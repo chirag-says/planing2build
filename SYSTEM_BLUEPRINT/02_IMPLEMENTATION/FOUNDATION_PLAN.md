@@ -291,6 +291,10 @@ Rules: SLICE3_5_READINESS.md section 0 (BP-01 to BP-20; BP-07A deferred). Result
 
 Rules: SLICE3_6_READINESS.md section 0 (QD-01 to QD-26; QD-02 a new product decision). Result and checks: `SLICE3_6_IMPLEMENTATION_REPORT.md`. Module `rfq`, migration `0015_rfq`, engagement origin in `engagements` (ADR-024), the RFQ_SELECTION usage kind in `billing`, functional screens on all three hosts.
 
+## 4m. AI design engine Checkpoint 1 run on 2026-10-06 (concept floor plan foundation)
+
+Rules: `AI_DESIGN_ENGINE_HAIRLINE_READINESS.md` section 0, `AI_DESIGN_ENGINE_CHECKPOINT_1.md` (approved, with the final CP1 answers), PD-28, ADR-025. Result and checks: `AI_DESIGN_ENGINE_CHECKPOINT_1_REPORT.md`. Module `houseplans`, migration `0019_houseplans`, feature flag `houseplans_enabled` off by default and in production until AD-05 and AD-06; synthetic test ruleset only; no language model; no web screens. OR-Tools measured and not adopted (image growth over threshold). Checkpoint 2 not started.
+
 ## 5. Handover plan (Chirag's rulings, 2026-10-04)
 
 Dates are engineering targets, not promises of feature completeness. A part is complete when its acceptance criteria hold and the named tests pass on the stack.

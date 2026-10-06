@@ -53,6 +53,10 @@ os.environ.update(
         "P2B_PAYMENT_KEY_ID": "fake_key_test",
         "P2B_PAYMENT_KEY_SECRET": "test-payment-key-secret",
         "P2B_PAYMENT_WEBHOOK_SECRET": "test-payment-webhook-secret",
+        # Concept floor plans (Checkpoint 1): the routes exist in tests. The draft and synthetic
+        # ruleset allowances are set per test module (tests/test_houseplans_api.py), so settings
+        # copied for production checks never inherit them.
+        "P2B_HOUSEPLANS_ENABLED": "true",
     }
 )
 

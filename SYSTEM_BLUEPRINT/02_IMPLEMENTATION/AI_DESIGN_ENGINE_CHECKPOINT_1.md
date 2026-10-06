@@ -4,7 +4,7 @@
 |---|---|
 | Document | `SYSTEM_BLUEPRINT/02_IMPLEMENTATION/AI_DESIGN_ENGINE_CHECKPOINT_1.md` |
 | Version | 1.0 (2026-10-06) |
-| Status | PLAN ONLY, awaiting Chirag's approval. No code, migration, API or UI written |
+| Status | APPROVED and IMPLEMENTED 2026-10-06. As built and deviations: `AI_DESIGN_ENGINE_CHECKPOINT_1_REPORT.md` |
 | Governing basis | `AI_DESIGN_ENGINE_HAIRLINE_READINESS.md` v1.1 (section 0 governs); PD-28 (IHB_FLOW 32.6); ADR-025; ADR-026; IMPLEMENTATION_CONTRACT (IC) including 18.6 and 18.7; `REFERENCE/hairline/HairlineStudy.md` (reference only: nothing from Hairline enters this checkpoint) |
 | Decided inputs | AD-01, AD-02, AD-07, AD-08 (subject to section N), AD-09, AD-10, AD-12, AD-14, AD-15 |
 | Pending inputs | AD-03 (brief), AD-04 (single floor), AD-05 (ruleset values), AD-06 (allowance and credits), AD-11 (timing), AD-13 (Vastu), AD-16 (label wording). This plan works around each without deciding it (section P, unresolved decisions CP1-01 to CP1-11) |

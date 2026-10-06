@@ -29,6 +29,8 @@ from p2b.designs.router import router as designs_router
 from p2b.documents.router import router as documents_router
 from p2b.engagements.ops_router import router as engagements_ops_router
 from p2b.engagements.router import router as engagements_router
+from p2b.houseplans.ops_router import router as houseplans_ops_router
+from p2b.houseplans.router import router as houseplans_router
 from p2b.identity.router import router as identity_router
 from p2b.integrations.ai_images import build_image_provider
 from p2b.integrations.nominatim import build_geocoder
@@ -96,6 +98,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     api.include_router(projects_router)
     api.include_router(documents_router)
     api.include_router(designs_router)
+    api.include_router(houseplans_router)
+    api.include_router(houseplans_ops_router)
     api.include_router(professionals_router)
     api.include_router(professional_review_router)
     api.include_router(operations_router)

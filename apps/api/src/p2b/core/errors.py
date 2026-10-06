@@ -108,6 +108,34 @@ class QuotaExhausted(AppError):
     default_message = "No more design generations are available right now."
 
 
+class DesignInputRequired(AppError):
+    """A concept plan needs facts the requirement does not give (`details.missing`)."""
+
+    code, status = "DESIGN_INPUT_REQUIRED", 422
+    default_message = "A few more details are needed before a floor plan can be generated."
+
+
+class PlanUnsupported(AppError):
+    """The requirement describes a case the concept plan engine does not support yet."""
+
+    code, status = "PLAN_UNSUPPORTED", 422
+    default_message = "A floor plan cannot be generated for this requirement yet."
+
+
+class RulesetNotPublished(AppError):
+    """No layout ruleset may be used here (production needs a PUBLISHED one; AD-05)."""
+
+    code, status = "RULESET_NOT_PUBLISHED", 409
+    default_message = "Floor plan rules are not available yet."
+
+
+class GenerationInProgress(AppError):
+    """A concept plan generation is already queued or running for this project."""
+
+    code, status = "GENERATION_IN_PROGRESS", 409
+    default_message = "A floor plan is already being generated for this project."
+
+
 class ProviderUnavailable(AppError):
     code, status = "PROVIDER_UNAVAILABLE", 503
     default_message = "A service we depend on is unavailable. Try again shortly."

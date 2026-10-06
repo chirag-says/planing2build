@@ -23,6 +23,7 @@ import p2b.core.ratelimit
 import p2b.designs.models
 import p2b.documents.models
 import p2b.engagements.models
+import p2b.houseplans.models
 import p2b.identity.models
 import p2b.integrations.fake_gateway
 import p2b.money.models

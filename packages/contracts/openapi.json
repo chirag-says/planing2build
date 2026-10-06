@@ -498,6 +498,82 @@
         "title": "ApproveRefundIn",
         "type": "object"
       },
+      "ArchitecturalIntent": {
+        "additionalProperties": false,
+        "properties": {
+          "floors": {
+            "const": 1,
+            "default": 1,
+            "title": "Floors",
+            "type": "integer"
+          },
+          "intent_version": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Intent Version",
+            "type": "string"
+          },
+          "orientation": {
+            "$ref": "#/components/schemas/OrientationMode"
+          },
+          "parking": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ParkingIntent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "programme": {
+            "items": {
+              "$ref": "#/components/schemas/ProgrammeItem"
+            },
+            "title": "Programme",
+            "type": "array"
+          },
+          "relations": {
+            "items": {
+              "$ref": "#/components/schemas/Relation"
+            },
+            "title": "Relations",
+            "type": "array"
+          },
+          "site": {
+            "$ref": "#/components/schemas/SiteIntent"
+          },
+          "sources": {
+            "$ref": "#/components/schemas/IntentSources"
+          },
+          "stair": {
+            "$ref": "#/components/schemas/StairChoice"
+          },
+          "target_built_up_mm2": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Built Up Mm2"
+          }
+        },
+        "required": [
+          "sources",
+          "site",
+          "programme",
+          "relations",
+          "orientation",
+          "parking",
+          "stair",
+          "target_built_up_mm2"
+        ],
+        "title": "ArchitecturalIntent",
+        "type": "object"
+      },
       "AssembleIn": {
         "additionalProperties": false,
         "properties": {
@@ -1016,6 +1092,35 @@
           "items"
         ],
         "title": "AuditorInspectionsOut",
+        "type": "object"
+      },
+      "BBox": {
+        "additionalProperties": false,
+        "properties": {
+          "max_x": {
+            "title": "Max X",
+            "type": "integer"
+          },
+          "max_y": {
+            "title": "Max Y",
+            "type": "integer"
+          },
+          "min_x": {
+            "title": "Min X",
+            "type": "integer"
+          },
+          "min_y": {
+            "title": "Min Y",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "min_x",
+          "min_y",
+          "max_x",
+          "max_y"
+        ],
+        "title": "BBox",
         "type": "object"
       },
       "BillingExceptionKind": {
@@ -2442,6 +2547,69 @@
         "title": "ComparisonState",
         "type": "string"
       },
+      "Compromise": {
+        "additionalProperties": false,
+        "properties": {
+          "accepted_by_user": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accepted By User"
+          },
+          "change_key": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Change Key",
+            "type": "string"
+          },
+          "constraint": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Constraint",
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "params": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              ]
+            },
+            "title": "Params",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "constraint",
+          "change_key",
+          "params"
+        ],
+        "title": "Compromise",
+        "type": "object"
+      },
       "Condition": {
         "properties": {
           "equals": {
@@ -2701,6 +2869,106 @@
         ],
         "title": "ConnectionTargetOut",
         "type": "object"
+      },
+      "Constraint": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ConstraintKind"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/Origin"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/ConstraintOutcome"
+          },
+          "params": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              ]
+            },
+            "title": "Params",
+            "type": "object"
+          },
+          "strength": {
+            "$ref": "#/components/schemas/ConstraintStrength"
+          },
+          "subjects": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Subjects",
+            "type": "array"
+          },
+          "weight": {
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Weight",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "strength",
+          "weight",
+          "subjects",
+          "params",
+          "origin",
+          "outcome"
+        ],
+        "title": "Constraint",
+        "type": "object"
+      },
+      "ConstraintKind": {
+        "enum": [
+          "ROOM_PRESENT",
+          "ROOM_MIN_SIZE",
+          "RELATION",
+          "INSIDE_ENVELOPE",
+          "ENTRANCE_ON_EDGE",
+          "PARKING_PROVIDED"
+        ],
+        "title": "ConstraintKind",
+        "type": "string"
+      },
+      "ConstraintOutcome": {
+        "enum": [
+          "MET",
+          "RELAXED",
+          "UNMET",
+          "NOT_EVALUATED"
+        ],
+        "title": "ConstraintOutcome",
+        "type": "string"
+      },
+      "ConstraintStrength": {
+        "enum": [
+          "HARD",
+          "SOFT"
+        ],
+        "title": "ConstraintStrength",
+        "type": "string"
       },
       "ContractorOut": {
         "properties": {
@@ -2965,6 +3233,317 @@
         ],
         "title": "DesignGenerationState",
         "type": "string"
+      },
+      "DesignInputs-Input": {
+        "additionalProperties": false,
+        "description": "PROVISIONAL (CP1-03): stands in for the design brief until AD-03 is decided. Versioned,\nstored apart from the requirement, accepted only where houseplans are enabled.",
+        "properties": {
+          "attached_bathrooms": {
+            "anyOf": [
+              {
+                "maximum": 12.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attached Bathrooms"
+          },
+          "bathrooms_exact": {
+            "anyOf": [
+              {
+                "maximum": 12.0,
+                "minimum": 5.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bathrooms Exact"
+          },
+          "bedrooms_exact": {
+            "anyOf": [
+              {
+                "maximum": 12.0,
+                "minimum": 5.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bedrooms Exact"
+          },
+          "dining": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DiningArrangement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "facing_override": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Facing"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "const": "PROVISIONAL_DESIGN_INPUTS",
+            "default": "PROVISIONAL_DESIGN_INPUTS",
+            "title": "Kind",
+            "type": "string"
+          },
+          "kitchen": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/KitchenArrangement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "parking_kind": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ParkingKind"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "parking_spaces": {
+            "anyOf": [
+              {
+                "maximum": 4.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parking Spaces"
+          },
+          "setbacks_ft": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "maximum": 200.0,
+                      "minimum": 0.0,
+                      "type": "number"
+                    },
+                    {
+                      "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,4}|(?=[\\d.]{1,7}0*$)\\d{0,4}\\.\\d{0,2}0*$)",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "propertyNames": {
+                  "$ref": "#/components/schemas/SetbackSide"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Setbacks Ft"
+          },
+          "stair": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StairChoice"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "utility": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utility"
+          },
+          "version": {
+            "const": 1,
+            "default": 1,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "title": "DesignInputs",
+        "type": "object"
+      },
+      "DesignInputs-Output": {
+        "additionalProperties": false,
+        "description": "PROVISIONAL (CP1-03): stands in for the design brief until AD-03 is decided. Versioned,\nstored apart from the requirement, accepted only where houseplans are enabled.",
+        "properties": {
+          "attached_bathrooms": {
+            "anyOf": [
+              {
+                "maximum": 12.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attached Bathrooms"
+          },
+          "bathrooms_exact": {
+            "anyOf": [
+              {
+                "maximum": 12.0,
+                "minimum": 5.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bathrooms Exact"
+          },
+          "bedrooms_exact": {
+            "anyOf": [
+              {
+                "maximum": 12.0,
+                "minimum": 5.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bedrooms Exact"
+          },
+          "dining": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DiningArrangement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "facing_override": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Facing"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "const": "PROVISIONAL_DESIGN_INPUTS",
+            "default": "PROVISIONAL_DESIGN_INPUTS",
+            "title": "Kind",
+            "type": "string"
+          },
+          "kitchen": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/KitchenArrangement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "parking_kind": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ParkingKind"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "parking_spaces": {
+            "anyOf": [
+              {
+                "maximum": 4.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parking Spaces"
+          },
+          "setbacks_ft": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,4}|(?=[\\d.]{1,7}0*$)\\d{0,4}\\.\\d{0,2}0*$)",
+                  "type": "string"
+                },
+                "propertyNames": {
+                  "$ref": "#/components/schemas/SetbackSide"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Setbacks Ft"
+          },
+          "stair": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StairChoice"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "utility": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utility"
+          },
+          "version": {
+            "const": 1,
+            "default": 1,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "title": "DesignInputs",
+        "type": "object"
       },
       "DesignListOut": {
         "properties": {
@@ -3368,6 +3947,51 @@
         "title": "DeviationType",
         "type": "string"
       },
+      "DimensionChain": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "$ref": "#/components/schemas/GPoint"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "PLOT",
+              "ENVELOPE",
+              "ROOM_CLEAR"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "start": {
+            "$ref": "#/components/schemas/GPoint"
+          },
+          "value_mm": {
+            "title": "Value Mm",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "start",
+          "end",
+          "value_mm"
+        ],
+        "title": "DimensionChain",
+        "type": "object"
+      },
+      "DiningArrangement": {
+        "enum": [
+          "SEPARATE",
+          "IN_LIVING"
+        ],
+        "title": "DiningArrangement",
+        "type": "string"
+      },
       "DirectoryCardOut": {
         "properties": {
           "base_locality": {
@@ -3556,6 +4180,36 @@
           "file"
         ],
         "title": "DocumentOut",
+        "type": "object"
+      },
+      "DoorLeaf": {
+        "enum": [
+          "SINGLE",
+          "DOUBLE",
+          "SLIDING"
+        ],
+        "title": "DoorLeaf",
+        "type": "string"
+      },
+      "DoorSpec": {
+        "additionalProperties": false,
+        "properties": {
+          "hinge": {
+            "$ref": "#/components/schemas/HingeSide"
+          },
+          "leaf": {
+            "$ref": "#/components/schemas/DoorLeaf"
+          },
+          "opens_to": {
+            "$ref": "#/components/schemas/WallSide"
+          }
+        },
+        "required": [
+          "leaf",
+          "hinge",
+          "opens_to"
+        ],
+        "title": "DoorSpec",
         "type": "object"
       },
       "DownloadLink": {
@@ -4383,6 +5037,38 @@
         "title": "EntitlementOut",
         "type": "object"
       },
+      "EntityKind": {
+        "enum": [
+          "DOCUMENT",
+          "PLOT",
+          "ENVELOPE",
+          "NODE",
+          "WALL",
+          "ROOM",
+          "OPENING",
+          "FIXTURE"
+        ],
+        "title": "EntityKind",
+        "type": "string"
+      },
+      "EntityRef": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/EntityKind"
+          }
+        },
+        "required": [
+          "kind",
+          "id"
+        ],
+        "title": "EntityRef",
+        "type": "object"
+      },
       "ErrorBody": {
         "properties": {
           "code": {
@@ -4929,6 +5615,21 @@
         ],
         "title": "ExtendIn",
         "type": "object"
+      },
+      "Facing": {
+        "description": "The side of the road and main entrance (AD-15), one of eight compass directions.",
+        "enum": [
+          "N",
+          "NE",
+          "E",
+          "SE",
+          "S",
+          "SW",
+          "W",
+          "NW"
+        ],
+        "title": "Facing",
+        "type": "string"
       },
       "FakePayIn": {
         "additionalProperties": false,
@@ -5874,6 +6575,131 @@
         "title": "FinishLevel",
         "type": "string"
       },
+      "Fixture": {
+        "additionalProperties": false,
+        "properties": {
+          "d_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "D Mm",
+            "type": "integer"
+          },
+          "id": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "offset_mm": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Offset Mm",
+            "type": "integer"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/Origin"
+          },
+          "room": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Room",
+            "type": "string"
+          },
+          "side": {
+            "$ref": "#/components/schemas/WallSide"
+          },
+          "type": {
+            "$ref": "#/components/schemas/FixtureType"
+          },
+          "w_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "W Mm",
+            "type": "integer"
+          },
+          "wall": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Wall",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "room",
+          "wall",
+          "offset_mm",
+          "side",
+          "w_mm",
+          "d_mm",
+          "origin"
+        ],
+        "title": "Fixture",
+        "type": "object"
+      },
+      "FixtureGeom": {
+        "additionalProperties": false,
+        "properties": {
+          "clearance": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/GPoint"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clearance"
+          },
+          "footprint": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/GPoint"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Footprint"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "room": {
+            "title": "Room",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/FixtureType"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "room",
+          "footprint",
+          "clearance"
+        ],
+        "title": "FixtureGeom",
+        "type": "object"
+      },
+      "FixtureType": {
+        "enum": [
+          "WC_WESTERN",
+          "WC_INDIAN",
+          "WASH_BASIN",
+          "SHOWER_AREA",
+          "KITCHEN_COUNTER",
+          "KITCHEN_SINK"
+        ],
+        "title": "FixtureType",
+        "type": "string"
+      },
       "FlagRule": {
         "properties": {
           "flag": {
@@ -5891,6 +6717,191 @@
         "title": "FlagRule",
         "type": "object"
       },
+      "Floor": {
+        "additionalProperties": false,
+        "properties": {
+          "clear_height_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Clear Height Mm",
+            "type": "integer"
+          },
+          "ffl_mm": {
+            "maximum": 10000000.0,
+            "minimum": -10000000.0,
+            "title": "Ffl Mm",
+            "type": "integer"
+          },
+          "fixtures": {
+            "items": {
+              "$ref": "#/components/schemas/Fixture"
+            },
+            "title": "Fixtures",
+            "type": "array"
+          },
+          "floor_to_floor_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Floor To Floor Mm",
+            "type": "integer"
+          },
+          "id": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "level": {
+            "maximum": 3.0,
+            "minimum": 0.0,
+            "title": "Level",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "nodes": {
+            "items": {
+              "$ref": "#/components/schemas/Node"
+            },
+            "title": "Nodes",
+            "type": "array"
+          },
+          "openings": {
+            "items": {
+              "$ref": "#/components/schemas/Opening"
+            },
+            "title": "Openings",
+            "type": "array"
+          },
+          "plinth_mm": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Plinth Mm",
+            "type": "integer"
+          },
+          "rooms": {
+            "items": {
+              "$ref": "#/components/schemas/Room"
+            },
+            "title": "Rooms",
+            "type": "array"
+          },
+          "slab_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Slab Mm",
+            "type": "integer"
+          },
+          "stairs": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/Stair"
+            },
+            "title": "Stairs",
+            "type": "array"
+          },
+          "walls": {
+            "items": {
+              "$ref": "#/components/schemas/Wall"
+            },
+            "title": "Walls",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "level",
+          "name",
+          "ffl_mm",
+          "floor_to_floor_mm",
+          "clear_height_mm",
+          "slab_mm",
+          "plinth_mm",
+          "nodes",
+          "walls",
+          "rooms",
+          "openings",
+          "fixtures"
+        ],
+        "title": "Floor",
+        "type": "object"
+      },
+      "FloorGeometry": {
+        "additionalProperties": false,
+        "properties": {
+          "dimensions": {
+            "items": {
+              "$ref": "#/components/schemas/DimensionChain"
+            },
+            "title": "Dimensions",
+            "type": "array"
+          },
+          "fixtures": {
+            "items": {
+              "$ref": "#/components/schemas/FixtureGeom"
+            },
+            "title": "Fixtures",
+            "type": "array"
+          },
+          "level": {
+            "title": "Level",
+            "type": "integer"
+          },
+          "openings": {
+            "items": {
+              "$ref": "#/components/schemas/OpeningGeom"
+            },
+            "title": "Openings",
+            "type": "array"
+          },
+          "rooms": {
+            "items": {
+              "$ref": "#/components/schemas/RoomGeom"
+            },
+            "title": "Rooms",
+            "type": "array"
+          },
+          "walls": {
+            "items": {
+              "$ref": "#/components/schemas/WallGeom"
+            },
+            "title": "Walls",
+            "type": "array"
+          }
+        },
+        "required": [
+          "level",
+          "rooms",
+          "walls",
+          "openings",
+          "fixtures",
+          "dimensions"
+        ],
+        "title": "FloorGeometry",
+        "type": "object"
+      },
+      "GPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "x": {
+            "title": "X",
+            "type": "integer"
+          },
+          "y": {
+            "title": "Y",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "x",
+          "y"
+        ],
+        "title": "GPoint",
+        "type": "object"
+      },
       "GateStatus": {
         "description": "STATE_MODEL section 6, gate stages only.",
         "enum": [
@@ -5901,6 +6912,73 @@
         ],
         "title": "GateStatus",
         "type": "string"
+      },
+      "GenerateHousePlanRequest": {
+        "additionalProperties": false,
+        "description": "`design_inputs` is PROVISIONAL (CP1-03): it stands in for the design brief until AD-03, is\nstored apart from the requirement and never changes an answer the requirement gives.",
+        "properties": {
+          "design_inputs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DesignInputs-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "GenerateHousePlanRequest",
+        "type": "object"
+      },
+      "GeneratorInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "engine": {
+            "const": "p2b-houseplans",
+            "title": "Engine",
+            "type": "string"
+          },
+          "engine_version": {
+            "title": "Engine Version",
+            "type": "string"
+          },
+          "intent_sha256": {
+            "title": "Intent Sha256",
+            "type": "string"
+          },
+          "ruleset_sha256": {
+            "title": "Ruleset Sha256",
+            "type": "string"
+          },
+          "ruleset_version": {
+            "title": "Ruleset Version",
+            "type": "integer"
+          },
+          "seed": {
+            "title": "Seed",
+            "type": "integer"
+          },
+          "solver": {
+            "$ref": "#/components/schemas/SolverKind"
+          },
+          "solver_version": {
+            "title": "Solver Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "engine",
+          "engine_version",
+          "solver",
+          "solver_version",
+          "seed",
+          "ruleset_version",
+          "ruleset_sha256",
+          "intent_sha256"
+        ],
+        "title": "GeneratorInfo",
+        "type": "object"
       },
       "HandoverDocumentKind": {
         "enum": [
@@ -6104,6 +7182,367 @@
         "title": "HandoverViewOut",
         "type": "object"
       },
+      "HingeSide": {
+        "description": "The jamb a door hangs on, relative to its host wall's a-to-b direction.",
+        "enum": [
+          "A_SIDE",
+          "B_SIDE"
+        ],
+        "title": "HingeSide",
+        "type": "string"
+      },
+      "HousePlan": {
+        "additionalProperties": false,
+        "properties": {
+          "compromises": {
+            "items": {
+              "$ref": "#/components/schemas/Compromise"
+            },
+            "title": "Compromises",
+            "type": "array"
+          },
+          "constraints": {
+            "items": {
+              "$ref": "#/components/schemas/Constraint"
+            },
+            "title": "Constraints",
+            "type": "array"
+          },
+          "floors": {
+            "items": {
+              "$ref": "#/components/schemas/Floor"
+            },
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Floors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "site": {
+            "$ref": "#/components/schemas/Site"
+          }
+        },
+        "required": [
+          "site",
+          "floors",
+          "constraints",
+          "compromises",
+          "meta"
+        ],
+        "title": "HousePlan",
+        "type": "object"
+      },
+      "HousePlanDetailOut": {
+        "additionalProperties": false,
+        "properties": {
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "design_inputs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DesignInputs-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "document": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HousePlan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "failure_reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanFailureReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "geometry": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanGeometry"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "infeasibility": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InfeasibilityOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "intent": {
+            "$ref": "#/components/schemas/ArchitecturalIntent"
+          },
+          "is_authoritative": {
+            "const": false,
+            "default": false,
+            "title": "Is Authoritative",
+            "type": "boolean"
+          },
+          "plan_id": {
+            "title": "Plan Id",
+            "type": "string"
+          },
+          "ruleset_is_synthetic": {
+            "title": "Ruleset Is Synthetic",
+            "type": "boolean"
+          },
+          "ruleset_status": {
+            "$ref": "#/components/schemas/RulesetStatus"
+          },
+          "ruleset_version": {
+            "title": "Ruleset Version",
+            "type": "integer"
+          },
+          "sequence": {
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "state": {
+            "$ref": "#/components/schemas/PlanGenerationState"
+          },
+          "validation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ValidationReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "validity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanValidity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "plan_id",
+          "sequence",
+          "state",
+          "validity",
+          "failure_reason",
+          "ruleset_version",
+          "ruleset_status",
+          "ruleset_is_synthetic",
+          "created_at",
+          "completed_at",
+          "intent",
+          "design_inputs",
+          "document",
+          "geometry",
+          "validation",
+          "infeasibility"
+        ],
+        "title": "HousePlanDetailOut",
+        "type": "object"
+      },
+      "HousePlanListOut": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HousePlanSummaryOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "HousePlanListOut",
+        "type": "object"
+      },
+      "HousePlanSummaryOut": {
+        "additionalProperties": false,
+        "properties": {
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "failure_reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanFailureReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_authoritative": {
+            "const": false,
+            "default": false,
+            "title": "Is Authoritative",
+            "type": "boolean"
+          },
+          "plan_id": {
+            "title": "Plan Id",
+            "type": "string"
+          },
+          "ruleset_is_synthetic": {
+            "title": "Ruleset Is Synthetic",
+            "type": "boolean"
+          },
+          "ruleset_status": {
+            "$ref": "#/components/schemas/RulesetStatus"
+          },
+          "ruleset_version": {
+            "title": "Ruleset Version",
+            "type": "integer"
+          },
+          "sequence": {
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "state": {
+            "$ref": "#/components/schemas/PlanGenerationState"
+          },
+          "validity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanValidity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "plan_id",
+          "sequence",
+          "state",
+          "validity",
+          "failure_reason",
+          "ruleset_version",
+          "ruleset_status",
+          "ruleset_is_synthetic",
+          "created_at",
+          "completed_at"
+        ],
+        "title": "HousePlanSummaryOut",
+        "type": "object"
+      },
+      "InfeasibilityOut": {
+        "additionalProperties": false,
+        "properties": {
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/InfeasibleReasonOut"
+            },
+            "title": "Reasons",
+            "type": "array"
+          }
+        },
+        "required": [
+          "reasons"
+        ],
+        "title": "InfeasibilityOut",
+        "type": "object"
+      },
+      "InfeasibleReason": {
+        "enum": [
+          "ENVELOPE_EMPTY",
+          "AREA_BUDGET",
+          "WIDTH_TOO_NARROW",
+          "DEPTH_EXCEEDED",
+          "PARKING_TOO_WIDE",
+          "ACCESS_SPAN",
+          "FIXTURE_FIT",
+          "OPENING_FIT",
+          "RULESET_INCOMPLETE"
+        ],
+        "title": "InfeasibleReason",
+        "type": "string"
+      },
+      "InfeasibleReasonOut": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/InfeasibleReason"
+          },
+          "message_key": {
+            "title": "Message Key",
+            "type": "string"
+          },
+          "params": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "title": "Params",
+            "type": "object"
+          }
+        },
+        "required": [
+          "code",
+          "params",
+          "message_key"
+        ],
+        "title": "InfeasibleReasonOut",
+        "type": "object"
+      },
       "InformationRequest": {
         "properties": {
           "message": {
@@ -6276,6 +7715,47 @@
         "title": "InstalmentPlanIn",
         "type": "object"
       },
+      "IntentSources": {
+        "additionalProperties": false,
+        "properties": {
+          "design_inputs_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Design Inputs Sha256"
+          },
+          "question_set_version": {
+            "title": "Question Set Version",
+            "type": "integer"
+          },
+          "requirement_version": {
+            "title": "Requirement Version",
+            "type": "integer"
+          },
+          "ruleset_sha256": {
+            "title": "Ruleset Sha256",
+            "type": "string"
+          },
+          "ruleset_version": {
+            "title": "Ruleset Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "question_set_version",
+          "requirement_version",
+          "design_inputs_sha256",
+          "ruleset_version",
+          "ruleset_sha256"
+        ],
+        "title": "IntentSources",
+        "type": "object"
+      },
       "IntroduceIn": {
         "additionalProperties": false,
         "properties": {
@@ -6399,6 +7879,14 @@
         ],
         "title": "InvoiceOut",
         "type": "object"
+      },
+      "KitchenArrangement": {
+        "enum": [
+          "CLOSED",
+          "OPEN"
+        ],
+        "title": "KitchenArrangement",
+        "type": "string"
       },
       "ListingState": {
         "description": "One professional category's place in the review workflow (D-04). Only LISTED is public,\nand only while the professional has not hidden it (D-11).",
@@ -6793,6 +8281,121 @@
         "title": "MeResponse",
         "type": "object"
       },
+      "Meta": {
+        "additionalProperties": false,
+        "properties": {
+          "body_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body Sha256"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "generator": {
+            "$ref": "#/components/schemas/GeneratorInfo"
+          },
+          "plan_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Id"
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project Id"
+          },
+          "question_set_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question Set Version"
+          },
+          "requirement_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requirement Version"
+          },
+          "revision_no": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Revision No",
+            "type": "integer"
+          },
+          "schema": {
+            "const": "p2b.houseplan",
+            "default": "p2b.houseplan",
+            "title": "Schema",
+            "type": "string"
+          },
+          "schema_version": {
+            "pattern": "^\\d+\\.\\d+\\.\\d+$",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/PlanSource"
+          }
+        },
+        "required": [
+          "schema_version",
+          "source",
+          "generator"
+        ],
+        "title": "Meta",
+        "type": "object"
+      },
       "MfaConfirmRequest": {
         "properties": {
           "code": {
@@ -7036,6 +8639,35 @@
         "title": "NeedState",
         "type": "string"
       },
+      "Node": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "x": {
+            "maximum": 10000000.0,
+            "minimum": -10000000.0,
+            "title": "X",
+            "type": "integer"
+          },
+          "y": {
+            "maximum": 10000000.0,
+            "minimum": -10000000.0,
+            "title": "Y",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "x",
+          "y"
+        ],
+        "title": "Node",
+        "type": "object"
+      },
       "OfferOut": {
         "description": "The price now, computed by the server for the buyer's state (the seller's by default).",
         "properties": {
@@ -7210,6 +8842,129 @@
         ],
         "title": "OfferingVersionIn",
         "type": "object"
+      },
+      "Opening": {
+        "additionalProperties": false,
+        "properties": {
+          "door": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DoorSpec"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "height_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Height Mm",
+            "type": "integer"
+          },
+          "id": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/OpeningKind"
+          },
+          "offset_mm": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Offset Mm",
+            "type": "integer"
+          },
+          "sill_mm": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Sill Mm",
+            "type": "integer"
+          },
+          "wall": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Wall",
+            "type": "string"
+          },
+          "width_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Width Mm",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "wall",
+          "offset_mm",
+          "width_mm",
+          "height_mm",
+          "sill_mm"
+        ],
+        "title": "Opening",
+        "type": "object"
+      },
+      "OpeningGeom": {
+        "additionalProperties": false,
+        "properties": {
+          "connects": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Connects",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "jamb_a": {
+            "$ref": "#/components/schemas/GPoint"
+          },
+          "jamb_b": {
+            "$ref": "#/components/schemas/GPoint"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/OpeningKind"
+          },
+          "swing": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Swing"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "wall": {
+            "title": "Wall",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "wall",
+          "jamb_a",
+          "jamb_b",
+          "swing",
+          "connects"
+        ],
+        "title": "OpeningGeom",
+        "type": "object"
+      },
+      "OpeningKind": {
+        "enum": [
+          "MAIN_ENTRANCE",
+          "DOOR",
+          "VOID",
+          "WINDOW"
+        ],
+        "title": "OpeningKind",
+        "type": "string"
       },
       "OpsAnswerIn": {
         "additionalProperties": false,
@@ -7926,6 +9681,161 @@
           "at"
         ],
         "title": "OpsHistoryOut",
+        "type": "object"
+      },
+      "OpsHousePlanDetailOut": {
+        "additionalProperties": false,
+        "properties": {
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "design_inputs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DesignInputs-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "document": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HousePlan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "failure_detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failure Detail"
+          },
+          "failure_reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanFailureReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "geometry": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanGeometry"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "infeasibility": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InfeasibilityOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "intent": {
+            "$ref": "#/components/schemas/ArchitecturalIntent"
+          },
+          "is_authoritative": {
+            "const": false,
+            "default": false,
+            "title": "Is Authoritative",
+            "type": "boolean"
+          },
+          "plan_id": {
+            "title": "Plan Id",
+            "type": "string"
+          },
+          "ruleset_is_synthetic": {
+            "title": "Ruleset Is Synthetic",
+            "type": "boolean"
+          },
+          "ruleset_status": {
+            "$ref": "#/components/schemas/RulesetStatus"
+          },
+          "ruleset_version": {
+            "title": "Ruleset Version",
+            "type": "integer"
+          },
+          "sequence": {
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "state": {
+            "$ref": "#/components/schemas/PlanGenerationState"
+          },
+          "validation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ValidationReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "validity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanValidity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "plan_id",
+          "sequence",
+          "state",
+          "validity",
+          "failure_reason",
+          "ruleset_version",
+          "ruleset_status",
+          "ruleset_is_synthetic",
+          "created_at",
+          "completed_at",
+          "intent",
+          "design_inputs",
+          "document",
+          "geometry",
+          "validation",
+          "infeasibility",
+          "failure_detail"
+        ],
+        "title": "OpsHousePlanDetailOut",
         "type": "object"
       },
       "OpsInspectionOut": {
@@ -9578,6 +11488,48 @@
         "title": "OrderSummaryOut",
         "type": "object"
       },
+      "OrientationMode": {
+        "description": "From the Vastu answer. Recorded only: no orientation table exists until AD-13.",
+        "enum": [
+          "OFF",
+          "SOFT",
+          "SOFT_HIGH"
+        ],
+        "title": "OrientationMode",
+        "type": "string"
+      },
+      "Origin": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/OriginKind"
+          },
+          "ref": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "ref"
+        ],
+        "title": "Origin",
+        "type": "object"
+      },
+      "OriginKind": {
+        "description": "Why a plan element exists: a requirement answer, a provisional design input, ruleset data,\nthe solver's circulation, or a person's edit.",
+        "enum": [
+          "REQUIREMENT",
+          "DESIGN_INPUT",
+          "RULESET",
+          "SOLVER",
+          "USER_EDIT"
+        ],
+        "title": "OriginKind",
+        "type": "string"
+      },
       "OtpStartRequest": {
         "properties": {
           "email": {
@@ -10513,6 +12465,91 @@
         "title": "PackageViewOut",
         "type": "object"
       },
+      "Parking": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/ParkingKind"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/Origin"
+          },
+          "placement": {
+            "$ref": "#/components/schemas/ParkingPlacement"
+          },
+          "space_d_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Space D Mm",
+            "type": "integer"
+          },
+          "space_w_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Space W Mm",
+            "type": "integer"
+          },
+          "spaces": {
+            "maximum": 4.0,
+            "minimum": 1.0,
+            "title": "Spaces",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "spaces",
+          "kind",
+          "space_w_mm",
+          "space_d_mm",
+          "placement",
+          "origin"
+        ],
+        "title": "Parking",
+        "type": "object"
+      },
+      "ParkingIntent": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/ParkingKind"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/Origin"
+          },
+          "placement": {
+            "$ref": "#/components/schemas/ParkingPlacement"
+          },
+          "spaces": {
+            "maximum": 4.0,
+            "minimum": 1.0,
+            "title": "Spaces",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "spaces",
+          "kind",
+          "placement",
+          "origin"
+        ],
+        "title": "ParkingIntent",
+        "type": "object"
+      },
+      "ParkingKind": {
+        "enum": [
+          "CAR",
+          "TWO_WHEELER"
+        ],
+        "title": "ParkingKind",
+        "type": "string"
+      },
+      "ParkingPlacement": {
+        "enum": [
+          "INSIDE_FOOTPRINT"
+        ],
+        "title": "ParkingPlacement",
+        "type": "string"
+      },
       "PaymentMarkValue": {
         "enum": [
           "YES",
@@ -10580,6 +12617,209 @@
           "captured_at"
         ],
         "title": "PaymentOut",
+        "type": "object"
+      },
+      "PlanFailureReason": {
+        "enum": [
+          "ENGINE_ERROR",
+          "ENGINE_INVALID_OUTPUT",
+          "ENGINE_TIMEOUT",
+          "STALE"
+        ],
+        "title": "PlanFailureReason",
+        "type": "string"
+      },
+      "PlanGenerationState": {
+        "description": "The concept plan generation lifecycle (CP1-04: its own, not Slice 3.1's). VALID is the\nonly outcome that carries a plan, and only a plan the validator passed. INFEASIBLE: the\nrequirement does not fit under the ruleset, with reasons. FAILED: an engine fault.",
+        "enum": [
+          "QUEUED",
+          "RUNNING",
+          "VALID",
+          "INFEASIBLE",
+          "FAILED"
+        ],
+        "title": "PlanGenerationState",
+        "type": "string"
+      },
+      "PlanGeometry": {
+        "additionalProperties": false,
+        "properties": {
+          "bounds": {
+            "$ref": "#/components/schemas/BBox"
+          },
+          "envelope": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/GPoint"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Envelope"
+          },
+          "floors": {
+            "items": {
+              "$ref": "#/components/schemas/FloorGeometry"
+            },
+            "title": "Floors",
+            "type": "array"
+          },
+          "geometry_version": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Geometry Version",
+            "type": "string"
+          },
+          "plot": {
+            "items": {
+              "$ref": "#/components/schemas/GPoint"
+            },
+            "title": "Plot",
+            "type": "array"
+          },
+          "units": {
+            "const": "mm",
+            "default": "mm",
+            "title": "Units",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bounds",
+          "plot",
+          "envelope",
+          "floors"
+        ],
+        "title": "PlanGeometry",
+        "type": "object"
+      },
+      "PlanSource": {
+        "enum": [
+          "GENERATED",
+          "EDITED",
+          "REGENERATED"
+        ],
+        "title": "PlanSource",
+        "type": "string"
+      },
+      "PlanValidity": {
+        "enum": [
+          "VALID",
+          "INVALID"
+        ],
+        "title": "PlanValidity",
+        "type": "string"
+      },
+      "Plot": {
+        "additionalProperties": false,
+        "properties": {
+          "edges": {
+            "items": {
+              "$ref": "#/components/schemas/PlotEdge"
+            },
+            "maxItems": 64,
+            "minItems": 4,
+            "title": "Edges",
+            "type": "array"
+          },
+          "vertices": {
+            "items": {
+              "$ref": "#/components/schemas/Point"
+            },
+            "maxItems": 64,
+            "minItems": 4,
+            "title": "Vertices",
+            "type": "array"
+          }
+        },
+        "required": [
+          "vertices",
+          "edges"
+        ],
+        "title": "Plot",
+        "type": "object"
+      },
+      "PlotEdge": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "minimum": 0.0,
+            "title": "End",
+            "type": "integer"
+          },
+          "id": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/PlotEdgeKind"
+          },
+          "road_width_mm": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 1000000.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Road Width Mm"
+          },
+          "side": {
+            "$ref": "#/components/schemas/SetbackSide"
+          },
+          "start": {
+            "minimum": 0.0,
+            "title": "Start",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "start",
+          "end",
+          "kind",
+          "side"
+        ],
+        "title": "PlotEdge",
+        "type": "object"
+      },
+      "PlotEdgeKind": {
+        "enum": [
+          "ROAD",
+          "NEIGHBOUR"
+        ],
+        "title": "PlotEdgeKind",
+        "type": "string"
+      },
+      "Point": {
+        "additionalProperties": false,
+        "properties": {
+          "x": {
+            "maximum": 10000000.0,
+            "minimum": -10000000.0,
+            "title": "X",
+            "type": "integer"
+          },
+          "y": {
+            "maximum": 10000000.0,
+            "minimum": -10000000.0,
+            "title": "Y",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "x",
+          "y"
+        ],
+        "title": "Point",
         "type": "object"
       },
       "PointIn": {
@@ -11779,6 +14019,34 @@
           }
         },
         "title": "ProfileUpdateIn",
+        "type": "object"
+      },
+      "ProgrammeItem": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Key",
+            "type": "string"
+          },
+          "must_have": {
+            "title": "Must Have",
+            "type": "boolean"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/Origin"
+          },
+          "room_type": {
+            "$ref": "#/components/schemas/RoomType"
+          }
+        },
+        "required": [
+          "key",
+          "room_type",
+          "must_have",
+          "origin"
+        ],
+        "title": "ProgrammeItem",
         "type": "object"
       },
       "ProjectCreateRequest": {
@@ -14041,6 +16309,48 @@
         "title": "ReinspectionIn",
         "type": "object"
       },
+      "Relation": {
+        "additionalProperties": false,
+        "description": "`room` is reached only from `host`, through a door (ADJACENT_WITH_DOOR) or an open\nconnection (ADJACENT_OPEN).",
+        "properties": {
+          "host": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Host",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/RelationKind"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/Origin"
+          },
+          "room": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Room",
+            "type": "string"
+          },
+          "strength": {
+            "$ref": "#/components/schemas/ConstraintStrength"
+          }
+        },
+        "required": [
+          "kind",
+          "room",
+          "host",
+          "strength",
+          "origin"
+        ],
+        "title": "Relation",
+        "type": "object"
+      },
+      "RelationKind": {
+        "enum": [
+          "ADJACENT_WITH_DOOR",
+          "ADJACENT_OPEN"
+        ],
+        "title": "RelationKind",
+        "type": "string"
+      },
       "RenewIn": {
         "additionalProperties": false,
         "properties": {
@@ -14061,6 +16371,15 @@
         ],
         "title": "RenewIn",
         "type": "object"
+      },
+      "RepairHint": {
+        "enum": [
+          "AUTO",
+          "USER",
+          "NONE"
+        ],
+        "title": "RepairHint",
+        "type": "string"
       },
       "ReportOut": {
         "properties": {
@@ -15091,6 +17410,193 @@
         "title": "RfqState",
         "type": "string"
       },
+      "Room": {
+        "additionalProperties": false,
+        "properties": {
+          "boundary": {
+            "items": {
+              "pattern": "^[a-z][a-z0-9_]{0,47}$",
+              "type": "string"
+            },
+            "maxItems": 256,
+            "minItems": 4,
+            "title": "Boundary",
+            "type": "array"
+          },
+          "enclosed": {
+            "title": "Enclosed",
+            "type": "boolean"
+          },
+          "id": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/Origin"
+          },
+          "required": {
+            "title": "Required",
+            "type": "boolean"
+          },
+          "size_spec": {
+            "$ref": "#/components/schemas/SizeSpec"
+          },
+          "type": {
+            "$ref": "#/components/schemas/RoomType"
+          },
+          "zone": {
+            "$ref": "#/components/schemas/Zone"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "name",
+          "boundary",
+          "zone",
+          "enclosed",
+          "required",
+          "size_spec",
+          "origin"
+        ],
+        "title": "Room",
+        "type": "object"
+      },
+      "RoomGeom": {
+        "additionalProperties": false,
+        "properties": {
+          "carpet_area_mm2": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Carpet Area Mm2"
+          },
+          "clear_d_mm": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clear D Mm"
+          },
+          "clear_polygon": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/GPoint"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clear Polygon"
+          },
+          "clear_w_mm": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clear W Mm"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label_at": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GPoint"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "polygon": {
+            "items": {
+              "$ref": "#/components/schemas/GPoint"
+            },
+            "title": "Polygon",
+            "type": "array"
+          },
+          "type": {
+            "$ref": "#/components/schemas/RoomType"
+          },
+          "zone": {
+            "$ref": "#/components/schemas/Zone"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "name",
+          "zone",
+          "polygon",
+          "clear_polygon",
+          "clear_w_mm",
+          "clear_d_mm",
+          "carpet_area_mm2",
+          "label_at"
+        ],
+        "title": "RoomGeom",
+        "type": "object"
+      },
+      "RoomType": {
+        "enum": [
+          "LIVING",
+          "DINING",
+          "KITCHEN",
+          "BEDROOM",
+          "BATH_ATTACHED",
+          "BATH_COMMON",
+          "WC",
+          "PUJA",
+          "UTILITY",
+          "STORE",
+          "PASSAGE",
+          "FOYER",
+          "STAIR_HALL",
+          "PARKING"
+        ],
+        "title": "RoomType",
+        "type": "string"
+      },
+      "RulesetStatus": {
+        "description": "A layout ruleset (ADR-025): DRAFT; APPROVED after an architect's review; PUBLISHED (one at a\ntime, the only status production may use); RETIRED. Content never changes.",
+        "enum": [
+          "DRAFT",
+          "APPROVED",
+          "PUBLISHED",
+          "RETIRED"
+        ],
+        "title": "RulesetStatus",
+        "type": "string"
+      },
       "ScheduleEntryIn": {
         "additionalProperties": false,
         "properties": {
@@ -15408,6 +17914,51 @@
         "title": "ServicesOut",
         "type": "object"
       },
+      "Setback": {
+        "additionalProperties": false,
+        "properties": {
+          "distance_mm": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Distance Mm",
+            "type": "integer"
+          },
+          "edge": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Edge",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SetbackSource"
+          }
+        },
+        "required": [
+          "edge",
+          "distance_mm",
+          "source"
+        ],
+        "title": "Setback",
+        "type": "object"
+      },
+      "SetbackSide": {
+        "description": "Sides of a rectangular plot as seen standing on the primary road edge, looking at the\nplot (CP1-02): FRONT is the road edge; LEFT and RIGHT are the viewer's left and right.",
+        "enum": [
+          "FRONT",
+          "BACK",
+          "LEFT",
+          "RIGHT"
+        ],
+        "title": "SetbackSide",
+        "type": "string"
+      },
+      "SetbackSource": {
+        "enum": [
+          "REQUIREMENT",
+          "DESIGN_INPUT"
+        ],
+        "title": "SetbackSource",
+        "type": "string"
+      },
       "Severity": {
         "description": "EX-11.",
         "enum": [
@@ -15626,6 +18177,164 @@
           "signed"
         ],
         "title": "SignoffLineOut",
+        "type": "object"
+      },
+      "Site": {
+        "additionalProperties": false,
+        "properties": {
+          "entry_edge": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Entry Edge",
+            "type": "string"
+          },
+          "facing": {
+            "$ref": "#/components/schemas/Facing"
+          },
+          "north_angle_deg": {
+            "exclusiveMaximum": 360.0,
+            "minimum": 0.0,
+            "title": "North Angle Deg",
+            "type": "integer"
+          },
+          "parking": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Parking"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "plot": {
+            "$ref": "#/components/schemas/Plot"
+          },
+          "setbacks": {
+            "items": {
+              "$ref": "#/components/schemas/Setback"
+            },
+            "maxItems": 64,
+            "minItems": 1,
+            "title": "Setbacks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "plot",
+          "north_angle_deg",
+          "facing",
+          "entry_edge",
+          "setbacks"
+        ],
+        "title": "Site",
+        "type": "object"
+      },
+      "SiteIntent": {
+        "additionalProperties": false,
+        "properties": {
+          "depth_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Depth Mm",
+            "type": "integer"
+          },
+          "facing": {
+            "$ref": "#/components/schemas/Facing"
+          },
+          "facing_origin": {
+            "$ref": "#/components/schemas/Origin"
+          },
+          "frontage_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Frontage Mm",
+            "type": "integer"
+          },
+          "north_angle_deg": {
+            "exclusiveMaximum": 360.0,
+            "minimum": 0.0,
+            "title": "North Angle Deg",
+            "type": "integer"
+          },
+          "setback_sources": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/SetbackSource"
+            },
+            "propertyNames": {
+              "$ref": "#/components/schemas/SetbackSide"
+            },
+            "title": "Setback Sources",
+            "type": "object"
+          },
+          "setbacks_mm": {
+            "additionalProperties": {
+              "maximum": 1000000.0,
+              "minimum": 0.0,
+              "type": "integer"
+            },
+            "propertyNames": {
+              "$ref": "#/components/schemas/SetbackSide"
+            },
+            "title": "Setbacks Mm",
+            "type": "object"
+          }
+        },
+        "required": [
+          "frontage_mm",
+          "depth_mm",
+          "facing",
+          "facing_origin",
+          "north_angle_deg",
+          "setbacks_mm",
+          "setback_sources"
+        ],
+        "title": "SiteIntent",
+        "type": "object"
+      },
+      "SizeSpec": {
+        "additionalProperties": false,
+        "properties": {
+          "max_area_mm2": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Area Mm2"
+          },
+          "min_area_mm2": {
+            "exclusiveMinimum": 0.0,
+            "title": "Min Area Mm2",
+            "type": "integer"
+          },
+          "min_short_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Min Short Mm",
+            "type": "integer"
+          },
+          "pref_area_mm2": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pref Area Mm2"
+          }
+        },
+        "required": [
+          "min_short_mm",
+          "min_area_mm2"
+        ],
+        "title": "SizeSpec",
         "type": "object"
       },
       "SnapshotAcceptanceOut": {
@@ -16638,6 +19347,14 @@
         "title": "SnapshotVersionOut",
         "type": "object"
       },
+      "SolverKind": {
+        "enum": [
+          "DETERMINISTIC_MVP",
+          "CP_SAT"
+        ],
+        "title": "SolverKind",
+        "type": "string"
+      },
       "SpecLineState": {
         "description": "STATE_MODEL section 7.",
         "enum": [
@@ -17149,6 +19866,65 @@
         "title": "StageUpdateKind",
         "type": "string"
       },
+      "Stair": {
+        "additionalProperties": false,
+        "description": "Present for schema stability; Checkpoint 1 generates none; the v1 validator refuses one.",
+        "properties": {
+          "id": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "riser_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Riser Mm",
+            "type": "integer"
+          },
+          "risers": {
+            "maximum": 60.0,
+            "minimum": 1.0,
+            "title": "Risers",
+            "type": "integer"
+          },
+          "room": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Room",
+            "type": "string"
+          },
+          "tread_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Tread Mm",
+            "type": "integer"
+          },
+          "width_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Width Mm",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "room",
+          "width_mm",
+          "riser_mm",
+          "tread_mm",
+          "risers"
+        ],
+        "title": "Stair",
+        "type": "object"
+      },
+      "StairChoice": {
+        "enum": [
+          "NONE",
+          "INTERNAL",
+          "EXTERNAL"
+        ],
+        "title": "StairChoice",
+        "type": "string"
+      },
       "SubmitIn": {
         "additionalProperties": false,
         "properties": {
@@ -17195,6 +19971,34 @@
           }
         },
         "title": "SubtypesIn",
+        "type": "object"
+      },
+      "Swing": {
+        "additionalProperties": false,
+        "properties": {
+          "end_deg": {
+            "title": "End Deg",
+            "type": "integer"
+          },
+          "hinge": {
+            "$ref": "#/components/schemas/GPoint"
+          },
+          "radius_mm": {
+            "title": "Radius Mm",
+            "type": "integer"
+          },
+          "start_deg": {
+            "title": "Start Deg",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "hinge",
+          "radius_mm",
+          "start_deg",
+          "end_deg"
+        ],
+        "title": "Swing",
         "type": "object"
       },
       "TaxConfigurationIn": {
@@ -17623,6 +20427,219 @@
         "title": "UserStatus",
         "type": "string"
       },
+      "ValidationCategory": {
+        "enum": [
+          "SCHEMA",
+          "REFERENCES",
+          "GEOMETRY",
+          "OPENINGS",
+          "FIXTURES",
+          "CIRCULATION",
+          "DIMENSIONS",
+          "REQUIREMENTS"
+        ],
+        "title": "ValidationCategory",
+        "type": "string"
+      },
+      "ValidationCode": {
+        "enum": [
+          "SCHEMA_INVALID",
+          "SCHEMA_VERSION_UNSUPPORTED",
+          "ID_DUPLICATE",
+          "REF_MISSING",
+          "PLOT_INVALID",
+          "GEOMETRY_UNSUPPORTED_V1",
+          "ROOM_POLYGON_INVALID",
+          "ROOM_OVERLAP",
+          "ROOM_OUTSIDE_ENVELOPE",
+          "BUILDING_OUTSIDE_PLOT",
+          "ROOM_EDGE_NOT_ON_WALL",
+          "WALL_ZERO_LENGTH",
+          "WALL_NOT_ORTHOGONAL",
+          "WALL_OVERLAP",
+          "WALL_DANGLING_END",
+          "WALL_THICKNESS_INVALID",
+          "OPENING_HOST_MISSING",
+          "OPENING_OUTSIDE_HOST",
+          "OPENING_OVERLAP",
+          "OPENING_DIMENSION_INVALID",
+          "WINDOW_ON_INTERIOR_WALL",
+          "FIXTURE_HOST_MISSING",
+          "FIXTURE_NOT_ON_ROOM_WALL",
+          "FIXTURE_OUTSIDE_ROOM",
+          "FIXTURE_NOT_PERMITTED_IN_ROOM",
+          "FIXTURE_COUNT_EXCEEDS_SPEC",
+          "FIXTURE_OVERLAP",
+          "FIXTURE_CLEARANCE_BLOCKED",
+          "FIXTURE_BLOCKS_OPENING",
+          "ENTRANCE_MISSING",
+          "ROOM_UNREACHABLE",
+          "ROOM_BELOW_MIN_SHORT_SIDE",
+          "ROOM_BELOW_MIN_AREA",
+          "PASSAGE_TOO_NARROW",
+          "HABITABLE_ROOM_NO_WINDOW",
+          "ROOM_COUNT_MISMATCH",
+          "PARKING_MISSING",
+          "PARKING_TOO_SMALL",
+          "RELATION_UNMET"
+        ],
+        "title": "ValidationCode",
+        "type": "string"
+      },
+      "ValidationIssue": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/ValidationCategory"
+          },
+          "code": {
+            "$ref": "#/components/schemas/ValidationCode"
+          },
+          "entities": {
+            "items": {
+              "$ref": "#/components/schemas/EntityRef"
+            },
+            "title": "Entities",
+            "type": "array"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "message_key": {
+            "title": "Message Key",
+            "type": "string"
+          },
+          "params": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              ]
+            },
+            "title": "Params",
+            "type": "object"
+          },
+          "repair": {
+            "$ref": "#/components/schemas/RepairHint"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/ValidationSeverity"
+          }
+        },
+        "required": [
+          "code",
+          "category",
+          "severity",
+          "entities",
+          "message_key",
+          "params",
+          "message",
+          "repair"
+        ],
+        "title": "ValidationIssue",
+        "type": "object"
+      },
+      "ValidationReport": {
+        "additionalProperties": false,
+        "properties": {
+          "checks_run": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationCode"
+            },
+            "title": "Checks Run",
+            "type": "array"
+          },
+          "engine_version": {
+            "title": "Engine Version",
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationIssue"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "ruleset_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ruleset Sha256"
+          },
+          "ruleset_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ruleset Version"
+          },
+          "schema_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Schema Version"
+          },
+          "valid": {
+            "title": "Valid",
+            "type": "boolean"
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationIssue"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "valid",
+          "schema_version",
+          "engine_version",
+          "ruleset_version",
+          "ruleset_sha256",
+          "errors",
+          "warnings",
+          "checks_run"
+        ],
+        "title": "ValidationReport",
+        "type": "object"
+      },
+      "ValidationSeverity": {
+        "enum": [
+          "ERROR",
+          "WARNING"
+        ],
+        "title": "ValidationSeverity",
+        "type": "string"
+      },
       "ValueApplicability": {
         "enum": [
           "APPLICABLE",
@@ -17848,6 +20865,151 @@
         ],
         "title": "VersionSummaryOut",
         "type": "object"
+      },
+      "Wall": {
+        "additionalProperties": false,
+        "properties": {
+          "a": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "A",
+            "type": "string"
+          },
+          "b": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "B",
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/WallKind"
+          },
+          "structural_role": {
+            "const": "UNASSESSED",
+            "default": "UNASSESSED",
+            "title": "Structural Role",
+            "type": "string"
+          },
+          "thickness_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Thickness Mm",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "a",
+          "b",
+          "thickness_mm",
+          "kind"
+        ],
+        "title": "Wall",
+        "type": "object"
+      },
+      "WallGeom": {
+        "additionalProperties": false,
+        "properties": {
+          "a": {
+            "$ref": "#/components/schemas/GPoint"
+          },
+          "b": {
+            "$ref": "#/components/schemas/GPoint"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/WallKind"
+          },
+          "length_mm": {
+            "title": "Length Mm",
+            "type": "integer"
+          },
+          "outline": {
+            "items": {
+              "items": {
+                "$ref": "#/components/schemas/GPoint"
+              },
+              "type": "array"
+            },
+            "title": "Outline",
+            "type": "array"
+          },
+          "pieces": {
+            "items": {
+              "$ref": "#/components/schemas/WallPiece"
+            },
+            "title": "Pieces",
+            "type": "array"
+          },
+          "thickness_mm": {
+            "title": "Thickness Mm",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "a",
+          "b",
+          "thickness_mm",
+          "length_mm",
+          "outline",
+          "pieces"
+        ],
+        "title": "WallGeom",
+        "type": "object"
+      },
+      "WallKind": {
+        "enum": [
+          "EXTERIOR",
+          "INTERIOR"
+        ],
+        "title": "WallKind",
+        "type": "string"
+      },
+      "WallPiece": {
+        "additionalProperties": false,
+        "properties": {
+          "s0_mm": {
+            "title": "S0 Mm",
+            "type": "integer"
+          },
+          "s1_mm": {
+            "title": "S1 Mm",
+            "type": "integer"
+          },
+          "z0_mm": {
+            "title": "Z0 Mm",
+            "type": "integer"
+          },
+          "z1_mm": {
+            "title": "Z1 Mm",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "s0_mm",
+          "s1_mm",
+          "z0_mm",
+          "z1_mm"
+        ],
+        "title": "WallPiece",
+        "type": "object"
+      },
+      "WallSide": {
+        "description": "A side of a wall, relative to its a-to-b direction.",
+        "enum": [
+          "LEFT",
+          "RIGHT"
+        ],
+        "title": "WallSide",
+        "type": "string"
       },
       "WarrantyIn": {
         "additionalProperties": false,
@@ -18188,6 +21350,17 @@
         ],
         "title": "WorkspaceStageOut",
         "type": "object"
+      },
+      "Zone": {
+        "enum": [
+          "PUBLIC",
+          "PRIVATE",
+          "SERVICE",
+          "CIRCULATION",
+          "OUTDOOR"
+        ],
+        "title": "Zone",
+        "type": "string"
       },
       "p2b__assurance__schemas__CaptureIn": {
         "additionalProperties": false,
@@ -24914,6 +28087,59 @@
         ]
       }
     },
+    "/api/v1/ops/house-plans/{plan_id}": {
+      "get": {
+        "operationId": "ops_house_plan_api_v1_ops_house_plans__plan_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Plan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpsHousePlanDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Ops House Plan",
+        "tags": [
+          "houseplans-ops"
+        ]
+      }
+    },
     "/api/v1/ops/inspection-files/{file_id}/url": {
       "get": {
         "operationId": "get_file_api_v1_ops_inspection_files__file_id__url_get",
@@ -27888,6 +31114,59 @@
         "summary": "Post Warranty",
         "tags": [
           "records-operations"
+        ]
+      }
+    },
+    "/api/v1/ops/projects/{project_id}/house-plans": {
+      "get": {
+        "operationId": "ops_house_plans_api_v1_ops_projects__project_id__house_plans_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HousePlanListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Ops House Plans",
+        "tags": [
+          "houseplans-ops"
         ]
       }
     },
@@ -38300,6 +41579,195 @@
         "summary": "Get Handover Document",
         "tags": [
           "records"
+        ]
+      }
+    },
+    "/api/v1/projects/{project_id}/house-plans": {
+      "get": {
+        "operationId": "get_house_plans_api_v1_projects__project_id__house_plans_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HousePlanListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Get House Plans",
+        "tags": [
+          "houseplans"
+        ]
+      },
+      "post": {
+        "description": "Generate a concept floor plan. 202 with the QUEUED plan; the job lays it out and validates\nit. 409 GENERATION_IN_PROGRESS, RULESET_NOT_PUBLISHED or STATE_CONFLICT; 422\nDESIGN_INPUT_REQUIRED (with the missing keys), PLAN_UNSUPPORTED or VALIDATION_ERROR.",
+        "operationId": "post_house_plan_api_v1_projects__project_id__house_plans_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateHousePlanRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HousePlanSummaryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post House Plan",
+        "tags": [
+          "houseplans"
+        ]
+      }
+    },
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}": {
+      "get": {
+        "operationId": "get_house_plan_api_v1_projects__project_id__house_plans__plan_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Plan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HousePlanDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Get House Plan",
+        "tags": [
+          "houseplans"
         ]
       }
     },

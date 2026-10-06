@@ -1508,6 +1508,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ops/house-plans/{plan_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Ops House Plan */
+        get: operations["ops_house_plan_api_v1_ops_house_plans__plan_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ops/inspection-files/{file_id}/url": {
         parameters: {
             query?: never;
@@ -2295,6 +2312,23 @@ export interface paths {
         put?: never;
         /** Post Warranty */
         post: operations["post_warranty_api_v1_ops_projects__project_id__handover_warranties_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/house-plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Ops House Plans */
+        get: operations["ops_house_plans_api_v1_ops_projects__project_id__house_plans_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -5259,6 +5293,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{project_id}/house-plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get House Plans */
+        get: operations["get_house_plans_api_v1_projects__project_id__house_plans_get"];
+        put?: never;
+        /**
+         * Post House Plan
+         * @description Generate a concept floor plan. 202 with the QUEUED plan; the job lays it out and validates
+         *     it. 409 GENERATION_IN_PROGRESS, RULESET_NOT_PUBLISHED or STATE_CONFLICT; 422
+         *     DESIGN_INPUT_REQUIRED (with the missing keys), PLAN_UNSUPPORTED or VALIDATION_ERROR.
+         */
+        post: operations["post_house_plan_api_v1_projects__project_id__house_plans_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get House Plan */
+        get: operations["get_house_plan_api_v1_projects__project_id__house_plans__plan_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{project_id}/inspections/{inspection_id}/reports/{version}/url": {
         parameters: {
             query?: never;
@@ -6123,6 +6197,32 @@ export interface components {
             /** Reason */
             reason: string;
         };
+        /** ArchitecturalIntent */
+        ArchitecturalIntent: {
+            /**
+             * Floors
+             * @default 1
+             * @constant
+             */
+            floors: 1;
+            /**
+             * Intent Version
+             * @default 1.0.0
+             * @constant
+             */
+            intent_version: "1.0.0";
+            orientation: components["schemas"]["OrientationMode"];
+            parking: components["schemas"]["ParkingIntent"] | null;
+            /** Programme */
+            programme: components["schemas"]["ProgrammeItem"][];
+            /** Relations */
+            relations: components["schemas"]["Relation"][];
+            site: components["schemas"]["SiteIntent"];
+            sources: components["schemas"]["IntentSources"];
+            stair: components["schemas"]["StairChoice"];
+            /** Target Built Up Mm2 */
+            target_built_up_mm2: number | null;
+        };
         /** AssembleIn */
         AssembleIn: {
             /**
@@ -6317,6 +6417,17 @@ export interface components {
             auditor_code: string;
             /** Items */
             items: components["schemas"]["AuditorInspectionSummary"][];
+        };
+        /** BBox */
+        BBox: {
+            /** Max X */
+            max_x: number;
+            /** Max Y */
+            max_y: number;
+            /** Min X */
+            min_x: number;
+            /** Min Y */
+            min_y: number;
         };
         /**
          * BillingExceptionKind
@@ -6822,6 +6933,21 @@ export interface components {
          * @enum {string}
          */
         ComparisonState: "PUBLISHED" | "SUPERSEDED" | "DECIDED";
+        /** Compromise */
+        Compromise: {
+            /** Accepted By User */
+            accepted_by_user?: boolean | null;
+            /** Change Key */
+            change_key: string;
+            /** Constraint */
+            constraint: string;
+            /** Id */
+            id: string;
+            /** Params */
+            params: {
+                [key: string]: number | string | boolean | string[];
+            };
+        };
         /** Condition */
         Condition: {
             /** Equals */
@@ -6928,6 +7054,38 @@ export interface components {
             /** Response Hours */
             response_hours: number;
         };
+        /** Constraint */
+        Constraint: {
+            /** Id */
+            id: string;
+            kind: components["schemas"]["ConstraintKind"];
+            origin: components["schemas"]["Origin"];
+            outcome: components["schemas"]["ConstraintOutcome"];
+            /** Params */
+            params: {
+                [key: string]: number | string | boolean | string[];
+            };
+            strength: components["schemas"]["ConstraintStrength"];
+            /** Subjects */
+            subjects: string[];
+            /** Weight */
+            weight: number;
+        };
+        /**
+         * ConstraintKind
+         * @enum {string}
+         */
+        ConstraintKind: "ROOM_PRESENT" | "ROOM_MIN_SIZE" | "RELATION" | "INSIDE_ENVELOPE" | "ENTRANCE_ON_EDGE" | "PARKING_PROVIDED";
+        /**
+         * ConstraintOutcome
+         * @enum {string}
+         */
+        ConstraintOutcome: "MET" | "RELAXED" | "UNMET" | "NOT_EVALUATED";
+        /**
+         * ConstraintStrength
+         * @enum {string}
+         */
+        ConstraintStrength: "HARD" | "SOFT";
         /** ContractorOut */
         ContractorOut: {
             /**
@@ -7042,6 +7200,82 @@ export interface components {
          * @enum {string}
          */
         DesignGenerationState: "QUEUED" | "RUNNING" | "SUCCEEDED" | "FAILED";
+        /**
+         * DesignInputs
+         * @description PROVISIONAL (CP1-03): stands in for the design brief until AD-03 is decided. Versioned,
+         *     stored apart from the requirement, accepted only where houseplans are enabled.
+         */
+        "DesignInputs-Input": {
+            /** Attached Bathrooms */
+            attached_bathrooms?: number | null;
+            /** Bathrooms Exact */
+            bathrooms_exact?: number | null;
+            /** Bedrooms Exact */
+            bedrooms_exact?: number | null;
+            dining?: components["schemas"]["DiningArrangement"] | null;
+            facing_override?: components["schemas"]["Facing"] | null;
+            /**
+             * Kind
+             * @default PROVISIONAL_DESIGN_INPUTS
+             * @constant
+             */
+            kind: "PROVISIONAL_DESIGN_INPUTS";
+            kitchen?: components["schemas"]["KitchenArrangement"] | null;
+            parking_kind?: components["schemas"]["ParkingKind"] | null;
+            /** Parking Spaces */
+            parking_spaces?: number | null;
+            /** Setbacks Ft */
+            setbacks_ft?: {
+                [key: string]: number | string;
+            } | null;
+            stair?: components["schemas"]["StairChoice"] | null;
+            /** Utility */
+            utility?: boolean | null;
+            /**
+             * Version
+             * @default 1
+             * @constant
+             */
+            version: 1;
+        };
+        /**
+         * DesignInputs
+         * @description PROVISIONAL (CP1-03): stands in for the design brief until AD-03 is decided. Versioned,
+         *     stored apart from the requirement, accepted only where houseplans are enabled.
+         */
+        "DesignInputs-Output": {
+            /** Attached Bathrooms */
+            attached_bathrooms?: number | null;
+            /** Bathrooms Exact */
+            bathrooms_exact?: number | null;
+            /** Bedrooms Exact */
+            bedrooms_exact?: number | null;
+            dining?: components["schemas"]["DiningArrangement"] | null;
+            facing_override?: components["schemas"]["Facing"] | null;
+            /**
+             * Kind
+             * @default PROVISIONAL_DESIGN_INPUTS
+             * @constant
+             */
+            kind: "PROVISIONAL_DESIGN_INPUTS";
+            kitchen?: components["schemas"]["KitchenArrangement"] | null;
+            parking_kind?: components["schemas"]["ParkingKind"] | null;
+            /** Parking Spaces */
+            parking_spaces?: number | null;
+            /** Setbacks Ft */
+            setbacks_ft?: {
+                [key: string]: string;
+            } | null;
+            stair?: components["schemas"]["StairChoice"] | null;
+            /** Utility */
+            utility?: boolean | null;
+            /**
+             * Version
+             * @default 1
+             * @constant
+             */
+            version: 1;
+        };
         /** DesignListOut */
         DesignListOut: {
             /** Items */
@@ -7199,6 +7433,25 @@ export interface components {
          * @enum {string}
          */
         DeviationType: "EXCLUDED" | "GRADE" | "QUANTITY" | "ADDITIONAL" | "OTHER";
+        /** DimensionChain */
+        DimensionChain: {
+            end: components["schemas"]["GPoint"];
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "PLOT" | "ENVELOPE" | "ROOM_CLEAR";
+            start: components["schemas"]["GPoint"];
+            /** Value Mm */
+            value_mm: number;
+        };
+        /**
+         * DiningArrangement
+         * @enum {string}
+         */
+        DiningArrangement: "SEPARATE" | "IN_LIVING";
         /** DirectoryCardOut */
         DirectoryCardOut: {
             /** Base Locality */
@@ -7252,6 +7505,17 @@ export interface components {
             document_id: string;
             file: components["schemas"]["FileOut"] | null;
             kind: components["schemas"]["ProfessionalDocumentKind"];
+        };
+        /**
+         * DoorLeaf
+         * @enum {string}
+         */
+        DoorLeaf: "SINGLE" | "DOUBLE" | "SLIDING";
+        /** DoorSpec */
+        DoorSpec: {
+            hinge: components["schemas"]["HingeSide"];
+            leaf: components["schemas"]["DoorLeaf"];
+            opens_to: components["schemas"]["WallSide"];
         };
         /** DownloadLink */
         DownloadLink: {
@@ -7552,6 +7816,17 @@ export interface components {
             ended_at: string | null;
             state: components["schemas"]["PackageState"];
         };
+        /**
+         * EntityKind
+         * @enum {string}
+         */
+        EntityKind: "DOCUMENT" | "PLOT" | "ENVELOPE" | "NODE" | "WALL" | "ROOM" | "OPENING" | "FIXTURE";
+        /** EntityRef */
+        EntityRef: {
+            /** Id */
+            id: string;
+            kind: components["schemas"]["EntityKind"];
+        };
         /** ErrorBody */
         ErrorBody: {
             /** Code */
@@ -7762,6 +8037,12 @@ export interface components {
             /** Reason */
             reason: string;
         };
+        /**
+         * Facing
+         * @description The side of the road and main entrance (AD-15), one of eight compass directions.
+         * @enum {string}
+         */
+        Facing: "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
         /** FakePayIn */
         FakePayIn: {
             /**
@@ -8078,11 +8359,102 @@ export interface components {
          * @enum {string}
          */
         FinishLevel: "STANDARD" | "PREMIUM" | "LUXURY";
+        /** Fixture */
+        Fixture: {
+            /** D Mm */
+            d_mm: number;
+            /** Id */
+            id: string;
+            /** Offset Mm */
+            offset_mm: number;
+            origin: components["schemas"]["Origin"];
+            /** Room */
+            room: string;
+            side: components["schemas"]["WallSide"];
+            type: components["schemas"]["FixtureType"];
+            /** W Mm */
+            w_mm: number;
+            /** Wall */
+            wall: string;
+        };
+        /** FixtureGeom */
+        FixtureGeom: {
+            /** Clearance */
+            clearance: components["schemas"]["GPoint"][] | null;
+            /** Footprint */
+            footprint: components["schemas"]["GPoint"][] | null;
+            /** Id */
+            id: string;
+            /** Room */
+            room: string;
+            type: components["schemas"]["FixtureType"];
+        };
+        /**
+         * FixtureType
+         * @enum {string}
+         */
+        FixtureType: "WC_WESTERN" | "WC_INDIAN" | "WASH_BASIN" | "SHOWER_AREA" | "KITCHEN_COUNTER" | "KITCHEN_SINK";
         /** FlagRule */
         FlagRule: {
             /** Flag */
             flag: string;
             when: components["schemas"]["Condition"];
+        };
+        /** Floor */
+        Floor: {
+            /** Clear Height Mm */
+            clear_height_mm: number;
+            /** Ffl Mm */
+            ffl_mm: number;
+            /** Fixtures */
+            fixtures: components["schemas"]["Fixture"][];
+            /** Floor To Floor Mm */
+            floor_to_floor_mm: number;
+            /** Id */
+            id: string;
+            /** Level */
+            level: number;
+            /** Name */
+            name: string;
+            /** Nodes */
+            nodes: components["schemas"]["Node"][];
+            /** Openings */
+            openings: components["schemas"]["Opening"][];
+            /** Plinth Mm */
+            plinth_mm: number;
+            /** Rooms */
+            rooms: components["schemas"]["Room"][];
+            /** Slab Mm */
+            slab_mm: number;
+            /**
+             * Stairs
+             * @default []
+             */
+            stairs: components["schemas"]["Stair"][];
+            /** Walls */
+            walls: components["schemas"]["Wall"][];
+        };
+        /** FloorGeometry */
+        FloorGeometry: {
+            /** Dimensions */
+            dimensions: components["schemas"]["DimensionChain"][];
+            /** Fixtures */
+            fixtures: components["schemas"]["FixtureGeom"][];
+            /** Level */
+            level: number;
+            /** Openings */
+            openings: components["schemas"]["OpeningGeom"][];
+            /** Rooms */
+            rooms: components["schemas"]["RoomGeom"][];
+            /** Walls */
+            walls: components["schemas"]["WallGeom"][];
+        };
+        /** GPoint */
+        GPoint: {
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
         };
         /**
          * GateStatus
@@ -8090,6 +8462,35 @@ export interface components {
          * @enum {string}
          */
         GateStatus: "NOT_INSPECTED" | "SCHEDULED" | "OPEN_NC" | "CLEARED";
+        /**
+         * GenerateHousePlanRequest
+         * @description `design_inputs` is PROVISIONAL (CP1-03): it stands in for the design brief until AD-03, is
+         *     stored apart from the requirement and never changes an answer the requirement gives.
+         */
+        GenerateHousePlanRequest: {
+            design_inputs?: components["schemas"]["DesignInputs-Input"] | null;
+        };
+        /** GeneratorInfo */
+        GeneratorInfo: {
+            /**
+             * Engine
+             * @constant
+             */
+            engine: "p2b-houseplans";
+            /** Engine Version */
+            engine_version: string;
+            /** Intent Sha256 */
+            intent_sha256: string;
+            /** Ruleset Sha256 */
+            ruleset_sha256: string;
+            /** Ruleset Version */
+            ruleset_version: number;
+            /** Seed */
+            seed: number;
+            solver: components["schemas"]["SolverKind"];
+            /** Solver Version */
+            solver_version: string;
+        };
         /**
          * HandoverDocumentKind
          * @enum {string}
@@ -8168,6 +8569,110 @@ export interface components {
              */
             project_id: string;
         };
+        /**
+         * HingeSide
+         * @description The jamb a door hangs on, relative to its host wall's a-to-b direction.
+         * @enum {string}
+         */
+        HingeSide: "A_SIDE" | "B_SIDE";
+        /** HousePlan */
+        HousePlan: {
+            /** Compromises */
+            compromises: components["schemas"]["Compromise"][];
+            /** Constraints */
+            constraints: components["schemas"]["Constraint"][];
+            /** Floors */
+            floors: components["schemas"]["Floor"][];
+            meta: components["schemas"]["Meta"];
+            site: components["schemas"]["Site"];
+        };
+        /** HousePlanDetailOut */
+        HousePlanDetailOut: {
+            /** Completed At */
+            completed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            design_inputs: components["schemas"]["DesignInputs-Output"] | null;
+            document: components["schemas"]["HousePlan"] | null;
+            failure_reason: components["schemas"]["PlanFailureReason"] | null;
+            geometry: components["schemas"]["PlanGeometry"] | null;
+            infeasibility: components["schemas"]["InfeasibilityOut"] | null;
+            intent: components["schemas"]["ArchitecturalIntent"];
+            /**
+             * Is Authoritative
+             * @default false
+             * @constant
+             */
+            is_authoritative: false;
+            /** Plan Id */
+            plan_id: string;
+            /** Ruleset Is Synthetic */
+            ruleset_is_synthetic: boolean;
+            ruleset_status: components["schemas"]["RulesetStatus"];
+            /** Ruleset Version */
+            ruleset_version: number;
+            /** Sequence */
+            sequence: number;
+            state: components["schemas"]["PlanGenerationState"];
+            validation: components["schemas"]["ValidationReport"] | null;
+            validity: components["schemas"]["PlanValidity"] | null;
+        };
+        /** HousePlanListOut */
+        HousePlanListOut: {
+            /** Items */
+            items: components["schemas"]["HousePlanSummaryOut"][];
+        };
+        /** HousePlanSummaryOut */
+        HousePlanSummaryOut: {
+            /** Completed At */
+            completed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            failure_reason: components["schemas"]["PlanFailureReason"] | null;
+            /**
+             * Is Authoritative
+             * @default false
+             * @constant
+             */
+            is_authoritative: false;
+            /** Plan Id */
+            plan_id: string;
+            /** Ruleset Is Synthetic */
+            ruleset_is_synthetic: boolean;
+            ruleset_status: components["schemas"]["RulesetStatus"];
+            /** Ruleset Version */
+            ruleset_version: number;
+            /** Sequence */
+            sequence: number;
+            state: components["schemas"]["PlanGenerationState"];
+            validity: components["schemas"]["PlanValidity"] | null;
+        };
+        /** InfeasibilityOut */
+        InfeasibilityOut: {
+            /** Reasons */
+            reasons: components["schemas"]["InfeasibleReasonOut"][];
+        };
+        /**
+         * InfeasibleReason
+         * @enum {string}
+         */
+        InfeasibleReason: "ENVELOPE_EMPTY" | "AREA_BUDGET" | "WIDTH_TOO_NARROW" | "DEPTH_EXCEEDED" | "PARKING_TOO_WIDE" | "ACCESS_SPAN" | "FIXTURE_FIT" | "OPENING_FIT" | "RULESET_INCOMPLETE";
+        /** InfeasibleReasonOut */
+        InfeasibleReasonOut: {
+            code: components["schemas"]["InfeasibleReason"];
+            /** Message Key */
+            message_key: string;
+            /** Params */
+            params: {
+                [key: string]: number | string;
+            };
+        };
         /** InformationRequest */
         InformationRequest: {
             /**
@@ -8239,6 +8744,19 @@ export interface components {
              */
             note: string;
         };
+        /** IntentSources */
+        IntentSources: {
+            /** Design Inputs Sha256 */
+            design_inputs_sha256: string | null;
+            /** Question Set Version */
+            question_set_version: number;
+            /** Requirement Version */
+            requirement_version: number;
+            /** Ruleset Sha256 */
+            ruleset_sha256: string;
+            /** Ruleset Version */
+            ruleset_version: number;
+        };
         /** IntroduceIn */
         IntroduceIn: {
             /**
@@ -8302,6 +8820,11 @@ export interface components {
             /** Total */
             total: string;
         };
+        /**
+         * KitchenArrangement
+         * @enum {string}
+         */
+        KitchenArrangement: "CLOSED" | "OPEN";
         /**
          * ListingState
          * @description One professional category's place in the review workflow (D-04). Only LISTED is public,
@@ -8424,6 +8947,38 @@ export interface components {
              */
             user_id: string;
         };
+        /** Meta */
+        Meta: {
+            /** Body Sha256 */
+            body_sha256?: string | null;
+            /** Created At */
+            created_at?: string | null;
+            /** Created By */
+            created_by?: string | null;
+            generator: components["schemas"]["GeneratorInfo"];
+            /** Plan Id */
+            plan_id?: string | null;
+            /** Project Id */
+            project_id?: string | null;
+            /** Question Set Version */
+            question_set_version?: number | null;
+            /** Requirement Version */
+            requirement_version?: number | null;
+            /**
+             * Revision No
+             * @default 0
+             */
+            revision_no: number;
+            /**
+             * Schema
+             * @default p2b.houseplan
+             * @constant
+             */
+            schema: "p2b.houseplan";
+            /** Schema Version */
+            schema_version: string;
+            source: components["schemas"]["PlanSource"];
+        };
         /** MfaConfirmRequest */
         MfaConfirmRequest: {
             /** Code */
@@ -8522,6 +9077,15 @@ export interface components {
          * @enum {string}
          */
         NeedState: "UNDECIDED" | "NEEDED" | "NOT_NEEDED";
+        /** Node */
+        Node: {
+            /** Id */
+            id: string;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+        };
         /**
          * OfferOut
          * @description The price now, computed by the server for the buyer's state (the seller's by default).
@@ -8597,6 +9161,41 @@ export interface components {
             /** Terms Version */
             terms_version: string;
         };
+        /** Opening */
+        Opening: {
+            door?: components["schemas"]["DoorSpec"] | null;
+            /** Height Mm */
+            height_mm: number;
+            /** Id */
+            id: string;
+            kind: components["schemas"]["OpeningKind"];
+            /** Offset Mm */
+            offset_mm: number;
+            /** Sill Mm */
+            sill_mm: number;
+            /** Wall */
+            wall: string;
+            /** Width Mm */
+            width_mm: number;
+        };
+        /** OpeningGeom */
+        OpeningGeom: {
+            /** Connects */
+            connects: string[];
+            /** Id */
+            id: string;
+            jamb_a: components["schemas"]["GPoint"];
+            jamb_b: components["schemas"]["GPoint"];
+            kind: components["schemas"]["OpeningKind"];
+            swing: components["schemas"]["Swing"] | null;
+            /** Wall */
+            wall: string;
+        };
+        /**
+         * OpeningKind
+         * @enum {string}
+         */
+        OpeningKind: "MAIN_ENTRANCE" | "DOOR" | "VOID" | "WINDOW";
         /** OpsAnswerIn */
         OpsAnswerIn: {
             /** Answer */
@@ -8835,6 +9434,42 @@ export interface components {
             subject_id: string;
             /** To State */
             to_state: string;
+        };
+        /** OpsHousePlanDetailOut */
+        OpsHousePlanDetailOut: {
+            /** Completed At */
+            completed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            design_inputs: components["schemas"]["DesignInputs-Output"] | null;
+            document: components["schemas"]["HousePlan"] | null;
+            /** Failure Detail */
+            failure_detail: string | null;
+            failure_reason: components["schemas"]["PlanFailureReason"] | null;
+            geometry: components["schemas"]["PlanGeometry"] | null;
+            infeasibility: components["schemas"]["InfeasibilityOut"] | null;
+            intent: components["schemas"]["ArchitecturalIntent"];
+            /**
+             * Is Authoritative
+             * @default false
+             * @constant
+             */
+            is_authoritative: false;
+            /** Plan Id */
+            plan_id: string;
+            /** Ruleset Is Synthetic */
+            ruleset_is_synthetic: boolean;
+            ruleset_status: components["schemas"]["RulesetStatus"];
+            /** Ruleset Version */
+            ruleset_version: number;
+            /** Sequence */
+            sequence: number;
+            state: components["schemas"]["PlanGenerationState"];
+            validation: components["schemas"]["ValidationReport"] | null;
+            validity: components["schemas"]["PlanValidity"] | null;
         };
         /** OpsInspectionOut */
         OpsInspectionOut: {
@@ -9366,6 +10001,25 @@ export interface components {
             /** Total */
             total: string;
         };
+        /**
+         * OrientationMode
+         * @description From the Vastu answer. Recorded only: no orientation table exists until AD-13.
+         * @enum {string}
+         */
+        OrientationMode: "OFF" | "SOFT" | "SOFT_HIGH";
+        /** Origin */
+        Origin: {
+            kind: components["schemas"]["OriginKind"];
+            /** Ref */
+            ref: string;
+        };
+        /**
+         * OriginKind
+         * @description Why a plan element exists: a requirement answer, a provisional design input, ruleset data,
+         *     the solver's circulation, or a person's edit.
+         * @enum {string}
+         */
+        OriginKind: "REQUIREMENT" | "DESIGN_INPUT" | "RULESET" | "SOLVER" | "USER_EDIT";
         /** OtpStartRequest */
         OtpStartRequest: {
             /**
@@ -9658,6 +10312,36 @@ export interface components {
             };
             unavailable: components["schemas"]["UnavailableOut"] | null;
         };
+        /** Parking */
+        Parking: {
+            kind: components["schemas"]["ParkingKind"];
+            origin: components["schemas"]["Origin"];
+            placement: components["schemas"]["ParkingPlacement"];
+            /** Space D Mm */
+            space_d_mm: number;
+            /** Space W Mm */
+            space_w_mm: number;
+            /** Spaces */
+            spaces: number;
+        };
+        /** ParkingIntent */
+        ParkingIntent: {
+            kind: components["schemas"]["ParkingKind"];
+            origin: components["schemas"]["Origin"];
+            placement: components["schemas"]["ParkingPlacement"];
+            /** Spaces */
+            spaces: number;
+        };
+        /**
+         * ParkingKind
+         * @enum {string}
+         */
+        ParkingKind: "CAR" | "TWO_WHEELER";
+        /**
+         * ParkingPlacement
+         * @enum {string}
+         */
+        ParkingPlacement: "INSIDE_FOOTPRINT";
         /**
          * PaymentMarkValue
          * @enum {string}
@@ -9690,6 +10374,83 @@ export interface components {
             provider_payment_id: string;
             /** Source */
             source: string;
+        };
+        /**
+         * PlanFailureReason
+         * @enum {string}
+         */
+        PlanFailureReason: "ENGINE_ERROR" | "ENGINE_INVALID_OUTPUT" | "ENGINE_TIMEOUT" | "STALE";
+        /**
+         * PlanGenerationState
+         * @description The concept plan generation lifecycle (CP1-04: its own, not Slice 3.1's). VALID is the
+         *     only outcome that carries a plan, and only a plan the validator passed. INFEASIBLE: the
+         *     requirement does not fit under the ruleset, with reasons. FAILED: an engine fault.
+         * @enum {string}
+         */
+        PlanGenerationState: "QUEUED" | "RUNNING" | "VALID" | "INFEASIBLE" | "FAILED";
+        /** PlanGeometry */
+        PlanGeometry: {
+            bounds: components["schemas"]["BBox"];
+            /** Envelope */
+            envelope: components["schemas"]["GPoint"][] | null;
+            /** Floors */
+            floors: components["schemas"]["FloorGeometry"][];
+            /**
+             * Geometry Version
+             * @default 1.0.0
+             * @constant
+             */
+            geometry_version: "1.0.0";
+            /** Plot */
+            plot: components["schemas"]["GPoint"][];
+            /**
+             * Units
+             * @default mm
+             * @constant
+             */
+            units: "mm";
+        };
+        /**
+         * PlanSource
+         * @enum {string}
+         */
+        PlanSource: "GENERATED" | "EDITED" | "REGENERATED";
+        /**
+         * PlanValidity
+         * @enum {string}
+         */
+        PlanValidity: "VALID" | "INVALID";
+        /** Plot */
+        Plot: {
+            /** Edges */
+            edges: components["schemas"]["PlotEdge"][];
+            /** Vertices */
+            vertices: components["schemas"]["Point"][];
+        };
+        /** PlotEdge */
+        PlotEdge: {
+            /** End */
+            end: number;
+            /** Id */
+            id: string;
+            kind: components["schemas"]["PlotEdgeKind"];
+            /** Road Width Mm */
+            road_width_mm?: number | null;
+            side: components["schemas"]["SetbackSide"];
+            /** Start */
+            start: number;
+        };
+        /**
+         * PlotEdgeKind
+         * @enum {string}
+         */
+        PlotEdgeKind: "ROAD" | "NEIGHBOUR";
+        /** Point */
+        Point: {
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
         };
         /** PointIn */
         PointIn: {
@@ -10063,6 +10824,15 @@ export interface components {
             team_size?: number | null;
             /** Years Experience */
             years_experience?: number | null;
+        };
+        /** ProgrammeItem */
+        ProgrammeItem: {
+            /** Key */
+            key: string;
+            /** Must Have */
+            must_have: boolean;
+            origin: components["schemas"]["Origin"];
+            room_type: components["schemas"]["RoomType"];
         };
         /** ProjectCreateRequest */
         ProjectCreateRequest: {
@@ -10837,6 +11607,25 @@ export interface components {
             /** Visit Note */
             visit_note?: string | null;
         };
+        /**
+         * Relation
+         * @description `room` is reached only from `host`, through a door (ADJACENT_WITH_DOOR) or an open
+         *     connection (ADJACENT_OPEN).
+         */
+        Relation: {
+            /** Host */
+            host: string;
+            kind: components["schemas"]["RelationKind"];
+            origin: components["schemas"]["Origin"];
+            /** Room */
+            room: string;
+            strength: components["schemas"]["ConstraintStrength"];
+        };
+        /**
+         * RelationKind
+         * @enum {string}
+         */
+        RelationKind: "ADJACENT_WITH_DOOR" | "ADJACENT_OPEN";
         /** RenewIn */
         RenewIn: {
             /**
@@ -10850,6 +11639,11 @@ export interface components {
              */
             valid_to: string;
         };
+        /**
+         * RepairHint
+         * @enum {string}
+         */
+        RepairHint: "AUTO" | "USER" | "NONE";
         /** ReportOut */
         ReportOut: {
             /** Correction Reason */
@@ -11182,6 +11976,55 @@ export interface components {
          * @enum {string}
          */
         RfqState: "DRAFT" | "ISSUED" | "CLOSED" | "CANCELLED";
+        /** Room */
+        Room: {
+            /** Boundary */
+            boundary: string[];
+            /** Enclosed */
+            enclosed: boolean;
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            origin: components["schemas"]["Origin"];
+            /** Required */
+            required: boolean;
+            size_spec: components["schemas"]["SizeSpec"];
+            type: components["schemas"]["RoomType"];
+            zone: components["schemas"]["Zone"];
+        };
+        /** RoomGeom */
+        RoomGeom: {
+            /** Carpet Area Mm2 */
+            carpet_area_mm2: number | null;
+            /** Clear D Mm */
+            clear_d_mm: number | null;
+            /** Clear Polygon */
+            clear_polygon: components["schemas"]["GPoint"][] | null;
+            /** Clear W Mm */
+            clear_w_mm: number | null;
+            /** Id */
+            id: string;
+            label_at: components["schemas"]["GPoint"] | null;
+            /** Name */
+            name: string;
+            /** Polygon */
+            polygon: components["schemas"]["GPoint"][];
+            type: components["schemas"]["RoomType"];
+            zone: components["schemas"]["Zone"];
+        };
+        /**
+         * RoomType
+         * @enum {string}
+         */
+        RoomType: "LIVING" | "DINING" | "KITCHEN" | "BEDROOM" | "BATH_ATTACHED" | "BATH_COMMON" | "WC" | "PUJA" | "UTILITY" | "STORE" | "PASSAGE" | "FOYER" | "STAIR_HALL" | "PARKING";
+        /**
+         * RulesetStatus
+         * @description A layout ruleset (ADR-025): DRAFT; APPROVED after an architect's review; PUBLISHED (one at a
+         *     time, the only status production may use); RETIRED. Content never changes.
+         * @enum {string}
+         */
+        RulesetStatus: "DRAFT" | "APPROVED" | "PUBLISHED" | "RETIRED";
         /** ScheduleEntryIn */
         ScheduleEntryIn: {
             /** Duration Days */
@@ -11296,6 +12139,26 @@ export interface components {
             /** Response Hours */
             response_hours: number;
         };
+        /** Setback */
+        Setback: {
+            /** Distance Mm */
+            distance_mm: number;
+            /** Edge */
+            edge: string;
+            source: components["schemas"]["SetbackSource"];
+        };
+        /**
+         * SetbackSide
+         * @description Sides of a rectangular plot as seen standing on the primary road edge, looking at the
+         *     plot (CP1-02): FRONT is the road edge; LEFT and RIGHT are the viewer's left and right.
+         * @enum {string}
+         */
+        SetbackSide: "FRONT" | "BACK" | "LEFT" | "RIGHT";
+        /**
+         * SetbackSource
+         * @enum {string}
+         */
+        SetbackSource: "REQUIREMENT" | "DESIGN_INPUT";
         /**
          * Severity
          * @description EX-11.
@@ -11365,6 +12228,48 @@ export interface components {
             signed: boolean;
             /** Value */
             value: string | null;
+        };
+        /** Site */
+        Site: {
+            /** Entry Edge */
+            entry_edge: string;
+            facing: components["schemas"]["Facing"];
+            /** North Angle Deg */
+            north_angle_deg: number;
+            parking?: components["schemas"]["Parking"] | null;
+            plot: components["schemas"]["Plot"];
+            /** Setbacks */
+            setbacks: components["schemas"]["Setback"][];
+        };
+        /** SiteIntent */
+        SiteIntent: {
+            /** Depth Mm */
+            depth_mm: number;
+            facing: components["schemas"]["Facing"];
+            facing_origin: components["schemas"]["Origin"];
+            /** Frontage Mm */
+            frontage_mm: number;
+            /** North Angle Deg */
+            north_angle_deg: number;
+            /** Setback Sources */
+            setback_sources: {
+                [key: string]: components["schemas"]["SetbackSource"];
+            };
+            /** Setbacks Mm */
+            setbacks_mm: {
+                [key: string]: number;
+            };
+        };
+        /** SizeSpec */
+        SizeSpec: {
+            /** Max Area Mm2 */
+            max_area_mm2?: number | null;
+            /** Min Area Mm2 */
+            min_area_mm2: number;
+            /** Min Short Mm */
+            min_short_mm: number;
+            /** Pref Area Mm2 */
+            pref_area_mm2?: number | null;
         };
         /** SnapshotAcceptanceOut */
         SnapshotAcceptanceOut: {
@@ -11652,6 +12557,11 @@ export interface components {
             version_no: number;
         };
         /**
+         * SolverKind
+         * @enum {string}
+         */
+        SolverKind: "DETERMINISTIC_MVP" | "CP_SAT";
+        /**
          * SpecLineState
          * @description STATE_MODEL section 7.
          * @enum {string}
@@ -11845,6 +12755,29 @@ export interface components {
          * @enum {string}
          */
         StageUpdateKind: "PROGRESS" | "COMPLETION_REQUEST";
+        /**
+         * Stair
+         * @description Present for schema stability; Checkpoint 1 generates none; the v1 validator refuses one.
+         */
+        Stair: {
+            /** Id */
+            id: string;
+            /** Riser Mm */
+            riser_mm: number;
+            /** Risers */
+            risers: number;
+            /** Room */
+            room: string;
+            /** Tread Mm */
+            tread_mm: number;
+            /** Width Mm */
+            width_mm: number;
+        };
+        /**
+         * StairChoice
+         * @enum {string}
+         */
+        StairChoice: "NONE" | "INTERNAL" | "EXTERNAL";
         /** SubmitIn */
         SubmitIn: {
             /**
@@ -11861,6 +12794,16 @@ export interface components {
         SubtypesIn: {
             /** Subtypes */
             subtypes?: string[];
+        };
+        /** Swing */
+        Swing: {
+            /** End Deg */
+            end_deg: number;
+            hinge: components["schemas"]["GPoint"];
+            /** Radius Mm */
+            radius_mm: number;
+            /** Start Deg */
+            start_deg: number;
         };
         /** TaxConfigurationIn */
         TaxConfigurationIn: {
@@ -12035,6 +12978,57 @@ export interface components {
          */
         UserStatus: "PENDING_VERIFICATION" | "ACTIVE" | "SUSPENDED" | "CLOSED";
         /**
+         * ValidationCategory
+         * @enum {string}
+         */
+        ValidationCategory: "SCHEMA" | "REFERENCES" | "GEOMETRY" | "OPENINGS" | "FIXTURES" | "CIRCULATION" | "DIMENSIONS" | "REQUIREMENTS";
+        /**
+         * ValidationCode
+         * @enum {string}
+         */
+        ValidationCode: "SCHEMA_INVALID" | "SCHEMA_VERSION_UNSUPPORTED" | "ID_DUPLICATE" | "REF_MISSING" | "PLOT_INVALID" | "GEOMETRY_UNSUPPORTED_V1" | "ROOM_POLYGON_INVALID" | "ROOM_OVERLAP" | "ROOM_OUTSIDE_ENVELOPE" | "BUILDING_OUTSIDE_PLOT" | "ROOM_EDGE_NOT_ON_WALL" | "WALL_ZERO_LENGTH" | "WALL_NOT_ORTHOGONAL" | "WALL_OVERLAP" | "WALL_DANGLING_END" | "WALL_THICKNESS_INVALID" | "OPENING_HOST_MISSING" | "OPENING_OUTSIDE_HOST" | "OPENING_OVERLAP" | "OPENING_DIMENSION_INVALID" | "WINDOW_ON_INTERIOR_WALL" | "FIXTURE_HOST_MISSING" | "FIXTURE_NOT_ON_ROOM_WALL" | "FIXTURE_OUTSIDE_ROOM" | "FIXTURE_NOT_PERMITTED_IN_ROOM" | "FIXTURE_COUNT_EXCEEDS_SPEC" | "FIXTURE_OVERLAP" | "FIXTURE_CLEARANCE_BLOCKED" | "FIXTURE_BLOCKS_OPENING" | "ENTRANCE_MISSING" | "ROOM_UNREACHABLE" | "ROOM_BELOW_MIN_SHORT_SIDE" | "ROOM_BELOW_MIN_AREA" | "PASSAGE_TOO_NARROW" | "HABITABLE_ROOM_NO_WINDOW" | "ROOM_COUNT_MISMATCH" | "PARKING_MISSING" | "PARKING_TOO_SMALL" | "RELATION_UNMET";
+        /** ValidationIssue */
+        ValidationIssue: {
+            category: components["schemas"]["ValidationCategory"];
+            code: components["schemas"]["ValidationCode"];
+            /** Entities */
+            entities: components["schemas"]["EntityRef"][];
+            /** Message */
+            message: string;
+            /** Message Key */
+            message_key: string;
+            /** Params */
+            params: {
+                [key: string]: number | string | boolean | string[];
+            };
+            repair: components["schemas"]["RepairHint"];
+            severity: components["schemas"]["ValidationSeverity"];
+        };
+        /** ValidationReport */
+        ValidationReport: {
+            /** Checks Run */
+            checks_run: components["schemas"]["ValidationCode"][];
+            /** Engine Version */
+            engine_version: string;
+            /** Errors */
+            errors: components["schemas"]["ValidationIssue"][];
+            /** Ruleset Sha256 */
+            ruleset_sha256: string | null;
+            /** Ruleset Version */
+            ruleset_version: number | null;
+            /** Schema Version */
+            schema_version: string | null;
+            /** Valid */
+            valid: boolean;
+            /** Warnings */
+            warnings: components["schemas"]["ValidationIssue"][];
+        };
+        /**
+         * ValidationSeverity
+         * @enum {string}
+         */
+        ValidationSeverity: "ERROR" | "WARNING";
+        /**
          * ValueApplicability
          * @enum {string}
          */
@@ -12091,6 +13085,62 @@ export interface components {
             /** Version No */
             version_no: number;
         };
+        /** Wall */
+        Wall: {
+            /** A */
+            a: string;
+            /** B */
+            b: string;
+            /** Id */
+            id: string;
+            kind: components["schemas"]["WallKind"];
+            /**
+             * Structural Role
+             * @default UNASSESSED
+             * @constant
+             */
+            structural_role: "UNASSESSED";
+            /** Thickness Mm */
+            thickness_mm: number;
+        };
+        /** WallGeom */
+        WallGeom: {
+            a: components["schemas"]["GPoint"];
+            b: components["schemas"]["GPoint"];
+            /** Id */
+            id: string;
+            kind: components["schemas"]["WallKind"];
+            /** Length Mm */
+            length_mm: number;
+            /** Outline */
+            outline: components["schemas"]["GPoint"][][];
+            /** Pieces */
+            pieces: components["schemas"]["WallPiece"][];
+            /** Thickness Mm */
+            thickness_mm: number;
+        };
+        /**
+         * WallKind
+         * @enum {string}
+         */
+        WallKind: "EXTERIOR" | "INTERIOR";
+        /** WallPiece */
+        WallPiece: {
+            /** S0 Mm */
+            s0_mm: number;
+            /** S1 Mm */
+            s1_mm: number;
+            /** Z0 Mm */
+            z0_mm: number;
+            /** Z1 Mm */
+            z1_mm: number;
+        };
+        /**
+         * WallSide
+         * @description A side of a wall, relative to its a-to-b direction.
+         * @enum {string}
+         */
+        WallSide: "LEFT" | "RIGHT";
         /**
          * WarrantyIn
          * @description MVP P8: every warranty carries its term, expiry and installer.
@@ -12218,6 +13268,11 @@ export interface components {
             stage_number: number;
             state: components["schemas"]["StageState"];
         };
+        /**
+         * Zone
+         * @enum {string}
+         */
+        Zone: "PUBLIC" | "PRIVATE" | "SERVICE" | "CIRCULATION" | "OUTDOOR";
         /**
          * CaptureIn
          * @description Operations enter the auditor's signed report (no account, F.3).
@@ -16407,6 +17462,46 @@ export interface operations {
             };
         };
     };
+    ops_house_plan_api_v1_ops_house_plans__plan_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHousePlanDetailOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_file_api_v1_ops_inspection_files__file_id__url_get: {
         parameters: {
             query?: never;
@@ -18338,6 +19433,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ops_house_plans_api_v1_ops_projects__project_id__house_plans_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanListOut"];
                 };
             };
             /** @description Client error */
@@ -25291,6 +26426,134 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["p2b__records__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_house_plans_api_v1_projects__project_id__house_plans_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanListOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_house_plan_api_v1_projects__project_id__house_plans_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenerateHousePlanRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanSummaryOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_house_plan_api_v1_projects__project_id__house_plans__plan_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanDetailOut"];
                 };
             };
             /** @description Client error */

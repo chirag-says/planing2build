@@ -91,6 +91,15 @@ class Settings(BaseSettings):
     ai_image_width: int = Field(default=1024, ge=256, le=2048)
     ai_image_height: int = Field(default=768, ge=256, le=2048)
 
+    # Concept floor plans (houseplans; PD-28, ADR-025). Off unless set, and off in production until
+    # a sourced ruleset is PUBLISHED (AD-05) and the allowance is decided (AD-06), CP1-05. A DRAFT
+    # or APPROVED ruleset only where allowed; a synthetic (test-data) ruleset only in local and
+    # test (CP1-06). The solve budget is a technical limit, not a business rule.
+    houseplans_enabled: bool = False
+    houseplans_allow_draft_ruleset: bool = False
+    houseplans_allow_synthetic_ruleset: bool = False
+    houseplans_solve_timeout_seconds: float = Field(default=30, gt=0, le=600)
+
     # Billing (Slice 3.3; SLICE3_3_READINESS). `razorpay` is the only provider that takes money;
     # `fake` is the development and test gateway (local and test only); `none` keeps buying off.
     # Keys and secrets per environment (SECURITY section 9): only the key id reaches the browser.
@@ -164,6 +173,8 @@ class Settings(BaseSettings):
                 raise ValueError("production cookies must be Secure")
             if self.storage_provider != "s3" or self.scanner_provider != "clamav":
                 raise ValueError("production stores files in R2 and scans them with ClamAV")
+            if self.houseplans_allow_draft_ruleset or self.houseplans_allow_synthetic_ruleset:
+                raise ValueError("production generates concept plans from a PUBLISHED ruleset only")
             if self.ai_image_provider == "demo":
                 raise ValueError("demo AI images never reach production homeowners")
             if self.payment_provider == "fake":
@@ -176,6 +187,8 @@ class Settings(BaseSettings):
                 raise ValueError("production invoices need P2B_INVOICE_FONT_PATH")
         elif (self.payment_key_id or "").startswith("rzp_live_"):
             raise ValueError("live Razorpay keys are for production only")
+        if self.houseplans_allow_synthetic_ruleset and self.env not in ("local", "test"):
+            raise ValueError("the synthetic layout ruleset runs locally and in tests only")
         if self.payment_provider == "fake" and self.env not in ("local", "test"):
             raise ValueError("the fake payment gateway runs locally and in tests only")
         if self.payment_provider != "none" and not (
