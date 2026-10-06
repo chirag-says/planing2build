@@ -1,0 +1,3 @@
+Inspection gate cleared
+---
+The inspection gate of the stage $stage (Gate $gate) on project $code is cleared.

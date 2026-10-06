@@ -1,0 +1,5 @@
+A payment was marked as paid
+---
+The homeowner of project $code marked the milestone payment for the stage $stage as paid.
+
+Sign in to Plan2Build to record whether you received it.

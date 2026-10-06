@@ -1,0 +1,5 @@
+Your contractor quote comparison is ready
+---
+Plan2Build has published the comparison of contractor quotes for project $code.
+
+Sign in to Plan2Build to read it and download it. Plan2Build does not rank the quotes or name a winner; you choose.

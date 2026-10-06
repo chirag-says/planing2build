@@ -41,6 +41,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/auditor-appointments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Appointment
+         * @description Appoint an independent auditor (EX-09); a unique auditor ID is issued. With an account
+         *     email the auditor signs in on the professionals site. 409 ACCOUNT_APPOINTED.
+         */
+        post: operations["post_appointment_api_v1_admin_auditor_appointments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/auditor-appointments/{appointment_id}/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post End Appointment */
+        post: operations["post_end_appointment_api_v1_admin_auditor_appointments__appointment_id__end_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/billing/instalment-plans": {
         parameters: {
             query?: never;
@@ -180,6 +218,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/checklists/{version_id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Publish
+         * @description Publish a DRAFT; the previous PUBLISHED version is RETIRED. Inspections keep the version
+         *     they were scheduled with. 409 NOT_DRAFT, EMPTY.
+         */
+        post: operations["post_publish_api_v1_admin_checklists__version_id__publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/drawing-checkers": {
         parameters: {
             query?: never;
@@ -283,6 +342,40 @@ export interface paths {
         put?: never;
         /** Post Retire Card */
         post: operations["post_retire_card_api_v1_admin_item_rate_cards__card_id__retire_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/selection-statements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Statement */
+        post: operations["post_statement_api_v1_admin_selection_statements_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/selection-statements/{statement_id}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Activate Statement */
+        post: operations["post_activate_statement_api_v1_admin_selection_statements__statement_id__activate_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -635,6 +728,44 @@ export interface paths {
          * @description The homeowner acceptance statement versions (BP-05).
          */
         get: operations["get_acceptance_statements_api_v1_ops_acceptance_statements_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/assurance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Queue
+         * @description Gate stages to inspect, open inspections (an exception after the configured days, EX-12),
+         *     submissions to approve, rectifications to re-inspect, and findings past due (EX-23).
+         */
+        get: operations["get_queue_api_v1_ops_assurance_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/auditor-appointments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Appointments */
+        get: operations["get_appointments_api_v1_ops_auditor_appointments_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1080,6 +1211,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ops/checklists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Checklists */
+        get: operations["get_checklists_api_v1_ops_checklists_get"];
+        put?: never;
+        /**
+         * Post Checklist
+         * @description A DRAFT checklist version, copied from an earlier one when named (EX-08: Gate 6 is
+         *     drafted by the auditor and operations).
+         */
+        post: operations["post_checklist_api_v1_ops_checklists_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/checklists/{version_id}/checkpoints": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Put Checkpoints
+         * @description Replace a DRAFT's checkpoints. 409 NOT_DRAFT.
+         */
+        put: operations["put_checkpoints_api_v1_ops_checklists__version_id__checkpoints_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ops/connections/{connection_id}/withdraw": {
         parameters: {
             query?: never;
@@ -1203,6 +1376,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ops/execution": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Queue
+         * @description Completion requests waiting for a decision, oldest first.
+         */
+        get: operations["get_queue_api_v1_ops_execution_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ops/files/{file_id}/url": {
         parameters: {
             query?: never;
@@ -1214,6 +1407,136 @@ export interface paths {
         get: operations["get_ops_file_url_api_v1_ops_files__file_id__url_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/inspection-files/{file_id}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get File */
+        get: operations["get_file_api_v1_ops_inspection_files__file_id__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/inspections/{inspection_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Approve
+         * @description Approve: findings open, the report is rendered once, the gate follows. 409
+         *     NOT_SUBMITTED, CONTENT_CHANGED; or PACKAGE_REQUIRED.
+         */
+        post: operations["post_approve_api_v1_ops_inspections__inspection_id__approve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/inspections/{inspection_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Cancel */
+        post: operations["post_cancel_api_v1_ops_inspections__inspection_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/inspections/{inspection_id}/capture": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Capture
+         * @description Enter an inspection from the auditor's signed report (staff capture): results, summary
+         *     and the report file; it is submitted and frozen at once.
+         */
+        post: operations["post_capture_api_v1_ops_inspections__inspection_id__capture_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/inspections/{inspection_id}/report-corrections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Report Correction
+         * @description A corrected report as a new version (EX-14); earlier versions stay readable.
+         */
+        post: operations["post_report_correction_api_v1_ops_inspections__inspection_id__report_corrections_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/inspections/{inspection_id}/reports/{version}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Report */
+        get: operations["get_report_api_v1_ops_inspections__inspection_id__reports__version__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/inspections/{inspection_id}/return": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Return */
+        post: operations["post_return_api_v1_ops_inspections__inspection_id__return_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1252,6 +1575,64 @@ export interface paths {
         /** Put Rate Lines */
         put: operations["put_rate_lines_api_v1_ops_item_rate_cards__card_id__lines_put"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/non-conformances/{nc_id}/due-date": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Due Date */
+        post: operations["post_due_date_api_v1_ops_non_conformances__nc_id__due_date_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/non-conformances/{nc_id}/rectification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Rectification
+         * @description Rectification evidence an OUTSIDE contractor sent, with how it was received. 409
+         *     LISTED_CONTRACTOR (it submits its own), NOT_OPEN.
+         */
+        post: operations["post_rectification_api_v1_ops_non_conformances__nc_id__rectification_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/non-conformances/{nc_id}/reopen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Reopen
+         * @description Send a rectification back with a reason (not enough evidence).
+         */
+        post: operations["post_reopen_api_v1_ops_non_conformances__nc_id__reopen_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1480,6 +1861,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ops/projects/{project_id}/assurance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Project */
+        get: operations["get_project_api_v1_ops_projects__project_id__assurance_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ops/projects/{project_id}/build-plan": {
         parameters: {
             query?: never;
@@ -1620,6 +2018,61 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ops/projects/{project_id}/execution": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Project Execution */
+        get: operations["get_project_execution_api_v1_ops_projects__project_id__execution_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/inspection-evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Inspection Evidence
+         * @description The auditor's signed report or photos received outside the portal (raw body). Scanned
+         *     before use.
+         */
+        post: operations["post_inspection_evidence_api_v1_ops_projects__project_id__inspection_evidence_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/payment-marks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Ops Marks */
+        get: operations["get_ops_marks_api_v1_ops_projects__project_id__payment_marks_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ops/projects/{project_id}/request-information": {
         parameters: {
             query?: never;
@@ -1634,6 +2087,69 @@ export interface paths {
          * @description Ask the family for more; the requirement reopens for them (ruling 2.7).
          */
         post: operations["post_request_information_api_v1_ops_projects__project_id__request_information_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/rfq-files": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Rfq File
+         * @description A contractor's quote document received outside the portal, uploaded through the API (raw
+         *     body; the admin host does not upload to storage directly). Scanned before use.
+         */
+        post: operations["post_rfq_file_api_v1_ops_projects__project_id__rfq_files_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/rfqs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Project Rfqs */
+        get: operations["get_project_rfqs_api_v1_ops_projects__project_id__rfqs_get"];
+        put?: never;
+        /**
+         * Post Rfq
+         * @description Create a DRAFT at the owner's direction (QD-03).
+         */
+        post: operations["post_rfq_api_v1_ops_projects__project_id__rfqs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/stage-evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Stage Evidence
+         * @description A photo an OUTSIDE contractor sent, uploaded through the API (raw body). Scanned and
+         *     re-encoded before use.
+         */
+        post: operations["post_stage_evidence_api_v1_ops_projects__project_id__stage_evidence_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1711,6 +2227,382 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ops/quote-versions/{quote_version_id}/adjustments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Put Adjustments
+         * @description Replace the adjustment list while the review is open. Never shown to contractors.
+         */
+        put: operations["put_adjustments_api_v1_ops_quote_versions__quote_version_id__adjustments_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/quote-versions/{quote_version_id}/reviewed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Reviewed
+         * @description The adjustment list is complete: the version may be compared.
+         */
+        post: operations["post_reviewed_api_v1_ops_quote_versions__quote_version_id__reviewed_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/reinspections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Reinspection
+         * @description Re-inspect rectified findings of one inspection. 409 NOT_RECTIFIED, MIXED_STAGES; or
+         *     PACKAGE_REQUIRED.
+         */
+        post: operations["post_reinspection_api_v1_ops_reinspections_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/results/{result_id}/test-results": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Test Result
+         * @description A later test result (a cube test at 7 or 28 days) on an approved inspection's checkpoint:
+         *     a new record, never an edit.
+         */
+        post: operations["post_test_result_api_v1_ops_results__result_id__test_results_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfq-clarifications/{clarification_id}/answer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Ops Answer
+         * @description Answer a contractor's question; optionally share it with every contractor who accepted,
+         *     without the asker's identity (QD-17).
+         */
+        post: operations["post_ops_answer_api_v1_ops_rfq_clarifications__clarification_id__answer_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfq-clarifications/{clarification_id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Ops Close */
+        post: operations["post_ops_close_api_v1_ops_rfq_clarifications__clarification_id__close_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfq-files/{file_id}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Rfq File
+         * @description A quote attachment, capture evidence or comparison document (logged).
+         */
+        get: operations["get_rfq_file_api_v1_ops_rfq_files__file_id__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfq-invitations/{invitation_id}/capture": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Capture
+         * @description Enter a quote in the standard structure for an outside contractor, or for a listed one who
+         *     sent it outside the portal; the contractor's document is the evidence (QD-22).
+         */
+        post: operations["post_capture_api_v1_ops_rfq_invitations__invitation_id__capture_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfq-invitations/{invitation_id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Withdraw Invitation */
+        post: operations["post_withdraw_invitation_api_v1_ops_rfq_invitations__invitation_id__withdraw_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfqs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Rfqs
+         * @description RFQs, open ones first by deadline (at most 100).
+         */
+        get: operations["get_rfqs_api_v1_ops_rfqs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfqs/{rfq_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Rfq
+         * @description Everything: invitations, every quote version with lines, review state and adjustments,
+         *     clarifications, comparisons, the selection and the history.
+         */
+        get: operations["get_rfq_api_v1_ops_rfqs__rfq_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfqs/{rfq_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Cancel */
+        post: operations["post_cancel_api_v1_ops_rfqs__rfq_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfqs/{rfq_id}/clarifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Ops Question */
+        post: operations["post_ops_question_api_v1_ops_rfqs__rfq_id__clarifications_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfqs/{rfq_id}/comparisons": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Publish
+         * @description Publish a comparison version of every current REVIEWED quote, with its PDF. 409
+         *     `details.reason`: NO_REVIEWED_QUOTES; or PACKAGE_REQUIRED.
+         */
+        post: operations["post_publish_api_v1_ops_rfqs__rfq_id__comparisons_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfqs/{rfq_id}/deadline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Put Deadline
+         * @description The quote deadline of a DRAFT RFQ; no universal default (QD-05).
+         */
+        put: operations["put_deadline_api_v1_ops_rfqs__rfq_id__deadline_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfqs/{rfq_id}/deadline/extend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Extend
+         * @description Extend with a reason; every contractor still in the RFQ gets the same notice (QD-05).
+         */
+        post: operations["post_extend_api_v1_ops_rfqs__rfq_id__deadline_extend_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfqs/{rfq_id}/invitations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Introduce
+         * @description Introduce a listed contractor with a written reason (QD-03), within the limit (QD-04).
+         */
+        post: operations["post_introduce_api_v1_ops_rfqs__rfq_id__invitations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/rfqs/{rfq_id}/issue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Issue
+         * @description Freeze the accepted Build Plan's contractor pack and send the invitations. 409
+         *     `details.reason`: NO_DEADLINE, BASELINE_CHANGED, NO_RECIPIENTS, NOT_ELIGIBLE; or
+         *     PACKAGE_REQUIRED.
+         */
+        post: operations["post_issue_api_v1_ops_rfqs__rfq_id__issue_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/selection-statements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Statements
+         * @description The selection statement versions (QD-12).
+         */
+        get: operations["get_statements_api_v1_ops_selection_statements_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ops/signoff-statements": {
         parameters: {
             query?: never;
@@ -1739,6 +2631,133 @@ export interface paths {
         put?: never;
         /** Post Ops Revoke */
         post: operations["post_ops_revoke_api_v1_ops_signoffs__signoff_id__revoke_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/stage-files/{file_id}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Stage File
+         * @description A photo of an update (logged).
+         */
+        get: operations["get_stage_file_api_v1_ops_stage_files__file_id__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/stages/{stage_id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Confirm
+         * @description Confirm a completion request with a recorded reason (EX-03). 409 GATE_NOT_CLEARED,
+         *     STALE, PROJECT_CLOSED; or STATE_CONFLICT.
+         */
+        post: operations["post_confirm_api_v1_ops_stages__stage_id__confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/stages/{stage_id}/inspections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Schedule
+         * @description Schedule the gate stage instance's inspection (EX-07). 409 `details.reason`: NOT_A_GATE,
+         *     ALREADY_SCHEDULED, NO_CHECKLIST, APPOINTMENT_ENDED, NOT_RETURNED, PROJECT_CLOSED; or
+         *     PACKAGE_REQUIRED.
+         */
+        post: operations["post_schedule_api_v1_ops_stages__stage_id__inspections_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/stages/{stage_id}/payment-mark": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Ops Received Mark
+         * @description Record an OUTSIDE contractor's "received" mark with how it was learnt. 409
+         *     `details.reason`: LISTED_CONTRACTOR (it marks its own), NOT_CONTRACTOR.
+         */
+        post: operations["post_ops_received_mark_api_v1_ops_stages__stage_id__payment_mark_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/stages/{stage_id}/return": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Return */
+        post: operations["post_return_api_v1_ops_stages__stage_id__return_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/stages/{stage_id}/updates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Updates
+         * @description Every update on the stage, from every contractor engaged over time.
+         */
+        get: operations["get_updates_api_v1_ops_stages__stage_id__updates_get"];
+        put?: never;
+        /**
+         * Post Update
+         * @description Enter an update for an OUTSIDE contractor, with how it was received (EX-02). A listed
+         *     contractor posts its own: 409 `details.reason` LISTED_CONTRACTOR; NOT_CONTRACTOR when no
+         *     contractor is engaged.
+         */
+        post: operations["post_update_api_v1_ops_stages__stage_id__updates_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2309,6 +3328,246 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pro/engagements/{engagement_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Pro Engagement
+         * @description An engagement you hold, for example from a homeowner's selection of your RFQ quote.
+         */
+        get: operations["get_pro_engagement_api_v1_pro_engagements__engagement_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/assurance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Contractor Assurance
+         * @description Inspections on the project's stages (content once approved) and the findings to correct.
+         */
+        get: operations["get_contractor_assurance_api_v1_pro_engagements__engagement_id__assurance_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post End Own Engagement */
+        post: operations["post_end_own_engagement_api_v1_pro_engagements__engagement_id__end_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Evidence Upload
+         * @description A presigned upload of a photo for an update (JPEG or PNG), scanned and re-encoded before
+         *     use; location metadata is removed from the stored image (EX-22).
+         */
+        post: operations["post_evidence_upload_api_v1_pro_engagements__engagement_id__evidence_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/evidence/{file_id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Evidence Complete */
+        post: operations["post_evidence_complete_api_v1_pro_engagements__engagement_id__evidence__file_id__complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/execution": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Pro Execution
+         * @description The project's stages with your own update counts, and the accepted Build Plan's drawings.
+         *     Only while your contractor engagement is active.
+         */
+        get: operations["get_pro_execution_api_v1_pro_engagements__engagement_id__execution_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/execution/files/{file_id}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Pro Execution File
+         * @description A drawing of the accepted Build Plan, or a photo of one of your own updates (logged).
+         */
+        get: operations["get_pro_execution_file_api_v1_pro_engagements__engagement_id__execution_files__file_id__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/files/{file_id}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Engagement File Url
+         * @description A file the family shared with your active engagement (logged).
+         */
+        get: operations["get_engagement_file_url_api_v1_pro_engagements__engagement_id__files__file_id__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/non-conformances/{nc_id}/rectification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Rectification
+         * @description Evidence that a finding is corrected: a note and photos you uploaded (the evidence route
+         *     of your execution page). Only an approved re-inspection closes it. 409 NOT_OPEN.
+         */
+        post: operations["post_rectification_api_v1_pro_engagements__engagement_id__non_conformances__nc_id__rectification_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/payment-marks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Pro Marks */
+        get: operations["get_pro_marks_api_v1_pro_engagements__engagement_id__payment_marks_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/stages/{stage_id}/payment-mark": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Received Mark
+         * @description Mark whether you received the homeowner's payment for this milestone.
+         */
+        post: operations["post_received_mark_api_v1_pro_engagements__engagement_id__stages__stage_id__payment_mark_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/stages/{stage_id}/updates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Pro Stage Updates
+         * @description Your own updates on the stage, newest first.
+         */
+        get: operations["get_pro_stage_updates_api_v1_pro_engagements__engagement_id__stages__stage_id__updates_get"];
+        put?: never;
+        /**
+         * Post Update
+         * @description Post a progress update or a completion request in the standard format (EX-02). The first
+         *     update starts the stage. 409 `details.reason`: STAGE_COMPLETED, ALREADY_REQUESTED,
+         *     NOT_CONTRACTOR, PROJECT_CLOSED; or STATE_CONFLICT.
+         */
+        post: operations["post_update_api_v1_pro_engagements__engagement_id__stages__stage_id__updates_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/pro/files/{file_id}/url": {
         parameters: {
             query?: never;
@@ -2320,6 +3579,187 @@ export interface paths {
         get: operations["get_pro_file_url_api_v1_pro_files__file_id__url_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/inspections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Auditor Inspections
+         * @description The inspections assigned to your active auditor appointment, newest first.
+         */
+        get: operations["get_auditor_inspections_api_v1_pro_inspections_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/inspections/{inspection_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Auditor Inspection
+         * @description The stage, the checklist with each line's criteria, the accepted drawings and your
+         *     results. No supplier, brand, product, price or homeowner contact.
+         */
+        get: operations["get_auditor_inspection_api_v1_pro_inspections__inspection_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/inspections/{inspection_id}/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Inspection Evidence
+         * @description A presigned upload of an inspection photo or file, scanned and re-encoded; capture time
+         *     and location are kept as the device's claims (EX-22).
+         */
+        post: operations["post_inspection_evidence_api_v1_pro_inspections__inspection_id__evidence_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/inspections/{inspection_id}/evidence/{file_id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Inspection Evidence Complete */
+        post: operations["post_inspection_evidence_complete_api_v1_pro_inspections__inspection_id__evidence__file_id__complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/inspections/{inspection_id}/files/{file_id}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Auditor File
+         * @description A drawing of the accepted Build Plan, or evidence of this inspection (logged).
+         */
+        get: operations["get_auditor_file_api_v1_pro_inspections__inspection_id__files__file_id__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/inspections/{inspection_id}/readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Readiness
+         * @description Confirm the stage is ready and start the inspection.
+         */
+        post: operations["post_readiness_api_v1_pro_inspections__inspection_id__readiness_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/inspections/{inspection_id}/results": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Put Results
+         * @description Record or replace checkpoint results while the inspection is open. A non-conformance on
+         *     an inspection carries severity, description, corrective action and due date.
+         */
+        put: operations["put_results_api_v1_pro_inspections__inspection_id__results_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/inspections/{inspection_id}/submission-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Submission Code
+         * @description Send a one-time code to your email to confirm the submission (EX-09).
+         */
+        post: operations["post_submission_code_api_v1_pro_inspections__inspection_id__submission_code_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/inspections/{inspection_id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Submit
+         * @description Submit with the code: the inspection is frozen and hashed. 409 `details.reason`:
+         *     INCOMPLETE (with the missing checkpoint codes), NOT_IN_PROGRESS.
+         */
+        post: operations["post_submit_api_v1_pro_inspections__inspection_id__submit_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2415,6 +3855,283 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pro/rfq-invitations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Invitations
+         * @description Requests to quote sent to you, newest first.
+         */
+        get: operations["get_invitations_api_v1_pro_rfq_invitations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/rfq-invitations/{invitation_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Invitation
+         * @description The brief before you accept; the pack, your quote versions and the clarifications you may
+         *     see after. Never another contractor's information or Plan2Build's rates.
+         */
+        get: operations["get_invitation_api_v1_pro_rfq_invitations__invitation_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/rfq-invitations/{invitation_id}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Accept Invitation
+         * @description Agree to prepare a quote. This is not an engagement. 409 `details.reason`: EXPIRED,
+         *     RFQ_CLOSED, DEADLINE_PASSED, NOT_LISTED; or PACKAGE_REQUIRED.
+         */
+        post: operations["post_accept_invitation_api_v1_pro_rfq_invitations__invitation_id__accept_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/rfq-invitations/{invitation_id}/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Attachment
+         * @description A presigned upload of a quote attachment, scanned before use.
+         */
+        post: operations["post_attachment_api_v1_pro_rfq_invitations__invitation_id__attachments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/rfq-invitations/{invitation_id}/attachments/{file_id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Attachment Complete */
+        post: operations["post_attachment_complete_api_v1_pro_rfq_invitations__invitation_id__attachments__file_id__complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/rfq-invitations/{invitation_id}/clarifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Question
+         * @description Ask Plan2Build about the pack. Never a channel to the homeowner (QD-17).
+         */
+        post: operations["post_question_api_v1_pro_rfq_invitations__invitation_id__clarifications_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/rfq-invitations/{invitation_id}/clarifications/{clarification_id}/answer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Answer
+         * @description Answer Plan2Build's question. An answer never changes your quote: submit a new version.
+         */
+        post: operations["post_answer_api_v1_pro_rfq_invitations__invitation_id__clarifications__clarification_id__answer_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/rfq-invitations/{invitation_id}/decline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Decline Invitation */
+        post: operations["post_decline_invitation_api_v1_pro_rfq_invitations__invitation_id__decline_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/rfq-invitations/{invitation_id}/drawings/{file_id}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Pack Drawing
+         * @description A drawing of the frozen pack (logged), while your invitation is accepted and the RFQ is
+         *     open, or once your quote was selected.
+         */
+        get: operations["get_pack_drawing_api_v1_pro_rfq_invitations__invitation_id__drawings__file_id__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/rfq-invitations/{invitation_id}/files/{file_id}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Own Attachment
+         * @description Your own quote attachment, uploaded by you or attached to one of your versions.
+         */
+        get: operations["get_own_attachment_api_v1_pro_rfq_invitations__invitation_id__files__file_id__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/rfq-invitations/{invitation_id}/quote-draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Put Quote Draft
+         * @description Save your working copy (private; not a submission).
+         */
+        put: operations["put_quote_draft_api_v1_pro_rfq_invitations__invitation_id__quote_draft_put"];
+        post?: never;
+        /** Delete Quote Draft */
+        delete: operations["delete_quote_draft_api_v1_pro_rfq_invitations__invitation_id__quote_draft_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/rfq-invitations/{invitation_id}/quote/renew": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Renew
+         * @description After expiry: the same quote with new validity dates (QD-06).
+         */
+        post: operations["post_renew_api_v1_pro_rfq_invitations__invitation_id__quote_renew_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/rfq-invitations/{invitation_id}/quote/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Withdraw Quote */
+        post: operations["post_withdraw_quote_api_v1_pro_rfq_invitations__invitation_id__quote_withdraw_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/rfq-invitations/{invitation_id}/quotes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Quote
+         * @description Submit a quote version: every line priced or excluded with a reason; amounts are computed
+         *     from the RFQ quantities. A new version supersedes the previous. 422 lists the lines to fix;
+         *     409 `details.reason`: DEADLINE_PASSED, RFQ_CLOSED, NOT_LISTED.
+         */
+        post: operations["post_quote_api_v1_pro_rfq_invitations__invitation_id__quotes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/pro/uploads": {
         parameters: {
             query?: never;
@@ -2476,6 +4193,26 @@ export interface paths {
         };
         /** Get Project Detail */
         get: operations["get_project_detail_api_v1_projects__project_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/assurance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Family Assurance
+         * @description Inspections (content once approved) and findings in plain language.
+         */
+        get: operations["get_family_assurance_api_v1_projects__project_id__assurance_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2991,6 +4728,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{project_id}/execution": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Execution
+         * @description Stages with what happened on them: state, actual dates, update counts, gate status and
+         *     payment milestones. No planned dates, percentages or delays (EX-04).
+         */
+        get: operations["get_execution_api_v1_projects__project_id__execution_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{project_id}/files": {
         parameters: {
             query?: never;
@@ -3000,6 +4758,26 @@ export interface paths {
         };
         /** Get Project Files */
         get: operations["get_project_files_api_v1_projects__project_id__files_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/inspections/{inspection_id}/reports/{version}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Report
+         * @description An approved inspection's report, any version (logged).
+         */
+        get: operations["get_report_api_v1_projects__project_id__inspections__inspection_id__reports__version__url_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3040,6 +4818,27 @@ export interface paths {
         put?: never;
         /** Post Package Order */
         post: operations["post_package_order_api_v1_projects__project_id__package_orders_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/payment-marks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Family Marks
+         * @description Payment milestones with the current marks. Information only: Plan2Build does not handle
+         *     construction payments.
+         */
+        get: operations["get_family_marks_api_v1_projects__project_id__payment_marks_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -3196,6 +4995,153 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{project_id}/rfqs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Rfqs
+         * @description Requests for contractor quotes: status, contractors and quote versions; prices only in a
+         *     published comparison.
+         */
+        get: operations["get_rfqs_api_v1_projects__project_id__rfqs_get"];
+        put?: never;
+        /**
+         * Post Rfq
+         * @description Ask Plan2Build for contractor quotes on the accepted Build Plan, nominating listed
+         *     contractors. 409 `details.reason`: NO_ACCEPTED_VERSION, OPEN_RFQ, NOT_NEEDED, ENGAGED,
+         *     NOT_LISTED, OUTSIDE_AREA, NO_LOCATION, SELF, DUPLICATE, LIMIT; or PACKAGE_REQUIRED.
+         */
+        post: operations["post_rfq_api_v1_projects__project_id__rfqs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/rfqs/{rfq_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Rfq */
+        get: operations["get_rfq_api_v1_projects__project_id__rfqs__rfq_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/rfqs/{rfq_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Cancel Rfq
+         * @description Withdraw the request. Allowed without a package: it stops coordination.
+         */
+        post: operations["post_cancel_rfq_api_v1_projects__project_id__rfqs__rfq_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/rfqs/{rfq_id}/comparisons/{comparison_id}/document": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Comparison Document
+         * @description The comparison PDF (logged; owner and household).
+         */
+        get: operations["get_comparison_document_api_v1_projects__project_id__rfqs__rfq_id__comparisons__comparison_id__document_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/rfqs/{rfq_id}/files/{file_id}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Family Quote File
+         * @description An attachment of a quote that is in a published comparison (logged). Never before.
+         */
+        get: operations["get_family_quote_file_api_v1_projects__project_id__rfqs__rfq_id__files__file_id__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/rfqs/{rfq_id}/select": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Select
+         * @description Select one quote version with the one-time code (QD-12). The contractor is engaged for
+         *     contractor work; Plan2Build is not a party to the contract and receives no money. 409
+         *     `details.reason`: NO_COMPARISON, STALE, EXPIRED, NOT_LISTED, ENGAGED, STATEMENT_CHANGED.
+         */
+        post: operations["post_select_api_v1_projects__project_id__rfqs__rfq_id__select_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/rfqs/{rfq_id}/selection-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Selection Code
+         * @description Send a one-time code to the owner's email to confirm selecting this exact quote version;
+         *     the response carries the statement to confirm.
+         */
+        post: operations["post_selection_code_api_v1_projects__project_id__rfqs__rfq_id__selection_code_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{project_id}/services": {
         parameters: {
             query?: never;
@@ -3227,6 +5173,109 @@ export interface paths {
         get?: never;
         /** Put Need */
         put: operations["put_need_api_v1_projects__project_id__services__code__need_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/stages/{stage_id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Confirm
+         * @description Confirm the contractor's completion request (EX-03). 409 `details.reason`:
+         *     GATE_NOT_CLEARED (the stage's inspection gate is not cleared), STALE, PROJECT_CLOSED; or
+         *     STATE_CONFLICT when no completion is requested.
+         */
+        post: operations["post_confirm_api_v1_projects__project_id__stages__stage_id__confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/stages/{stage_id}/files/{file_id}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Stage File
+         * @description A photo of an update on this stage (logged).
+         */
+        get: operations["get_stage_file_api_v1_projects__project_id__stages__stage_id__files__file_id__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/stages/{stage_id}/payment-mark": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Paid Mark
+         * @description Mark whether you paid the contractor for this milestone. 409 `details.reason`:
+         *     NOT_A_MILESTONE, UNCHANGED, PROJECT_CLOSED.
+         */
+        post: operations["post_paid_mark_api_v1_projects__project_id__stages__stage_id__payment_mark_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/stages/{stage_id}/return": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Return
+         * @description Return the completion request with a reason; the stage goes back to in progress.
+         */
+        post: operations["post_return_api_v1_projects__project_id__stages__stage_id__return_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/stages/{stage_id}/updates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Stage Updates
+         * @description Every update on the stage, newest first, with the contractor who posted it.
+         */
+        get: operations["get_stage_updates_api_v1_projects__project_id__stages__stage_id__updates_get"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -3450,6 +5499,105 @@ export interface components {
             /** Subtypes */
             subtypes?: string[];
         };
+        /** AdditionalItemIn */
+        AdditionalItemIn: {
+            /** Description */
+            description: string;
+            /** Quantity */
+            quantity: number | string;
+            /** Rate */
+            rate: number | string;
+            /** Unit */
+            unit: string;
+        };
+        /**
+         * AdjustmentClarification
+         * @enum {string}
+         */
+        AdjustmentClarification: "NONE" | "OPEN" | "RESOLVED";
+        /** AdjustmentIn */
+        AdjustmentIn: {
+            /** Basis Note */
+            basis_note?: string | null;
+            /** @default NONE */
+            clarification_status: components["schemas"]["AdjustmentClarification"];
+            /** Description */
+            description: string;
+            deviation_type: components["schemas"]["DeviationType"];
+            /** Line No */
+            line_no?: number | null;
+            /** Rupee Impact */
+            rupee_impact: number | string;
+            /** Spec Line Code */
+            spec_line_code?: string | null;
+        };
+        /** AdjustmentOut */
+        AdjustmentOut: {
+            /** Basis Note */
+            basis_note: string | null;
+            clarification_status: components["schemas"]["AdjustmentClarification"];
+            /** Description */
+            description: string;
+            deviation_type: components["schemas"]["DeviationType"];
+            /** Line No */
+            line_no: number | null;
+            /** Rupee Impact */
+            rupee_impact: string;
+            /** Spec Line Code */
+            spec_line_code: string | null;
+        };
+        /** AdjustmentsIn */
+        AdjustmentsIn: {
+            /** Adjustments */
+            adjustments: components["schemas"]["AdjustmentIn"][];
+        };
+        /** AnswerIn */
+        AnswerIn: {
+            /** Answer */
+            answer: string;
+        };
+        /** AppointmentIn */
+        AppointmentIn: {
+            /**
+             * Account Email
+             * @description Links a professionals-host account (optional, EX-09)
+             */
+            account_email?: string | null;
+            /** Credential File Id */
+            credential_file_id?: string | null;
+            /** Name */
+            name: string;
+            /** Qualification */
+            qualification: string;
+            /** Registration Reference */
+            registration_reference?: string | null;
+        };
+        /** AppointmentOut */
+        AppointmentOut: {
+            /** Auditor Code */
+            auditor_code: string;
+            /** End Reason */
+            end_reason: string | null;
+            /** Has Account */
+            has_account: boolean;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Qualification */
+            qualification: string;
+            /** Registration Reference */
+            registration_reference: string | null;
+            status: components["schemas"]["AppointmentStatus"];
+        };
+        /**
+         * AppointmentStatus
+         * @enum {string}
+         */
+        AppointmentStatus: "ACTIVE" | "ENDED";
         /** ApproveRefundIn */
         ApproveRefundIn: {
             /** Amount */
@@ -3466,6 +5614,31 @@ export interface components {
             ends_package: boolean;
             /** Reason */
             reason: string;
+        };
+        /** AssuranceOut */
+        AssuranceOut: {
+            /** Findings */
+            findings: components["schemas"]["FindingOut"][];
+            /** Inspections */
+            inspections: components["schemas"]["InspectionOut"][];
+        };
+        /**
+         * AssuranceQueueOut
+         * @description EX-12 and EX-23: exceptions for operations only; nothing is sent to anyone.
+         */
+        AssuranceQueueOut: {
+            /** Inspection Open Days */
+            inspection_open_days: number;
+            /** Open Inspections */
+            open_inspections: components["schemas"]["QueueInspectionOut"][];
+            /** Overdue */
+            overdue: components["schemas"]["QueueFindingOut"][];
+            /** Rectified */
+            rectified: components["schemas"]["QueueFindingOut"][];
+            /** To Approve */
+            to_approve: components["schemas"]["QueueInspectionOut"][];
+            /** To Schedule */
+            to_schedule: components["schemas"]["QueueStageOut"][];
         };
         /** AttemptOut */
         AttemptOut: {
@@ -3512,6 +5685,123 @@ export interface components {
          * @enum {string}
          */
         Audience: "ihb" | "pro" | "ops";
+        /** AuditorCheckpointOut */
+        AuditorCheckpointOut: {
+            /**
+             * Accepted Value
+             * @description The accepted Build Plan value, only for lines with no brand category
+             */
+            accepted_value: string | null;
+            /** Code */
+            code: string;
+            /**
+             * Criteria
+             * @description The issued performance specification of the line
+             */
+            criteria: string | null;
+            /** Expected Evidence */
+            expected_evidence: string | null;
+            /** Gate */
+            gate: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Critical */
+            is_critical: boolean;
+            /** Sequence */
+            sequence: number;
+            /** Spec Line Code */
+            spec_line_code: string | null;
+            /** Text */
+            text: string;
+        };
+        /** AuditorInspectionOut */
+        AuditorInspectionOut: {
+            /** Checklist Version */
+            checklist_version: number;
+            /** Checkpoints */
+            checkpoints: components["schemas"]["AuditorCheckpointOut"][];
+            /** Drawings */
+            drawings: components["schemas"]["p2b__assurance__schemas__DrawingOut"][];
+            /** Floor */
+            floor: number | null;
+            /** Gate */
+            gate: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["InspectionKind"];
+            /** Locality */
+            locality: string | null;
+            /** Project Code */
+            project_code: string;
+            /** Results */
+            results: components["schemas"]["ResultOut"][];
+            /** Return Reason */
+            return_reason: string | null;
+            /**
+             * Scheduled At
+             * Format: date-time
+             */
+            scheduled_at: string;
+            /**
+             * Stage Instance Id
+             * Format: uuid
+             */
+            stage_instance_id: string;
+            /** Stage Name */
+            stage_name: string;
+            /** Stage Number */
+            stage_number: number;
+            state: components["schemas"]["InspectionState"];
+            /** Summary */
+            summary: string | null;
+            /** Version */
+            version: number;
+            /** Visit Note */
+            visit_note: string | null;
+        };
+        /** AuditorInspectionSummary */
+        AuditorInspectionSummary: {
+            /** Floor */
+            floor: number | null;
+            /** Gate */
+            gate: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["InspectionKind"];
+            /** Project Code */
+            project_code: string;
+            /**
+             * Scheduled At
+             * Format: date-time
+             */
+            scheduled_at: string;
+            /**
+             * Stage Instance Id
+             * Format: uuid
+             */
+            stage_instance_id: string;
+            /** Stage Name */
+            stage_name: string;
+            /** Stage Number */
+            stage_number: number;
+            state: components["schemas"]["InspectionState"];
+        };
+        /** AuditorInspectionsOut */
+        AuditorInspectionsOut: {
+            /** Auditor Code */
+            auditor_code: string;
+            /** Items */
+            items: components["schemas"]["AuditorInspectionSummary"][];
+        };
         /**
          * BillingExceptionKind
          * @description A payment Plan2Build cannot apply automatically; operations decide (never applied).
@@ -3563,32 +5853,6 @@ export interface components {
             /** Stage Number */
             stage_number?: number | null;
         };
-        /**
-         * BriefOut
-         * @description What a professional sees before accepting: no name, phone, email, address, pin or file.
-         */
-        BriefOut: {
-            /** Basement */
-            basement: boolean | null;
-            /** Budget Band */
-            budget_band: string | null;
-            /** Built Up Area Sqft */
-            built_up_area_sqft: number | null;
-            /** Category */
-            category: string;
-            /** Floors */
-            floors: number | null;
-            /** Locality */
-            locality: string | null;
-            /** Plot Area Sqft */
-            plot_area_sqft: string | null;
-            /** Services */
-            services: string[];
-            /** Start Window */
-            start_window: string | null;
-            /** Subtypes */
-            subtypes: string[];
-        };
         /** BuildPlanAcceptIn */
         BuildPlanAcceptIn: {
             /**
@@ -3618,6 +5882,11 @@ export interface components {
             name: string;
             /** State Code */
             state_code: string;
+        };
+        /** CancelIn */
+        CancelIn: {
+            /** Note */
+            note?: string | null;
         };
         /** CancellationRequest */
         CancellationRequest: {
@@ -3659,21 +5928,6 @@ export interface components {
             subtypes: {
                 [key: string]: string;
             };
-        };
-        /** ChallengeOut */
-        ChallengeOut: {
-            /**
-             * Challenge Id
-             * Format: uuid
-             */
-            challenge_id: string;
-            /**
-             * Expires At
-             * Format: date-time
-             */
-            expires_at: string;
-            /** Sent To */
-            sent_to: string;
         };
         /** CheckIn */
         CheckIn: {
@@ -3751,6 +6005,13 @@ export interface components {
             /** User Id */
             user_id: string | null;
         };
+        /** ChecklistDraftIn */
+        ChecklistDraftIn: {
+            /** From Version Id */
+            from_version_id?: string | null;
+            /** Note */
+            note: string;
+        };
         /** ChecklistIn */
         ChecklistIn: {
             /** Items */
@@ -3782,21 +6043,12 @@ export interface components {
             /** Label */
             label: string;
         };
-        /** ChecklistOut */
-        ChecklistOut: {
-            /** Items */
-            items: components["schemas"]["ChecklistItemOut"][];
-            /** Note */
-            note: string;
-            status: components["schemas"]["ConfigStatus"];
-            /** Version */
-            version: number;
-            /**
-             * Version Id
-             * Format: uuid
-             */
-            version_id: string;
-        };
+        /**
+         * ChecklistStatus
+         * @description EX-08: versioned configuration; PUBLISHED is immutable, one at a time.
+         * @enum {string}
+         */
+        ChecklistStatus: "DRAFT" | "PUBLISHED" | "RETIRED";
         /**
          * CheckoutOut
          * @description What the browser needs to open the provider's checkout; the amount is the server's.
@@ -3834,11 +6086,158 @@ export interface components {
             /** Signature */
             signature: string;
         };
+        /** CheckpointIn */
+        CheckpointIn: {
+            /** Code */
+            code: string;
+            /** Expected Evidence */
+            expected_evidence?: string | null;
+            /** Gate */
+            gate: number;
+            /**
+             * Is Critical
+             * @default false
+             */
+            is_critical: boolean;
+            /** Sequence */
+            sequence: number;
+            /** Spec Line Code */
+            spec_line_code?: string | null;
+            /** Text */
+            text: string;
+        };
+        /** CheckpointOut */
+        CheckpointOut: {
+            /** Code */
+            code: string;
+            /** Expected Evidence */
+            expected_evidence: string | null;
+            /** Gate */
+            gate: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Critical */
+            is_critical: boolean;
+            /** Sequence */
+            sequence: number;
+            /** Spec Line Code */
+            spec_line_code: string | null;
+            /** Text */
+            text: string;
+        };
+        /**
+         * CheckpointResult
+         * @enum {string}
+         */
+        CheckpointResult: "PASS" | "OBSERVATION" | "NON_CONFORMANCE" | "NOT_APPLICABLE";
+        /** CheckpointsIn */
+        CheckpointsIn: {
+            /** Checkpoints */
+            checkpoints: components["schemas"]["CheckpointIn"][];
+        };
+        /**
+         * ClarificationDirection
+         * @enum {string}
+         */
+        ClarificationDirection: "CONTRACTOR_ASKS" | "PLAN2BUILD_ASKS";
+        /**
+         * ClarificationState
+         * @enum {string}
+         */
+        ClarificationState: "OPEN" | "ANSWERED" | "CLOSED";
         /**
          * ComingSoonWork
          * @enum {string}
          */
         ComingSoonWork: "RENOVATION" | "INTERIORS" | "REPAIRS";
+        /** ComparisonCountsOut */
+        ComparisonCountsOut: {
+            /** Included */
+            included: number;
+            /** Invited */
+            invited: number;
+            /** Quotes Received */
+            quotes_received: number;
+        };
+        /** ComparisonLineOut */
+        ComparisonLineOut: {
+            /** Description */
+            description: string;
+            /** Line No */
+            line_no: number;
+            /** Quantity */
+            quantity: string;
+            /** Unit */
+            unit: string;
+        };
+        /** ComparisonOut */
+        ComparisonOut: {
+            /** Build Plan Version No */
+            build_plan_version_no: number;
+            counts: components["schemas"]["ComparisonCountsOut"];
+            /**
+             * Document File Id
+             * Format: uuid
+             */
+            document_file_id: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Lines */
+            lines: components["schemas"]["ComparisonLineOut"][];
+            /** Notes */
+            notes: string[];
+            /**
+             * Published At
+             * Format: date-time
+             */
+            published_at: string;
+            /** Quotes */
+            quotes: components["schemas"]["ComparisonQuoteOut"][];
+            /** Snapshot Sha256 */
+            snapshot_sha256: string;
+            state: components["schemas"]["ComparisonState"];
+            /** Version No */
+            version_no: number;
+        };
+        /**
+         * ComparisonQuoteOut
+         * @description One quote in the comparison: as submitted, the adjustment list, the totals. No rank.
+         */
+        ComparisonQuoteOut: {
+            /** Adjustments */
+            adjustments: components["schemas"]["AdjustmentOut"][];
+            /** Adjustments Total */
+            adjustments_total: string;
+            /** Contractor Name */
+            contractor_name: string | null;
+            /** Firm Name */
+            firm_name: string | null;
+            /**
+             * Invitation Id
+             * Format: uuid
+             */
+            invitation_id: string;
+            /** Normalised Total */
+            normalised_total: string;
+            party: components["schemas"]["EngagementParty"];
+            quote: components["schemas"]["QuoteContentOut"];
+            /**
+             * Quote Version Id
+             * Format: uuid
+             */
+            quote_version_id: string;
+        };
+        /**
+         * ComparisonState
+         * @enum {string}
+         */
+        ComparisonState: "PUBLISHED" | "SUPERSEDED" | "DECIDED";
         /** Condition */
         Condition: {
             /** Equals */
@@ -3945,6 +6344,17 @@ export interface components {
             /** Response Hours */
             response_hours: number;
         };
+        /** ContractorOut */
+        ContractorOut: {
+            /**
+             * Engagement Id
+             * Format: uuid
+             */
+            engagement_id: string;
+            /** Name */
+            name: string | null;
+            party: components["schemas"]["EngagementParty"];
+        };
         /** CreateProfessionalIn */
         CreateProfessionalIn: {
             /**
@@ -4012,21 +6422,13 @@ export interface components {
             };
             unavailable: components["schemas"]["UnavailableOut"] | null;
         };
-        /** DecisionIn */
-        DecisionIn: {
-            /** Message */
-            message?: string | null;
-            /** Note */
-            note?: string | null;
-        };
-        /** DeclineIn */
-        DeclineIn: {
+        /** DeadlineIn */
+        DeadlineIn: {
             /**
-             * Note
-             * @description Required for OTHER; never shown to the family
+             * Quotes Due At
+             * Format: date-time
              */
-            note?: string | null;
-            reason: components["schemas"]["DeclineReason"];
+            quotes_due_at: string;
         };
         /**
          * DeclineReason
@@ -4208,6 +6610,11 @@ export interface components {
          * @enum {string}
          */
         DesignView: "EXTERIOR" | "INTERIOR";
+        /**
+         * DeviationType
+         * @enum {string}
+         */
+        DeviationType: "EXCLUDED" | "GRADE" | "QUANTITY" | "ADDITIONAL" | "OTHER";
         /** DirectoryCardOut */
         DirectoryCardOut: {
             /** Base Locality */
@@ -4400,6 +6807,16 @@ export interface components {
          * @enum {string}
          */
         DrawingSetState: "DRAFT" | "SUBMITTED" | "IN_CHECK" | "CHANGES_REQUESTED" | "APPROVED" | "REJECTED" | "SUPERSEDED";
+        /** DueDateIn */
+        DueDateIn: {
+            /**
+             * Due Date
+             * Format: date
+             */
+            due_date: string;
+            /** Reason */
+            reason: string;
+        };
         /** DueOut */
         DueOut: {
             /** Amount */
@@ -4507,6 +6924,13 @@ export interface components {
             note: string;
             outcome: components["schemas"]["EligibilityOutcome"];
         };
+        /**
+         * EngagementOrigin
+         * @description How an engagement started (ADR-024): an accepted connection (3.4), an outside professional
+         *     the family recorded (3.4), or the homeowner's selection of an RFQ quote (3.6, QD-01).
+         * @enum {string}
+         */
+        EngagementOrigin: "CONNECTION" | "OUTSIDE" | "RFQ_SELECTION";
         /**
          * EngagementParty
          * @description Who provides a category. Professionals verified for one project only wait for F-03.
@@ -4723,6 +7147,21 @@ export interface components {
             /** To State */
             to_state: string;
         };
+        /** EvidenceOut */
+        EvidenceOut: {
+            /**
+             * Captured At
+             * @description The device's claim; not verified (EX-22)
+             */
+            captured_at: string | null;
+            /**
+             * File Id
+             * Format: uuid
+             */
+            file_id: string;
+            /** File Name */
+            file_name: string;
+        };
         /** ExceptionOut */
         ExceptionOut: {
             /**
@@ -4757,6 +7196,16 @@ export interface components {
             /** Resolved At */
             resolved_at: string | null;
             state: components["schemas"]["BillingExceptionState"];
+        };
+        /** ExtendIn */
+        ExtendIn: {
+            /**
+             * Quotes Due At
+             * Format: date-time
+             */
+            quotes_due_at: string;
+            /** Reason */
+            reason: string;
         };
         /** FakePayIn */
         FakePayIn: {
@@ -4880,6 +7329,111 @@ export interface components {
             started_at: string;
             state: components["schemas"]["EngagementState"];
         };
+        /** FamilyExecutionOut */
+        FamilyExecutionOut: {
+            contractor: components["schemas"]["ContractorOut"] | null;
+            /** Is Owner */
+            is_owner: boolean;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            /** Stages */
+            stages: components["schemas"]["StageOut"][];
+        };
+        /** FamilyInvitationOut */
+        FamilyInvitationOut: {
+            /** Contractor Name */
+            contractor_name: string | null;
+            /** Firm Name */
+            firm_name: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            latest_quote: components["schemas"]["FamilyQuoteStatusOut"] | null;
+            party: components["schemas"]["EngagementParty"];
+            /** Responded At */
+            responded_at: string | null;
+            /** Sent At */
+            sent_at: string | null;
+            source: components["schemas"]["InvitationSource"];
+            state: components["schemas"]["InvitationState"];
+        };
+        /**
+         * FamilyQuoteStatusOut
+         * @description A quote's existence and identity before publication: never its prices (QD-07).
+         */
+        FamilyQuoteStatusOut: {
+            kind: components["schemas"]["QuoteVersionKind"];
+            state: components["schemas"]["QuoteVersionState"];
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
+            /**
+             * Valid To
+             * Format: date
+             */
+            valid_to: string;
+            /** Version No */
+            version_no: number;
+        };
+        /** FamilyRfqOut */
+        FamilyRfqOut: {
+            /** Build Plan Version No */
+            build_plan_version_no: number | null;
+            /** Can Cancel */
+            can_cancel: boolean;
+            /** Can Select */
+            can_select: boolean;
+            cancel_reason: components["schemas"]["RfqCancelReason"] | null;
+            /** Closed At */
+            closed_at: string | null;
+            comparison: components["schemas"]["ComparisonOut"] | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Invitations */
+            invitations: components["schemas"]["FamilyInvitationOut"][];
+            /** Issued At */
+            issued_at: string | null;
+            /** Max Recipients */
+            max_recipients: number;
+            /** Quotes Due At */
+            quotes_due_at: string | null;
+            selection: components["schemas"]["SelectionOut"] | null;
+            state: components["schemas"]["RfqState"];
+        };
+        /** FamilyRfqsOut */
+        FamilyRfqsOut: {
+            /** Accepted Build Plan Version No */
+            accepted_build_plan_version_no: number | null;
+            /** Can Request */
+            can_request: boolean;
+            /** Engaged Contractor */
+            engaged_contractor: string | null;
+            /** Max Recipients */
+            max_recipients: number;
+            package_state: components["schemas"]["PackageState"];
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            /** Rfqs */
+            rfqs: components["schemas"]["FamilyRfqOut"][];
+        };
         /** FileOut */
         FileOut: {
             /** Content Type */
@@ -4900,7 +7454,7 @@ export interface components {
          * @description Why a file exists; each purpose has its own limits (ADR-011).
          * @enum {string}
          */
-        FilePurpose: "REQUIREMENT_UPLOAD" | "AI_CONCEPT" | "VERIFICATION_EVIDENCE" | "PORTFOLIO" | "INVOICE" | "QUOTE_DOCUMENT" | "DRAWING" | "BUILD_PLAN_EVIDENCE" | "BUILD_PLAN_DOCUMENT";
+        FilePurpose: "REQUIREMENT_UPLOAD" | "AI_CONCEPT" | "VERIFICATION_EVIDENCE" | "PORTFOLIO" | "INVOICE" | "QUOTE_DOCUMENT" | "DRAWING" | "BUILD_PLAN_EVIDENCE" | "BUILD_PLAN_DOCUMENT" | "QUOTE_ATTACHMENT" | "COMPARISON_DOCUMENT" | "STAGE_EVIDENCE" | "INSPECTION_EVIDENCE" | "INSPECTION_REPORT";
         /**
          * FileState
          * @description File object machine (STATE_MODEL section 16).
@@ -4926,6 +7480,42 @@ export interface components {
             /** Size Bytes */
             size_bytes: number;
             state: components["schemas"]["FileState"];
+        };
+        /** FindingOut */
+        FindingOut: {
+            /** Closed At */
+            closed_at: string | null;
+            /** Corrective Action */
+            corrective_action: string;
+            /** Description */
+            description: string;
+            /**
+             * Due Date
+             * Format: date
+             */
+            due_date: string;
+            /** Floor */
+            floor: number | null;
+            /** Gate */
+            gate: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Overdue */
+            overdue: boolean;
+            severity: components["schemas"]["Severity"];
+            /**
+             * Stage Instance Id
+             * Format: uuid
+             */
+            stage_instance_id: string;
+            /** Stage Name */
+            stage_name: string;
+            /** Stage Number */
+            stage_number: number;
+            state: components["schemas"]["NcState"];
         };
         /**
          * FinishLevel
@@ -4953,6 +7543,55 @@ export interface components {
              */
             message: string;
         };
+        /**
+         * InspectionKind
+         * @enum {string}
+         */
+        InspectionKind: "INITIAL" | "REINSPECTION";
+        /**
+         * InspectionOut
+         * @description What the homeowner and the contractor see: content only once approved.
+         */
+        InspectionOut: {
+            /** Approved At */
+            approved_at: string | null;
+            /** Auditor Code */
+            auditor_code: string | null;
+            /** Floor */
+            floor: number | null;
+            /** Gate */
+            gate: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["InspectionKind"];
+            /** Outcome */
+            outcome: string | null;
+            /** Reports */
+            reports: components["schemas"]["ReportOut"][];
+            /**
+             * Scheduled At
+             * Format: date-time
+             */
+            scheduled_at: string;
+            /**
+             * Stage Instance Id
+             * Format: uuid
+             */
+            stage_instance_id: string;
+            /** Stage Name */
+            stage_name: string;
+            /** Stage Number */
+            stage_number: number;
+            state: components["schemas"]["InspectionState"];
+        };
+        /**
+         * InspectionState
+         * @enum {string}
+         */
+        InspectionState: "SCHEDULED" | "IN_PROGRESS" | "SUBMITTED" | "APPROVED" | "RETURNED" | "CANCELLED";
         /** InstalmentPlanIn */
         InstalmentPlanIn: {
             /** Instalments */
@@ -4967,6 +7606,44 @@ export interface components {
              */
             note: string;
         };
+        /** IntroduceIn */
+        IntroduceIn: {
+            /**
+             * Profile Id
+             * Format: uuid
+             */
+            profile_id: string;
+            /**
+             * Reason
+             * @description Why operations add this contractor (QD-03)
+             */
+            reason: string;
+        };
+        /** InvitationAcceptIn */
+        InvitationAcceptIn: {
+            /**
+             * Phone
+             * @description Shown to the homeowner only if your quote is selected
+             */
+            phone?: string | null;
+        };
+        /**
+         * InvitationSource
+         * @enum {string}
+         */
+        InvitationSource: "NOMINATED" | "INTRODUCED" | "ENGAGED";
+        /**
+         * InvitationState
+         * @description An invitation asks one contractor to quote (QD-01); accepting it is agreeing to quote, never
+         *     an engagement.
+         * @enum {string}
+         */
+        InvitationState: "PROPOSED" | "SENT" | "ACCEPTED" | "DECLINED" | "EXPIRED" | "WITHDRAWN";
+        /**
+         * InvitationWithdrawReason
+         * @enum {string}
+         */
+        InvitationWithdrawReason: "REMOVED" | "OPERATIONS" | "RFQ_CANCELLED" | "RFQ_CLOSED" | "NOT_LISTED";
         /**
          * InvoiceKind
          * @enum {string}
@@ -5080,6 +7757,21 @@ export interface components {
             /** Value */
             value: string | null;
         };
+        /** MarkIn */
+        MarkIn: {
+            value: components["schemas"]["PaymentMarkValue"];
+        };
+        /** MarkOut */
+        MarkOut: {
+            /** By Operations */
+            by_operations: boolean;
+            /**
+             * Marked At
+             * Format: date-time
+             */
+            marked_at: string;
+            value: components["schemas"]["PaymentMarkValue"];
+        };
         /**
          * MeResponse
          * @description `GET /me` (API_ARCHITECTURE section 2). Memberships and pending consents are added when the
@@ -5148,6 +7840,38 @@ export interface components {
             /** Recovery Codes Left */
             recovery_codes_left: number;
         };
+        /** MilestoneOut */
+        MilestoneOut: {
+            /**
+             * Due
+             * @description The stage is complete; informational only
+             */
+            due: boolean;
+            /** Floor */
+            floor: number | null;
+            /** @description The owner's mark */
+            paid: components["schemas"]["MarkOut"] | null;
+            /** @description The contractor's mark */
+            received: components["schemas"]["MarkOut"] | null;
+            /**
+             * Stage Instance Id
+             * Format: uuid
+             */
+            stage_instance_id: string;
+            /** Stage Number */
+            stage_number: number;
+        };
+        /** MilestonesOut */
+        MilestonesOut: {
+            /** Milestones */
+            milestones: components["schemas"]["MilestoneOut"][];
+        };
+        /**
+         * NcState
+         * @description EX-11: closed only by an approved re-inspection.
+         * @enum {string}
+         */
+        NcState: "OPEN" | "RECTIFICATION_SUBMITTED" | "REINSPECTION_SCHEDULED" | "CLOSED";
         /** NeedIn */
         NeedIn: {
             state: components["schemas"]["NeedState"];
@@ -5240,6 +7964,17 @@ export interface components {
             /** Terms Version */
             terms_version: string;
         };
+        /** OpsAnswerIn */
+        OpsAnswerIn: {
+            /** Answer */
+            answer: string;
+            /**
+             * Shared With All
+             * @description Send to every accepted invitation without the asker's name
+             * @default false
+             */
+            shared_with_all: boolean;
+        };
         /** OpsBuildPlanOut */
         OpsBuildPlanOut: {
             /** Accepted Version Id */
@@ -5258,6 +7993,38 @@ export interface components {
             project_id: string;
             /** Versions */
             versions: components["schemas"]["VersionSummaryOut"][];
+        };
+        /** OpsClarificationOut */
+        OpsClarificationOut: {
+            /** Answer */
+            answer: string | null;
+            /** Answered At */
+            answered_at: string | null;
+            /**
+             * Asked At
+             * Format: date-time
+             */
+            asked_at: string;
+            /** Close Reason */
+            close_reason: string | null;
+            direction: components["schemas"]["ClarificationDirection"];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Invitation Id
+             * Format: uuid
+             */
+            invitation_id: string;
+            /** Question */
+            question: string;
+            /** Quote Version Id */
+            quote_version_id: string | null;
+            /** Shared With All */
+            shared_with_all: boolean;
+            state: components["schemas"]["ClarificationState"];
         };
         /** OpsConnectionOut */
         OpsConnectionOut: {
@@ -5356,6 +8123,49 @@ export interface components {
             /** Quote Reviews */
             quote_reviews: components["schemas"]["OpsQuoteReviewOut"][];
         };
+        /** OpsEventOut */
+        OpsEventOut: {
+            /** Actor Role */
+            actor_role: string;
+            /**
+             * At
+             * Format: date-time
+             */
+            at: string;
+            /** From State */
+            from_state: string | null;
+            /** Reason */
+            reason: string | null;
+            /** Subject */
+            subject: string;
+            /**
+             * Subject Id
+             * Format: uuid
+             */
+            subject_id: string;
+            /** To State */
+            to_state: string;
+        };
+        /** OpsExecutionOut */
+        OpsExecutionOut: {
+            contractor: components["schemas"]["ContractorOut"] | null;
+            /** Project Code */
+            project_code: string;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            /** Stages */
+            stages: components["schemas"]["StageOut"][];
+        };
+        /** OpsExecutionQueueOut */
+        OpsExecutionQueueOut: {
+            /** Exception Days */
+            exception_days: number;
+            /** Waiting */
+            waiting: components["schemas"]["OpsWaitingOut"][];
+        };
         /** OpsHistoryOut */
         OpsHistoryOut: {
             /** Actor Role */
@@ -5380,6 +8190,142 @@ export interface components {
             subject_id: string;
             /** To State */
             to_state: string;
+        };
+        /** OpsInspectionOut */
+        OpsInspectionOut: {
+            /** Amends Id */
+            amends_id: string | null;
+            /**
+             * Appointment Id
+             * Format: uuid
+             */
+            appointment_id: string;
+            /** Approved At */
+            approved_at: string | null;
+            /** Auditor Code */
+            auditor_code: string | null;
+            /** Auditor Name */
+            auditor_name: string;
+            /** Cancel Reason */
+            cancel_reason: string | null;
+            /** Checklist Version */
+            checklist_version: number;
+            /** Checkpoints */
+            checkpoints: components["schemas"]["CheckpointOut"][];
+            /** Content Sha256 */
+            content_sha256: string | null;
+            /** Floor */
+            floor: number | null;
+            /** Gate */
+            gate: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["InspectionKind"];
+            /** Nc Ids */
+            nc_ids: string[];
+            /** Outcome */
+            outcome: string | null;
+            /** Project Code */
+            project_code: string;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            /** Reinspects Id */
+            reinspects_id: string | null;
+            /** Reports */
+            reports: components["schemas"]["ReportOut"][];
+            /** Results */
+            results: components["schemas"]["ResultOut"][];
+            /** Return Reason */
+            return_reason: string | null;
+            /**
+             * Scheduled At
+             * Format: date-time
+             */
+            scheduled_at: string;
+            /** Staff Capture */
+            staff_capture: boolean;
+            /**
+             * Stage Instance Id
+             * Format: uuid
+             */
+            stage_instance_id: string;
+            /** Stage Name */
+            stage_name: string;
+            /** Stage Number */
+            stage_number: number;
+            state: components["schemas"]["InspectionState"];
+            /** Summary */
+            summary: string | null;
+            /** Version */
+            version: number;
+            /** Visit Note */
+            visit_note: string | null;
+        };
+        /** OpsInspectionsOut */
+        OpsInspectionsOut: {
+            /** Findings */
+            findings: components["schemas"]["FindingOut"][];
+            /** Inspections */
+            inspections: components["schemas"]["OpsInspectionOut"][];
+            /** Project Code */
+            project_code: string;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+        };
+        /** OpsInvitationOut */
+        OpsInvitationOut: {
+            /** Contractor Name */
+            contractor_name: string | null;
+            /** Decline Note */
+            decline_note: string | null;
+            decline_reason: components["schemas"]["DeclineReason"] | null;
+            /** Engagement Id */
+            engagement_id: string | null;
+            /** Firm Name */
+            firm_name: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Introduced Reason */
+            introduced_reason: string | null;
+            party: components["schemas"]["EngagementParty"];
+            /** Professional Contact */
+            professional_contact: {
+                [key: string]: unknown;
+            } | null;
+            /** Profile Id */
+            profile_id: string | null;
+            /** Respond By */
+            respond_by: string | null;
+            /** Responded At */
+            responded_at: string | null;
+            /** Sent At */
+            sent_at: string | null;
+            source: components["schemas"]["InvitationSource"];
+            state: components["schemas"]["InvitationState"];
+            /** Withdraw Note */
+            withdraw_note: string | null;
+            withdraw_reason: components["schemas"]["InvitationWithdrawReason"] | null;
+        };
+        /**
+         * OpsMarkIn
+         * @description How operations learnt of the OUTSIDE contractor's receipt.
+         */
+        OpsMarkIn: {
+            /** Reason */
+            reason: string;
+            value: components["schemas"]["PaymentMarkValue"];
         };
         /** OpsNeedOut */
         OpsNeedOut: {
@@ -5479,6 +8425,18 @@ export interface components {
             queue_item: components["schemas"]["QueueItemOut"] | null;
             requirement: components["schemas"]["ReviewRequirementOut"];
         };
+        /** OpsQuestionIn */
+        OpsQuestionIn: {
+            /**
+             * Invitation Id
+             * Format: uuid
+             */
+            invitation_id: string;
+            /** Question */
+            question: string;
+            /** Quote Version Id */
+            quote_version_id?: string | null;
+        };
         /** OpsQuoteReviewOut */
         OpsQuoteReviewOut: {
             /** Category */
@@ -5501,6 +8459,140 @@ export interface components {
              */
             submitted_at: string;
         };
+        /** OpsQuoteVersionOut */
+        OpsQuoteVersionOut: {
+            /** Adjustments */
+            adjustments: components["schemas"]["AdjustmentOut"][];
+            /** Comment */
+            comment: string | null;
+            /** Content Sha256 */
+            content_sha256: string;
+            /** Evidence File Id */
+            evidence_file_id: string | null;
+            /**
+             * Invitation Id
+             * Format: uuid
+             */
+            invitation_id: string;
+            quote: components["schemas"]["QuoteContentOut"];
+            review_state: components["schemas"]["QuoteCheckState"];
+            state: components["schemas"]["QuoteVersionState"];
+            /** Withdraw Reason */
+            withdraw_reason: string | null;
+        };
+        /** OpsRectifyIn */
+        OpsRectifyIn: {
+            /** File Ids */
+            file_ids: string[];
+            /** Note */
+            note: string;
+            /** Reason */
+            reason: string;
+        };
+        /** OpsRfqOut */
+        OpsRfqOut: {
+            /**
+             * Build Plan Version Id
+             * Format: uuid
+             */
+            build_plan_version_id: string;
+            /** Cancel Note */
+            cancel_note: string | null;
+            cancel_reason: components["schemas"]["RfqCancelReason"] | null;
+            /** Clarifications */
+            clarifications: components["schemas"]["OpsClarificationOut"][];
+            /** Comparisons */
+            comparisons: components["schemas"]["ComparisonOut"][];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** History */
+            history: components["schemas"]["OpsEventOut"][];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Invitations */
+            invitations: components["schemas"]["OpsInvitationOut"][];
+            /** Issued At */
+            issued_at: string | null;
+            /** Manifest Sha256 */
+            manifest_sha256: string | null;
+            /** Max Recipients */
+            max_recipients: number;
+            package_state: components["schemas"]["PackageState"];
+            /** Project Code */
+            project_code: string;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            /** Quote Versions */
+            quote_versions: components["schemas"]["OpsQuoteVersionOut"][];
+            /** Quotes Due At */
+            quotes_due_at: string | null;
+            /** Requested Role */
+            requested_role: string;
+            selection: components["schemas"]["SelectionOut"] | null;
+            state: components["schemas"]["RfqState"];
+        };
+        /** OpsRfqSummaryOut */
+        OpsRfqSummaryOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Invitations */
+            invitations: number;
+            /** Pending Reviews */
+            pending_reviews: number;
+            /** Project Code */
+            project_code: string;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            /** Quotes */
+            quotes: number;
+            /** Quotes Due At */
+            quotes_due_at: string | null;
+            state: components["schemas"]["RfqState"];
+        };
+        /** OpsRfqsOut */
+        OpsRfqsOut: {
+            /** Items */
+            items: components["schemas"]["OpsRfqSummaryOut"][];
+        };
+        /**
+         * OpsUpdateIn
+         * @description Operations enter an OUTSIDE contractor's update with how they received it.
+         */
+        OpsUpdateIn: {
+            /** Corrects Update Id */
+            corrects_update_id?: string | null;
+            /** File Ids */
+            file_ids: string[];
+            kind: components["schemas"]["StageUpdateKind"];
+            /** Materials */
+            materials?: string | null;
+            /** Note */
+            note: string;
+            /** Open Problems */
+            open_problems?: string | null;
+            /** Reason */
+            reason: string;
+        };
         /** OpsVersionOut */
         OpsVersionOut: {
             /** Accepted Document Id */
@@ -5518,6 +8610,23 @@ export interface components {
              */
             missing: string[];
             snapshot: components["schemas"]["SnapshotOut"];
+        };
+        /**
+         * OpsWaitingOut
+         * @description A completion request waiting for a decision; `exception` once it has waited longer than
+         *     the configured number of days (EX-12). No reminder is sent.
+         */
+        OpsWaitingOut: {
+            /** Exception */
+            exception: boolean;
+            /** Project Code */
+            project_code: string;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            stage: components["schemas"]["StageOut"];
         };
         /** Option */
         Option: {
@@ -5739,6 +8848,109 @@ export interface components {
             /** Years Experience */
             years_experience: number | null;
         };
+        /** PackDrawingOut */
+        PackDrawingOut: {
+            /** Drawing Class */
+            drawing_class: string;
+            /**
+             * File Id
+             * Format: uuid
+             */
+            file_id: string;
+            /** Floor */
+            floor: number | null;
+            /** Sha256 */
+            sha256: string | null;
+            /** Sheet No */
+            sheet_no: string | null;
+            /** Title */
+            title: string;
+        };
+        /**
+         * PackOut
+         * @description The frozen RFQ pack (E.1): never Plan2Build's rates, amounts, totals or rate card.
+         */
+        PackOut: {
+            /** Build Plan Version No */
+            build_plan_version_no: number;
+            /** Content Hash */
+            content_hash: string;
+            /** Dates Status */
+            dates_status: string;
+            /** Drawings */
+            drawings: components["schemas"]["PackDrawingOut"][];
+            /** Manifest Sha256 */
+            manifest_sha256: string;
+            /** Quantities */
+            quantities: components["schemas"]["PackQuantityOut"][];
+            /** Quote Format Version */
+            quote_format_version: number;
+            /** Schedule */
+            schedule: components["schemas"]["PackScheduleOut"][];
+            scope: components["schemas"]["PackScopeOut"];
+            /** Specifications */
+            specifications: components["schemas"]["PackSpecOut"][];
+        };
+        /** PackQuantityOut */
+        PackQuantityOut: {
+            /** Assumptions */
+            assumptions: string | null;
+            /** Description */
+            description: string;
+            /** Floor */
+            floor: number | null;
+            /** Item Code */
+            item_code: string;
+            /** Line No */
+            line_no: number;
+            /** Quantity */
+            quantity: string;
+            /** Spec Line Codes */
+            spec_line_codes: string[];
+            /** Stage Number */
+            stage_number: number | null;
+            /** Unit */
+            unit: string;
+        };
+        /** PackScheduleOut */
+        PackScheduleOut: {
+            /** Duration Days */
+            duration_days: number | null;
+            /** Entry Key */
+            entry_key: string;
+            /** Floor */
+            floor: number | null;
+            /** Predecessors */
+            predecessors: string[];
+            /** Stage Name */
+            stage_name: string;
+            /** Stage Number */
+            stage_number: number;
+        };
+        /** PackScopeOut */
+        PackScopeOut: {
+            /** Assumptions */
+            assumptions: string[];
+            /** Exclusions */
+            exclusions: string[];
+            /** Inclusions */
+            inclusions: string[];
+        };
+        /** PackSpecOut */
+        PackSpecOut: {
+            /** Applicability */
+            applicability: string;
+            /** Code */
+            code: string;
+            /** Criteria */
+            criteria: string;
+            /** Item */
+            item: string;
+            /** Not Applicable Reason */
+            not_applicable_reason: string | null;
+            /** Value */
+            value: string | null;
+        };
         /**
          * PackageAvailability
          * @description Whether the Plan2Build package can be offered on a project (PD-21). ELIGIBLE means the
@@ -5801,6 +9013,11 @@ export interface components {
             };
             unavailable: components["schemas"]["UnavailableOut"] | null;
         };
+        /**
+         * PaymentMarkValue
+         * @enum {string}
+         */
+        PaymentMarkValue: "YES" | "NO";
         /**
          * PaymentMode
          * @enum {string}
@@ -5909,9 +9126,35 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        /** ProClarificationOut */
+        ProClarificationOut: {
+            /** Answer */
+            answer: string | null;
+            /** Answered At */
+            answered_at: string | null;
+            /**
+             * Asked At
+             * Format: date-time
+             */
+            asked_at: string;
+            direction: components["schemas"]["ClarificationDirection"];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Question */
+            question: string;
+            state: components["schemas"]["ClarificationState"];
+            /**
+             * Yours
+             * @description False for an answer Plan2Build shared with every contractor
+             */
+            yours: boolean;
+        };
         /** ProConnectionOut */
         ProConnectionOut: {
-            brief: components["schemas"]["BriefOut"];
+            brief: components["schemas"]["p2b__engagements__schemas__BriefOut"];
             /** Category */
             category: string;
             /** Category Name */
@@ -5966,6 +9209,141 @@ export interface components {
         ProDesignRequestsOut: {
             /** Items */
             items: components["schemas"]["ProDesignRequestOut"][];
+        };
+        /**
+         * ProEngagementOut
+         * @description A professional's engagement, whatever its origin (ADR-024): the family's contact, and the
+         *     plot pin and shared files while it is ACTIVE (N-08).
+         */
+        ProEngagementOut: {
+            /** Category */
+            category: string;
+            /** Category Name */
+            category_name: string;
+            /** Ended At */
+            ended_at: string | null;
+            family_contact: components["schemas"]["FamilyContactOut"] | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            location: components["schemas"]["PointOut"] | null;
+            origin: components["schemas"]["EngagementOrigin"];
+            /** Project Code */
+            project_code: string;
+            /** Shared Files */
+            shared_files: components["schemas"]["FileOut"][];
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            state: components["schemas"]["EngagementState"];
+        };
+        /** ProExecutionOut */
+        ProExecutionOut: {
+            /** Build Plan Version No */
+            build_plan_version_no: number | null;
+            /** Drawings */
+            drawings: components["schemas"]["p2b__construction__schemas__DrawingOut"][];
+            /**
+             * Engagement Id
+             * Format: uuid
+             */
+            engagement_id: string;
+            /** Project Code */
+            project_code: string;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            /** Stages */
+            stages: components["schemas"]["StageOut"][];
+        };
+        /** ProInvitationOut */
+        ProInvitationOut: {
+            /** Attachments Max */
+            attachments_max: number;
+            brief: components["schemas"]["p2b__rfq__schemas__BriefOut"];
+            /** Can Renew */
+            can_renew: boolean;
+            /** Can Submit */
+            can_submit: boolean;
+            /** Can Withdraw */
+            can_withdraw: boolean;
+            /** Clarifications */
+            clarifications: components["schemas"]["ProClarificationOut"][];
+            decline_reason: components["schemas"]["DeclineReason"] | null;
+            /** Draft */
+            draft: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Engagement Id
+             * @description Your engagement, once selected
+             */
+            engagement_id: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            outcome: components["schemas"]["QuoteVersionState"] | null;
+            /** @description Only after you accept, while the RFQ is open */
+            pack: components["schemas"]["PackOut"] | null;
+            /** Quotes Due At */
+            quotes_due_at: string | null;
+            /** Respond By */
+            respond_by: string | null;
+            /** Responded At */
+            responded_at: string | null;
+            /** Rfq Open */
+            rfq_open: boolean;
+            /** Sent At */
+            sent_at: string | null;
+            state: components["schemas"]["InvitationState"];
+            /** Versions */
+            versions: components["schemas"]["ProQuoteVersionOut"][];
+            withdraw_reason: components["schemas"]["InvitationWithdrawReason"] | null;
+        };
+        /** ProInvitationSummaryOut */
+        ProInvitationSummaryOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Locality */
+            locality: string | null;
+            outcome: components["schemas"]["QuoteVersionState"] | null;
+            /** Quotes Due At */
+            quotes_due_at: string | null;
+            /** Respond By */
+            respond_by: string | null;
+            /** Rfq Open */
+            rfq_open: boolean;
+            /** Sent At */
+            sent_at: string | null;
+            state: components["schemas"]["InvitationState"];
+        };
+        /** ProInvitationsOut */
+        ProInvitationsOut: {
+            /** Items */
+            items: components["schemas"]["ProInvitationSummaryOut"][];
+        };
+        /**
+         * ProQuoteVersionOut
+         * @description Your own quote version and its state; never Plan2Build's review or adjustments (QD-08).
+         */
+        ProQuoteVersionOut: {
+            /** Comment */
+            comment: string | null;
+            quote: components["schemas"]["QuoteContentOut"];
+            state: components["schemas"]["QuoteVersionState"];
+            /** Withdraw Reason */
+            withdraw_reason: string | null;
         };
         /** ProSignoffListOut */
         ProSignoffListOut: {
@@ -6201,6 +9579,11 @@ export interface components {
              */
             type: "location" | "text" | "single_choice" | "multi_choice" | "yes_no" | "number" | "number_or_not_sure" | "setbacks" | "ranking" | "files";
         };
+        /** QuestionIn */
+        QuestionIn: {
+            /** Question */
+            question: string;
+        };
         /** QuestionSetDefinition */
         QuestionSetDefinition: {
             /** Locale */
@@ -6213,6 +9596,78 @@ export interface components {
             sections: components["schemas"]["Section"][];
             /** Version */
             version: number;
+        };
+        /** QueueFindingOut */
+        QueueFindingOut: {
+            /**
+             * Due Date
+             * Format: date
+             */
+            due_date: string;
+            /** Floor */
+            floor: number | null;
+            /** Gate */
+            gate: number;
+            /**
+             * Nc Id
+             * Format: uuid
+             */
+            nc_id: string;
+            /** Overdue */
+            overdue: boolean;
+            /** Project Code */
+            project_code: string;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            /**
+             * Stage Instance Id
+             * Format: uuid
+             */
+            stage_instance_id: string;
+            /** Stage Name */
+            stage_name: string;
+            /** Stage Number */
+            stage_number: number;
+            state: components["schemas"]["NcState"];
+        };
+        /** QueueInspectionOut */
+        QueueInspectionOut: {
+            /** Exception */
+            exception: boolean;
+            /** Floor */
+            floor: number | null;
+            /** Gate */
+            gate: number;
+            /**
+             * Inspection Id
+             * Format: uuid
+             */
+            inspection_id: string;
+            /** Project Code */
+            project_code: string;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            /**
+             * Scheduled At
+             * Format: date-time
+             */
+            scheduled_at: string;
+            /**
+             * Stage Instance Id
+             * Format: uuid
+             */
+            stage_instance_id: string;
+            /** Stage Name */
+            stage_name: string;
+            /** Stage Number */
+            stage_number: number;
+            state: components["schemas"]["InspectionState"];
         };
         /** QueueItemOut */
         QueueItemOut: {
@@ -6239,6 +9694,129 @@ export interface components {
          * @enum {string}
          */
         QueueItemState: "OPEN" | "CLAIMED" | "RESOLVED";
+        /** QueueStageOut */
+        QueueStageOut: {
+            /** Floor */
+            floor: number | null;
+            /** Gate */
+            gate: number;
+            /** Project Code */
+            project_code: string;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            /**
+             * Stage Instance Id
+             * Format: uuid
+             */
+            stage_instance_id: string;
+            /** Stage Name */
+            stage_name: string;
+            /** Stage Number */
+            stage_number: number;
+        };
+        /**
+         * QuoteCheckState
+         * @description Plan2Build's review of one submitted quote version (K.2). Distinct from the 3.4
+         *     quote-holder review intake (QuoteReviewState).
+         * @enum {string}
+         */
+        QuoteCheckState: "PENDING" | "NEEDS_CLARIFICATION" | "REVIEWED" | "CLOSED";
+        /**
+         * QuoteContentOut
+         * @description A quote as submitted, the same for every reader who may see it.
+         */
+        QuoteContentOut: {
+            /** Additional Items */
+            additional_items: components["schemas"]["QuoteLineOut"][];
+            /** Additional Total */
+            additional_total: string;
+            /** Assumptions */
+            assumptions: string[];
+            /** Attachments */
+            attachments: components["schemas"]["FileOut"][];
+            /** Captured By Staff */
+            captured_by_staff: boolean;
+            /** Comparable Total */
+            comparable_total: string;
+            /** Duration Days */
+            duration_days: number;
+            /** Exclusions */
+            exclusions: string[];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["QuoteVersionKind"];
+            /** Lines */
+            lines: components["schemas"]["QuoteLineOut"][];
+            /** Materials */
+            materials: string | null;
+            /** Payment Terms */
+            payment_terms: string | null;
+            /** Stage Durations */
+            stage_durations: components["schemas"]["StageDurationOut"][];
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
+            /** Tax Note */
+            tax_note: string | null;
+            tax_treatment: components["schemas"]["TaxTreatment"];
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /**
+             * Valid To
+             * Format: date
+             */
+            valid_to: string;
+            /** Version No */
+            version_no: number;
+            /** Warranty */
+            warranty: string | null;
+        };
+        /**
+         * QuoteDraftIn
+         * @description A working copy: any field may be missing. Never part of the record.
+         */
+        QuoteDraftIn: {
+            /** Additional Items */
+            additional_items?: components["schemas"]["AdditionalItemIn"][];
+            /** Assumptions */
+            assumptions?: string[];
+            /** Attachment File Ids */
+            attachment_file_ids?: string[];
+            /** Comment */
+            comment?: string | null;
+            /** Duration Days */
+            duration_days?: number | null;
+            /** Exclusions */
+            exclusions?: string[];
+            /** Lines */
+            lines?: components["schemas"]["QuoteLineIn"][];
+            /** Materials */
+            materials?: string | null;
+            /** Payment Terms */
+            payment_terms?: string | null;
+            /** Stage Durations */
+            stage_durations?: components["schemas"]["StageDurationIn"][];
+            /** Tax Note */
+            tax_note?: string | null;
+            tax_treatment?: components["schemas"]["TaxTreatment"] | null;
+            /** Valid From */
+            valid_from?: string | null;
+            /** Valid To */
+            valid_to?: string | null;
+            /** Warranty */
+            warranty?: string | null;
+        };
         /** QuoteFormatOut */
         QuoteFormatOut: {
             /** Contractor Schedule */
@@ -6249,6 +9827,87 @@ export interface components {
             price_per_quantity_line: boolean;
             /** Version */
             version: number;
+        };
+        /**
+         * QuoteIn
+         * @description A complete quote (QD-18): every RFQ quantity line priced or excluded with a reason.
+         */
+        QuoteIn: {
+            /** Additional Items */
+            additional_items?: components["schemas"]["AdditionalItemIn"][];
+            /** Assumptions */
+            assumptions?: string[];
+            /** Attachment File Ids */
+            attachment_file_ids?: string[];
+            /** Comment */
+            comment?: string | null;
+            /** Duration Days */
+            duration_days: number;
+            /** Exclusions */
+            exclusions?: string[];
+            /** Lines */
+            lines: components["schemas"]["QuoteLineIn"][];
+            /** Materials */
+            materials?: string | null;
+            /** Payment Terms */
+            payment_terms?: string | null;
+            /** Stage Durations */
+            stage_durations?: components["schemas"]["StageDurationIn"][];
+            /** Tax Note */
+            tax_note?: string | null;
+            tax_treatment: components["schemas"]["TaxTreatment"];
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /**
+             * Valid To
+             * Format: date
+             */
+            valid_to: string;
+            /** Warranty */
+            warranty?: string | null;
+        };
+        /** QuoteLineIn */
+        QuoteLineIn: {
+            /** Alternate Spec */
+            alternate_spec?: string | null;
+            /**
+             * Excluded
+             * @default false
+             */
+            excluded: boolean;
+            /** Exclusion Reason */
+            exclusion_reason?: string | null;
+            /** Line No */
+            line_no: number;
+            /**
+             * Rate
+             * @description Unit rate; the amount is computed
+             */
+            rate?: number | string | null;
+        };
+        /** QuoteLineOut */
+        QuoteLineOut: {
+            /** Alternate Spec */
+            alternate_spec: string | null;
+            /** Amount */
+            amount: string | null;
+            /** Description */
+            description: string;
+            /** Excluded */
+            excluded: boolean;
+            /** Exclusion Reason */
+            exclusion_reason: string | null;
+            /** Line No */
+            line_no: number;
+            /** Quantity */
+            quantity: string;
+            /** Rate */
+            rate: string | null;
+            /** Unit */
+            unit: string;
         };
         /** QuoteReviewIn */
         QuoteReviewIn: {
@@ -6289,6 +9948,16 @@ export interface components {
          * @enum {string}
          */
         QuoteReviewState: "SUBMITTED";
+        /**
+         * QuoteVersionKind
+         * @enum {string}
+         */
+        QuoteVersionKind: "STANDARD" | "RENEWAL";
+        /**
+         * QuoteVersionState
+         * @enum {string}
+         */
+        QuoteVersionState: "SUBMITTED" | "SUPERSEDED" | "WITHDRAWN" | "EXPIRED" | "SELECTED" | "NOT_SELECTED";
         /** RateCardIn */
         RateCardIn: {
             /**
@@ -6387,12 +10056,26 @@ export interface components {
             /** Lines */
             lines: components["schemas"]["RateLineIn"][];
         };
+        /** ReasonDecisionIn */
+        ReasonDecisionIn: {
+            /** Reason */
+            reason: string;
+            /** Version */
+            version: number;
+        };
         /** ReconcileOut */
         ReconcileOut: {
             /** Counts */
             counts: {
                 [key: string]: number;
             };
+        };
+        /** RectifyIn */
+        RectifyIn: {
+            /** File Ids */
+            file_ids: string[];
+            /** Note */
+            note: string;
         };
         /** ReferenceIn */
         ReferenceIn: {
@@ -6497,6 +10180,43 @@ export interface components {
          * @enum {string}
          */
         RefundState: "PROCESSING" | "REFUNDED" | "FAILED";
+        /** ReinspectionIn */
+        ReinspectionIn: {
+            /**
+             * Appointment Id
+             * Format: uuid
+             */
+            appointment_id: string;
+            /** Nc Ids */
+            nc_ids: string[];
+            /** Visit Note */
+            visit_note?: string | null;
+        };
+        /** RenewIn */
+        RenewIn: {
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /**
+             * Valid To
+             * Format: date
+             */
+            valid_to: string;
+        };
+        /** ReportOut */
+        ReportOut: {
+            /** Correction Reason */
+            correction_reason: string | null;
+            /**
+             * Rendered At
+             * Format: date-time
+             */
+            rendered_at: string;
+            /** Version */
+            version: number;
+        };
         /**
          * RequirementLevel
          * @enum {string}
@@ -6553,6 +10273,68 @@ export interface components {
         ResolveIn: {
             /** Resolution */
             resolution: string;
+        };
+        /** ResultIn */
+        ResultIn: {
+            /**
+             * Checkpoint Id
+             * Format: uuid
+             */
+            checkpoint_id: string;
+            /** Corrective Action */
+            corrective_action?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Due Date */
+            due_date?: string | null;
+            /** File Ids */
+            file_ids?: string[];
+            /** Measurement */
+            measurement?: string | null;
+            /** Na Reason */
+            na_reason?: string | null;
+            /** Note */
+            note?: string | null;
+            result: components["schemas"]["CheckpointResult"];
+            /** Room Tag */
+            room_tag?: string | null;
+            severity?: components["schemas"]["Severity"] | null;
+        };
+        /** ResultOut */
+        ResultOut: {
+            /**
+             * Checkpoint Id
+             * Format: uuid
+             */
+            checkpoint_id: string;
+            /** Corrective Action */
+            corrective_action: string | null;
+            /** Description */
+            description: string | null;
+            /** Due Date */
+            due_date: string | null;
+            /** File Ids */
+            file_ids: string[];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Measurement */
+            measurement: string | null;
+            /** Na Reason */
+            na_reason: string | null;
+            /** Note */
+            note: string | null;
+            result: components["schemas"]["CheckpointResult"];
+            /** Room Tag */
+            room_tag: string | null;
+            severity: components["schemas"]["Severity"] | null;
+        };
+        /** ResultsIn */
+        ResultsIn: {
+            /** Results */
+            results: components["schemas"]["ResultIn"][];
         };
         /** ReviewDetailOut */
         ReviewDetailOut: {
@@ -6705,6 +10487,11 @@ export interface components {
             question_set_version: number;
         };
         /**
+         * RfqCancelReason
+         * @enum {string}
+         */
+        RfqCancelReason: "OWNER" | "OPERATIONS" | "PACKAGE_ENDED" | "BASELINE_SUPERSEDED" | "PROJECT_CLOSED";
+        /**
          * RfqManifestOut
          * @description BP-08: for contractor RFQs; never Plan2Build's rates or amounts.
          */
@@ -6737,6 +10524,19 @@ export interface components {
             /** Version No */
             version_no: number;
         };
+        /** RfqRequestIn */
+        RfqRequestIn: {
+            /**
+             * Profile Ids
+             * @description Listed contractors the owner nominates (QD-03)
+             */
+            profile_ids?: string[];
+        };
+        /**
+         * RfqState
+         * @enum {string}
+         */
+        RfqState: "DRAFT" | "ISSUED" | "CLOSED" | "CANCELLED";
         /** ScheduleEntryIn */
         ScheduleEntryIn: {
             /** Duration Days */
@@ -6747,11 +10547,6 @@ export interface components {
             note?: string | null;
             /** Predecessors */
             predecessors?: string[];
-        };
-        /** ScheduleIn */
-        ScheduleIn: {
-            /** Entries */
-            entries: components["schemas"]["ScheduleEntryIn"][];
         };
         /** ScopeIn */
         ScopeIn: {
@@ -6772,6 +10567,62 @@ export interface components {
             questions: string[];
             /** Title */
             title: string;
+        };
+        /** SelectIn */
+        SelectIn: {
+            /**
+             * Challenge Id
+             * Format: uuid
+             */
+            challenge_id: string;
+            /** Code */
+            code: string;
+            /** Contact Name */
+            contact_name: string;
+            /** Contact Phone */
+            contact_phone: string;
+            /**
+             * Quote Version Id
+             * Format: uuid
+             */
+            quote_version_id: string;
+            /**
+             * Statement Id
+             * Format: uuid
+             */
+            statement_id: string;
+        };
+        /** SelectionCodeIn */
+        SelectionCodeIn: {
+            /**
+             * Quote Version Id
+             * Format: uuid
+             */
+            quote_version_id: string;
+        };
+        /** SelectionOut */
+        SelectionOut: {
+            /** Contractor Name */
+            contractor_name: string | null;
+            /**
+             * Engagement Id
+             * Format: uuid
+             */
+            engagement_id: string;
+            /** Firm Name */
+            firm_name: string | null;
+            /**
+             * Quote Version Id
+             * Format: uuid
+             */
+            quote_version_id: string;
+            /**
+             * Selected At
+             * Format: date-time
+             */
+            selected_at: string;
+            /** Statement Text */
+            statement_text: string;
         };
         /** ServicesOut */
         ServicesOut: {
@@ -6800,6 +10651,12 @@ export interface components {
             /** Response Hours */
             response_hours: number;
         };
+        /**
+         * Severity
+         * @description EX-11.
+         * @enum {string}
+         */
+        Severity: "MINOR" | "MAJOR" | "CRITICAL";
         /** ShareIn */
         ShareIn: {
             /** File Ids */
@@ -7277,12 +11134,72 @@ export interface components {
             /** Stage Number */
             stage_number: number;
         };
+        /** StageDurationIn */
+        StageDurationIn: {
+            /** Days */
+            days: number;
+            /** Entry Key */
+            entry_key: string;
+        };
+        /** StageDurationOut */
+        StageDurationOut: {
+            /** Days */
+            days: number;
+            /** Entry Key */
+            entry_key: string;
+        };
+        /**
+         * StageOut
+         * @description No planned date, percentage or delay: only what happened (EX-04).
+         */
+        StageOut: {
+            /** Actual End */
+            actual_end: string | null;
+            /** Actual Start */
+            actual_start: string | null;
+            /** Completion Requested At */
+            completion_requested_at: string | null;
+            /** Floor */
+            floor: number | null;
+            gate_status: components["schemas"]["GateStatus"] | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Gate */
+            is_gate: boolean;
+            /** Is Payment Milestone */
+            is_payment_milestone: boolean;
+            /** Last Update At */
+            last_update_at: string | null;
+            /** Name */
+            name: string;
+            /**
+             * Sequence
+             * @description Display order only, not build order (BP-07A)
+             */
+            sequence: number;
+            /** Stage Number */
+            stage_number: number;
+            state: components["schemas"]["StageState"];
+            /** Update Count */
+            update_count: number;
+            /** Version */
+            version: number;
+        };
         /**
          * StageState
          * @description STATE_MODEL section 6.
          * @enum {string}
          */
         StageState: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETION_REQUESTED" | "COMPLETED" | "BLOCKED" | "ON_HOLD";
+        /**
+         * StageUpdateKind
+         * @description EX-02: evidence and history, never a promise of schedule completion.
+         * @enum {string}
+         */
+        StageUpdateKind: "PROGRESS" | "COMPLETION_REQUEST";
         /** StatementIn */
         StatementIn: {
             /** Note */
@@ -7305,6 +11222,18 @@ export interface components {
             text: string;
             /** Version */
             version: number;
+        };
+        /** SubmitIn */
+        SubmitIn: {
+            /**
+             * Challenge Id
+             * Format: uuid
+             */
+            challenge_id: string;
+            /** Code */
+            code: string;
+            /** Summary */
+            summary?: string | null;
         };
         /** SubtypesIn */
         SubtypesIn: {
@@ -7361,6 +11290,20 @@ export interface components {
             /** Rate */
             rate: string;
         };
+        /**
+         * TaxTreatment
+         * @enum {string}
+         */
+        TaxTreatment: "INCLUSIVE" | "EXCLUSIVE";
+        /** TestResultIn */
+        TestResultIn: {
+            /** File Id */
+            file_id?: string | null;
+            /** Test Kind */
+            test_kind: string;
+            /** Value */
+            value: string;
+        };
         /** UnavailableOut */
         UnavailableOut: {
             /**
@@ -7370,6 +11313,60 @@ export interface components {
             code: string;
             /** Missing */
             missing: string[];
+        };
+        /**
+         * UpdateIn
+         * @description The standard update (EX-02). A completion request is an update of that kind.
+         */
+        UpdateIn: {
+            /** Corrects Update Id */
+            corrects_update_id?: string | null;
+            /** File Ids */
+            file_ids: string[];
+            kind: components["schemas"]["StageUpdateKind"];
+            /** Materials */
+            materials?: string | null;
+            /** Note */
+            note: string;
+            /** Open Problems */
+            open_problems?: string | null;
+        };
+        /** UpdateOut */
+        UpdateOut: {
+            /**
+             * Contractor Name
+             * @description The contractor of record when posted
+             */
+            contractor_name: string | null;
+            /** Corrects Update Id */
+            corrects_update_id: string | null;
+            /** Entered By Operations */
+            entered_by_operations: boolean;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["StageUpdateKind"];
+            /** Materials */
+            materials: string | null;
+            /** Note */
+            note: string;
+            /** Open Problems */
+            open_problems: string | null;
+            /** Photos */
+            photos: components["schemas"]["EvidenceOut"][];
+            /**
+             * Posted At
+             * Format: date-time
+             */
+            posted_at: string;
+        };
+        /** UpdatesOut */
+        UpdatesOut: {
+            stage: components["schemas"]["StageOut"];
+            /** Updates */
+            updates: components["schemas"]["UpdateOut"][];
         };
         /** UploadRequest */
         UploadRequest: {
@@ -7555,6 +11552,122 @@ export interface components {
             stage_number: number;
             state: components["schemas"]["StageState"];
         };
+        /**
+         * CaptureIn
+         * @description Operations enter the auditor's signed report (no account, F.3).
+         */
+        p2b__assurance__schemas__CaptureIn: {
+            /**
+             * Evidence File Id
+             * Format: uuid
+             */
+            evidence_file_id: string;
+            /** Results */
+            results: components["schemas"]["ResultIn"][];
+            /** Summary */
+            summary?: string | null;
+        };
+        /** ChallengeOut */
+        p2b__assurance__schemas__ChallengeOut: {
+            /**
+             * Challenge Id
+             * Format: uuid
+             */
+            challenge_id: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Sent To */
+            sent_to: string;
+        };
+        /** ChecklistOut */
+        p2b__assurance__schemas__ChecklistOut: {
+            /** Checkpoints */
+            checkpoints: components["schemas"]["CheckpointOut"][];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Note */
+            note: string;
+            /** Published At */
+            published_at: string | null;
+            status: components["schemas"]["ChecklistStatus"];
+            /** Version */
+            version: number;
+        };
+        /** DownloadOut */
+        p2b__assurance__schemas__DownloadOut: {
+            /** Url */
+            url: string;
+        };
+        /** DrawingOut */
+        p2b__assurance__schemas__DrawingOut: {
+            /** Drawing Class */
+            drawing_class: string | null;
+            /**
+             * File Id
+             * Format: uuid
+             */
+            file_id: string;
+            /** Sheet No */
+            sheet_no: string | null;
+            /** Title */
+            title: string | null;
+        };
+        /** EvidenceUploadIn */
+        p2b__assurance__schemas__EvidenceUploadIn: {
+            /** Captured At */
+            captured_at?: string | null;
+            /** Content Type */
+            content_type: string;
+            /** File Name */
+            file_name: string;
+            /** Latitude */
+            latitude?: number | null;
+            /** Longitude */
+            longitude?: number | null;
+            /** Size Bytes */
+            size_bytes: number;
+        };
+        /** ReasonIn */
+        p2b__assurance__schemas__ReasonIn: {
+            /** Reason */
+            reason: string;
+        };
+        /** ScheduleIn */
+        p2b__assurance__schemas__ScheduleIn: {
+            /**
+             * Amends Id
+             * @description A RETURNED inspection it replaces
+             */
+            amends_id?: string | null;
+            /**
+             * Appointment Id
+             * Format: uuid
+             */
+            appointment_id: string;
+            /** Visit Note */
+            visit_note?: string | null;
+        };
+        /** ChecklistOut */
+        p2b__billing__schemas__ChecklistOut: {
+            /** Items */
+            items: components["schemas"]["ChecklistItemOut"][];
+            /** Note */
+            note: string;
+            status: components["schemas"]["ConfigStatus"];
+            /** Version */
+            version: number;
+            /**
+             * Version Id
+             * Format: uuid
+             */
+            version_id: string;
+        };
         /** DownloadOut */
         p2b__billing__schemas__DownloadOut: {
             /** Expires In Seconds */
@@ -7567,6 +11680,21 @@ export interface components {
             /** Reason */
             reason: string;
         };
+        /** ChallengeOut */
+        p2b__buildplan__schemas__ChallengeOut: {
+            /**
+             * Challenge Id
+             * Format: uuid
+             */
+            challenge_id: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Sent To */
+            sent_to: string;
+        };
         /** DownloadOut */
         p2b__buildplan__schemas__DownloadOut: {
             /** Url */
@@ -7576,6 +11704,11 @@ export interface components {
         p2b__buildplan__schemas__ReasonIn: {
             /** Reason */
             reason: string;
+        };
+        /** ScheduleIn */
+        p2b__buildplan__schemas__ScheduleIn: {
+            /** Entries */
+            entries: components["schemas"]["ScheduleEntryIn"][];
         };
         /** UploadIn */
         p2b__buildplan__schemas__UploadIn: {
@@ -7587,6 +11720,89 @@ export interface components {
             purpose: components["schemas"]["FilePurpose"];
             /** Size Bytes */
             size_bytes: number;
+        };
+        /**
+         * DecisionIn
+         * @description `version` is the stage's version as read; a stale version is 409 STALE.
+         */
+        p2b__construction__schemas__DecisionIn: {
+            /** Version */
+            version: number;
+        };
+        /** DownloadOut */
+        p2b__construction__schemas__DownloadOut: {
+            /** Url */
+            url: string;
+        };
+        /** DrawingOut */
+        p2b__construction__schemas__DrawingOut: {
+            /** Drawing Class */
+            drawing_class: string | null;
+            /**
+             * File Id
+             * Format: uuid
+             */
+            file_id: string;
+            /** Floor */
+            floor: number | null;
+            /** Sheet No */
+            sheet_no: string | null;
+            /** Title */
+            title: string | null;
+        };
+        /**
+         * EvidenceUploadIn
+         * @description A photo of an update. Capture time and location are the device's claims, stored apart
+         *     from the image (whose own metadata is stripped) and never authoritative (EX-22).
+         */
+        p2b__construction__schemas__EvidenceUploadIn: {
+            /** Captured At */
+            captured_at?: string | null;
+            /** Content Type */
+            content_type: string;
+            /** File Name */
+            file_name: string;
+            /** Latitude */
+            latitude?: number | null;
+            /** Longitude */
+            longitude?: number | null;
+            /** Size Bytes */
+            size_bytes: number;
+        };
+        /**
+         * BriefOut
+         * @description What a professional sees before accepting: no name, phone, email, address, pin or file.
+         */
+        p2b__engagements__schemas__BriefOut: {
+            /** Basement */
+            basement: boolean | null;
+            /** Budget Band */
+            budget_band: string | null;
+            /** Built Up Area Sqft */
+            built_up_area_sqft: number | null;
+            /** Category */
+            category: string;
+            /** Floors */
+            floors: number | null;
+            /** Locality */
+            locality: string | null;
+            /** Plot Area Sqft */
+            plot_area_sqft: string | null;
+            /** Services */
+            services: string[];
+            /** Start Window */
+            start_window: string | null;
+            /** Subtypes */
+            subtypes: string[];
+        };
+        /** DeclineIn */
+        p2b__engagements__schemas__DeclineIn: {
+            /**
+             * Note
+             * @description Required for OTHER; never shown to the family
+             */
+            note?: string | null;
+            reason: components["schemas"]["DeclineReason"];
         };
         /** DownloadOut */
         p2b__engagements__schemas__DownloadOut: {
@@ -7620,6 +11836,13 @@ export interface components {
             /** Reason */
             reason: string | null;
             to_status: components["schemas"]["ProjectStatus"];
+        };
+        /** DecisionIn */
+        p2b__professionals__schemas__DecisionIn: {
+            /** Message */
+            message?: string | null;
+            /** Note */
+            note?: string | null;
         };
         /** DownloadOut */
         p2b__professionals__schemas__DownloadOut: {
@@ -7660,6 +11883,128 @@ export interface components {
              * @enum {string}
              */
             purpose: "VERIFICATION_EVIDENCE" | "PORTFOLIO";
+            /** Size Bytes */
+            size_bytes: number;
+        };
+        /**
+         * BriefOut
+         * @description Before accepting: no name, phone, email, address, pin, drawings or documents (QD-09).
+         */
+        p2b__rfq__schemas__BriefOut: {
+            /** Basement */
+            basement: boolean | null;
+            /** Budget Band */
+            budget_band: string | null;
+            /** Build Plan Accepted */
+            build_plan_accepted: boolean;
+            /** Built Up Area Sqft */
+            built_up_area_sqft: number | null;
+            /** Floors */
+            floors: number | null;
+            /** Locality */
+            locality: string | null;
+            /** Plot Area Sqft */
+            plot_area_sqft: string | null;
+            /** Start Window */
+            start_window: string | null;
+        };
+        /**
+         * CaptureIn
+         * @description Operations enter a quote in the standard structure for an outside contractor, or for a
+         *     listed contractor who sent it outside the portal; the contractor's document is the
+         *     evidence (QD-22, BR-082).
+         */
+        p2b__rfq__schemas__CaptureIn: {
+            /** Additional Items */
+            additional_items?: components["schemas"]["AdditionalItemIn"][];
+            /** Assumptions */
+            assumptions?: string[];
+            /** Attachment File Ids */
+            attachment_file_ids?: string[];
+            /** Comment */
+            comment?: string | null;
+            /** Duration Days */
+            duration_days: number;
+            /**
+             * Evidence File Id
+             * Format: uuid
+             */
+            evidence_file_id: string;
+            /** Exclusions */
+            exclusions?: string[];
+            /** Lines */
+            lines: components["schemas"]["QuoteLineIn"][];
+            /** Materials */
+            materials?: string | null;
+            /** Payment Terms */
+            payment_terms?: string | null;
+            /** Stage Durations */
+            stage_durations?: components["schemas"]["StageDurationIn"][];
+            /** Tax Note */
+            tax_note?: string | null;
+            tax_treatment: components["schemas"]["TaxTreatment"];
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /**
+             * Valid To
+             * Format: date
+             */
+            valid_to: string;
+            /** Warranty */
+            warranty?: string | null;
+        };
+        /** ChallengeOut */
+        p2b__rfq__schemas__ChallengeOut: {
+            /**
+             * Challenge Id
+             * Format: uuid
+             */
+            challenge_id: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Sent To */
+            sent_to: string;
+            /**
+             * Statement Id
+             * Format: uuid
+             */
+            statement_id: string;
+            /** Statement Text */
+            statement_text: string;
+            /** Statement Version */
+            statement_version: number;
+        };
+        /** DeclineIn */
+        p2b__rfq__schemas__DeclineIn: {
+            /**
+             * Note
+             * @description Required for OTHER; never shown to the homeowner
+             */
+            note?: string | null;
+            reason: components["schemas"]["DeclineReason"];
+        };
+        /** DownloadOut */
+        p2b__rfq__schemas__DownloadOut: {
+            /** Url */
+            url: string;
+        };
+        /** ReasonIn */
+        p2b__rfq__schemas__ReasonIn: {
+            /** Reason */
+            reason: string;
+        };
+        /** UploadIn */
+        p2b__rfq__schemas__UploadIn: {
+            /** Content Type */
+            content_type: string;
+            /** File Name */
+            file_name: string;
             /** Size Bytes */
             size_bytes: number;
         };
@@ -7735,6 +12080,98 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StatementOut"][];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_appointment_api_v1_admin_auditor_appointments_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AppointmentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_end_appointment_api_v1_admin_auditor_appointments__appointment_id__end_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                appointment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__assurance__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentOut"];
                 };
             };
             /** @description Client error */
@@ -8088,6 +12525,49 @@ export interface operations {
             };
         };
     };
+    post_publish_api_v1_admin_checklists__version_id__publish_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                version_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__assurance__schemas__ChecklistOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     post_checker_api_v1_admin_drawing_checkers_post: {
         parameters: {
             query?: never;
@@ -8188,7 +12668,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChecklistOut"][];
+                    "application/json": components["schemas"]["p2b__billing__schemas__ChecklistOut"][];
                 };
             };
             /** @description Client error */
@@ -8230,7 +12710,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChecklistOut"];
+                    "application/json": components["schemas"]["p2b__billing__schemas__ChecklistOut"];
                 };
             };
             /** @description Client error */
@@ -8270,7 +12750,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChecklistOut"];
+                    "application/json": components["schemas"]["p2b__billing__schemas__ChecklistOut"];
                 };
             };
             /** @description Client error */
@@ -8357,6 +12837,91 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RateCardOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_statement_api_v1_admin_selection_statements_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StatementIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StatementOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_activate_statement_api_v1_admin_selection_statements__statement_id__activate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                statement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StatementOut"][];
                 };
             };
             /** @description Client error */
@@ -9184,6 +13749,82 @@ export interface operations {
             };
         };
     };
+    get_queue_api_v1_ops_assurance_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceQueueOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_appointments_api_v1_ops_auditor_appointments_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentOut"][];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_exceptions_api_v1_ops_billing_exceptions_get: {
         parameters: {
             query?: never;
@@ -9926,7 +14567,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ScheduleIn"];
+                "application/json": components["schemas"]["p2b__buildplan__schemas__ScheduleIn"];
             };
         };
         responses: {
@@ -10203,6 +14844,133 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OpsVersionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_checklists_api_v1_ops_checklists_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__assurance__schemas__ChecklistOut"][];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_checklist_api_v1_ops_checklists_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChecklistDraftIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__assurance__schemas__ChecklistOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    put_checkpoints_api_v1_ops_checklists__version_id__checkpoints_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckpointsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__assurance__schemas__ChecklistOut"];
                 };
             };
             /** @description Client error */
@@ -10534,6 +15302,44 @@ export interface operations {
             };
         };
     };
+    get_queue_api_v1_ops_execution_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsExecutionQueueOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_ops_file_url_api_v1_ops_files__file_id__url_get: {
         parameters: {
             query?: never;
@@ -10552,6 +15358,318 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StaffDownloadLink"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_file_api_v1_ops_inspection_files__file_id__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__assurance__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_approve_api_v1_ops_inspections__inspection_id__approve_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsInspectionsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_cancel_api_v1_ops_inspections__inspection_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__assurance__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsInspectionsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_capture_api_v1_ops_inspections__inspection_id__capture_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__assurance__schemas__CaptureIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsInspectionsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_report_correction_api_v1_ops_inspections__inspection_id__report_corrections_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__assurance__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsInspectionsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_report_api_v1_ops_inspections__inspection_id__reports__version__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                inspection_id: string;
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__assurance__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_return_api_v1_ops_inspections__inspection_id__return_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__assurance__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsInspectionsOut"];
                 };
             };
             /** @description Client error */
@@ -10701,6 +15819,147 @@ export interface operations {
             };
         };
     };
+    post_due_date_api_v1_ops_non_conformances__nc_id__due_date_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                nc_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DueDateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsInspectionsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_rectification_api_v1_ops_non_conformances__nc_id__rectification_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                nc_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpsRectifyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsInspectionsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_reopen_api_v1_ops_non_conformances__nc_id__reopen_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                nc_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__assurance__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsInspectionsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     post_portfolio_review_api_v1_ops_portfolio_items__item_id___verdict__post: {
         parameters: {
             query?: never;
@@ -10798,7 +16057,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DecisionIn"];
+                "application/json": components["schemas"]["p2b__professionals__schemas__DecisionIn"];
             };
         };
         responses: {
@@ -10933,7 +16192,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DecisionIn"];
+                "application/json": components["schemas"]["p2b__professionals__schemas__DecisionIn"];
             };
         };
         responses: {
@@ -10980,7 +16239,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DecisionIn"];
+                "application/json": components["schemas"]["p2b__professionals__schemas__DecisionIn"];
             };
         };
         responses: {
@@ -11207,6 +16466,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OpsProjectDetail"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_project_api_v1_ops_projects__project_id__assurance_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsInspectionsOut"];
                 };
             };
             /** @description Client error */
@@ -11538,6 +16837,137 @@ export interface operations {
             };
         };
     };
+    get_project_execution_api_v1_ops_projects__project_id__execution_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsExecutionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_inspection_evidence_api_v1_ops_projects__project_id__inspection_evidence_post: {
+        parameters: {
+            query: {
+                file_name: string;
+            };
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/pdf": string;
+                "image/jpeg": string;
+                "image/png": string;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_ops_marks_api_v1_ops_projects__project_id__payment_marks_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MilestonesOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     post_request_information_api_v1_ops_projects__project_id__request_information_post: {
         parameters: {
             query?: never;
@@ -11563,6 +16993,194 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OpsProjectDetail"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_rfq_file_api_v1_ops_projects__project_id__rfq_files_post: {
+        parameters: {
+            query: {
+                file_name: string;
+            };
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/pdf": string;
+                "image/jpeg": string;
+                "image/png": string;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_project_rfqs_api_v1_ops_projects__project_id__rfqs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_rfq_api_v1_ops_projects__project_id__rfqs_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RfqRequestIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_stage_evidence_api_v1_ops_projects__project_id__stage_evidence_post: {
+        parameters: {
+            query: {
+                file_name: string;
+            };
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "image/jpeg": string;
+                "image/png": string;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileOut"];
                 };
             };
             /** @description Client error */
@@ -11745,6 +17363,849 @@ export interface operations {
             };
         };
     };
+    put_adjustments_api_v1_ops_quote_versions__quote_version_id__adjustments_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_version_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdjustmentsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_reviewed_api_v1_ops_quote_versions__quote_version_id__reviewed_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                quote_version_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_reinspection_api_v1_ops_reinspections_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReinspectionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsInspectionsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_test_result_api_v1_ops_results__result_id__test_results_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                result_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TestResultIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsInspectionsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_ops_answer_api_v1_ops_rfq_clarifications__clarification_id__answer_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                clarification_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpsAnswerIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_ops_close_api_v1_ops_rfq_clarifications__clarification_id__close_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                clarification_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__rfq__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_rfq_file_api_v1_ops_rfq_files__file_id__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__rfq__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_capture_api_v1_ops_rfq_invitations__invitation_id__capture_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                invitation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__rfq__schemas__CaptureIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_withdraw_invitation_api_v1_ops_rfq_invitations__invitation_id__withdraw_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                invitation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__rfq__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_rfqs_api_v1_ops_rfqs_get: {
+        parameters: {
+            query?: {
+                state?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_rfq_api_v1_ops_rfqs__rfq_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rfq_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_cancel_api_v1_ops_rfqs__rfq_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                rfq_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__rfq__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_ops_question_api_v1_ops_rfqs__rfq_id__clarifications_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                rfq_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpsQuestionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_publish_api_v1_ops_rfqs__rfq_id__comparisons_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                rfq_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    put_deadline_api_v1_ops_rfqs__rfq_id__deadline_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rfq_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeadlineIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_extend_api_v1_ops_rfqs__rfq_id__deadline_extend_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                rfq_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExtendIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_introduce_api_v1_ops_rfqs__rfq_id__invitations_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                rfq_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IntroduceIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_issue_api_v1_ops_rfqs__rfq_id__issue_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                rfq_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_statements_api_v1_ops_selection_statements_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StatementOut"][];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_statements_api_v1_ops_signoff_statements_get: {
         parameters: {
             query?: never;
@@ -11808,6 +18269,321 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OpsVersionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_stage_file_api_v1_ops_stage_files__file_id__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__construction__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_confirm_api_v1_ops_stages__stage_id__confirm_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReasonDecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsExecutionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_schedule_api_v1_ops_stages__stage_id__inspections_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__assurance__schemas__ScheduleIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsInspectionsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_ops_received_mark_api_v1_ops_stages__stage_id__payment_mark_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpsMarkIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MilestonesOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_return_api_v1_ops_stages__stage_id__return_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReasonDecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsExecutionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_updates_api_v1_ops_stages__stage_id__updates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdatesOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_update_api_v1_ops_stages__stage_id__updates_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpsUpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdatesOut"];
                 };
             };
             /** @description Client error */
@@ -12445,7 +19221,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChallengeOut"];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__ChallengeOut"];
                 };
             };
             /** @description Client error */
@@ -12906,7 +19682,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DeclineIn"];
+                "application/json": components["schemas"]["p2b__engagements__schemas__DeclineIn"];
             };
         };
         responses: {
@@ -13109,6 +19885,565 @@ export interface operations {
             };
         };
     };
+    get_pro_engagement_api_v1_pro_engagements__engagement_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProEngagementOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_contractor_assurance_api_v1_pro_engagements__engagement_id__assurance_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_end_own_engagement_api_v1_pro_engagements__engagement_id__end_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__engagements__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProEngagementOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_evidence_upload_api_v1_pro_engagements__engagement_id__evidence_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__construction__schemas__EvidenceUploadIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadTicketOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_evidence_complete_api_v1_pro_engagements__engagement_id__evidence__file_id__complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_pro_execution_api_v1_pro_engagements__engagement_id__execution_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProExecutionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_pro_execution_file_api_v1_pro_engagements__engagement_id__execution_files__file_id__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__construction__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_engagement_file_url_api_v1_pro_engagements__engagement_id__files__file_id__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__engagements__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_rectification_api_v1_pro_engagements__engagement_id__non_conformances__nc_id__rectification_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                engagement_id: string;
+                nc_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RectifyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_pro_marks_api_v1_pro_engagements__engagement_id__payment_marks_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MilestonesOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_received_mark_api_v1_pro_engagements__engagement_id__stages__stage_id__payment_mark_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                engagement_id: string;
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MarkIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MilestonesOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_pro_stage_updates_api_v1_pro_engagements__engagement_id__stages__stage_id__updates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdatesOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_update_api_v1_pro_engagements__engagement_id__stages__stage_id__updates_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                engagement_id: string;
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdatesOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_pro_file_url_api_v1_pro_files__file_id__url_get: {
         parameters: {
             query?: never;
@@ -13127,6 +20462,384 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["p2b__professionals__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_auditor_inspections_api_v1_pro_inspections_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditorInspectionsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_auditor_inspection_api_v1_pro_inspections__inspection_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditorInspectionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_inspection_evidence_api_v1_pro_inspections__inspection_id__evidence_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__assurance__schemas__EvidenceUploadIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadTicketOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_inspection_evidence_complete_api_v1_pro_inspections__inspection_id__evidence__file_id__complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                inspection_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_auditor_file_api_v1_pro_inspections__inspection_id__files__file_id__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                inspection_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__assurance__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_readiness_api_v1_pro_inspections__inspection_id__readiness_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditorInspectionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    put_results_api_v1_pro_inspections__inspection_id__results_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResultsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditorInspectionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_submission_code_api_v1_pro_inspections__inspection_id__submission_code_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__assurance__schemas__ChallengeOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_submit_api_v1_pro_inspections__inspection_id__submit_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubmitIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditorInspectionOut"];
                 };
             };
             /** @description Client error */
@@ -13393,6 +21106,665 @@ export interface operations {
             };
         };
     };
+    get_invitations_api_v1_pro_rfq_invitations_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProInvitationsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_invitation_api_v1_pro_rfq_invitations__invitation_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invitation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProInvitationOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_accept_invitation_api_v1_pro_rfq_invitations__invitation_id__accept_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                invitation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvitationAcceptIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProInvitationOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_attachment_api_v1_pro_rfq_invitations__invitation_id__attachments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invitation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__rfq__schemas__UploadIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadTicketOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_attachment_complete_api_v1_pro_rfq_invitations__invitation_id__attachments__file_id__complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invitation_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_question_api_v1_pro_rfq_invitations__invitation_id__clarifications_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                invitation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuestionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProInvitationOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_answer_api_v1_pro_rfq_invitations__invitation_id__clarifications__clarification_id__answer_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                invitation_id: string;
+                clarification_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnswerIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProInvitationOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_decline_invitation_api_v1_pro_rfq_invitations__invitation_id__decline_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                invitation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__rfq__schemas__DeclineIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProInvitationOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_pack_drawing_api_v1_pro_rfq_invitations__invitation_id__drawings__file_id__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invitation_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__rfq__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_own_attachment_api_v1_pro_rfq_invitations__invitation_id__files__file_id__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invitation_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__rfq__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    put_quote_draft_api_v1_pro_rfq_invitations__invitation_id__quote_draft_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invitation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuoteDraftIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProInvitationOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_quote_draft_api_v1_pro_rfq_invitations__invitation_id__quote_draft_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                invitation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProInvitationOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_renew_api_v1_pro_rfq_invitations__invitation_id__quote_renew_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                invitation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RenewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProInvitationOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_withdraw_quote_api_v1_pro_rfq_invitations__invitation_id__quote_withdraw_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                invitation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__rfq__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProInvitationOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_quote_api_v1_pro_rfq_invitations__invitation_id__quotes_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                invitation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuoteIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProInvitationOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     post_pro_upload_api_v1_pro_uploads_post: {
         parameters: {
             query?: never;
@@ -13579,6 +21951,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_family_assurance_api_v1_projects__project_id__assurance_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceOut"];
                 };
             };
             /** @description Client error */
@@ -13918,7 +22330,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChallengeOut"];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__ChallengeOut"];
                 };
             };
             /** @description Client error */
@@ -14828,6 +23240,46 @@ export interface operations {
             };
         };
     };
+    get_execution_api_v1_projects__project_id__execution_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FamilyExecutionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_project_files_api_v1_projects__project_id__files_get: {
         parameters: {
             query?: never;
@@ -14846,6 +23298,48 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FileView"][];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_report_api_v1_projects__project_id__inspections__inspection_id__reports__version__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                inspection_id: string;
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__assurance__schemas__DownloadOut"];
                 };
             };
             /** @description Client error */
@@ -14935,6 +23429,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_family_marks_api_v1_projects__project_id__payment_marks_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MilestonesOut"];
                 };
             };
             /** @description Client error */
@@ -15310,6 +23844,359 @@ export interface operations {
             };
         };
     };
+    get_rfqs_api_v1_projects__project_id__rfqs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FamilyRfqsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_rfq_api_v1_projects__project_id__rfqs_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RfqRequestIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FamilyRfqsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_rfq_api_v1_projects__project_id__rfqs__rfq_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                rfq_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FamilyRfqOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_cancel_rfq_api_v1_projects__project_id__rfqs__rfq_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+                rfq_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CancelIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FamilyRfqsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_comparison_document_api_v1_projects__project_id__rfqs__rfq_id__comparisons__comparison_id__document_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                rfq_id: string;
+                comparison_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__rfq__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_family_quote_file_api_v1_projects__project_id__rfqs__rfq_id__files__file_id__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                rfq_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__rfq__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_select_api_v1_projects__project_id__rfqs__rfq_id__select_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+                rfq_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SelectIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FamilyRfqsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_selection_code_api_v1_projects__project_id__rfqs__rfq_id__selection_code_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                rfq_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SelectionCodeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__rfq__schemas__ChallengeOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_services_api_v1_projects__project_id__services_get: {
         parameters: {
             query?: never;
@@ -15373,6 +24260,233 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ServicesOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_confirm_api_v1_projects__project_id__stages__stage_id__confirm_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__construction__schemas__DecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FamilyExecutionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_stage_file_api_v1_projects__project_id__stages__stage_id__files__file_id__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                stage_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__construction__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_paid_mark_api_v1_projects__project_id__stages__stage_id__payment_mark_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MarkIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MilestonesOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_return_api_v1_projects__project_id__stages__stage_id__return_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReasonDecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FamilyExecutionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_stage_updates_api_v1_projects__project_id__stages__stage_id__updates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                stage_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdatesOut"];
                 };
             };
             /** @description Client error */

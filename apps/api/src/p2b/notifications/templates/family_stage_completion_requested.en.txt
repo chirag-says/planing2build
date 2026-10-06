@@ -1,0 +1,5 @@
+Your contractor asks you to confirm a stage
+---
+Your contractor on project $code says this stage is complete: $stage.
+
+Sign in to Plan2Build to see the photos and notes, then confirm the stage or return it with a reason.

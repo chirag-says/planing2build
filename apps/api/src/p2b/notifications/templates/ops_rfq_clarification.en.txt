@@ -1,0 +1,3 @@
+A clarification needs attention
+---
+There is a new clarification message on the request for quotation of project $code.

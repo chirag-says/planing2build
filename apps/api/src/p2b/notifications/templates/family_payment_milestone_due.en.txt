@@ -1,0 +1,5 @@
+A payment milestone is reached
+---
+The stage $stage on project $code is complete, and it is a payment milestone in your plan.
+
+You pay your contractor directly; Plan2Build does not handle construction payments. You can record that you paid on your project's construction page.

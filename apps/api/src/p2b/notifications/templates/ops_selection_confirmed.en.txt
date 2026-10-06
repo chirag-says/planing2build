@@ -1,0 +1,3 @@
+A homeowner selected a contractor
+---
+The owner of project $code selected a contractor's quote. The request for quotation is closed.

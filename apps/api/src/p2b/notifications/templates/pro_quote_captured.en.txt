@@ -1,0 +1,5 @@
+Plan2Build entered your quote
+---
+Plan2Build entered the quote you sent for the project in $locality in the standard quote format.
+
+Sign in to Plan2Build to check it.

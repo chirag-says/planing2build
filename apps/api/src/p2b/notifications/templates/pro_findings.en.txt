@@ -1,0 +1,5 @@
+Inspection findings to correct
+---
+The inspection of the stage $stage (Gate $gate) on project $code found items to correct.
+
+Sign in to Plan2Build to read each finding, its due date and the correction required.

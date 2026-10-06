@@ -2,6 +2,7 @@
 (ADR-011; SECURITY sections 5 and 8; API section 15; REQUIREMENT_QUESTIONS_V1 R-15)."""
 
 import asyncio
+import hashlib
 import io
 import uuid
 from typing import Any
@@ -196,6 +197,23 @@ async def test_a_photo_becomes_available_without_its_metadata(
     assert incoming_key(record.object_key) not in storage.objects  # incoming copy removed
     assert record.detected_mime == "image/jpeg"
     assert record.sha256 is not None
+
+
+async def test_the_recorded_hash_is_of_the_final_stored_bytes(
+    setup: tuple[AsyncClient, str], storage: MemoryStorage, database: Database
+) -> None:
+    """H-07: upload, process (re-encode), store, read the stored bytes back, recompute: the
+    persisted sha256 equals the hash of what is served, not of what was uploaded."""
+    client, project_id = setup
+    original = jpeg_with_exif()
+    file = await uploaded(client, storage, project_id, original, "image/jpeg")
+    assert await run_processing(database, storage, file["file_id"]) == FileState.AVAILABLE
+    record = await stored(database, file["file_id"])
+    final, _ = storage.objects[record.object_key]
+    assert final != original  # re-encoded: metadata gone
+    assert record.sha256 == hashlib.sha256(final).hexdigest()
+    assert record.sha256 != hashlib.sha256(original).hexdigest()
+    assert record.size_bytes == len(final)
 
 
 @pytest.mark.parametrize(

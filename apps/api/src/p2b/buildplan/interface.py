@@ -55,7 +55,9 @@ async def accepted_manifest(
     if version is None or facts is None:
         return None
     view = await snapshot(session, facts, version)
-    return AcceptedManifest(version.id, version.version_no, version.content_hash or "", manifest(view))
+    return AcceptedManifest(
+        version.id, version.version_no, version.content_hash or "", manifest(view)
+    )
 
 
 __all__ = [

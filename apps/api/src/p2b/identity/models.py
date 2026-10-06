@@ -81,7 +81,8 @@ class OtpChallenge(Timestamps, Base):
     __table_args__ = (
         CheckConstraint("audience IN ('ihb', 'pro', 'ops')", name="audience"),
         CheckConstraint(
-            "purpose IN ('LOGIN', 'ACCEPT_BUILD_PLAN', 'SIGN_STRUCTURAL', 'SELECT_QUOTE')", name="purpose"
+            "purpose IN ('LOGIN', 'ACCEPT_BUILD_PLAN', 'SIGN_STRUCTURAL', 'SELECT_QUOTE')",
+            name="purpose",
         ),
         CheckConstraint(
             "(purpose = 'LOGIN') = (subject_id IS NULL)", name="confirmation_has_subject"

@@ -1,0 +1,5 @@
+A Plan2Build request for quotation is closed
+---
+A Plan2Build request for quotation in $locality is no longer open to you.
+
+Sign in to Plan2Build to see your invitation.

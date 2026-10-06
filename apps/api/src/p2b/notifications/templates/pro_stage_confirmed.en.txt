@@ -1,0 +1,5 @@
+Stage completion confirmed
+---
+Completion of the stage $stage on project $code was confirmed.
+
+Sign in to Plan2Build to see the project's stages.

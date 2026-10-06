@@ -1,0 +1,5 @@
+An inspection was cancelled
+---
+The inspection of the stage $stage (Gate $gate) on project $code was cancelled.
+
+Sign in to Plan2Build to see why.

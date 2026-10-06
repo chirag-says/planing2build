@@ -1,0 +1,5 @@
+Your request for contractor quotes was closed
+---
+The request for contractor quotes on project $code was closed by Plan2Build.
+
+Sign in to Plan2Build to see why and what comes next. Quotes already received stay available to read.

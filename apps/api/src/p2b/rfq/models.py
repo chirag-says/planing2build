@@ -323,9 +323,7 @@ class RfqClarification(Base):
 
     __tablename__ = "rfq_clarifications"
     __table_args__ = (
-        CheckConstraint(
-            "direction IN ('CONTRACTOR_ASKS', 'PLAN2BUILD_ASKS')", name="direction"
-        ),
+        CheckConstraint("direction IN ('CONTRACTOR_ASKS', 'PLAN2BUILD_ASKS')", name="direction"),
         CheckConstraint("state IN ('OPEN', 'ANSWERED', 'CLOSED')", name="state"),
         CheckConstraint("(state = 'ANSWERED') = (answer IS NOT NULL)", name="answered"),
         CheckConstraint(

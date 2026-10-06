@@ -85,6 +85,8 @@ __all__ = [
     "connection_notice",
     "engage_for_selection",
     "engagement_facts",
+    "contractor_history",
+    "engagement_names",
     "lock_category",
     "quote_review_notice",
 ]
@@ -142,3 +144,53 @@ async def active_engagement(
         )
     ).one_or_none()
     return _facts(row) if row else None
+
+
+async def engagement_names(
+    session: AsyncSession, engagement_ids: list[uuid.UUID]
+) -> dict[uuid.UUID, str | None]:
+    """The name to show for each engagement's party, whatever its state now (Slice 3.7: an
+    update stays with the contractor who posted it, EX-19)."""
+    if not engagement_ids:
+        return {}
+    rows = list(
+        await session.scalars(
+            select(ProjectEngagement).where(ProjectEngagement.id.in_(engagement_ids))
+        )
+    )
+    names = await profile_names(session, [r.profile_id for r in rows if r.profile_id])
+    out: dict[uuid.UUID, str | None] = {}
+    for row in rows:
+        if row.profile_id is not None and row.profile_id in names:
+            _, display_name, firm_name = names[row.profile_id]
+            out[row.id] = display_name or firm_name
+        else:
+            out[row.id] = row.outside_firm or row.outside_name
+    return out
+
+
+async def contractor_history(
+    session: AsyncSession, project_id: uuid.UUID, category_code: str = "CONTRACTOR"
+) -> list[dict[str, object]]:
+    """Every engagement of the category, oldest first, as the Build Record names them (I.1): an
+    OUTSIDE party is labelled as chosen by the family."""
+    rows = list(
+        await session.scalars(
+            select(ProjectEngagement)
+            .where(
+                ProjectEngagement.project_id == project_id,
+                ProjectEngagement.category_code == category_code,
+            )
+            .order_by(ProjectEngagement.started_at, ProjectEngagement.id)
+        )
+    )
+    names = await engagement_names(session, [r.id for r in rows])
+    return [
+        {
+            "name": names.get(r.id), "party": r.party, "origin": r.origin, "state": r.state,
+            "chosen_by_family": r.party == "OUTSIDE",
+            "started_at": r.started_at.isoformat(),
+            "ended_at": r.ended_at.isoformat() if r.ended_at else None,
+        }
+        for r in rows
+    ]  # fmt: skip

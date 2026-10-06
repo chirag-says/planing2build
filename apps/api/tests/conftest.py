@@ -90,7 +90,10 @@ APP_TABLES = (
     "item_rate_card_lines, drawing_checker_appointments, design_requests, "
     "drawing_sets, drawing_files, build_plans, build_plan_versions, build_plan_spec_values, "
     "boq_lines, build_plan_schedule_entries, structural_signoffs, build_plan_acceptances, "
-    "build_plan_events"
+    "build_plan_events, rfqs, rfq_invitations, quote_drafts, quote_versions, quote_lines, "
+    "quote_adjustments, rfq_clarifications, comparisons, selections, rfq_events, "
+    "stage_updates, construction_events, payment_marks, auditor_appointments, inspections, "
+    "inspection_results, non_conformances, inspection_reports, test_results, assurance_events"
 )
 
 
@@ -245,4 +248,60 @@ async def work(app: FastAPI, database: Database, billing_app: "App") -> AsyncIte
         assert not failed, failed
 
     async with billing_app.open_async():
+        yield run
+
+
+@pytest.fixture
+async def rfq_worker(
+    app: FastAPI, database: Database, billing_app: "App", notify_app: "App"
+) -> AsyncIterator[Any]:
+    """The worker for this slice: billing, engagements, rfq and notification subscribers on the
+    outbox, then billing and notification jobs. Returns the mailbox of the run. Slice 3.7 adds
+    the assurance subscribers."""
+    from sqlalchemy import select
+
+    from p2b.assurance import handlers as assurance_handlers
+    from p2b.billing import handlers as billing_handlers
+    from p2b.core.jobs import RESOURCES_KEY, JobResources
+    from p2b.core.outbox import HandlerRegistry, OutboxEvent, relay_batch
+    from p2b.engagements import handlers as engagements_handlers
+    from p2b.integrations.clamav import AcceptAllScanner
+    from p2b.integrations.email import MemoryEmailProvider
+    from p2b.notifications import handlers as notifications_handlers
+    from p2b.rfq import handlers as rfq_handlers
+
+    registry = HandlerRegistry()
+    billing_handlers.register(registry, billing_app)
+    engagements_handlers.register(registry, billing_app)
+    rfq_handlers.register(registry, billing_app)
+    assurance_handlers.register(registry, billing_app)
+    notifications_handlers.register(registry, notify_app)
+
+    async def run() -> MemoryEmailProvider:
+        mailbox = MemoryEmailProvider()
+        resources = JobResources(
+            database, app.state.settings, mailbox, app.state.storage, AcceptAllScanner(),
+            app.state.image_provider, app.state.payment_gateway,
+        )  # fmt: skip
+        for _ in range(3):
+            while await relay_batch(database, registry):
+                pass
+            await billing_app.run_worker_async(
+                queues=["priority", "render"], wait=False, install_signal_handlers=False,
+                additional_context={RESOURCES_KEY: resources},
+            )  # fmt: skip
+        await notify_app.run_worker_async(
+            queues=["notifications"], wait=False, install_signal_handlers=False,
+            additional_context={RESOURCES_KEY: resources},
+        )  # fmt: skip
+        async with database.transaction() as session:
+            failed = list(
+                await session.scalars(
+                    select(OutboxEvent.last_error).where(OutboxEvent.last_error.is_not(None))
+                )
+            )
+        assert not failed, failed
+        return mailbox
+
+    async with billing_app.open_async(), notify_app.open_async():
         yield run

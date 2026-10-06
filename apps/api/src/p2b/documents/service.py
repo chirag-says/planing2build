@@ -14,6 +14,7 @@ import hashlib
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any
 
 import structlog
 from sqlalchemy import func, select
@@ -181,15 +182,19 @@ async def process_file(
         file = await session.get_one(FileObject, file_id, with_for_update=True)
         if file.state != FileState.SCANNING.value:
             return None
-        file.sha256 = hashlib.sha256(data).hexdigest()
         file.detected_mime = verdict.detected_mime
         if not verdict.ok or (scan is not None and not scan.clean):
+            # The quarantined bytes are the incoming copy, which stays where it is.
+            file.sha256 = hashlib.sha256(data).hexdigest()
             file.state = FileState.QUARANTINED.value
             file.rejection_reason = verdict.reason or "MALWARE"
             event = "documents.file_quarantined"
             log.warning("file.quarantined", reason=file.rejection_reason)
         else:
             await storage.write(key, verdict.content, declared)
+            # H-07: the hash is of the bytes stored as the record (re-encoded for images), so
+            # anything that later verifies a file against its hash checks what is served.
+            file.sha256 = hashlib.sha256(verdict.content).hexdigest()
             file.state = FileState.AVAILABLE.value
             file.size_bytes = len(verdict.content)
             file.available_at = func.now()
@@ -276,6 +281,9 @@ async def store_generated_file(
         FilePurpose.INVOICE,
         FilePurpose.BUILD_PLAN_DOCUMENT,
         FilePurpose.COMPARISON_DOCUMENT,
+        FilePurpose.INSPECTION_REPORT,
+        FilePurpose.BUILD_RECORD_DOCUMENT,
+        FilePurpose.BUILD_RECORD_EXPORT,
     ):
         raise ValueError("only server-generated purposes are stored this way")
     if (purpose == FilePurpose.INVOICE) != (project_id is None):
@@ -414,6 +422,19 @@ PROJECT_LIMITS: dict[FilePurpose, UploadLimits] = {
     FilePurpose.QUOTE_ATTACHMENT: UploadLimits(
         accept=("application/pdf", "image/jpeg", "image/png"), max_bytes=10 * MB, max_files=200
     ),
+    # Photos with a progress update or a rectification (Slice 3.7, EX-02): images only.
+    FilePurpose.STAGE_EVIDENCE: UploadLimits(
+        accept=("image/jpeg", "image/png"), max_bytes=10 * MB, max_files=5000
+    ),
+    # An inspection's photos and files (Slice 3.7B; P3), and the signed report operations upload
+    # when they capture an inspection for an auditor without an account.
+    FilePurpose.INSPECTION_EVIDENCE: UploadLimits(
+        accept=("application/pdf", "image/jpeg", "image/png"), max_bytes=10 * MB, max_files=5000
+    ),
+    # Handover documents (Slice 3.7C): warranties, manuals, certificates, final drawings, photos.
+    FilePurpose.HANDOVER_DOCUMENT: UploadLimits(
+        accept=("application/pdf", "image/jpeg", "image/png"), max_bytes=20 * MB, max_files=500
+    ),
 }
 STAFF_READABLE = frozenset(
     p.value
@@ -428,6 +449,12 @@ STAFF_READABLE = frozenset(
         FilePurpose.BUILD_PLAN_DOCUMENT,
         FilePurpose.QUOTE_ATTACHMENT,
         FilePurpose.COMPARISON_DOCUMENT,
+        FilePurpose.STAGE_EVIDENCE,
+        FilePurpose.INSPECTION_EVIDENCE,
+        FilePurpose.INSPECTION_REPORT,
+        FilePurpose.HANDOVER_DOCUMENT,
+        FilePurpose.BUILD_RECORD_DOCUMENT,
+        FilePurpose.BUILD_RECORD_EXPORT,
     )
 )
 
@@ -676,6 +703,7 @@ class FileFacts:
     file_name: str
     content_type: str
     size_bytes: int
+    capture_claim: dict[str, Any] | None = None
 
 
 async def create_project_file_upload(
@@ -689,6 +717,7 @@ async def create_project_file_upload(
     original_name: str,
     content_type: str,
     size_bytes: int,
+    capture_claim: dict[str, Any] | None = None,
 ) -> tuple["FileSummary", PresignedUpload]:
     """A presigned upload of a drawing or evidence file into a project. The caller has checked
     the uploader's right to add it; the same checks and scanning follow as for every upload."""
@@ -726,6 +755,7 @@ async def create_project_file_upload(
         declared_mime=content_type,
         size_bytes=size_bytes,
         state=FileState.PENDING_UPLOAD.value,
+        capture_claim=capture_claim,
     )
     session.add(file)
     await session.flush()
@@ -780,7 +810,7 @@ async def file_facts(
     return {
         r.id: FileFacts(
             r.id, r.project_id, r.owner_user_id, FilePurpose(r.purpose), FileState(r.state),
-            r.sha256, r.original_name, r.declared_mime, r.size_bytes,
+            r.sha256, r.original_name, r.declared_mime, r.size_bytes, r.capture_claim,
         )
         for r in rows
     }  # fmt: skip
@@ -815,6 +845,7 @@ async def store_staff_upload(
     original_name: str,
     content_type: str,
     data: bytes,
+    capture_claim: dict[str, Any] | None = None,
 ) -> "FileSummary":
     """A drawing or evidence file operations upload through the API (Slice 3.5): the admin host is
     not an allowed origin for direct storage uploads (R2 CORS, launch gate N-01), so the bytes come
@@ -842,6 +873,7 @@ async def store_staff_upload(
         declared_mime=content_type,
         size_bytes=len(data),
         state=FileState.UPLOADED.value,
+        capture_claim=capture_claim,
     )
     session.add(file)
     await session.flush()

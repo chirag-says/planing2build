@@ -1,0 +1,5 @@
+An inspection is scheduled on your stage
+---
+An independent inspection of the stage $stage (Gate $gate) on project $code is scheduled.
+
+Sign in to Plan2Build to see your project's stages.

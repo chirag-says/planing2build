@@ -16,7 +16,7 @@ export type SecuritySeverity = (typeof SecuritySeverityValues)[number];
 export const ContactKindValues = ["EMAIL", "PHONE"] as const;
 export type ContactKind = (typeof ContactKindValues)[number];
 
-export const OtpPurposeValues = ["LOGIN", "ACCEPT_BUILD_PLAN", "SIGN_STRUCTURAL"] as const;
+export const OtpPurposeValues = ["LOGIN", "ACCEPT_BUILD_PLAN", "SIGN_STRUCTURAL", "SELECT_QUOTE", "SUBMIT_INSPECTION"] as const;
 export type OtpPurpose = (typeof OtpPurposeValues)[number];
 
 export const OtpStateValues = ["ISSUED", "VERIFIED", "EXPIRED", "LOCKED"] as const;
@@ -46,7 +46,7 @@ export type ComingSoonWork = (typeof ComingSoonWorkValues)[number];
 export const FileStateValues = ["PENDING_UPLOAD", "UPLOADED", "SCANNING", "AVAILABLE", "QUARANTINED", "FAILED", "DELETED"] as const;
 export type FileState = (typeof FileStateValues)[number];
 
-export const FilePurposeValues = ["REQUIREMENT_UPLOAD", "AI_CONCEPT", "VERIFICATION_EVIDENCE", "PORTFOLIO", "INVOICE", "QUOTE_DOCUMENT", "DRAWING", "BUILD_PLAN_EVIDENCE", "BUILD_PLAN_DOCUMENT"] as const;
+export const FilePurposeValues = ["REQUIREMENT_UPLOAD", "AI_CONCEPT", "VERIFICATION_EVIDENCE", "PORTFOLIO", "INVOICE", "QUOTE_DOCUMENT", "DRAWING", "BUILD_PLAN_EVIDENCE", "BUILD_PLAN_DOCUMENT", "QUOTE_ATTACHMENT", "COMPARISON_DOCUMENT", "STAGE_EVIDENCE", "INSPECTION_EVIDENCE", "INSPECTION_REPORT"] as const;
 export type FilePurpose = (typeof FilePurposeValues)[number];
 
 export const ConfigStatusValues = ["DRAFT", "ACTIVE", "RETIRED"] as const;
@@ -216,3 +216,87 @@ export type SignerKind = (typeof SignerKindValues)[number];
 
 export const SignoffStateValues = ["SIGNED", "VOID"] as const;
 export type SignoffState = (typeof SignoffStateValues)[number];
+
+export const EngagementOriginValues = ["CONNECTION", "OUTSIDE", "RFQ_SELECTION"] as const;
+export type EngagementOrigin = (typeof EngagementOriginValues)[number];
+
+export const PackageServiceKindValues = ["CONNECTION_ACCEPTED", "RFQ_SELECTION"] as const;
+export type PackageServiceKind = (typeof PackageServiceKindValues)[number];
+
+export const RfqStateValues = ["DRAFT", "ISSUED", "CLOSED", "CANCELLED"] as const;
+export type RfqState = (typeof RfqStateValues)[number];
+
+export const RfqCancelReasonValues = ["OWNER", "OPERATIONS", "PACKAGE_ENDED", "BASELINE_SUPERSEDED", "PROJECT_CLOSED"] as const;
+export type RfqCancelReason = (typeof RfqCancelReasonValues)[number];
+
+export const InvitationStateValues = ["PROPOSED", "SENT", "ACCEPTED", "DECLINED", "EXPIRED", "WITHDRAWN"] as const;
+export type InvitationState = (typeof InvitationStateValues)[number];
+
+export const InvitationSourceValues = ["NOMINATED", "INTRODUCED", "ENGAGED"] as const;
+export type InvitationSource = (typeof InvitationSourceValues)[number];
+
+export const InvitationWithdrawReasonValues = ["REMOVED", "OPERATIONS", "RFQ_CANCELLED", "RFQ_CLOSED", "NOT_LISTED"] as const;
+export type InvitationWithdrawReason = (typeof InvitationWithdrawReasonValues)[number];
+
+export const QuoteVersionStateValues = ["SUBMITTED", "SUPERSEDED", "WITHDRAWN", "EXPIRED", "SELECTED", "NOT_SELECTED"] as const;
+export type QuoteVersionState = (typeof QuoteVersionStateValues)[number];
+
+export const QuoteVersionKindValues = ["STANDARD", "RENEWAL"] as const;
+export type QuoteVersionKind = (typeof QuoteVersionKindValues)[number];
+
+export const QuoteCheckStateValues = ["PENDING", "NEEDS_CLARIFICATION", "REVIEWED", "CLOSED"] as const;
+export type QuoteCheckState = (typeof QuoteCheckStateValues)[number];
+
+export const TaxTreatmentValues = ["INCLUSIVE", "EXCLUSIVE"] as const;
+export type TaxTreatment = (typeof TaxTreatmentValues)[number];
+
+export const QuoteLineKindValues = ["RFQ_LINE", "ADDITIONAL"] as const;
+export type QuoteLineKind = (typeof QuoteLineKindValues)[number];
+
+export const DeviationTypeValues = ["EXCLUDED", "GRADE", "QUANTITY", "ADDITIONAL", "OTHER"] as const;
+export type DeviationType = (typeof DeviationTypeValues)[number];
+
+export const AdjustmentClarificationValues = ["NONE", "OPEN", "RESOLVED"] as const;
+export type AdjustmentClarification = (typeof AdjustmentClarificationValues)[number];
+
+export const ClarificationDirectionValues = ["CONTRACTOR_ASKS", "PLAN2BUILD_ASKS"] as const;
+export type ClarificationDirection = (typeof ClarificationDirectionValues)[number];
+
+export const ClarificationStateValues = ["OPEN", "ANSWERED", "CLOSED"] as const;
+export type ClarificationState = (typeof ClarificationStateValues)[number];
+
+export const ComparisonStateValues = ["PUBLISHED", "SUPERSEDED", "DECIDED"] as const;
+export type ComparisonState = (typeof ComparisonStateValues)[number];
+
+export const StageUpdateKindValues = ["PROGRESS", "COMPLETION_REQUEST"] as const;
+export type StageUpdateKind = (typeof StageUpdateKindValues)[number];
+
+export const PaymentMarkSideValues = ["PAID", "RECEIVED"] as const;
+export type PaymentMarkSide = (typeof PaymentMarkSideValues)[number];
+
+export const PaymentMarkValueValues = ["YES", "NO"] as const;
+export type PaymentMarkValue = (typeof PaymentMarkValueValues)[number];
+
+export const AppointmentStatusValues = ["ACTIVE", "ENDED"] as const;
+export type AppointmentStatus = (typeof AppointmentStatusValues)[number];
+
+export const ChecklistStatusValues = ["DRAFT", "PUBLISHED", "RETIRED"] as const;
+export type ChecklistStatus = (typeof ChecklistStatusValues)[number];
+
+export const InspectionKindValues = ["INITIAL", "REINSPECTION"] as const;
+export type InspectionKind = (typeof InspectionKindValues)[number];
+
+export const InspectionStateValues = ["SCHEDULED", "IN_PROGRESS", "SUBMITTED", "APPROVED", "RETURNED", "CANCELLED"] as const;
+export type InspectionState = (typeof InspectionStateValues)[number];
+
+export const InspectionCancelReasonValues = ["OPERATIONS", "PACKAGE_ENDED", "PROJECT_CLOSED"] as const;
+export type InspectionCancelReason = (typeof InspectionCancelReasonValues)[number];
+
+export const CheckpointResultValues = ["PASS", "OBSERVATION", "NON_CONFORMANCE", "NOT_APPLICABLE"] as const;
+export type CheckpointResult = (typeof CheckpointResultValues)[number];
+
+export const SeverityValues = ["MINOR", "MAJOR", "CRITICAL"] as const;
+export type Severity = (typeof SeverityValues)[number];
+
+export const NcStateValues = ["OPEN", "RECTIFICATION_SUBMITTED", "REINSPECTION_SCHEDULED", "CLOSED"] as const;
+export type NcState = (typeof NcStateValues)[number];

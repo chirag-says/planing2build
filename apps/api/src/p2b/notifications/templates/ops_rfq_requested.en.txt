@@ -1,0 +1,3 @@
+Contractor quotes requested
+---
+The owner of project $code asked for contractor quotes. Prepare the request: check the contractors, set the deadline and issue it.

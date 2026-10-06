@@ -287,6 +287,10 @@ Rules: SLICE3_4_READINESS.md section 0 (N-01 to N-12, confirmed); build result i
 
 Rules: SLICE3_5_READINESS.md section 0 (BP-01 to BP-20; BP-07A deferred). Result and checks: `SLICE3_5_IMPLEMENTATION_REPORT.md`. Module `buildplan`, migrations `0013_buildplan` and `0014_acceptance_statements`, item rate cards in `catalog`, confirmation codes in `identity`, functional screens on all three hosts. Status: implementation COMPLETE (approved 2026-10-05); production readiness NOT YET READY. PDF engine reconciled: ADR-023 (fpdf2) supersedes ADR-018.
 
+## 4l. Slice 3.6 run on 2026-10-06 (accepted Build Plan to contractor selection)
+
+Rules: SLICE3_6_READINESS.md section 0 (QD-01 to QD-26; QD-02 a new product decision). Result and checks: `SLICE3_6_IMPLEMENTATION_REPORT.md`. Module `rfq`, migration `0015_rfq`, engagement origin in `engagements` (ADR-024), the RFQ_SELECTION usage kind in `billing`, functional screens on all three hosts.
+
 ## 5. Handover plan (Chirag's rulings, 2026-10-04)
 
 Dates are engineering targets, not promises of feature completeness. A part is complete when its acceptance criteria hold and the named tests pass on the stack.

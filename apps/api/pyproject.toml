@@ -94,7 +94,7 @@ source_modules = ["p2b.core"]
 forbidden_modules = [
     "p2b.identity", "p2b.audit", "p2b.catalog", "p2b.integrations", "p2b.projects", "p2b.documents",
     "p2b.operations", "p2b.construction", "p2b.specification", "p2b.notifications", "p2b.designs", "p2b.professionals",
-    "p2b.billing", "p2b.engagements", "p2b.buildplan",
+    "p2b.billing", "p2b.engagements", "p2b.buildplan", "p2b.rfq", "p2b.money", "p2b.assurance",
 ]
 
 [[tool.importlinter.contracts]]
@@ -104,16 +104,16 @@ source_modules = ["p2b.integrations"]
 forbidden_modules = [
     "p2b.identity", "p2b.audit", "p2b.catalog", "p2b.projects", "p2b.documents", "p2b.operations",
     "p2b.construction", "p2b.specification", "p2b.notifications", "p2b.designs", "p2b.professionals",
-    "p2b.billing", "p2b.engagements", "p2b.buildplan",
+    "p2b.billing", "p2b.engagements", "p2b.buildplan", "p2b.rfq", "p2b.money", "p2b.assurance",
 ]
 
 [[tool.importlinter.contracts]]
-name = "billing never touches professionals or construction (no construction money, G.1)"
+name = "billing never touches professionals, construction or payment marks (no construction money, G.1)"
 type = "forbidden"
 source_modules = ["p2b.billing"]
 forbidden_modules = [
     "p2b.professionals", "p2b.construction", "p2b.specification", "p2b.engagements",
-    "p2b.buildplan",
+    "p2b.buildplan", "p2b.rfq", "p2b.money", "p2b.assurance",
 ]
 # Billing reads projects through their interface, which knows the workspace; billing itself
 # never imports these modules.
@@ -125,7 +125,7 @@ type = "independence"
 modules = [
     "p2b.identity", "p2b.audit", "p2b.catalog", "p2b.projects", "p2b.documents", "p2b.operations",
     "p2b.construction", "p2b.specification", "p2b.notifications", "p2b.designs", "p2b.professionals",
-    "p2b.billing", "p2b.engagements", "p2b.buildplan",
+    "p2b.billing", "p2b.engagements", "p2b.buildplan", "p2b.rfq", "p2b.money", "p2b.assurance",
 ]
 # Allowed: a module may call another module's interface.py, never its other files.
 ignore_imports = [
@@ -141,4 +141,7 @@ ignore_imports = [
     "p2b.** -> p2b.engagements.interface",
     "p2b.** -> p2b.buildplan.interface",
     "p2b.** -> p2b.designs.interface",
+    "p2b.** -> p2b.rfq.interface",
+    "p2b.** -> p2b.assurance.interface",
 ]
+# p2b.money.interface is added here once another module calls it (nothing does in 3.7A).

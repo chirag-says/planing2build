@@ -2,8 +2,10 @@
 
 import uuid
 from datetime import datetime
+from typing import Any
 
 from sqlalchemy import BigInteger, CheckConstraint, ForeignKey, Index, String, text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from p2b.core.db import Base, Timestamps
@@ -23,7 +25,9 @@ class FileObject(Timestamps, Base):
         CheckConstraint(
             "purpose IN ('REQUIREMENT_UPLOAD', 'AI_CONCEPT', 'VERIFICATION_EVIDENCE', "
             "'PORTFOLIO', 'INVOICE', 'QUOTE_DOCUMENT', 'DRAWING', 'BUILD_PLAN_EVIDENCE', "
-            "'BUILD_PLAN_DOCUMENT', 'QUOTE_ATTACHMENT', 'COMPARISON_DOCUMENT')",
+            "'BUILD_PLAN_DOCUMENT', 'QUOTE_ATTACHMENT', 'COMPARISON_DOCUMENT', 'STAGE_EVIDENCE', "
+            "'INSPECTION_EVIDENCE', 'INSPECTION_REPORT', 'HANDOVER_DOCUMENT', 'BUILD_RECORD_DOCUMENT', "
+            "'BUILD_RECORD_EXPORT')",
             name="purpose",
         ),
         CheckConstraint("size_bytes > 0", name="size_positive"),
@@ -48,6 +52,9 @@ class FileObject(Timestamps, Base):
     detected_mime: Mapped[str | None] = mapped_column(String(100))
     size_bytes: Mapped[int] = mapped_column(BigInteger)
     sha256: Mapped[str | None] = mapped_column(String(64))
+    # EX-22: what the uploading device claims (capture time, location where it gives one).
+    # Never read from EXIF, which the pipeline strips; the server's own time is created_at.
+    capture_claim: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     state: Mapped[str] = mapped_column(String(20))
     rejection_reason: Mapped[str | None] = mapped_column(String(60))
     available_at: Mapped[datetime | None]

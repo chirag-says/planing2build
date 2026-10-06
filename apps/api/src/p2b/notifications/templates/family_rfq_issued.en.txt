@@ -1,0 +1,5 @@
+Your request for contractor quotes has been sent
+---
+Plan2Build has sent your request for contractor quotes on project $code to the contractors you chose. The quote deadline is $deadline.
+
+Sign in to Plan2Build to follow it. Prices are shown once Plan2Build has reviewed the quotes and published the comparison.

@@ -1,0 +1,5 @@
+You selected a contractor's quote
+---
+Your selection of a contractor's quote for project $code is recorded, and the contractor is now engaged for contractor work.
+
+The construction contract and its payments are between you and the contractor. Plan2Build is not a party to it.

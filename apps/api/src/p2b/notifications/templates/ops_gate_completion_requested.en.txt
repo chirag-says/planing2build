@@ -1,0 +1,3 @@
+Gate stage completion requested
+---
+Completion is requested for the gate stage $stage on project $code. Its inspection gate must be cleared before the stage can complete.

@@ -503,9 +503,7 @@ async def post_end_own_engagement(
 ) -> JSONResponse:
     async def act() -> ProEngagementOut:
         await service.end_own_engagement(db, actor, engagement_id, body.reason)
-        return await pro_engagement_out(
-            db, await service.own_engagement(db, actor, engagement_id)
-        )
+        return await pro_engagement_out(db, await service.own_engagement(db, actor, engagement_id))
 
     return await _once(
         db, actor, key, {"engagement_id": str(engagement_id), **body.model_dump(mode="json")}, act

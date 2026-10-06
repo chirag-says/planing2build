@@ -1,0 +1,3 @@
+A Plan2Build quote deadline was extended
+---
+The quote deadline for the Plan2Build request for quotation in $locality is now $deadline.

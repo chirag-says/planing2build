@@ -127,7 +127,7 @@ A weekly canary job generates one image per provider on staging to catch model r
 |---|---|
 | Scanner | ClamAV (`clamd`) as a container on the VPS, signatures refreshed by `freshclam` daily; `ScanProvider.scan(file) -> CLEAN or INFECTED(signature)`. About 1.3 GB RAM resident; included in the VPS sizing (CLOUD_AND_HOSTING_ARCHITECTURE.md). External scanning APIs would send private documents to a third party and are not used. |
 | Type detection | `libmagic` on the first bytes; the declared type must agree with the sniffed type or the file is QUARANTINED |
-| Images | Re-encoded with Pillow (strips EXIF including GPS and camera serials), resized variants (thumbnail, 1600 px), original kept |
+| Images | Re-encoded with Pillow (strips EXIF including GPS and camera serials), resized variants (thumbnail, 1600 px), original kept. The recorded `sha256` is of the final stored bytes, computed after re-encoding (H-07, fixed in Slice 3.7 with a regression test); the hash of the uploaded original is never stored as the file's hash |
 | PDFs | Checked with `pikepdf`: encrypted or JavaScript-bearing PDFs are quarantined; page count and size limits per purpose |
 | DXF, DWG | Accepted for drawings from the team and architects; not parsed at the POC; scanned and stored |
 | Outcome | `documents.file_available` or `documents.file_quarantined`; quarantined objects stay in R2 under `quarantine/` for 30 days then are deleted |

@@ -1,0 +1,5 @@
+An inspection was returned to you
+---
+Plan2Build returned your inspection of the stage $stage (Gate $gate) on project $code for amendment.
+
+Sign in to read the reason.

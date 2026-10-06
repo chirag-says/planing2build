@@ -20,6 +20,9 @@ export default async function OpsLayout({ children }: { children: React.ReactNod
     ...(ops || admin ? [{ href: "/professionals", label: t("nav.professionals") }] : []),
     ...(ops || admin ? [{ href: "/billing", label: t("nav.billing") }] : []),
     ...(ops || admin ? [{ href: "/build-plan", label: t("nav.buildPlan") }] : []),
+    ...(ops || admin ? [{ href: "/rfqs", label: t("nav.rfqs") }] : []),
+    ...(ops || admin ? [{ href: "/execution", label: t("nav.execution") }] : []),
+    ...(ops || admin ? [{ href: "/assurance", label: t("nav.assurance") }] : []),
     ...(admin ? [{ href: "/admin/billing", label: t("nav.configuration") }] : []),
   ];
   return (

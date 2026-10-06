@@ -20,13 +20,16 @@ from string import Template
 import structlog
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from p2b.assurance.interface import assurance_notice
 from p2b.buildplan.interface import issued_notice
+from p2b.construction.interface import execution_notice
 from p2b.core.config import Settings
 from p2b.core.db import Database
 from p2b.core.messaging import EmailMessage, MessageProvider
 from p2b.engagements.interface import connection_notice, quote_review_notice
 from p2b.identity.interface import primary_emails
 from p2b.projects.interface import enquiry_summary, review_snapshots
+from p2b.rfq.interface import contractor_notice, family_notice, ops_notice
 
 log = structlog.get_logger(__name__)
 
@@ -48,6 +51,49 @@ class Kind(StrEnum):
     PRO_CONNECTION_WITHDRAWN = "pro_connection_withdrawn"
     OPS_QUOTE_REVIEW_SUBMITTED = "ops_quote_review_submitted"
     FAMILY_BUILD_PLAN_ISSUED = "family_build_plan_issued"  # Slice 3.5
+    # RFQs (Slice 3.6, SLICE3_6_READINESS R): one email per event; nothing private before
+    # selection; a contractor's email never names a winner, a price or a ranking (QD-20).
+    FAMILY_RFQ_ISSUED = "family_rfq_issued"
+    FAMILY_COMPARISON_PUBLISHED = "family_comparison_published"
+    FAMILY_SELECTION_CONFIRMED = "family_selection_confirmed"
+    FAMILY_RFQ_CANCELLED = "family_rfq_cancelled"
+    PRO_RFQ_INVITATION = "pro_rfq_invitation"
+    PRO_RFQ_CLOSED = "pro_rfq_closed"
+    PRO_RFQ_DEADLINE_EXTENDED = "pro_rfq_deadline_extended"
+    PRO_RFQ_QUESTION = "pro_rfq_question"
+    PRO_RFQ_ANSWER = "pro_rfq_answer"
+    PRO_RFQ_SHARED_ANSWER = "pro_rfq_shared_answer"
+    PRO_QUOTE_CAPTURED = "pro_quote_captured"
+    PRO_QUOTE_EXPIRED = "pro_quote_expired"
+    PRO_QUOTE_SELECTED = "pro_quote_selected"
+    PRO_QUOTE_NOT_SELECTED = "pro_quote_not_selected"
+    OPS_RFQ_REQUESTED = "ops_rfq_requested"
+    OPS_QUOTE_SUBMITTED = "ops_quote_submitted"
+    OPS_QUOTE_WITHDRAWN = "ops_quote_withdrawn"
+    OPS_RFQ_CLARIFICATION = "ops_rfq_clarification"
+    OPS_RFQ_DEADLINE_REACHED = "ops_rfq_deadline_reached"
+    OPS_SELECTION_CONFIRMED = "ops_selection_confirmed"
+    # Execution (Slice 3.7A, SLICE3_7_READINESS O): no reminders, no amounts.
+    FAMILY_STAGE_COMPLETION_REQUESTED = "family_stage_completion_requested"
+    FAMILY_PAYMENT_MILESTONE_DUE = "family_payment_milestone_due"
+    PRO_STAGE_CONFIRMED = "pro_stage_confirmed"
+    PRO_STAGE_RETURNED = "pro_stage_returned"
+    PRO_PAYMENT_MARKED_PAID = "pro_payment_marked_paid"
+    OPS_GATE_COMPLETION_REQUESTED = "ops_gate_completion_requested"
+    # Assurance (Slice 3.7B, SLICE3_7_READINESS O): no finding text in any email.
+    FAMILY_INSPECTION_SCHEDULED = "family_inspection_scheduled"
+    FAMILY_INSPECTION_CANCELLED = "family_inspection_cancelled"
+    FAMILY_INSPECTION_REPORT = "family_inspection_report"
+    PRO_INSPECTION_SCHEDULED = "pro_inspection_scheduled"
+    PRO_REINSPECTION_SCHEDULED = "pro_reinspection_scheduled"
+    PRO_FINDINGS = "pro_findings"
+    PRO_FINDINGS_CLOSED = "pro_findings_closed"
+    PRO_GATE_CLEARED = "pro_gate_cleared"
+    AUDITOR_INSPECTION_ASSIGNED = "auditor_inspection_assigned"
+    AUDITOR_INSPECTION_RETURNED = "auditor_inspection_returned"
+    AUDITOR_INSPECTION_CANCELLED = "auditor_inspection_cancelled"
+    OPS_INSPECTION_SUBMITTED = "ops_inspection_submitted"
+    OPS_RECTIFICATION_SUBMITTED = "ops_rectification_submitted"
 
 
 OPS_KINDS = frozenset(
@@ -70,6 +116,86 @@ CONNECTION_KINDS = frozenset(
     }
 )
 PRO_KINDS = frozenset({Kind.PRO_CONNECTION_RECEIVED, Kind.PRO_CONNECTION_WITHDRAWN})
+# RFQ notices (`rfq.<audience>_notice`, payload `notice`) to their notification kind.
+RFQ_NOTICES: dict[str, dict[str, Kind]] = {
+    "rfq.family_notice": {
+        "RFQ_ISSUED": Kind.FAMILY_RFQ_ISSUED,
+        "COMPARISON_PUBLISHED": Kind.FAMILY_COMPARISON_PUBLISHED,
+        "SELECTION_CONFIRMED": Kind.FAMILY_SELECTION_CONFIRMED,
+        "RFQ_CANCELLED": Kind.FAMILY_RFQ_CANCELLED,
+    },
+    "rfq.contractor_notice": {
+        "INVITATION": Kind.PRO_RFQ_INVITATION,
+        "RFQ_CLOSED": Kind.PRO_RFQ_CLOSED,
+        "DEADLINE_EXTENDED": Kind.PRO_RFQ_DEADLINE_EXTENDED,
+        "QUESTION": Kind.PRO_RFQ_QUESTION,
+        "ANSWER": Kind.PRO_RFQ_ANSWER,
+        "SHARED_ANSWER": Kind.PRO_RFQ_SHARED_ANSWER,
+        "QUOTE_CAPTURED": Kind.PRO_QUOTE_CAPTURED,
+        "QUOTE_EXPIRED": Kind.PRO_QUOTE_EXPIRED,
+        "SELECTED": Kind.PRO_QUOTE_SELECTED,
+        "NOT_SELECTED": Kind.PRO_QUOTE_NOT_SELECTED,
+    },
+    "rfq.ops_notice": {
+        "RFQ_REQUESTED": Kind.OPS_RFQ_REQUESTED,
+        "QUOTE_SUBMITTED": Kind.OPS_QUOTE_SUBMITTED,
+        "QUOTE_WITHDRAWN": Kind.OPS_QUOTE_WITHDRAWN,
+        "CLARIFICATION": Kind.OPS_RFQ_CLARIFICATION,
+        "DEADLINE_REACHED": Kind.OPS_RFQ_DEADLINE_REACHED,
+        "SELECTION_CONFIRMED": Kind.OPS_SELECTION_CONFIRMED,
+    },
+}
+RFQ_KINDS = {kind: event for event, kinds in RFQ_NOTICES.items() for kind in kinds.values()}
+# Execution notices (`construction.<audience>_notice`, payload `notice`, Slice 3.7A).
+EXECUTION_NOTICES: dict[str, dict[str, Kind]] = {
+    "construction.family_notice": {
+        "COMPLETION_REQUESTED": Kind.FAMILY_STAGE_COMPLETION_REQUESTED,
+        "PAYMENT_DUE": Kind.FAMILY_PAYMENT_MILESTONE_DUE,
+    },
+    "construction.contractor_notice": {
+        "STAGE_CONFIRMED": Kind.PRO_STAGE_CONFIRMED,
+        "STAGE_RETURNED": Kind.PRO_STAGE_RETURNED,
+        "MARKED_PAID": Kind.PRO_PAYMENT_MARKED_PAID,
+    },
+    "construction.ops_notice": {
+        "GATE_COMPLETION_REQUESTED": Kind.OPS_GATE_COMPLETION_REQUESTED,
+    },
+}
+EXECUTION_KINDS = {
+    kind: event.removeprefix("construction.").removesuffix("_notice")
+    for event, kinds in EXECUTION_NOTICES.items()
+    for kind in kinds.values()
+}
+# Assurance notices (`assurance.<audience>_notice`, payload `notice`, Slice 3.7B).
+ASSURANCE_NOTICES: dict[str, dict[str, Kind]] = {
+    "assurance.family_notice": {
+        "INSPECTION_SCHEDULED": Kind.FAMILY_INSPECTION_SCHEDULED,
+        "INSPECTION_CANCELLED": Kind.FAMILY_INSPECTION_CANCELLED,
+        "REPORT_APPROVED": Kind.FAMILY_INSPECTION_REPORT,
+    },
+    "assurance.contractor_notice": {
+        "INSPECTION_SCHEDULED": Kind.PRO_INSPECTION_SCHEDULED,
+        "REINSPECTION_SCHEDULED": Kind.PRO_REINSPECTION_SCHEDULED,
+        "FINDINGS": Kind.PRO_FINDINGS,
+        "FINDINGS_CLOSED": Kind.PRO_FINDINGS_CLOSED,
+        "GATE_CLEARED": Kind.PRO_GATE_CLEARED,
+    },
+    "assurance.auditor_notice": {
+        "INSPECTION_ASSIGNED": Kind.AUDITOR_INSPECTION_ASSIGNED,
+        "INSPECTION_RETURNED": Kind.AUDITOR_INSPECTION_RETURNED,
+        "INSPECTION_CANCELLED": Kind.AUDITOR_INSPECTION_CANCELLED,
+    },
+    "assurance.ops_notice": {
+        "INSPECTION_SUBMITTED": Kind.OPS_INSPECTION_SUBMITTED,
+        "RECTIFICATION_SUBMITTED": Kind.OPS_RECTIFICATION_SUBMITTED,
+    },
+}
+ASSURANCE_KINDS = {
+    kind: event.removeprefix("assurance.").removesuffix("_notice")
+    for event, kinds in ASSURANCE_NOTICES.items()
+    for kind in kinds.values()
+}
+NOTICES = {**RFQ_NOTICES, **EXECUTION_NOTICES, **ASSURANCE_NOTICES}
 
 # Event type to the notifications it produces. `requirement.submitted` with review flags also
 # produces the flagged notice.
@@ -86,6 +212,19 @@ BY_EVENT: dict[str, tuple[Kind, ...]] = {
     "connection.withdrawn": (Kind.FAMILY_CONNECTION_WITHDRAWN, Kind.PRO_CONNECTION_WITHDRAWN),
     "quote_review.submitted": (Kind.OPS_QUOTE_REVIEW_SUBMITTED,),
     "buildplan.issued": (Kind.FAMILY_BUILD_PLAN_ISSUED,),
+    # Slice 3.6: the kind comes from the payload's notice (kinds_for).
+    "rfq.family_notice": (),
+    "rfq.contractor_notice": (),
+    "rfq.ops_notice": (),
+    # Slice 3.7A: likewise.
+    "construction.family_notice": (),
+    "construction.contractor_notice": (),
+    "construction.ops_notice": (),
+    # Slice 3.7B: likewise.
+    "assurance.family_notice": (),
+    "assurance.contractor_notice": (),
+    "assurance.auditor_notice": (),
+    "assurance.ops_notice": (),
 }
 
 FLAG_LABELS = {
@@ -95,6 +234,9 @@ FLAG_LABELS = {
 
 
 def kinds_for(event_type: str, payload: dict[str, object]) -> list[Kind]:
+    if event_type in NOTICES:
+        kind = NOTICES[event_type].get(str(payload.get("notice")))
+        return [kind] if kind else []
     kinds = list(BY_EVENT.get(event_type, ()))
     if event_type == "requirement.submitted" and payload.get("review_flags"):
         kinds.append(Kind.OPS_REQUIREMENT_FLAGGED)
@@ -144,6 +286,36 @@ async def _prepare(
         }
         user_id = notice.professional_user_id if kind in PRO_KINDS else notice.family_user_id
         return Prepared((await primary_emails(session, [user_id])).get(user_id), values)
+    if kind in RFQ_KINDS:
+        event = RFQ_KINDS[kind]
+        if event == "rfq.contractor_notice":
+            rfq_notice = await contractor_notice(session, ref_id)
+        elif event == "rfq.family_notice":
+            rfq_notice = await family_notice(session, ref_id)
+        else:
+            rfq_notice = await ops_notice(session, ref_id)
+        if rfq_notice is None:
+            return Prepared(None, {})
+        if rfq_notice.user_id is None:
+            return Prepared(settings.ops_notification_email, rfq_notice.values)
+        to = (await primary_emails(session, [rfq_notice.user_id])).get(rfq_notice.user_id)
+        return Prepared(to, rfq_notice.values)
+    if kind in ASSURANCE_KINDS:
+        found = await assurance_notice(session, ASSURANCE_KINDS[kind], ref_id, payload)
+        if found is None:
+            return Prepared(None, {})
+        if found.user_id is None:
+            return Prepared(settings.ops_notification_email, found.values)
+        to = (await primary_emails(session, [found.user_id])).get(found.user_id)
+        return Prepared(to, found.values)
+    if kind in EXECUTION_KINDS:
+        stage = await execution_notice(session, EXECUTION_KINDS[kind], ref_id, payload)
+        if stage is None:
+            return Prepared(None, {})
+        if stage.user_id is None:
+            return Prepared(settings.ops_notification_email, stage.values)
+        to = (await primary_emails(session, [stage.user_id])).get(stage.user_id)
+        return Prepared(to, stage.values)
     if kind == Kind.FAMILY_BUILD_PLAN_ISSUED:
         issued = await issued_notice(session, ref_id)
         if issued is None:

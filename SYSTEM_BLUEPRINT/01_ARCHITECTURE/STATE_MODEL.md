@@ -252,6 +252,10 @@ Connection, per project, category and professional: `new to SENT` (owner, packag
 
 Engagement, per project and category, at most one ACTIVE: `new to ACTIVE` on acceptance (LISTED) or on recording (OUTSIDE), withdrawing the category's SENT requests; `ACTIVE to ENDED` by the family, the professional or operations, with a reason (shared files stop being visible). The package ending never ends an engagement (N-10).
 
+## 10a. RFQ, invitation, quote version, review, comparison, selection (rfq; as built, Slice 3.6)
+
+Section 10 is superseded where it differs: SLICE3_6_READINESS section T and 0 are the machines as built. RFQ: DRAFT → ISSUED (pack frozen) → CLOSED (selection) | CANCELLED (owner, operations, PACKAGE_ENDED, BASELINE_SUPERSEDED, PROJECT_CLOSED). Invitation: PROPOSED → SENT → ACCEPTED | DECLINED | EXPIRED; PROPOSED → ACCEPTED for an outside party at issue; PROPOSED, SENT or ACCEPTED → WITHDRAWN. Quote version: SUBMITTED → SUPERSEDED | WITHDRAWN | EXPIRED | SELECTED | NOT_SELECTED; a RENEWAL version after expiry. Review: PENDING ⇄ NEEDS_CLARIFICATION → REVIEWED, or CLOSED when the version leaves SUBMITTED. Comparison: PUBLISHED → SUPERSEDED | DECIDED. Selection: one append-only row. No project status moves and no engagement state is added: a selection creates or reuses the 3.4 engagement (origin RFQ_SELECTION, ADR-024).
+
 ## 10. RFQ, quote version, comparison and selection (rfq)
 
 RFQ `[canonical]`: `DRAFT → ISSUED → CLOSED | CANCELLED`. ISSUED requires a pack version with drawings, BOQ, specification set, timeline and quote format (BR-080); a new pack version is an attribute change with `rfq.pack_version_changed` notifying invited contractors, not a state. CLOSED on selection; CANCELLED by operations with reason.

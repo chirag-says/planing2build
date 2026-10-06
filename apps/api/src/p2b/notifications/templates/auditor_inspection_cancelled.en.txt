@@ -1,0 +1,3 @@
+An inspection was cancelled
+---
+Your inspection of the stage $stage (Gate $gate) on project $code was cancelled.

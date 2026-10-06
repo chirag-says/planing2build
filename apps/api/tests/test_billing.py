@@ -83,8 +83,8 @@ async def pay(
     fake = gateway(app)
     payment = await fake.simulate_payment(
         ticket["provider_order_id"],
-        status=status,
-        amount_paise=amount_paise,  # type: ignore[arg-type]
+        status=status,  # type: ignore[arg-type]
+        amount_paise=amount_paise,
     )
     event = "payment.captured" if status == "captured" else "payment.failed"
     response, _ = await deliver(client, fake, event, payment)

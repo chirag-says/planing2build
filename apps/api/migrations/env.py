@@ -11,6 +11,7 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
+import p2b.assurance.models
 import p2b.audit.models
 import p2b.billing.models
 import p2b.buildplan.models
@@ -24,9 +25,11 @@ import p2b.documents.models
 import p2b.engagements.models
 import p2b.identity.models
 import p2b.integrations.fake_gateway
+import p2b.money.models
 import p2b.operations.models
 import p2b.professionals.models
 import p2b.projects.models
+import p2b.rfq.models
 import p2b.specification.models  # noqa: F401  (registers tables on the metadata)
 from p2b.core.db import Base
 

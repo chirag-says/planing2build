@@ -443,6 +443,56 @@ Owner `buildplan` unless noted. Database triggers enforce the version model: a v
 
 Specification seed (D-03 ruling): the five structural lines A04, A05, A09, A12 and A13 carry no brand category, and no brand or vendor concept replaces it; the `spec_line_masters` CHECK above is unchanged.
 
+### 4.20 As built for Slice 3.6 (migration `0015_rfq`, 2026-10-06)
+
+Owner `rfq` unless noted (module named in DOM 3.10; ADR-024 records `engagements`). Section 4.9's design is [SUPERSEDED] where it differs: no `quotes` table (the invitation holds a contractor's versions), no pack versions (QD-16), no `contract_values`, no recommendation tables (QD-10). Guards as in 3.3 to 3.5: lifecycle columns only (`p2b_allow_only_columns`), set-once columns (`p2b_set_once`), append-only (`p2b_forbid_mutation`), and `p2b_review_open_child` (adjustments change only while their quote's review is open).
+
+| Table | As built |
+|---|---|
+| `rfqs` | CONTRACTOR only (CHECK, QD-26); the ACCEPTED Build Plan version (FK); states DRAFT, ISSUED, CLOSED, CANCELLED; one open (DRAFT or ISSUED) per project and category; `max_recipients` copied from configuration (3, QD-04); `quotes_due_at`; the frozen manifest JSON and its sha256 set once at issue (CHECK: ISSUED and CLOSED are frozen); cancel reason OWNER, OPERATIONS, PACKAGE_ENDED, BASELINE_SUPERSEDED, PROJECT_CLOSED |
+| `rfq_invitations` | Party LISTED (profile) or OUTSIDE (the engaged outside party, staff capture only, QD-22); source NOMINATED, INTRODUCED (written reason, CHECK) or ENGAGED (QD-13); states PROPOSED, SENT, ACCEPTED, DECLINED, EXPIRED, WITHDRAWN; brief without identity; `respond_by` (48 hours, QD-05); N-06 decline reasons; the contractor's contact held for after a selection; one per contractor and RFQ |
+| `quote_drafts` | The contractor's private working copy; deleted on submission or discard |
+| `quote_versions` | Immutable submissions: kind STANDARD or RENEWAL (`renewal_of`, QD-06); states SUBMITTED, SUPERSEDED, WITHDRAWN, EXPIRED, SELECTED, NOT_SELECTED; review state PENDING, NEEDS_CLARIFICATION, REVIEWED, CLOSED; validity dates (CHECK `valid_to > valid_from`); GST treatment and note; duration and stage durations; payment terms, warranty and materials as text only (CD-09, BP-10); comparable and additional totals; content sha256; staff capture with evidence (CHECK) |
+| `quote_lines` | Append-only: every RFQ quantity line priced (unit rate and server amount) or excluded with a reason (CHECK); additional items priced, never excluded |
+| `quote_adjustments` | Plan2Build's findings: line or specification line, deviation type, description, rupee impact, basis, clarification status; never in any contractor response (QD-08) |
+| `rfq_clarifications` | One question and one answer: CONTRACTOR_ASKS or PLAN2BUILD_ASKS; OPEN, ANSWERED, CLOSED; shared with all only for contractor questions (CHECK) |
+| `comparisons` | Version per RFQ; PUBLISHED, SUPERSEDED, DECIDED; the included quote versions, stored order seed (QD-11), snapshot and its sha256, the fpdf2 document (QD-23); at least one quote (QD-24) |
+| `selection_statements` | QD-12 wording as versioned configuration ($project_code, $contractor, $version_no); one ACTIVE; v1 IMPLEMENTED / PENDING FINAL CLIENT + LEGAL CONFIRMATION. Reference data |
+| `selections` | Append-only, one per RFQ and per quote version: comparison, invitation, engagement and whether it was created, owner, one-time code challenge (UNIQUE), statement and filled-in text. No contract value |
+| `rfq_events` | History of every RFQ, invitation, quote, review, clarification, comparison and selection transition |
+| `project_engagements` (engagements) | `origin` CONNECTION, OUTSIDE or RFQ_SELECTION (ADR-024); `selection_id`; `family_contact` and `professional_contact` for an engagement started by a selection (CHECK `party_fields` widened) |
+| `package_service_usage` (billing) | CHECK `service IN ('CONNECTION_ACCEPTED', 'RFQ_SELECTION')` (N-12; QD-02 new product decision) |
+| `otp_challenges` (identity), `file_objects` (documents) | Purpose SELECT_QUOTE; purposes QUOTE_ATTACHMENT and COMPARISON_DOCUMENT |
+
+### 4.21 As built for Slice 3.7A, execution (migration `0016_execution`, 2026-10-06)
+
+Owners `construction` and `money` (ADR-008 names). No execution entity and no project status movement (EX-01). Section 4.11's `stage_logs` design is [SUPERSEDED] by `stage_updates`; no percentage, no planned date, no amount anywhere (EX-02, EX-04, EX-05).
+
+| Table | As built |
+|---|---|
+| `stage_instances` (existing) | States move NOT_STARTED → IN_PROGRESS (first update) → COMPLETION_REQUESTED → COMPLETED, or back to IN_PROGRESS on a return (EX-03); `completion_requested_at` added (EX-12 exception); CHECK `dates_not_calculated_bp07a` keeps `planned_start` and `planned_end` NULL; trigger `stage_instances_lifecycle_only` allows only `state`, `gate_status`, `actual_start`, `actual_end`, `completion_requested_at`, `updated_at`, `version` to change and refuses deletes (H-09 closed) |
+| `stage_updates` | Append-only. Stage instance, the CONTRACTOR engagement it was made under (NOT NULL, EX-19), kind PROGRESS or COMPLETION_REQUEST, note, optional materials and open problems, photo file ids (at least one, CHECK), optional `corrects_update_id`, posted by and role (PROFESSIONAL, or OPS and ADMIN for an OUTSIDE contractor) |
+| `construction_events` | Append-only history: subject STAGE (transitions, with actor role and reason) or CONTRACTOR (a different engagement posted on the stage) |
+| `payment_marks` (money) | Append-only; the latest per stage and side is current. Side PAID (marked by FAMILY) or RECEIVED (PROFESSIONAL, or OPS and ADMIN for an OUTSIDE contractor, with the engagement), value YES or NO, optional note. No amount, contract value or settled state (CHECK on side and role) |
+| `file_objects` (documents) | Purpose STAGE_EVIDENCE (images only); `capture_claim` jsonb (EX-22) |
+
+### 4.22 As built for Slice 3.7B, assurance (migration `0017_assurance`, 2026-10-06)
+
+Owner `assurance` (ADR-008 name). Section 4.12's design is [SUPERSEDED] where it differs: no offline sync tables (EX-10), no device sequence, EXIF never kept (EX-22: capture claims live on `file_objects.capture_claim`), findings close only through a re-inspection (EX-11, no reviewer closure). Guards: lifecycle columns only, append-only history, `p2b_child_editable` (results only while their inspection is IN_PROGRESS), `p2b_status_child_editable` (checkpoints only while their checklist is DRAFT), and `p2b_inspection_frozen` (content columns frozen from SUBMITTED; APPROVED, RETURNED and CANCELLED terminal).
+
+| Table | As built |
+|---|---|
+| `auditor_appointments` | Unique `auditor_code` (AUD-nnnnn from `auditor_code_seq`), name, qualification, registration reference, optional credential file, optional linked professionals-host user (one ACTIVE appointment per user), ACTIVE or ENDED with actor, time and reason (EX-09) |
+| `checklist_versions`, `checkpoints` | Versions DRAFT, PUBLISHED (one), RETIRED; user ids without foreign keys (reference data). Checkpoint: gate 1 to 6, sequence, code, text, expected evidence, critical flag, specification line code. Version 1 seeded PUBLISHED from S04 "verified at": Gate 1: 6, Gate 2: 3, Gate 3: 3, Gate 4: 13, Gate 5: 2; no Gate 6 (EX-08; S04 maps C24 to Gate 6, noted for the draft) |
+| `inspections` | Project, gate stage instance, gate number, kind INITIAL or REINSPECTION (`nc_ids`, `reinspects_id`), `amends_id`, appointment, checklist version, states SCHEDULED, IN_PROGRESS, SUBMITTED, APPROVED, RETURNED, CANCELLED (reasons OPERATIONS, PACKAGE_ENDED, PROJECT_CLOSED); one live INITIAL per stage instance (partial UNIQUE, EX-07); submission by the auditor with a SUBMIT_INSPECTION code or by staff capture with the signed report; `content_sha256` of the frozen content |
+| `inspection_results` | One per checkpoint: PASS, OBSERVATION, NON_CONFORMANCE, NOT_APPLICABLE (with reason); note, measurement, room tag, evidence file ids; a finding's severity MINOR, MAJOR or CRITICAL with description, corrective action and due date (CHECK all or none) |
+| `non_conformances` | Opened at approval from a finding; text, severity and checkpoint set once; states OPEN, RECTIFICATION_SUBMITTED, REINSPECTION_SCHEDULED, CLOSED (CHECK: closed only with the closing inspection and time); due date changed by operations with a reason |
+| `inspection_reports` | Append-only report versions (fpdf2, sha256); a correction is a new version with its reason (EX-14) |
+| `test_results` | Append-only later results on a checkpoint (cube tests) |
+| `assurance_events` | Append-only history with reasons and evidence file ids |
+| `stage_instances` (construction) | `gate_status` set only through `construction.interface.set_gate_status`, derived from the records; each change is a `construction_events` row with subject GATE |
+| `file_objects`, `otp_challenges` | Purposes INSPECTION_EVIDENCE, INSPECTION_REPORT; confirmation purpose SUBMIT_INSPECTION |
+
 ## 5. Geospatial design
 
 - Projects store the plot as a `geography(Point, 4326)` chosen by a map pin (the address text is secondary). Professionals store a base point and optional service polygons; a profile without polygons uses `base_geom` plus `service_radius_km`.
@@ -454,7 +504,8 @@ Specification seed (D-03 ruling): the five structural lines A04, A05, A09, A12 a
 
 - Buckets: `p2b-prod-private`, `p2b-prod-public`, `p2b-staging-private`, `p2b-staging-public`, `p2b-backups` (separate credentials).
 - Object keys are generated by the server, never by the client: `{env}/{purpose}/{yyyy}/{mm}/{file_uuid}` with variants under `{file_uuid}/v/{variant}`. The original filename is metadata in `file_objects`, never part of the key.
-- Objects are immutable: a new version of a document is a new object; `file_objects.sha256` lets the build record prove integrity.
+- Objects are immutable: a new version of a document is a new object; `file_objects.sha256` lets the build record prove integrity. It is the hash of the final stored bytes, after any re-encoding (H-07, fixed in Slice 3.7).
+- Capture claims (Slice 3.7, EX-22): `file_objects.capture_claim` (jsonb, nullable) holds what the uploading device claims (capture time; location only where the device gives it). It is never read from EXIF, which the pipeline strips, and is never authoritative; the server's own receipt time is `created_at`.
 - Public bucket holds only listing portfolio images and marketing assets; everything else is private and served by presigned URLs with 15-minute validity (5 minutes for P3 evidence).
 
 ## 7. Search design

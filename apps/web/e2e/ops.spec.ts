@@ -112,11 +112,11 @@ test("accepting completes the initial review; the family sees stages and specifi
   await sections.getByRole("link", { name: "Construction stages" }).click();
   await expect(sections.getByRole("link", { name: "Construction stages" })).toHaveAttribute("aria-current", "page");
   // G+1 with a basement: 13 stages once, stages 5, 6 and 9 for basement, ground and first floor.
-  const stages = page.getByRole("region", { name: "Construction stages" }).getByRole("row");
-  await expect(stages).toHaveCount(13 + 3 * 3 + 1); // + header row
-  await expect(page.getByText("Basement").first()).toBeVisible();
-  // Phones show the schedule under the stage name, wider screens in its own column.
-  await expect(page.getByText("Schedule to be confirmed").filter({ visible: true }).first()).toBeVisible();
+  // Slice 3.7A: the page shows what happened on each stage; no planned dates (EX-04, BP-07A).
+  const stages = page.locator('[data-testid^="stage-"]').filter({ has: page.getByTestId("stage-state") });
+  await expect(stages).toHaveCount(13 + 3 * 3);
+  await expect(page.getByText(/Basement/).first()).toBeVisible();
+  await expect(page.getByTestId("stage-state").first()).toHaveText("Not started");
   await axe(page);
 
   await sections.getByRole("link", { name: "Specification" }).click();

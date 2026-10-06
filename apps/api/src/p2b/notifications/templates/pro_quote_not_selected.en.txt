@@ -1,0 +1,5 @@
+Your quote was not selected
+---
+The homeowner did not select your quote for the project in $locality.
+
+Thank you for quoting through Plan2Build.

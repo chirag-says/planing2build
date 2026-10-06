@@ -1,0 +1,5 @@
+Your Plan2Build quote has expired
+---
+The validity of your quote for the project in $locality has ended, so it cannot be selected.
+
+Sign in to Plan2Build if you want to renew it with new validity dates.

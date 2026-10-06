@@ -1,0 +1,5 @@
+Your inspection report is ready
+---
+The independent inspection report for the stage $stage (Gate $gate) on project $code is ready.
+
+Sign in to Plan2Build to read the result and any items that need correcting.

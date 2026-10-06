@@ -119,6 +119,12 @@ class Settings(BaseSettings):
     rfq_max_recipients: int = Field(default=3, ge=1)
     rfq_invitation_response_hours: int = Field(default=48, ge=1)
     rfq_quote_attachments_max: int = Field(default=5, ge=0)
+    # Slice 3.7: photos per progress update (EX-02).
+    stage_update_photos_max: int = Field(default=10, ge=1)
+    # EX-12 [PD NEW]: operations exceptions, never reminders. A completion request unanswered for
+    # this many calendar days; an inspection open for this many (3.7B).
+    completion_request_exception_days: int = Field(default=3, ge=1)
+    inspection_open_exception_days: int = Field(default=7, ge=1)
 
     # Object storage, S3 API (ADR-006): Cloudflare R2 in staging and production, MinIO locally.
     # Browsers reach the public endpoint; the API and worker may use an internal one.

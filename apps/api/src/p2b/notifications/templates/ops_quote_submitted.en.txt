@@ -1,0 +1,3 @@
+A contractor quote was submitted
+---
+A contractor quote was submitted on project $code. It is waiting for review.

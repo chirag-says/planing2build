@@ -1,0 +1,3 @@
+A quote deadline has passed
+---
+The quote deadline of the request for quotation on project $code has passed ($deadline). Review the quotes and publish the comparison.

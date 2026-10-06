@@ -1,0 +1,5 @@
+Plan2Build has a question about your quote
+---
+Plan2Build has asked a question about your quote for the project in $locality.
+
+Sign in to Plan2Build to answer it. An answer never changes your quote; to change a price, submit a new version.

@@ -10,6 +10,7 @@ from pathlib import Path
 import structlog
 from procrastinate import App, Blueprint
 
+from p2b.assurance import handlers as assurance_handlers
 from p2b.billing import handlers as billing_handlers
 from p2b.billing import jobs as billing_jobs
 from p2b.core.config import Settings, get_settings
@@ -34,6 +35,8 @@ from p2b.integrations.storage import build_storage
 from p2b.notifications import handlers as notifications_handlers
 from p2b.notifications import jobs as notifications_jobs
 from p2b.operations import handlers as operations_handlers
+from p2b.rfq import handlers as rfq_handlers
+from p2b.rfq import jobs as rfq_jobs
 
 log = structlog.get_logger("p2b.worker")
 
@@ -51,6 +54,8 @@ def build_registry(job_app: App) -> HandlerRegistry:
     designs_handlers.register(registry, job_app)
     billing_handlers.register(registry, job_app)
     engagements_handlers.register(registry, job_app)
+    rfq_handlers.register(registry, job_app)
+    assurance_handlers.register(registry, job_app)
     return registry
 
 
@@ -62,6 +67,7 @@ def job_blueprints() -> list[tuple[str, Blueprint]]:
         (designs_handlers.JOB_NAMESPACE, designs_jobs.blueprint),
         (billing_handlers.JOB_NAMESPACE, billing_jobs.blueprint),
         (engagements_handlers.JOB_NAMESPACE, engagements_jobs.blueprint),
+        (rfq_handlers.JOB_NAMESPACE, rfq_jobs.blueprint),
     ]
 
 

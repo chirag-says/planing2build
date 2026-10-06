@@ -40,6 +40,8 @@ export default async function ProjectDashboardLayout({
         { href: `${base}/build-plan`, label: t("areas.buildPlan") },
         // Needs, requests and engagements per category (Slice 3.4); the directory is one step on.
         { href: `${base}/services`, label: t("areas.professionals") },
+        // Requests for contractor quotes on the accepted Build Plan (Slice 3.6).
+        { href: `${base}/quotes`, label: t("areas.quotes") },
       ]
     : [];
 

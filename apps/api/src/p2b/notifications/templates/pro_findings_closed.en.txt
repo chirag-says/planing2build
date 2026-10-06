@@ -1,0 +1,5 @@
+Corrections confirmed
+---
+A re-inspection confirmed corrections on the stage $stage (Gate $gate), project $code.
+
+Sign in to Plan2Build to see what remains open, if anything.

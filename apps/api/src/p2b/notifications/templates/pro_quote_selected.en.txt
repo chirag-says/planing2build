@@ -1,0 +1,5 @@
+Your quote was selected
+---
+The homeowner selected your quote for the project in $locality. You are now engaged for contractor work.
+
+Sign in to Plan2Build to see the homeowner's contact details. The construction contract and its payments are between you and the homeowner.

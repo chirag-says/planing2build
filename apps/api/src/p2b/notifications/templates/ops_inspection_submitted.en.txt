@@ -1,0 +1,3 @@
+Inspection submitted for approval
+---
+The inspection of the stage $stage (Gate $gate) on project $code was submitted. Review and approve or return it.

@@ -14,7 +14,9 @@ export default async function ProLayout({ children }: { children: React.ReactNod
   const links = [
     { href: "/", label: t("nav.dashboard") },
     { href: "/connections", label: t("nav.connections") },
+    { href: "/quotes", label: t("nav.quotes") },
     { href: "/build-plan", label: t("nav.buildPlan") },
+    { href: "/inspections", label: t("nav.inspections") },
     { href: "/profile", label: t("nav.profile") },
     { href: "/portfolio", label: t("nav.portfolio") },
   ];

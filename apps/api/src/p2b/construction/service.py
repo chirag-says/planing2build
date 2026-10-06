@@ -21,10 +21,33 @@ from p2b.core.state_machine import Transition, TransitionTable
 from p2b.core.vocabulary import ActorType, GateStatus, StageState
 
 S = StageState
-# STATE_MODEL 6. Slice 2 only creates instances; the other transitions arrive with construction.
+# STATE_MODEL 6 as decided for Slice 3.7A (EX-03): the first update starts a stage; a completion
+# request asks; the owner (or operations with a reason) confirms or returns. BLOCKED and ON_HOLD
+# have no trigger in 3.7 (EX-23).
 STAGE = TransitionTable[StageState](
-    "stage_instance", [Transition(None, S.NOT_STARTED, "instantiate")]
+    "stage_instance",
+    [
+        Transition(None, S.NOT_STARTED, "instantiate"),
+        Transition(S.NOT_STARTED, S.IN_PROGRESS, "start"),
+        Transition(S.IN_PROGRESS, S.COMPLETION_REQUESTED, "request"),
+        Transition(S.COMPLETION_REQUESTED, S.COMPLETED, "confirm"),
+        Transition(S.COMPLETION_REQUESTED, S.IN_PROGRESS, "return"),
+    ],
 )
+
+
+@dataclass(frozen=True)
+class Who:
+    """Who acted on an execution record."""
+
+    user_id: uuid.UUID | None
+    role: str  # FAMILY, PROFESSIONAL, OPS, ADMIN, SYSTEM
+    session_id: uuid.UUID | None = None
+
+    @property
+    def actor_type(self) -> ActorType:
+        return ActorType.USER if self.user_id else ActorType.JOB
+
 
 BASEMENT = -1
 GROUND = 0

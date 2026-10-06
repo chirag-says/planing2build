@@ -457,3 +457,22 @@ Slice 3.5 (2026-10-05). Creating and transition POSTs take `Idempotency-Key`; re
 | `GET /ops/projects/{id}/build-plan`, `POST .../design-requests`, `POST /ops/design-requests/{rid}/sets`, `POST /ops/projects/{id}/build-plan/files` (raw body), `POST /ops/drawing-sets/{sid}/files`, `.../submit`, `.../check` | OPS or ADMIN with MFA | Staff uploads go through the API (the admin host is not a storage CORS origin) |
 | `POST /ops/projects/{id}/build-plan/versions`, `GET /ops/build-plan-versions/{vid}`, `PUT .../drawing-set`, `.../values`, `POST .../values/{code}/refresh`, `PUT .../boq`, `.../schedule`, `.../scope`, `POST .../submit`, `.../return`, `.../withdraw`, `.../issue`, `.../signoffs`, `POST /ops/signoffs/{id}/revoke` | OPS or ADMIN with MFA | Issue never by the last editor |
 | `GET /ops/projects/{id}/build-plan/rfq-manifest` | OPS or ADMIN with MFA | Accepted version only; no rate, amount or rate card (BP-08) |
+
+Slice 3.6 (2026-10-06). Creating and transition POSTs take `Idempotency-Key`; refusals are 409 with `details.reason` (PACKAGE_REQUIRED, NO_ACCEPTED_VERSION, OPEN_RFQ, NOT_NEEDED, ENGAGED, NOT_LISTED, OUTSIDE_AREA, NO_LOCATION, SELF, DUPLICATE, LIMIT, NO_DEADLINE, BASELINE_CHANGED, NO_RECIPIENTS, NOT_ELIGIBLE, EXPIRED, RFQ_CLOSED, DEADLINE_PASSED, NOT_EXPIRED, CONTENT_CHANGED, NO_QUOTE, NO_REVIEWED_QUOTES, NO_COMPARISON, STALE, STATEMENT_CHANGED, NO_STATEMENT); 422 names the quote lines to fix. Section 10 is [SUPERSEDED] where it differs.
+
+| Route | Actor | Notes |
+|---|---|---|
+| `GET /projects/{id}/rfqs`, `GET .../rfqs/{rid}` | owner, household | Status, contractors and quote versions; prices only in a published comparison (QD-07) |
+| `POST /projects/{id}/rfqs` | owner, package | `profile_ids` nominated (QD-03); the ACCEPTED version is named |
+| `POST /projects/{id}/rfqs/{rid}/cancel` | owner | No package needed |
+| `GET /projects/{id}/rfqs/{rid}/comparisons/{cid}/document`, `GET .../rfqs/{rid}/files/{fid}/url` | owner, household | Comparison PDF; attachments of compared quotes only; logged |
+| `POST /projects/{id}/rfqs/{rid}/selection-code`, `.../select` | owner, package | Code bound to the quote version; the response carries the statement; `select` takes the code, `statement_id` and the contact to share |
+| `GET /pro/rfq-invitations`, `GET .../{iid}` | the invited contractor | Brief until accepted; then the frozen pack (no rate, amount or card), own versions and visible clarifications; never adjustments, reviews, comparisons or other contractors |
+| `POST /pro/rfq-invitations/{iid}/accept`, `/decline` | the invited contractor | Agreeing to quote is not an engagement (QD-01) |
+| `GET .../{iid}/drawings/{fid}/url`, `PUT`/`DELETE .../quote-draft`, `POST .../quotes`, `.../quote/renew`, `.../quote/withdraw`, `.../clarifications`, `.../clarifications/{cid}/answer`, `.../attachments`, `.../attachments/{fid}/complete`, `.../files/{fid}/url` | the invited contractor | Pack drawings while accepted; quote versions; questions to Plan2Build |
+| `GET /pro/engagements/{eid}`, `POST .../end`, `GET .../files/{fid}/url` (engagements) | the engaged professional | Any origin (ADR-024): the family's contact, and pin and shared files while ACTIVE |
+| `GET /ops/rfqs`, `GET /ops/projects/{id}/rfqs`, `POST /ops/projects/{id}/rfqs`, `GET /ops/rfqs/{rid}` | OPS or ADMIN with MFA | Queue, detail with every version, review, adjustment, clarification, comparison and history |
+| `PUT /ops/rfqs/{rid}/deadline`, `POST .../deadline/extend`, `.../invitations`, `.../issue`, `.../cancel`, `POST /ops/rfq-invitations/{iid}/withdraw`, `.../capture` | OPS or ADMIN with MFA | Introductions and extensions need a reason; capture needs the contractor's document |
+| `POST /ops/projects/{id}/rfq-files` (raw body), `GET /ops/rfq-files/{fid}/url` | OPS or ADMIN with MFA | Quote documents received outside the portal; logged downloads |
+| `PUT /ops/quote-versions/{qid}/adjustments`, `POST .../reviewed`, `POST /ops/rfqs/{rid}/clarifications`, `POST /ops/rfq-clarifications/{cid}/answer`, `.../close`, `POST /ops/rfqs/{rid}/comparisons` | OPS or ADMIN with MFA | Review, questions, publication with the PDF |
+| `GET /ops/selection-statements`, `POST /admin/selection-statements`, `.../{id}/activate` | OPS reads, ADMIN | Versioned selection statement |

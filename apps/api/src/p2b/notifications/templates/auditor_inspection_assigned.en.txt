@@ -1,0 +1,5 @@
+An inspection is assigned to you
+---
+Plan2Build assigned you the inspection of the stage $stage (Gate $gate) on project $code.
+
+Sign in to the Plan2Build professionals site to see the checklist and the drawings.

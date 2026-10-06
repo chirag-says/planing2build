@@ -1,0 +1,3 @@
+Rectification submitted
+---
+Rectification evidence was submitted for a finding on the stage $stage (Gate $gate), project $code. Review it and schedule the re-inspection.

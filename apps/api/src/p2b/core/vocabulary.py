@@ -54,6 +54,8 @@ class OtpPurpose(StrEnum):
     ACCEPT_BUILD_PLAN = "ACCEPT_BUILD_PLAN"  # the owner accepts one issued version (BP-05)
     SIGN_STRUCTURAL = "SIGN_STRUCTURAL"  # a verified engineer signs structural lines (BP-04)
     SELECT_QUOTE = "SELECT_QUOTE"  # the owner selects one contractor quote version (QD-12)
+    SUBMIT_INSPECTION = "SUBMIT_INSPECTION"  # an appointed auditor submits an inspection (EX-09)
+    ACKNOWLEDGE_HANDOVER = "ACKNOWLEDGE_HANDOVER"  # the owner acknowledges the handover (EX-15)
 
 
 class OtpState(StrEnum):
@@ -157,6 +159,12 @@ class FilePurpose(StrEnum):
     BUILD_PLAN_DOCUMENT = "BUILD_PLAN_DOCUMENT"  # a rendered Build Plan PDF; never changed
     QUOTE_ATTACHMENT = "QUOTE_ATTACHMENT"  # a contractor's file with an RFQ quote (3.6)
     COMPARISON_DOCUMENT = "COMPARISON_DOCUMENT"  # a rendered quote comparison PDF; never changed
+    STAGE_EVIDENCE = "STAGE_EVIDENCE"  # photos with a progress update or a rectification (3.7)
+    INSPECTION_EVIDENCE = "INSPECTION_EVIDENCE"  # photos and files of an inspection (3.7B, P3)
+    INSPECTION_REPORT = "INSPECTION_REPORT"  # the rendered report of an approved inspection
+    HANDOVER_DOCUMENT = "HANDOVER_DOCUMENT"  # warranties, manuals, certificates at handover (3.7C)
+    BUILD_RECORD_DOCUMENT = "BUILD_RECORD_DOCUMENT"  # an issued Build Record version as PDF
+    BUILD_RECORD_EXPORT = "BUILD_RECORD_EXPORT"  # the same version as structured JSON
 
 
 class ConfigStatus(StrEnum):
@@ -727,6 +735,114 @@ class ComparisonState(StrEnum):
     DECIDED = "DECIDED"
 
 
+# --- Slice 3.7: execution, assurance, handover and Build Record (SLICE3_7_READINESS 0) ------
+
+
+class StageUpdateKind(StrEnum):
+    """EX-02: evidence and history, never a promise of schedule completion."""
+
+    PROGRESS = "PROGRESS"
+    COMPLETION_REQUEST = "COMPLETION_REQUEST"
+
+
+class PaymentMarkSide(StrEnum):
+    """EX-05: the owner's "paid" mark and the contractor's "received" mark."""
+
+    PAID = "PAID"
+    RECEIVED = "RECEIVED"
+
+
+class PaymentMarkValue(StrEnum):
+    YES = "YES"
+    NO = "NO"
+
+
+class AppointmentStatus(StrEnum):
+    ACTIVE = "ACTIVE"
+    ENDED = "ENDED"
+
+
+class ChecklistStatus(StrEnum):
+    """EX-08: versioned configuration; PUBLISHED is immutable, one at a time."""
+
+    DRAFT = "DRAFT"
+    PUBLISHED = "PUBLISHED"
+    RETIRED = "RETIRED"
+
+
+class InspectionKind(StrEnum):
+    INITIAL = "INITIAL"  # the gate stage instance's inspection (EX-07), or its amendment
+    REINSPECTION = "REINSPECTION"  # of open non-conformances after rectification (EX-11)
+
+
+class InspectionState(StrEnum):
+    SCHEDULED = "SCHEDULED"
+    IN_PROGRESS = "IN_PROGRESS"
+    SUBMITTED = "SUBMITTED"
+    APPROVED = "APPROVED"
+    RETURNED = "RETURNED"
+    CANCELLED = "CANCELLED"
+
+
+class InspectionCancelReason(StrEnum):
+    OPERATIONS = "OPERATIONS"
+    PACKAGE_ENDED = "PACKAGE_ENDED"  # EX-18
+    PROJECT_CLOSED = "PROJECT_CLOSED"
+
+
+class CheckpointResult(StrEnum):
+    PASS = "PASS"  # noqa: S105 (a result, not a password)
+    OBSERVATION = "OBSERVATION"
+    NON_CONFORMANCE = "NON_CONFORMANCE"
+    NOT_APPLICABLE = "NOT_APPLICABLE"
+
+
+class Severity(StrEnum):
+    """EX-11."""
+
+    MINOR = "MINOR"
+    MAJOR = "MAJOR"
+    CRITICAL = "CRITICAL"
+
+
+class NcState(StrEnum):
+    """EX-11: closed only by an approved re-inspection."""
+
+    OPEN = "OPEN"
+    RECTIFICATION_SUBMITTED = "RECTIFICATION_SUBMITTED"
+    REINSPECTION_SCHEDULED = "REINSPECTION_SCHEDULED"
+    CLOSED = "CLOSED"
+
+
+class HandoverState(StrEnum):
+    """EX-15: an operations issue is never an acknowledgement."""
+
+    OPEN = "OPEN"
+    READY = "READY"
+    ACKNOWLEDGED = "ACKNOWLEDGED"
+    ISSUED_BY_OPERATIONS = "ISSUED_BY_OPERATIONS"
+
+
+class HandoverDocumentKind(StrEnum):
+    WARRANTY = "WARRANTY"
+    MANUAL = "MANUAL"
+    DRAWING = "DRAWING"
+    CERTIFICATE = "CERTIFICATE"
+    PHOTO = "PHOTO"
+    OTHER = "OTHER"
+
+
+class BuildRecordState(StrEnum):
+    DRAFT = "DRAFT"
+    ISSUED = "ISSUED"
+    SUPERSEDED = "SUPERSEDED"
+
+
+class BuildRecordBasis(StrEnum):
+    ACKNOWLEDGED = "ACKNOWLEDGED"
+    ISSUED_BY_OPERATIONS = "ISSUED_BY_OPERATIONS"
+
+
 ALL_ENUMS: tuple[type[StrEnum], ...] = (
     Audience, UserStatus, ActorType, SecuritySeverity, ContactKind, OtpPurpose, OtpState,
     FinishLevel, ProjectStatus, ProjectType, MembershipRole, ReviewFlag, EnquiryKind,
@@ -744,5 +860,8 @@ ALL_ENUMS: tuple[type[StrEnum], ...] = (
     PackageServiceKind, RfqState, RfqCancelReason, InvitationState, InvitationSource,
     InvitationWithdrawReason, QuoteVersionState, QuoteVersionKind, QuoteCheckState, TaxTreatment,
     QuoteLineKind, DeviationType, AdjustmentClarification, ClarificationDirection,
-    ClarificationState, ComparisonState,
+    ClarificationState, ComparisonState, StageUpdateKind, PaymentMarkSide, PaymentMarkValue,
+    AppointmentStatus, ChecklistStatus, InspectionKind, InspectionState, InspectionCancelReason,
+    CheckpointResult, Severity, NcState, HandoverState, HandoverDocumentKind, BuildRecordState,
+    BuildRecordBasis,
 )  # fmt: skip

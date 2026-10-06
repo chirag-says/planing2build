@@ -6,6 +6,8 @@ from typing import Any
 
 from fastapi import APIRouter, FastAPI
 
+from p2b.assurance.ops_router import router as assurance_ops_router
+from p2b.assurance.router import router as assurance_router
 from p2b.audit.interface import record_security_event
 from p2b.billing.ops_router import router as billing_ops_router
 from p2b.billing.router import dev_router as billing_dev_router
@@ -13,6 +15,8 @@ from p2b.billing.router import router as billing_router
 from p2b.buildplan.ops_router import router as buildplan_ops_router
 from p2b.buildplan.router import router as buildplan_router
 from p2b.catalog.router import router as catalog_router
+from p2b.construction.ops_router import router as construction_ops_router
+from p2b.construction.router import router as construction_router
 from p2b.core import health
 from p2b.core.config import Settings, get_settings
 from p2b.core.db import Database
@@ -30,10 +34,13 @@ from p2b.integrations.ai_images import build_image_provider
 from p2b.integrations.nominatim import build_geocoder
 from p2b.integrations.razorpay import build_payment_gateway
 from p2b.integrations.storage import build_storage
+from p2b.money.router import router as money_router
 from p2b.operations.professionals_router import router as professional_review_router
 from p2b.operations.router import router as operations_router
 from p2b.professionals.router import router as professionals_router
 from p2b.projects.router import router as projects_router
+from p2b.rfq.ops_router import router as rfq_ops_router
+from p2b.rfq.router import router as rfq_router
 
 API_VERSION = "v1"
 
@@ -96,6 +103,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     api.include_router(engagements_ops_router)
     api.include_router(buildplan_router)
     api.include_router(buildplan_ops_router)
+    api.include_router(rfq_router)
+    api.include_router(rfq_ops_router)
+    api.include_router(construction_router)
+    api.include_router(construction_ops_router)
+    api.include_router(money_router)
+    api.include_router(assurance_router)
+    api.include_router(assurance_ops_router)
     if settings.payment_provider == "fake":  # local development and tests only (Settings)
         api.include_router(billing_dev_router)
     app.include_router(api)
