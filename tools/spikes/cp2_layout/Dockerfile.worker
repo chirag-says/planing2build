@@ -1,0 +1,19 @@
+# Checkpoint 2 research spike: a separate solver-worker image (Options A/B in
+# AI_DESIGN_ENGINE_CHECKPOINT_2.md). Only the pure engine (stdlib + Pydantic + vocabulary), the
+# synthetic test ruleset and the spike, plus OR-Tools when WITH_ORTOOLS=1. Not application code.
+#
+#   build context: a minimal copy (see README.md), never the repository root
+#   docker build -f Dockerfile.worker --build-arg WITH_ORTOOLS=0 -t p2b-engine-worker:py .
+#   docker build -f Dockerfile.worker --build-arg WITH_ORTOOLS=1 -t p2b-engine-worker:cpsat .
+FROM python:3.12-slim-bookworm
+ARG WITH_ORTOOLS=1
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 P2B_API_DIR=/app/apps/api
+RUN pip install --no-cache-dir "pydantic==2.13.5" \
+    && if [ "$WITH_ORTOOLS" = "1" ]; then pip install --no-cache-dir "ortools==9.15.6755"; fi \
+    && useradd --uid 10001 --no-create-home --shell /usr/sbin/nologin app
+COPY apps /app/apps
+COPY tools /app/tools
+ENV PYTHONPATH=/app/apps/api/src
+WORKDIR /app/tools/spikes/cp2_layout
+USER app
+CMD ["python", "run.py", "--solver", "ls"]
