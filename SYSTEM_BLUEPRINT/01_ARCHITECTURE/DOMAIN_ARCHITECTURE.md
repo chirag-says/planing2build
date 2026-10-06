@@ -118,6 +118,8 @@ Each module lists: responsibility; owned entities (tables are detailed in DATA_A
 
 ### 3.7 design
 
+**As built (ADR-025, 2026-10-06):** this module was built as three parts: `designs` (illustrative images, Slice 3.1), `buildplan` (design requests, drawing sets, checking, Slice 3.5) and `houseplans` (concept floor plans, section 3.25). The text below is the original design.
+
 - Responsibility: the concept design pipeline (IHB 33.6): intake (sanctioned plan upload or plan-library fit), the approved vector plan, the 3D model reference, depth and line exports, image generation requests to the provider adapter, generated views with review states, replacement by an architect's design pack (CD-25), and the "illustrative" labelling. Structural design never passes through this module (BR-055).
 - Owns: `design_requests`, `design_artefacts` (plans, elevations, views, model references, each versioned), `generation_jobs`, `design_reviews`.
 - Interface: `start_concept_design(project, inputs)`, `attach_sanctioned_plan(file)`, `select_library_layout(layout)`, `approve_plan(version, checker)`, `request_views(plan_version, style, cameras)`, `review_view(view, decision, reason)`, `attach_architect_pack(files, architect)`, `current_design(project)`.
@@ -331,6 +333,18 @@ Each module lists: responsibility; owned entities (tables are detailed in DATA_A
 - Events consumed: selected domain events.
 - Ownership: system.
 - Scalability: append-only, aggregated nightly; moves to a warehouse at scale.
+
+### 3.25 houseplans (ADR-025, PD-28)
+
+- Responsibility: the non-authoritative concept floor plan: requirement normalisation, architectural intent, layout rulesets (versioned, PUBLISHED only in production), deterministic layout generation, independent validation, deterministic repair, typed editing operations, revisions and named versions, derived `PlanGeometry` for 2D, 3D and PDF, and naming a VALID version as an illustrative reference.
+- Owns: `layout_rulesets`, `house_plans`, `house_plan_versions` (Checkpoint 1); `house_plan_ops` (editing checkpoint); design brief storage after AD-03.
+- Interface: `plan_reference_facts(project, version_ids)` for `buildplan` (checks a named plan version belongs to the project and is VALID). Nothing else.
+- Dependencies: projects (requirement answers through `projects.interface`), billing (credits, after AD-06), documents (PDF files, later), audit, identity.
+- Events emitted: `houseplan.generation_requested`, `houseplan.generation_finished`.
+- Events consumed: its own `houseplan.generation_requested` (queues the job on `engine`).
+- Ownership: owner edits; members view; operations read only; professionals later.
+- Scalability: CPU-bound solve on the worker, one at a time; `houseplans.engine` is pure and can move to its own worker image.
+- Detail: `02_IMPLEMENTATION/AI_DESIGN_ENGINE_CHECKPOINT_1.md`.
 
 ## 4. Dependency layers
 

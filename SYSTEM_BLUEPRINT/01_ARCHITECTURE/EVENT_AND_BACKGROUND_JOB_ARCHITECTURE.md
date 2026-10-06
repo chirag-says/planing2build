@@ -116,6 +116,8 @@ Each event: emitter, payload (beyond `aggregate_id`), consumers, and the jobs th
 | `design.architect_requested` | project id, request id | recommendation: `recommendation.requested` for architects (use = architect shortlist, once CQ-25 is settled; until then an ops queue item) |
 | `design.architect_pack_attached` | request id, artefact ids | rfq: new pack version if an RFQ is open; notifications: N homeowner and ops |
 | `design.generation_failed` | request id, provider, error class | design: retry per section 3; after the last attempt, ops exception; N nobody external |
+| `houseplan.generation_requested` | plan id, project id | houseplans: J `houseplans:generate_plan` on `engine` (concurrency 1, `queueing_lock` per plan); proposed, ADR-025 |
+| `houseplan.generation_finished` | plan id, project id, state | no consumer at Checkpoint 1; notifications later |
 
 ### 4.4 Professionals, Club, leads
 

@@ -477,3 +477,13 @@ Slice 3.6 (2026-10-06). Creating and transition POSTs take `Idempotency-Key`; re
 | `PUT /ops/quote-versions/{qid}/adjustments`, `POST .../reviewed`, `POST /ops/rfqs/{rid}/clarifications`, `POST /ops/rfq-clarifications/{cid}/answer`, `.../close`, `POST /ops/rfqs/{rid}/comparisons` | OPS or ADMIN with MFA | Review, questions, publication with the PDF |
 | `GET /ops/selection-statements`, `POST /admin/selection-statements`, `.../{id}/activate` | OPS reads, ADMIN | Versioned selection statement |
 
+## 23. Proposed for the concept floor plan, Checkpoint 1 (not built)
+
+Owner `houseplans` (ADR-025, PD-28). Homeowner audience; owner writes, members read (AD-12). Behind the `houseplans_enabled` setting, off in production until the ruleset is PUBLISHED and AD-06 is decided. Full contracts: `02_IMPLEMENTATION/AI_DESIGN_ENGINE_CHECKPOINT_1.md` section D.
+
+| Endpoint | Who | Notes |
+|---|---|---|
+| `GET /projects/{id}/house-plans` | owner, members | Plans with generation state and head validity |
+| `POST /projects/{id}/house-plans` | owner | `Idempotency-Key`; 202 QUEUED; 422 `DESIGN_INPUT_REQUIRED` with the missing inputs; 409 `RULESET_NOT_PUBLISHED` where a published ruleset is required |
+| `GET /projects/{id}/house-plans/{plan_id}` | owner, members | Head document, `PlanGeometry`, validation report, or the infeasibility explanation |
+| `GET /ops/projects/{id}/house-plans`, `GET /ops/house-plans/{plan_id}` | OPS or ADMIN with MFA | Read only |

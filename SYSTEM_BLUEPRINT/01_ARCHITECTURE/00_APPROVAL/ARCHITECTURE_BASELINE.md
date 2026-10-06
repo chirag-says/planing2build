@@ -64,7 +64,7 @@ The API is same-origin at `/api/v1` on each host. `/api/v1/admin/*` is reachable
 
 ## 8. Approved domain and module structure
 
-ALREADY DECIDED (ADR-008, `DOMAIN_ARCHITECTURE.md`). A modular monolith with 24 modules: `core`, `identity`, `projects`, `catalog`, `specification`, `buildplan`, `design`, `professionals`, `leads`, `rfq`, `recommendation`, `construction`, `variations`, `money`, `assurance`, `issues`, `records`, `billing`, `documents`, `notifications`, `messaging`, `audit`, `ops`, `analytics`. Each module owns its tables; other modules use its `interface.py` or its events; `core` imports no module; `integrations` import no module; `recommendation/core` imports nothing from the application. Adding a module is an architecture change.
+ALREADY DECIDED (ADR-008, `DOMAIN_ARCHITECTURE.md`). A modular monolith with 24 modules: `core`, `identity`, `projects`, `catalog`, `specification`, `buildplan`, `design`, `professionals`, `leads`, `rfq`, `recommendation`, `construction`, `variations`, `money`, `assurance`, `issues`, `records`, `billing`, `documents`, `notifications`, `messaging`, `audit`, `ops`, `analytics`. Amended: `engagements` replaces `leads` (ADR-024); `houseplans` added and `design` built as `designs`, `buildplan` and `houseplans` (ADR-025), 25 modules. Each module owns its tables; other modules use its `interface.py` or its events; `core` imports no module; `integrations` import no module; `recommendation/core` imports nothing from the application. Adding a module is an architecture change.
 
 Modules are created when their first slice needs them, not in advance. An empty module package is not created to "reserve" a name.
 
@@ -159,7 +159,7 @@ From `IHB_FLOW.md` section 33 and `PROFESSIONALS_FLOW.md` section 44, Raipur onl
 
 ## 19. Explicit POC exclusions
 
-Construction money through the platform, escrow, Razorpay Route (CD-01); payment amounts between homeowner and professional (CD-09); project types other than new homes (CD-03); material supply (CD-13); the matched marketplace (CD-22); the brand dashboard (CD-23); ratings and reviews (CQ-17, until answered); post-handover service orders (CD-12); Hindi UI (ADR-022); native apps (ADR-021); SMS and WhatsApp channels (until enabled); payment links and subscriptions; lead allocation by min-cost flow and learned ranking (engine phase 2); AI-generated drawings or structural design; any language model; price ranking or price sort anywhere; paid prominence.
+Construction money through the platform, escrow, Razorpay Route (CD-01); payment amounts between homeowner and professional (CD-09); project types other than new homes (CD-03); material supply (CD-13); the matched marketplace (CD-22); the brand dashboard (CD-23); ratings and reviews (CQ-17, until answered); post-handover service orders (CD-12); Hindi UI (ADR-022); native apps (ADR-021); SMS and WhatsApp channels (until enabled); payment links and subscriptions; lead allocation by min-cost flow and learned ranking (engine phase 2); AI-generated drawings or structural design (a PD-28 concept floor plan computed by the deterministic `houseplans` engine is not a drawing; ADR-025); any language model; price ranking or price sort anywhere; paid prominence.
 
 ## 20. Approved ADR list
 
@@ -191,6 +191,8 @@ All 22 ADRs are part of this baseline. Status after this baseline: "Accepted for
 | 022 | English only, strings externalised | Chirag |
 | 023 | fpdf2 for issued PDFs (supersedes 018) | Chirag (2026-10-05) |
 | 024 | `engagements` replaces `leads` in the module list (amends 008) | Chirag (2026-10-06) |
+| 025 | `houseplans` module and deterministic concept floor plan engine, zoning + OR-Tools CP-SAT (amends 008 and 013; records the `design` naming drift) | Chirag (2026-10-06) |
+| 026 | three.js and React Three Fiber for the concept plan 3D viewer | Chirag (2026-10-06) |
 
 ## 21. Blocking open decisions
 

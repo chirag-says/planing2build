@@ -32,3 +32,7 @@ Thumbs.db
 .idea/
 .vscode/
 .import_linter_cache/
+
+# Third-party reference clones (studied, never shipped). Each keeps its own .git and LICENSE;
+# findings are carried into SYSTEM_BLUEPRINT (see AI_DESIGN_ENGINE_HAIRLINE_READINESS.md).
+/REFERENCE/

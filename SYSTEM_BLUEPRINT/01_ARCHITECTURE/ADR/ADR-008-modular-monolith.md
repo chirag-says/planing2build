@@ -2,7 +2,7 @@
 
 | Item | Value |
 |---|---|
-| Status | Proposed (2026-10-03); module list amended by ADR-024 (2026-10-06): `engagements` replaces `leads` |
+| Status | Proposed (2026-10-03); module list amended by ADR-024 (2026-10-06): `engagements` replaces `leads`; amended by ADR-025 (2026-10-06): `houseplans` added (25 modules) and `design` recorded as built in `designs`, `buildplan` and `houseplans` |
 | Deciders | Chirag (strong preference stated), Sakha |
 | Related | SYSTEM_ARCHITECTURE.md section 6, DOMAIN_ARCHITECTURE.md, ADR-002, ADR-009 |
 

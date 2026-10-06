@@ -2,7 +2,7 @@
 
 | Item | Value |
 |---|---|
-| Status | Proposed (2026-10-03); CD-25 by Chirag |
+| Status | Proposed (2026-10-03); CD-25 by Chirag. Amended by ADR-025 (2026-10-06): the rejected alternative below stays rejected for drawings; a deterministic, non-authoritative concept floor plan (PD-28) is a separate artefact owned by `houseplans` |
 | Deciders | Chirag, Sakha |
 | Related | IHB_FLOW.md 33.6, AI_AND_RECOMMENDATION_ARCHITECTURE.md Part A, INTEGRATION_ARCHITECTURE.md section 6 |
 

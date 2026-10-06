@@ -507,6 +507,10 @@ Owner `records` (ADR-008 name). Section 4.13's design is [SUPERSEDED] where it d
 | `records_events` | Append-only history |
 | `file_objects`, `otp_challenges` | Purposes HANDOVER_DOCUMENT, BUILD_RECORD_DOCUMENT, BUILD_RECORD_EXPORT; confirmation purpose ACKNOWLEDGE_HANDOVER |
 
+### 4.24 Proposed for the concept floor plan, Checkpoint 1 (migration `0019_houseplans`, not built)
+
+Owner `houseplans` (ADR-025). Design and columns: `02_IMPLEMENTATION/AI_DESIGN_ENGINE_CHECKPOINT_1.md` sections C and E. Tables: `layout_rulesets` (versioned rule data, DRAFT / APPROVED / PUBLISHED / RETIRED, per-value sources), `house_plans` (generation state, intent, head document in integer millimetres, head validity and report, `is_authoritative` false by CHECK), `house_plan_versions` (append-only named snapshots with content hash). Additive only. `house_plan_ops` (append-only operation log) arrives with the editing checkpoint, not in 0019.
+
 ## 5. Geospatial design
 
 - Projects store the plot as a `geography(Point, 4326)` chosen by a map pin (the address text is secondary). Professionals store a base point and optional service polygons; a profile without polygons uses `base_geom` plus `service_radius_km`.

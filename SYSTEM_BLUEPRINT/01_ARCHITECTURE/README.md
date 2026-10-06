@@ -35,7 +35,7 @@ The design holds the sources' hard rules by construction: project isolation thro
 | 15 | `TESTING_ARCHITECTURE.md` | Test layers, the S06 critical tests as assertions, end-to-end flows, test data, quality gates |
 | 16 | `SCALABILITY_AND_MIGRATION_PLAN.md` | Stages with objective triggers, what each step changes and what it does not, deferred items with reasons, designed-in migration paths |
 | 17 | `COST_MODEL.md` | Unit prices, four phases with fixed, usage and optional lines, the largest driver per phase and the change that halves it, cost per house |
-| 18 | `ADR/ADR-001` to `ADR-024` (ADR-018 superseded by ADR-023; ADR-024 replaces `leads` with `engagements` in the module list) | One decision each: context, decision, why, alternatives, why not, consequences, migration path |
+| 18 | `ADR/ADR-001` to `ADR-026` (ADR-018 superseded by ADR-023; ADR-024 replaces `leads` with `engagements` in the module list; ADR-025 adds `houseplans` and the concept floor plan engine; ADR-026 the 3D viewer) | One decision each: context, decision, why, alternatives, why not, consequences, migration path |
 
 ## 3. Decisions taken with Chirag on 2026-10-03
 
