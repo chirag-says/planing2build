@@ -1,0 +1,9 @@
+{
+  "identities": [
+    {
+      "name": "p2b-local",
+      "credentials": [{"accessKey": "p2b-local-access", "secretKey": "p2b-local-secret-not-secret"}],
+      "actions": ["Read", "Write", "List", "Tagging"]
+    }
+  ]
+}

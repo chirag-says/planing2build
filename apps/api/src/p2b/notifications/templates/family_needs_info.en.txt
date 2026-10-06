@@ -1,0 +1,7 @@
+Plan2Build needs more information about your project $code
+---
+The Plan2Build team reviewed your requirement and needs more information:
+
+$message
+
+Sign in to Plan2Build, update your requirement and submit it again.

@@ -1,0 +1,9 @@
+Requirement needs attention: $code
+---
+A submitted requirement carries review flags.
+
+Project: $code
+Locality: $locality
+Review flags: $flags
+
+Open it from the review queue on the operations site.

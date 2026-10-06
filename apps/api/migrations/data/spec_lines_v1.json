@@ -1,0 +1,1097 @@
+{
+  "version": 1,
+  "source": "S04 Plan2Build_Specification_Schema.docx, tables 3, 5 to 7 and 10",
+  "approved_note": "Product-owner-approved v1 seed (Chirag, 2026-10-04, rulings 2.4 and 2.5)",
+  "packages": [
+    {
+      "code": "A",
+      "name": "Structure",
+      "issued": "Before stage 3"
+    },
+    {
+      "code": "B",
+      "name": "Concealed systems",
+      "issued": "Before stage 9, about month 5"
+    },
+    {
+      "code": "C",
+      "name": "Finishes",
+      "issued": "Before stage 13, about month 10"
+    }
+  ],
+  "lines": [
+    {
+      "code": "A01",
+      "package": "A",
+      "item": "Soil investigation",
+      "performance_specification": "Bearing capacity at founding depth, water table, soil classification",
+      "consuming_stages": [
+        1
+      ],
+      "decide_by_weeks": 6,
+      "verified_at": "Report on file",
+      "brand_category": null,
+      "s04_brand_category": "Testing lab",
+      "is_structural": true,
+      "is_long_lead": false,
+      "engineer_signoff": "PENDING"
+    },
+    {
+      "code": "A02",
+      "package": "A",
+      "item": "Foundation type",
+      "performance_specification": "Isolated, combined or raft, per the soil report",
+      "consuming_stages": [
+        3
+      ],
+      "decide_by_weeks": 5,
+      "verified_at": "Gate 1",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": true,
+      "is_long_lead": false,
+      "engineer_signoff": "PENDING"
+    },
+    {
+      "code": "A03",
+      "package": "A",
+      "item": "PCC",
+      "performance_specification": "Grade, thickness, aggregate size",
+      "consuming_stages": [
+        3
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Gate 1",
+      "brand_category": "Cement",
+      "s04_brand_category": "Cement",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "A04",
+      "package": "A",
+      "item": "Foundation concrete",
+      "performance_specification": "Grade, exposure class, slump range",
+      "consuming_stages": [
+        3
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Gate 1 + cube test",
+      "brand_category": null,
+      "s04_brand_category": "Cement / RMC",
+      "is_structural": true,
+      "is_long_lead": false,
+      "engineer_signoff": "PENDING"
+    },
+    {
+      "code": "A05",
+      "package": "A",
+      "item": "Reinforcement steel",
+      "performance_specification": "Grade (Fe500 or Fe500D), corrosion resistance, IS mark",
+      "consuming_stages": [
+        3
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Gate 1, mill test certificate",
+      "brand_category": null,
+      "s04_brand_category": "Steel",
+      "is_structural": true,
+      "is_long_lead": false,
+      "engineer_signoff": "PENDING"
+    },
+    {
+      "code": "A06",
+      "package": "A",
+      "item": "Cover blocks",
+      "performance_specification": "Material, cover depth by element",
+      "consuming_stages": [
+        3
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Gate 1",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "A07",
+      "package": "A",
+      "item": "Binding wire",
+      "performance_specification": "Gauge, annealed",
+      "consuming_stages": [
+        3
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Site log",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "A08",
+      "package": "A",
+      "item": "Anti-termite treatment",
+      "performance_specification": "Chemical class, concentration, stages of application, warranty term",
+      "consuming_stages": [
+        4
+      ],
+      "decide_by_weeks": 2,
+      "verified_at": "Gate 2",
+      "brand_category": "Chemicals",
+      "s04_brand_category": "Chemicals",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "A09",
+      "package": "A",
+      "item": "Plinth beam concrete",
+      "performance_specification": "Grade, reinforcement detail",
+      "consuming_stages": [
+        4
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Gate 2",
+      "brand_category": null,
+      "s04_brand_category": "Cement / RMC",
+      "is_structural": true,
+      "is_long_lead": false,
+      "engineer_signoff": "PENDING"
+    },
+    {
+      "code": "A10",
+      "package": "A",
+      "item": "Backfill material",
+      "performance_specification": "Type, layer thickness, compaction standard",
+      "consuming_stages": [
+        4
+      ],
+      "decide_by_weeks": 2,
+      "verified_at": "Gate 2",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "A11",
+      "package": "A",
+      "item": "Foundation waterproofing",
+      "performance_specification": "System type, coats, membrane specification where applicable",
+      "consuming_stages": [
+        3
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Gate 1",
+      "brand_category": "Waterproofing",
+      "s04_brand_category": "Waterproofing",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "A12",
+      "package": "A",
+      "item": "Column and beam concrete",
+      "performance_specification": "Grade by floor",
+      "consuming_stages": [
+        5
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Site log, cube test",
+      "brand_category": null,
+      "s04_brand_category": "Cement / RMC",
+      "is_structural": true,
+      "is_long_lead": false,
+      "engineer_signoff": "PENDING"
+    },
+    {
+      "code": "A13",
+      "package": "A",
+      "item": "Slab concrete",
+      "performance_specification": "Grade, delivery mode (RMC or site mix), pump requirement",
+      "consuming_stages": [
+        6
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Gate 3, cube test",
+      "brand_category": null,
+      "s04_brand_category": "RMC / Cement",
+      "is_structural": true,
+      "is_long_lead": false,
+      "engineer_signoff": "PENDING"
+    },
+    {
+      "code": "A14",
+      "package": "A",
+      "item": "Admixture",
+      "performance_specification": "Type, dosage, purpose",
+      "consuming_stages": [
+        6
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Delivery challan",
+      "brand_category": "Admixtures",
+      "s04_brand_category": "Admixtures",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "A15",
+      "package": "A",
+      "item": "Curing method",
+      "performance_specification": "Method, duration by element, compound where used",
+      "consuming_stages": [
+        6
+      ],
+      "decide_by_weeks": 2,
+      "verified_at": "Site log, photo evidence",
+      "brand_category": "Curing compound",
+      "s04_brand_category": "Curing compound",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "A16",
+      "package": "A",
+      "item": "Shuttering system",
+      "performance_specification": "Type, reuse limit, surface finish class",
+      "consuming_stages": [
+        5,
+        6
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Gate 3",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "A17",
+      "package": "A",
+      "item": "Blockwork",
+      "performance_specification": "Type (AAC, fly-ash or clay), density, thickness by wall",
+      "consuming_stages": [
+        7
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Site log, delivery",
+      "brand_category": "Blocks",
+      "s04_brand_category": "Blocks",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "A18",
+      "package": "A",
+      "item": "Block mortar",
+      "performance_specification": "Mix ratio or adhesive system, joint thickness",
+      "consuming_stages": [
+        7
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Site log",
+      "brand_category": "Cement / adhesive",
+      "s04_brand_category": "Cement / adhesive",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "A19",
+      "package": "A",
+      "item": "Lintels and sills",
+      "performance_specification": "Cast in situ or precast, bearing length",
+      "consuming_stages": [
+        7
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Site log",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": true,
+      "is_long_lead": false,
+      "engineer_signoff": "PENDING"
+    },
+    {
+      "code": "A20",
+      "package": "A",
+      "item": "Sunken slab treatment",
+      "performance_specification": "Fill material, waterproofing, slope",
+      "consuming_stages": [
+        6
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Gate 3",
+      "brand_category": "Waterproofing",
+      "s04_brand_category": "Waterproofing",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "A21",
+      "package": "A",
+      "item": "Structural steel and fabrication",
+      "performance_specification": "Section, grade, coating, where used",
+      "consuming_stages": [
+        8
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Site log",
+      "brand_category": "Steel",
+      "s04_brand_category": "Steel",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B01",
+      "package": "B",
+      "item": "Electrical load and phase",
+      "performance_specification": "Connected load, single or three phase, sanctioned load application",
+      "consuming_stages": [
+        9
+      ],
+      "decide_by_weeks": 5,
+      "verified_at": "Gate 4",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B02",
+      "package": "B",
+      "item": "Point schedule",
+      "performance_specification": "Room-by-room count and height of every outlet, switch and fixture point",
+      "consuming_stages": [
+        9
+      ],
+      "decide_by_weeks": 5,
+      "verified_at": "Gate 4, against drawing",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B03",
+      "package": "B",
+      "item": "Wiring cable",
+      "performance_specification": "Conductor, insulation class (FR, FRLS or ZHFR), size by circuit",
+      "consuming_stages": [
+        9
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Gate 4, delivery challan",
+      "brand_category": "Wires and cables",
+      "s04_brand_category": "Wires and cables",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B04",
+      "package": "B",
+      "item": "Conduits",
+      "performance_specification": "Material, wall thickness, ISI mark, bend radius rule",
+      "consuming_stages": [
+        9
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Gate 4",
+      "brand_category": "Conduits",
+      "s04_brand_category": "Conduits",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B05",
+      "package": "B",
+      "item": "Distribution board and protection",
+      "performance_specification": "DB ways, MCB ratings by circuit, RCCB sensitivity, SPD",
+      "consuming_stages": [
+        14
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Second fix check",
+      "brand_category": "Switchgear",
+      "s04_brand_category": "Switchgear",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B06",
+      "package": "B",
+      "item": "Earthing",
+      "performance_specification": "System type, electrode specification, number of pits, resistance target",
+      "consuming_stages": [
+        9
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Gate 4, resistance test",
+      "brand_category": "Earthing",
+      "s04_brand_category": "Earthing",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B07",
+      "package": "B",
+      "item": "Switches and sockets",
+      "performance_specification": "Modular series, rating, IP class for wet areas",
+      "consuming_stages": [
+        14
+      ],
+      "decide_by_weeks": 8,
+      "verified_at": "Second fix check",
+      "brand_category": "Wiring devices",
+      "s04_brand_category": "Wiring devices",
+      "is_structural": false,
+      "is_long_lead": true,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B08",
+      "package": "B",
+      "item": "Inverter and battery provision",
+      "performance_specification": "Capacity, circuits on backup, cabling and location",
+      "consuming_stages": [
+        9
+      ],
+      "decide_by_weeks": 5,
+      "verified_at": "Gate 4",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B09",
+      "package": "B",
+      "item": "Solar provision",
+      "performance_specification": "Roof loading allowance, conduit route, meter position",
+      "consuming_stages": [
+        9
+      ],
+      "decide_by_weeks": 5,
+      "verified_at": "Gate 4",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B10",
+      "package": "B",
+      "item": "EV charging provision",
+      "performance_specification": "Circuit rating, cable route to parking",
+      "consuming_stages": [
+        9
+      ],
+      "decide_by_weeks": 5,
+      "verified_at": "Gate 4",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B11",
+      "package": "B",
+      "item": "Data, TV and CCTV conduits",
+      "performance_specification": "Category, route, termination points",
+      "consuming_stages": [
+        9
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Gate 4",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B12",
+      "package": "B",
+      "item": "Water supply piping",
+      "performance_specification": "Material (CPVC, PPR or composite), pressure class, size by run",
+      "consuming_stages": [
+        9
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Gate 4, pressure test",
+      "brand_category": "Plumbing",
+      "s04_brand_category": "Plumbing",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B13",
+      "package": "B",
+      "item": "Drainage piping",
+      "performance_specification": "Material, class (SWR type), size, slope",
+      "consuming_stages": [
+        9
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Gate 4",
+      "brand_category": "Plumbing",
+      "s04_brand_category": "Plumbing",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B14",
+      "package": "B",
+      "item": "Concealed valves and bodies",
+      "performance_specification": "Type, body material, compatibility with the chosen CP range",
+      "consuming_stages": [
+        9
+      ],
+      "decide_by_weeks": 6,
+      "verified_at": "Gate 4",
+      "brand_category": "CP fittings",
+      "s04_brand_category": "CP fittings",
+      "is_structural": false,
+      "is_long_lead": true,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B15",
+      "package": "B",
+      "item": "Bathroom waterproofing",
+      "performance_specification": "System, coats, coving detail, ponding test duration",
+      "consuming_stages": [
+        10
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Gate 5, ponding test",
+      "brand_category": "Waterproofing",
+      "s04_brand_category": "Waterproofing",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B16",
+      "package": "B",
+      "item": "Terrace waterproofing",
+      "performance_specification": "System, slope, coving, drain outlet detail",
+      "consuming_stages": [
+        10
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Gate 5, ponding test",
+      "brand_category": "Waterproofing",
+      "s04_brand_category": "Waterproofing",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B17",
+      "package": "B",
+      "item": "Overhead tank",
+      "performance_specification": "Capacity, material, layers, structural provision",
+      "consuming_stages": [
+        8
+      ],
+      "decide_by_weeks": 5,
+      "verified_at": "Site log",
+      "brand_category": "Water tanks",
+      "s04_brand_category": "Water tanks",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B18",
+      "package": "B",
+      "item": "Underground sump",
+      "performance_specification": "Capacity, construction, waterproofing, access",
+      "consuming_stages": [
+        2
+      ],
+      "decide_by_weeks": 6,
+      "verified_at": "Site log",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B19",
+      "package": "B",
+      "item": "Pump and pressure system",
+      "performance_specification": "Type, head, flow, pressure pump requirement",
+      "consuming_stages": [
+        14
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Second fix check",
+      "brand_category": "Pumps",
+      "s04_brand_category": "Pumps",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B20",
+      "package": "B",
+      "item": "Rainwater harvesting",
+      "performance_specification": "Recharge or storage, pit specification, filter",
+      "consuming_stages": [
+        16
+      ],
+      "decide_by_weeks": 6,
+      "verified_at": "Site log",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B21",
+      "package": "B",
+      "item": "Septic tank or sewer connection",
+      "performance_specification": "Type, capacity, or municipal connection route",
+      "consuming_stages": [
+        2
+      ],
+      "decide_by_weeks": 6,
+      "verified_at": "Site log",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "B22",
+      "package": "B",
+      "item": "Air-conditioning provisions",
+      "performance_specification": "Drain routing, wall sleeves, outdoor unit position, dedicated circuits",
+      "consuming_stages": [
+        9
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Gate 4",
+      "brand_category": null,
+      "s04_brand_category": null,
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C01",
+      "package": "C",
+      "item": "Internal plaster",
+      "performance_specification": "Mix, thickness, finish class, curing",
+      "consuming_stages": [
+        11
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Site log",
+      "brand_category": "Cement",
+      "s04_brand_category": "Cement",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C02",
+      "package": "C",
+      "item": "External plaster and texture",
+      "performance_specification": "Mix, thickness, texture system where used",
+      "consuming_stages": [
+        11
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Site log",
+      "brand_category": "Cement / texture",
+      "s04_brand_category": "Cement / texture",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C03",
+      "package": "C",
+      "item": "Wall putty",
+      "performance_specification": "Type (cement or acrylic), coats",
+      "consuming_stages": [
+        15
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Site log",
+      "brand_category": "Putty",
+      "s04_brand_category": "Putty",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C04",
+      "package": "C",
+      "item": "Primer",
+      "performance_specification": "Type, coats, compatibility with topcoat",
+      "consuming_stages": [
+        15
+      ],
+      "decide_by_weeks": 3,
+      "verified_at": "Site log",
+      "brand_category": "Paint",
+      "s04_brand_category": "Paint",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C05",
+      "package": "C",
+      "item": "Internal paint",
+      "performance_specification": "Sheen, washability class, VOC, coats, warranty term",
+      "consuming_stages": [
+        15
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Site log, delivery",
+      "brand_category": "Paint",
+      "s04_brand_category": "Paint",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C06",
+      "package": "C",
+      "item": "External paint",
+      "performance_specification": "Weather resistance class, warranty term, coats",
+      "consuming_stages": [
+        15
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Site log, delivery",
+      "brand_category": "Paint",
+      "s04_brand_category": "Paint",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C07",
+      "package": "C",
+      "item": "Living and bedroom flooring",
+      "performance_specification": "Material, size, thickness, PEI or abrasion class, finish",
+      "consuming_stages": [
+        13
+      ],
+      "decide_by_weeks": 6,
+      "verified_at": "Site log, delivery",
+      "brand_category": "Tiles / stone",
+      "s04_brand_category": "Tiles / stone",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C08",
+      "package": "C",
+      "item": "Kitchen and utility flooring",
+      "performance_specification": "Anti-skid rating, stain resistance",
+      "consuming_stages": [
+        13
+      ],
+      "decide_by_weeks": 6,
+      "verified_at": "Site log",
+      "brand_category": "Tiles",
+      "s04_brand_category": "Tiles",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C09",
+      "package": "C",
+      "item": "Bathroom floor tile",
+      "performance_specification": "Anti-skid class (wet), size",
+      "consuming_stages": [
+        13
+      ],
+      "decide_by_weeks": 6,
+      "verified_at": "Site log",
+      "brand_category": "Tiles",
+      "s04_brand_category": "Tiles",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C10",
+      "package": "C",
+      "item": "Bathroom wall tile",
+      "performance_specification": "Size, water absorption class, height",
+      "consuming_stages": [
+        13
+      ],
+      "decide_by_weeks": 6,
+      "verified_at": "Site log",
+      "brand_category": "Tiles",
+      "s04_brand_category": "Tiles",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C11",
+      "package": "C",
+      "item": "Tile adhesive and grout",
+      "performance_specification": "Adhesive type by substrate, grout type (epoxy or cementitious)",
+      "consuming_stages": [
+        13
+      ],
+      "decide_by_weeks": 4,
+      "verified_at": "Site log",
+      "brand_category": "Adhesives",
+      "s04_brand_category": "Adhesives",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C12",
+      "package": "C",
+      "item": "Skirting",
+      "performance_specification": "Material, height, profile",
+      "consuming_stages": [
+        13
+      ],
+      "decide_by_weeks": 5,
+      "verified_at": "Site log",
+      "brand_category": "Tiles / stone",
+      "s04_brand_category": "Tiles / stone",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C13",
+      "package": "C",
+      "item": "Staircase finish",
+      "performance_specification": "Material, tread and riser detail, nosing, anti-skid",
+      "consuming_stages": [
+        13
+      ],
+      "decide_by_weeks": 6,
+      "verified_at": "Site log",
+      "brand_category": "Stone / tiles",
+      "s04_brand_category": "Stone / tiles",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C14",
+      "package": "C",
+      "item": "Kitchen counter",
+      "performance_specification": "Material, thickness, edge profile, sink cut-out",
+      "consuming_stages": [
+        13
+      ],
+      "decide_by_weeks": 6,
+      "verified_at": "Site log",
+      "brand_category": "Stone / quartz",
+      "s04_brand_category": "Stone / quartz",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C15",
+      "package": "C",
+      "item": "Kitchen sink and faucet",
+      "performance_specification": "Material, gauge, bowl configuration, faucet type",
+      "consuming_stages": [
+        14
+      ],
+      "decide_by_weeks": 6,
+      "verified_at": "Second fix",
+      "brand_category": "Kitchen fittings",
+      "s04_brand_category": "Kitchen fittings",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C16",
+      "package": "C",
+      "item": "WC",
+      "performance_specification": "Type, flush volume, rough-in dimension, seat",
+      "consuming_stages": [
+        14
+      ],
+      "decide_by_weeks": 8,
+      "verified_at": "Second fix",
+      "brand_category": "Sanitaryware",
+      "s04_brand_category": "Sanitaryware",
+      "is_structural": false,
+      "is_long_lead": true,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C17",
+      "package": "C",
+      "item": "Basin and counter",
+      "performance_specification": "Type, size, waste and trap specification",
+      "consuming_stages": [
+        14
+      ],
+      "decide_by_weeks": 8,
+      "verified_at": "Second fix",
+      "brand_category": "Sanitaryware",
+      "s04_brand_category": "Sanitaryware",
+      "is_structural": false,
+      "is_long_lead": true,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C18",
+      "package": "C",
+      "item": "CP fittings",
+      "performance_specification": "Finish, cartridge type, flow rate, warranty term",
+      "consuming_stages": [
+        14
+      ],
+      "decide_by_weeks": 8,
+      "verified_at": "Second fix",
+      "brand_category": "CP fittings",
+      "s04_brand_category": "CP fittings",
+      "is_structural": false,
+      "is_long_lead": true,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C19",
+      "package": "C",
+      "item": "Main door",
+      "performance_specification": "Material, core, thickness, frame, finish, lock grade",
+      "consuming_stages": [
+        12
+      ],
+      "decide_by_weeks": 10,
+      "verified_at": "Site log",
+      "brand_category": "Doors",
+      "s04_brand_category": "Doors",
+      "is_structural": false,
+      "is_long_lead": true,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C20",
+      "package": "C",
+      "item": "Internal doors",
+      "performance_specification": "Material, core, finish, hardware set",
+      "consuming_stages": [
+        12
+      ],
+      "decide_by_weeks": 8,
+      "verified_at": "Site log",
+      "brand_category": "Doors",
+      "s04_brand_category": "Doors",
+      "is_structural": false,
+      "is_long_lead": true,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C21",
+      "package": "C",
+      "item": "Windows",
+      "performance_specification": "System (uPVC, aluminium or wood), glazing thickness, mesh, hardware",
+      "consuming_stages": [
+        12
+      ],
+      "decide_by_weeks": 10,
+      "verified_at": "Site log",
+      "brand_category": "Windows",
+      "s04_brand_category": "Windows",
+      "is_structural": false,
+      "is_long_lead": true,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C22",
+      "package": "C",
+      "item": "Railings and grills",
+      "performance_specification": "Material, section, coating system, height to code",
+      "consuming_stages": [
+        12
+      ],
+      "decide_by_weeks": 8,
+      "verified_at": "Site log",
+      "brand_category": "Steel / fabrication",
+      "s04_brand_category": "Steel / fabrication",
+      "is_structural": false,
+      "is_long_lead": true,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C23",
+      "package": "C",
+      "item": "False ceiling",
+      "performance_specification": "System, board type, moisture resistance in wet areas",
+      "consuming_stages": [
+        15
+      ],
+      "decide_by_weeks": 5,
+      "verified_at": "Site log",
+      "brand_category": "Boards",
+      "s04_brand_category": "Boards",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    },
+    {
+      "code": "C24",
+      "package": "C",
+      "item": "External works",
+      "performance_specification": "Compound wall, gate, paving material and thickness",
+      "consuming_stages": [
+        16
+      ],
+      "decide_by_weeks": 5,
+      "verified_at": "Gate 6",
+      "brand_category": "Paving / fabrication",
+      "s04_brand_category": "Paving / fabrication",
+      "is_structural": false,
+      "is_long_lead": false,
+      "engineer_signoff": "NOT_REQUIRED"
+    }
+  ]
+}

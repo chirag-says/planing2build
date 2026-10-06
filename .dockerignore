@@ -1,0 +1,12 @@
+**/node_modules
+**/.next
+**/test-results
+**/playwright-report
+apps/api
+SOURCE_OF_TRUTH
+SYSTEM_BLUEPRINT
+.sakha
+infra
+**/.env
+**/.env.*
+!**/.env.example

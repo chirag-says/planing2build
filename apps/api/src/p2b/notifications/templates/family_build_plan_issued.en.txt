@@ -1,0 +1,5 @@
+Your Plan2Build Build Plan is ready to review
+---
+Build Plan version $version for project $code has been issued.
+
+Sign in to Plan2Build to read it, download it, and accept it or ask for changes.

@@ -1,0 +1,21 @@
+# LOCAL routing, same shape as production (CLOUD_AND_HOSTING section 4): /api/v1/* to FastAPI,
+# everything else to Next.js, by host. No TLS locally; production terminates TLS with the
+# Cloudflare origin certificate.
+{
+	admin off
+	auto_https off
+}
+
+http://ihb.localhost:8080, http://pro.localhost:8080, http://admin.localhost:8080 {
+	request_body {
+		max_size 10MB
+	}
+	request_header X-Request-Id {http.request.uuid}
+
+	handle /api/v1/* {
+		reverse_proxy api:8000
+	}
+	handle {
+		reverse_proxy host.docker.internal:3000
+	}
+}

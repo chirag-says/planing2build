@@ -1,0 +1,7 @@
+Your Plan2Build connection request has been sent
+---
+Your request to $professional for $category on project $code has been sent.
+
+They have $hours hours to respond. If they do not, the request expires and you can send a request to another professional.
+
+Sign in to Plan2Build to see your requests.

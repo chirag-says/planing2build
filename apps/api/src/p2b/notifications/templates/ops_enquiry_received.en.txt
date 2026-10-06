@@ -1,0 +1,7 @@
+New enquiry: $kind
+---
+A new enquiry arrived.
+
+Type: $kind
+Type of work: $work_type
+Email: $email

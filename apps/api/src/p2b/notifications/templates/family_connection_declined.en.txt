@@ -1,0 +1,5 @@
+Your Plan2Build connection request was declined
+---
+$professional could not take your request for $category on project $code.
+
+You can send a request to another professional from your project.

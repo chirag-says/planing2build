@@ -1,0 +1,8 @@
+[
+  {
+    "AllowedOrigins": ["http://ihb.localhost:8080", "http://pro.localhost:8080"],
+    "AllowedMethods": ["PUT"],
+    "AllowedHeaders": ["content-type"],
+    "MaxAgeSeconds": 3600
+  }
+]

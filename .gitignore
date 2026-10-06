@@ -1,0 +1,34 @@
+# Client evidence and working notes never enter the code repository (AQ-30: the client receives
+# the blueprint and releases, not the repository; S09 and S12 contain vendor bank details).
+/SOURCE_OF_TRUTH/
+/.sakha/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node and Next.js
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+test-results/
+playwright-report/
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.import_linter_cache/

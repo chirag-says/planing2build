@@ -1,0 +1,7 @@
+Your project $code has been closed
+---
+The Plan2Build team has closed your project $code.
+
+Reason: $message
+
+Sign in to Plan2Build to see the details.

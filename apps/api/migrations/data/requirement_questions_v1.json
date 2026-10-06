@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "locale": "en",
+  "sections": [
+    {"key": "plot", "title": "Your plot", "questions": ["location", "locality", "property_type", "property_type_other", "plot_is_rectangular", "plot_width_ft", "plot_depth_ft", "plot_area_sqft", "facing", "setbacks"]},
+    {"key": "house", "title": "Your house", "questions": ["built_up_area_sqft", "floors", "basement", "quality_tier", "style", "bedrooms", "bathrooms", "pooja_room", "car_parking", "vastu", "services_needed"]},
+    {"key": "budget_timing", "title": "Budget and timing", "questions": ["budget_band", "start_timeline", "construction_started", "has_contractor", "has_quote"]},
+    {"key": "priorities", "title": "What matters most", "questions": ["priorities"]},
+    {"key": "more", "title": "Anything else", "questions": ["notes", "uploads"]}
+  ],
+  "questions": [
+    {"key": "location", "type": "location", "label": "Mark your plot on the map", "required": true},
+    {"key": "locality", "type": "text", "label": "Locality", "help": "Filled in from the pin. Correct it if it is wrong.", "max_length": 120, "required": true},
+    {"key": "property_type", "type": "single_choice", "label": "What are you building?", "required": true, "options": [
+      {"value": "INDEPENDENT_HOUSE", "label": "Independent house"},
+      {"value": "VILLA", "label": "Villa"},
+      {"value": "MULTI_FLAT_OWN_PLOT", "label": "Apartment / multi-flat building on your own plot"},
+      {"value": "OTHER", "label": "Other"}
+    ]},
+    {"key": "property_type_other", "type": "text", "label": "Tell us what you are building", "max_length": 200, "required": true, "show_if": {"key": "property_type", "equals": "OTHER"}},
+    {"key": "plot_is_rectangular", "type": "yes_no", "label": "Is your plot a rectangle?", "required": true},
+    {"key": "plot_width_ft", "type": "number", "label": "Plot width (feet)", "min": 5, "max": 1000, "required": true, "show_if": {"key": "plot_is_rectangular", "equals": true}},
+    {"key": "plot_depth_ft", "type": "number", "label": "Plot depth (feet)", "min": 5, "max": 1000, "required": true, "show_if": {"key": "plot_is_rectangular", "equals": true}},
+    {"key": "plot_area_sqft", "type": "number", "label": "Total plot area (sq ft)", "min": 100, "max": 200000, "required": true, "show_if": {"key": "plot_is_rectangular", "equals": false}},
+    {"key": "facing", "type": "single_choice", "label": "Which way does the plot face?", "required": true, "options": [
+      {"value": "N", "label": "North"}, {"value": "S", "label": "South"}, {"value": "E", "label": "East"}, {"value": "W", "label": "West"},
+      {"value": "NE", "label": "North-East"}, {"value": "NW", "label": "North-West"}, {"value": "SE", "label": "South-East"}, {"value": "SW", "label": "South-West"},
+      {"value": "NOT_SURE", "label": "Not sure"}
+    ]},
+    {"key": "setbacks", "type": "setbacks", "label": "Setbacks (open space to leave on each side), in feet", "min": 0, "max": 200, "required": true, "sides": [
+      {"value": "FRONT", "label": "Front"}, {"value": "BACK", "label": "Back"}, {"value": "LEFT", "label": "Left"}, {"value": "RIGHT", "label": "Right"}
+    ]},
+    {"key": "built_up_area_sqft", "type": "number_or_not_sure", "label": "Total built-up area across all floors (sq ft)", "not_sure_label": "Not sure yet", "min": 300, "max": 12000, "required": true},
+    {"key": "floors", "type": "single_choice", "label": "How many floors?", "required": true, "options": [
+      {"value": "G", "label": "Ground only"}, {"value": "G_PLUS_1", "label": "Ground + 1"}, {"value": "G_PLUS_2", "label": "Ground + 2"}, {"value": "G_PLUS_3", "label": "Ground + 3"}
+    ]},
+    {"key": "basement", "type": "yes_no", "label": "Will the house have a basement?", "required": true},
+    {"key": "quality_tier", "type": "single_choice", "label": "Construction quality tier", "help": "How the house is built and finished: materials and specifications.", "required": true, "options": [
+      {"value": "STANDARD", "label": "Standard"}, {"value": "PREMIUM", "label": "Premium"}, {"value": "LUXURY", "label": "Luxury"}
+    ]},
+    {"key": "style", "type": "single_choice", "label": "Style of the house", "help": "How the house looks. This guides the illustrative 3D images; it does not change the quality tier.", "required": false, "options": [
+      {"value": "MODERN", "label": "Modern"}, {"value": "CONTEMPORARY", "label": "Contemporary"}, {"value": "TRADITIONAL", "label": "Traditional"},
+      {"value": "MINIMALIST", "label": "Minimalist"}, {"value": "LUXURY", "label": "Luxury"}
+    ]},
+    {"key": "bedrooms", "type": "single_choice", "label": "Bedrooms", "required": true, "options": [
+      {"value": "1", "label": "1"}, {"value": "2", "label": "2"}, {"value": "3", "label": "3"}, {"value": "4", "label": "4"}, {"value": "5_PLUS", "label": "5+"}
+    ]},
+    {"key": "bathrooms", "type": "single_choice", "label": "Bathrooms", "required": true, "options": [
+      {"value": "1", "label": "1"}, {"value": "2", "label": "2"}, {"value": "3", "label": "3"}, {"value": "4", "label": "4"}, {"value": "5_PLUS", "label": "5+"}
+    ]},
+    {"key": "pooja_room", "type": "yes_no", "label": "Pooja room", "required": true},
+    {"key": "car_parking", "type": "yes_no", "label": "Car parking", "required": true},
+    {"key": "vastu", "type": "single_choice", "label": "Vastu", "required": true, "options": [
+      {"value": "MUST_FOLLOW", "label": "Must follow"}, {"value": "WHERE_POSSIBLE", "label": "Where possible"}, {"value": "NOT_NEEDED", "label": "Not needed"}
+    ]},
+    {"key": "services_needed", "type": "multi_choice", "label": "Which services do you need?", "help": "Choose all that apply.", "required": false, "options": [
+      {"value": "CONSTRUCTION", "label": "Full home construction"},
+      {"value": "ARCHITECTURAL_DESIGN", "label": "Architectural design"},
+      {"value": "STRUCTURAL_DESIGN", "label": "Structural design (by a registered structural engineer)"},
+      {"value": "CIVIL_WORK", "label": "Civil work"},
+      {"value": "MEP", "label": "Electrical, plumbing and HVAC"},
+      {"value": "INTERIOR_DESIGN", "label": "Interior design and execution"},
+      {"value": "PROJECT_MANAGEMENT", "label": "Project management"},
+      {"value": "APPROVALS", "label": "Approvals and legal support"}
+    ]},
+    {"key": "budget_band", "type": "single_choice", "label": "Your construction budget (excluding land)", "required": true, "options": [
+      {"value": "UNDER_40L", "label": "Under ₹40L"}, {"value": "40L_60L", "label": "₹40L to ₹60L"}, {"value": "60L_80L", "label": "₹60L to ₹80L"},
+      {"value": "80L_1CR", "label": "₹80L to ₹1Cr"}, {"value": "1CR_1_5CR", "label": "₹1Cr to ₹1.5Cr"}, {"value": "ABOVE_1_5CR", "label": "Above ₹1.5Cr"}
+    ]},
+    {"key": "start_timeline", "type": "single_choice", "label": "When do you plan to start building?", "required": true, "options": [
+      {"value": "WITHIN_3M", "label": "Within 3 months"}, {"value": "3_6M", "label": "3 to 6 months"}, {"value": "6_12M", "label": "6 to 12 months"},
+      {"value": "OVER_12M", "label": "More than 12 months"}, {"value": "ALREADY_STARTED", "label": "Already started"}
+    ]},
+    {"key": "construction_started", "type": "yes_no", "label": "Has construction started?", "required": true},
+    {"key": "has_contractor", "type": "yes_no", "label": "Does your family already have a contractor you want to use?", "required": true},
+    {"key": "has_quote", "type": "yes_no", "label": "Do you already have a quote from any contractor?", "required": true},
+    {"key": "priorities", "type": "ranking", "label": "Rank what matters most to you (1 = most important)", "required": true, "options": [
+      {"value": "QUALITY", "label": "Quality of work"}, {"value": "ON_TIME", "label": "Finishing on time"},
+      {"value": "WITHIN_BUDGET", "label": "Staying within budget"}, {"value": "SIMILAR_HOMES", "label": "Experience with similar homes"}
+    ]},
+    {"key": "notes", "type": "text", "label": "Anything else we should know?", "max_length": 500, "multiline": true, "required": false},
+    {"key": "uploads", "type": "files", "label": "Drawings, a sanctioned plan or site photos", "required": false, "max_files": 10, "max_bytes": 10485760, "accept": ["image/jpeg", "image/png", "application/pdf"]}
+  ],
+  "review_flags": [
+    {"flag": "PROPERTY_TYPE_OTHER", "when": {"key": "property_type", "equals": "OTHER"}},
+    {"flag": "CONSTRUCTION_STARTED", "when": {"key": "construction_started", "equals": true}},
+    {"flag": "CONSTRUCTION_STARTED", "when": {"key": "start_timeline", "equals": "ALREADY_STARTED"}}
+  ]
+}

@@ -1,0 +1,3 @@
+A Plan2Build connection request was withdrawn
+---
+The request for $category in $locality has been withdrawn. No action is needed.

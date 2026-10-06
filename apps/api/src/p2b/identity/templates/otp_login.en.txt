@@ -1,0 +1,7 @@
+Your Plan2Build sign-in code
+---
+Your Plan2Build sign-in code is $code.
+
+It expires in $minutes minutes. Enter it on the page where you asked for it.
+
+If you did not ask for this code, you can ignore this email. Nobody can sign in without it.

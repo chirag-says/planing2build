@@ -1,0 +1,5 @@
+You have a new Plan2Build connection request
+---
+A family has sent you a request for $category in $locality.
+
+Sign in to Plan2Build to see the project brief and respond within $hours hours. The family's contact details are shared with you once you accept.

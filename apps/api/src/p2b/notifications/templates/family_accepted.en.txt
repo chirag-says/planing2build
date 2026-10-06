@@ -1,0 +1,5 @@
+Your project $code has passed Plan2Build's initial review
+---
+Plan2Build has completed its initial review of project $code. The Plan2Build package can now be offered to you; you use only the services you need.
+
+Sign in to Plan2Build to see your project dashboard.

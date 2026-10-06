@@ -1,0 +1,5 @@
+Your Plan2Build connection request was accepted
+---
+$professional accepted your request for $category on project $code.
+
+Sign in to Plan2Build to see their contact details.

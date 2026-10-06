@@ -1,0 +1,5 @@
+Your Plan2Build connection request was withdrawn
+---
+Your request to $professional for $category on project $code was withdrawn.
+
+Sign in to Plan2Build to see why and what you can do next.

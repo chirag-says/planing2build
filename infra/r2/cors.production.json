@@ -1,0 +1,8 @@
+[
+  {
+    "AllowedOrigins": ["https://plan2build.in", "https://professionals.plan2build.in"],
+    "AllowedMethods": ["PUT"],
+    "AllowedHeaders": ["content-type"],
+    "MaxAgeSeconds": 3600
+  }
+]

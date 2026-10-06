@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PLAN2BUILD / IHB &amp; PROFESSIONAL USER FLOWS</title>
+<style>
+@page{size:A4;margin:14mm 12mm}
+:root{--ink:#111;--soft:#333;--muted:#555;--rule:#bdbdbd;--fill:#f1f1f1;--fill2:#dcdcdc;--main:540px}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:#fff;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+h1,h2,h3,h4,p,ul{margin:0}
+.page{max-width:1200px;margin:0 auto;padding:40px 28px 72px}
+
+/* Title block */
+.doc-head{border-bottom:3px solid var(--ink);padding-bottom:18px}
+.doc-head h1{font-size:30px;line-height:1.2;font-weight:800;letter-spacing:.03em}
+.toc{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:12px;font-size:14.5px}
+.toc a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink)}
+.key{display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;margin-top:16px;font-size:13.5px;color:var(--soft)}
+.k{display:inline-flex;align-items:center;gap:8px}
+.k-box,.k-ret,.k-dia,.k-dash{display:inline-block;flex:0 0 auto}
+.k-box{width:34px;height:20px;border:1.5px solid var(--ink)}
+.k-ret{width:34px;height:22px;border:5px double var(--ink)}
+.k-dia{width:42px;height:24px}
+.k-dia svg{display:block;width:100%;height:100%}
+.k-dash{width:34px;border-top:2px dashed var(--ink)}
+
+/* Sections */
+.section{margin-top:46px}
+.sec-head{display:flex;align-items:stretch;gap:16px;border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:22px}
+.sec-num{flex:0 0 52px;display:flex;align-items:center;justify-content:center;background:var(--ink);color:#fff;font-size:26px;font-weight:800}
+.sec-head h2{font-size:24px;line-height:1.25}
+.sec-sub{margin-top:2px;font-size:16px;color:var(--soft)}
+.scope{max-width:820px;margin:0 auto 18px;text-align:center;font-size:15px;color:var(--soft)}
+
+/* Flow column */
+.cq{container-type:inline-size;width:100%}
+.flow{display:flex;flex-direction:column;align-items:center;width:100%}
+.phase{position:relative;flex:0 0 auto;width:100%;height:38px}
+.phase::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px dashed var(--rule)}
+.phase::after{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:2px solid var(--ink);transform:translateX(-1px)}
+.phase.top::after{top:50%}
+.phase.none::after{display:none}
+.phase span{position:absolute;left:0;top:50%;transform:translateY(-50%);padding-right:10px;background:#fff;font-size:12.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+
+/* Step box */
+.node{display:flex;flex:0 0 auto;width:min(100%,var(--main));border:1.5px solid var(--ink);background:#fff;break-inside:avoid;page-break-inside:avoid}
+.node>.n{flex:0 0 44px;display:flex;justify-content:center;padding-top:10px;border-right:1.5px solid var(--ink);background:var(--fill);font-size:16px;font-weight:800}
+.node>.nb{flex:1 1 auto;min-width:0;padding:9px 14px 11px}
+.who{margin-bottom:2px;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.node h3{margin-bottom:3px;font-size:16.5px;line-height:1.3}
+.d{font-size:15px;line-height:1.45;color:var(--soft)}
+.opts{list-style:none;padding:0;margin-top:6px;font-size:14.5px;line-height:1.4;color:var(--soft)}
+.opts li{position:relative;margin-top:4px;padding-left:16px}
+.opts li::before{content:"";position:absolute;left:1px;top:.5em;width:7px;height:7px;border:1.5px solid var(--ink)}
+.aside{margin-top:6px;font-size:13.5px;font-style:italic;color:var(--muted)}
+.tbc{display:inline-block;margin-top:8px;padding:2px 9px;border:1.5px dashed var(--ink);background:#fff;color:var(--ink);font-size:11.5px;font-style:normal;font-weight:800;letter-spacing:.08em;text-transform:uppercase;line-height:1.5}
+.tag{display:inline-block;margin-top:7px;padding:2px 8px;border:1px solid var(--ink);color:var(--ink);font-size:12.5px;font-weight:700;line-height:1.45}
+.tag.dash{border-style:dashed}
+
+/* Arrows */
+.conn{position:relative;flex:0 0 auto;width:100%;height:30px;display:flex;align-items:center;justify-content:center}
+.conn::before{content:"";position:absolute;top:0;bottom:8px;left:50%;border-left:2px solid var(--ink);transform:translateX(-1px)}
+.conn::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-6px);border-left:6px solid transparent;border-right:6px solid transparent;border-top:9px solid var(--ink)}
+.conn.t{height:48px}
+.conn.s{height:16px}
+.conn.line::before{bottom:0}
+.conn.line::after{display:none}
+.conn.dash::before{border-left-style:dashed}
+.chip{position:relative;display:inline-block;max-width:92%;padding:1px 10px;border:1.5px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink);font-size:13px;font-weight:700;line-height:1.35;text-align:center}
+.conn .chip{margin-bottom:6px}
+
+/* Decision diamond */
+.decision{position:relative;flex:0 0 auto;width:min(100%,320px);height:128px;display:flex;align-items:center;justify-content:center;break-inside:avoid;page-break-inside:avoid}
+.decision>svg{position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible}
+.decision>p{position:relative;padding:0 21%;text-align:center;font-size:15px;font-weight:800;line-height:1.28}
+.decision.sm{width:min(100%,240px);height:96px}
+.decision.sm>p{padding:0 18%;font-size:13.5px}
+
+/* Decision or step with side exits */
+.drow{display:flex;flex-direction:column;align-items:center;flex:0 0 auto;width:100%}
+.drow>.mid{display:flex;flex-direction:column;align-items:center;width:100%}
+.ftop,.fbot{display:block;position:relative;width:100%;flex:0 0 auto}
+.ftop{height:14px}
+.ftop::before{content:"";position:absolute;top:0;bottom:7px;left:50%;border-left:2px solid var(--ink);transform:translateX(-1px)}
+.ftop::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-6px);border-left:6px solid transparent;border-right:6px solid transparent;border-top:9px solid var(--ink)}
+.fbot{height:0}
+.fbot::before{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:2px solid var(--ink);transform:translateX(-1px)}
+.drow>.mid{order:0}
+.drow>.side{order:1;position:relative;display:flex;flex-direction:row;align-items:flex-start;width:50%;margin:10px 0 4px}
+.drow>.side.left{align-self:flex-start;justify-content:flex-end}
+.drow>.side.right{align-self:flex-end}
+.drow>.side::before{content:"";position:absolute;top:-12px;bottom:-4px;border-left:2px solid var(--ink)}
+.drow>.side.left::before{right:-1px}
+.drow>.side.right::before{left:-1px}
+.drow>.side:empty{display:none}
+.hconn{display:block;position:relative;flex:0 0 18px;height:0;margin-top:22px;border-top:2px solid var(--ink)}
+.side.right>.hconn::after{content:"";position:absolute;right:-1px;top:-7px;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:9px solid var(--ink)}
+.side.left>.hconn::after{content:"";position:absolute;left:-1px;top:-7px;border-top:6px solid transparent;border-bottom:6px solid transparent;border-right:9px solid var(--ink)}
+.drow>.side>.sbox,.drow>.side>.snote{flex:1 1 auto;min-width:0}
+.drow>.side.left>.snote{margin-right:14px}
+.sbox{position:relative;border:1.5px solid var(--ink);background:#fff;padding:9px 13px 11px;font-size:14.5px;line-height:1.45;color:var(--soft);break-inside:avoid;page-break-inside:avoid}
+.sbox h4{margin:5px 0 3px;font-size:15px;line-height:1.3;color:var(--ink)}
+.sbox p+p{margin-top:5px}
+.sbox.opt{border-style:dashed}
+.sn{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:26px;margin-right:6px;padding:0 6px;border:1.5px solid var(--ink);background:var(--fill);color:var(--ink);font-size:14px;font-weight:800;vertical-align:middle}
+.snote{border-left:3px solid var(--ink);padding:4px 0 4px 11px;font-size:14px;line-height:1.45;color:var(--soft)}
+@container (max-width:480px){
+  .drow>.side,.drow>.side.left,.drow>.side.right{width:100%;align-self:stretch}
+  .drow>.side::before,.hconn{display:none}
+  .drow>.side.left>.snote{margin-right:0}
+}
+@container (min-width:940px){
+  .drow{display:grid;grid-template-columns:minmax(0,1fr) var(--midw,320px) minmax(0,1fr);align-items:center}
+  .drow.nrow{--midw:var(--main)}
+  .drow>.mid{align-self:stretch;width:auto}
+  .ftop{flex:1 1 auto;min-height:14px;height:auto}
+  .fbot{flex:1 1 auto}
+  .drow>.side,.drow>.side.left,.drow>.side.right{order:0;align-self:auto;flex-direction:row;align-items:center;gap:0;width:auto;margin:0}
+  .drow>.side::before{display:none}
+  .drow>.side:empty{display:block}
+  .hconn{flex:0 0 44px;margin-top:0}
+  .drow>.side>.sbox{flex:0 1 340px}
+  .drow>.side>.snote{flex:0 1 300px}
+  .drow>.side.left>.snote{margin-right:22px}
+}
+
+/* Branches that split and rejoin */
+.split{display:flex;flex-direction:column;align-items:center;gap:12px;flex:0 0 auto;width:100%;margin:6px 0}
+.br{display:flex;flex-direction:column;align-items:center;width:min(100%,var(--main));border:1.5px dashed var(--rule);padding:4px 12px 12px}
+.br .node{width:100%}
+.br>.fill{display:none}
+.bnote{margin:2px 0 4px;padding:5px 10px;border:1px solid var(--ink);background:#fff;font-size:13.5px;color:var(--soft);text-align:center}
+.mbox{width:100%;border:1.5px solid var(--ink);background:#fff;padding:7px 10px;font-size:14px;line-height:1.4;color:var(--soft);text-align:center;break-inside:avoid;page-break-inside:avoid}
+@container (min-width:620px){
+  .split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;align-items:stretch;position:relative;margin:0}
+  .split.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .split::before,.split::after{content:"";position:absolute;left:25%;right:25%;border-top:2px solid var(--ink)}
+  .split::before{top:0}
+  .split::after{bottom:0}
+  .split.three::before,.split.three::after{left:16.6667%;right:16.6667%}
+  .br{width:auto;border:0;padding:0 12px}
+  .br>.fill{display:block;flex:1 1 auto;min-height:16px;width:100%;position:relative}
+  .br>.fill::before{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:2px solid var(--ink);transform:translateX(-1px)}
+}
+
+/* Parallel activities during construction */
+.group{flex:0 0 auto;width:100%;border:2px solid var(--ink);padding:14px 14px 16px}
+.group-title{margin-bottom:12px;text-align:center;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.card{display:flex;flex-direction:column;border:1.5px solid var(--ink);background:#fff;break-inside:avoid;page-break-inside:avoid}
+.card-head{display:flex;align-items:stretch;border-bottom:1.5px solid var(--ink)}
+.card-head .n{flex:0 0 40px;display:flex;align-items:center;justify-content:center;border-right:1.5px solid var(--ink);background:var(--fill);font-weight:800}
+.card-head h3{padding:8px 12px;font-size:15.5px;line-height:1.3}
+.card-body{padding:9px 12px 12px;font-size:14.5px;line-height:1.45;color:var(--soft)}
+.card-body>p+p{margin-top:6px}
+.mini{display:flex;flex-direction:column;align-items:center;margin-top:8px}
+.mout{width:100%;margin-top:6px;padding:6px 9px;border:1.5px solid var(--ink);font-size:13.5px;line-height:1.4;color:var(--soft)}
+.mout .chip{margin-right:6px;font-size:12px}
+.small{font-size:13.5px;color:var(--muted)}
+
+/* Role cards */
+.roles{display:flex;flex-direction:column;gap:28px}
+.pair{display:grid;grid-template-columns:minmax(0,1fr);gap:28px}
+.role{border:2px solid var(--ink);background:#fff}
+.role-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 14px;padding:11px 16px;border-bottom:2px solid var(--ink);background:var(--fill)}
+.role-head h3{font-size:20px;line-height:1.25}
+.role-tag{padding:2px 9px;border:1.5px solid var(--ink);background:#fff;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.role-note{padding:12px 16px 0;font-size:14.5px;line-height:1.5;color:var(--soft)}
+.role-body{padding:14px 16px 20px}
+.role.ret{border:6px double var(--ink)}
+.role.ret .role-head{background:var(--ink);color:#fff}
+.role.ret .role-tag{background:var(--ink);color:#fff;border-color:#fff}
+.role.ret .node>.n{background:var(--fill2)}
+.compact{--main:480px}
+.compact .drow{--midw:270px}
+.compact .drow.nrow{--midw:var(--main)}
+.compact .node>.n{flex-basis:38px;padding-top:8px;font-size:14.5px}
+.compact .node>.nb{padding:7px 12px 9px}
+.compact .node h3{font-size:15px}
+.compact .d{font-size:14px}
+.compact .decision{width:min(100%,270px);height:108px}
+.compact .decision>p{font-size:13.5px}
+.compact .conn{height:24px}
+.compact .conn.t{height:42px}
+.paths{display:grid;grid-template-columns:minmax(0,1fr);gap:24px}
+.path{border:1.5px solid var(--ink);padding:12px}
+.path-head{margin-bottom:6px;text-align:center}
+.path-head h4{font-size:16px}
+.path-head p{font-size:13.5px;color:var(--soft)}
+.endcap{width:min(100%,var(--main));padding:10px 13px;border:1.5px dashed var(--ink);background:#fff;font-size:14px;line-height:1.45;color:var(--soft);break-inside:avoid;page-break-inside:avoid}
+.subflow{margin-top:18px;border-top:1.5px solid var(--ink);padding-top:12px}
+.subflow h4{margin-bottom:8px;font-size:15px}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:8px 6px;font-size:13.5px;color:var(--soft)}
+.chain .c{padding:3px 9px;border:1.5px solid var(--ink);background:#fff}
+.chain .a{font-weight:800;color:var(--ink)}
+@media (min-width:1080px){
+  .pair{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+  .paths{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+}
+
+/* Swimlanes */
+.lane-cap{margin:8px 0 12px}
+.lane-cap h3{font-size:18px}
+.lane-cap p{margin-top:2px;font-size:14.5px;color:var(--soft)}
+.lanes{position:relative;width:100%}
+.lanes>.guides,.lane-head{display:none}
+.lphase{margin:16px 0 8px;padding-bottom:4px;border-bottom:1px dashed var(--rule);font-size:12.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.lrow{position:relative;display:flex;flex-direction:column;gap:8px;margin-bottom:10px;padding:10px 12px 10px 46px;border:1.5px solid var(--ink);break-inside:avoid;page-break-inside:avoid}
+.lrow>.ln{position:absolute;left:10px;top:11px;display:flex;align-items:center;justify-content:center;width:26px;height:26px;border:1.5px solid var(--ink);background:#fff;font-size:12.5px;font-weight:800}
+.lbox{position:relative;border:1.5px solid var(--ink);background:#fff;padding:7px 10px;font-size:14px;line-height:1.4;color:var(--soft)}
+.lbox .who{display:block}
+.lbox.p2b{background:var(--fill)}
+.lbox.ret{border:4px double var(--ink)}
+.lbox.to{margin-left:24px}
+.lbox.to .who::before{content:"\2192\00a0";font-weight:800;color:var(--ink)}
+.lbox.to.two .who::before{content:"\2194\00a0"}
+.lline{display:none}
+@container (min-width:900px){
+  .lanes>.guides{display:block;position:absolute;top:0;bottom:0;left:0;right:0;pointer-events:none}
+  .guides>i{position:absolute;top:0;bottom:0;border-left:1px dashed var(--rule);left:calc(40px + (100% - 40px) * var(--k) / var(--lanes))}
+  .lane-head{display:grid;grid-template-columns:40px repeat(var(--lanes),minmax(0,1fr));position:relative;z-index:1;margin-bottom:4px}
+  .lane-head>div{margin:0 6px;padding:8px 6px;background:var(--ink);color:#fff;text-align:center;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.25}
+  .lane-head>div:first-child{visibility:hidden}
+  .lane-head>.ret{background:#fff;color:var(--ink);border:5px double var(--ink)}
+  .lane-head small{display:block;margin-top:2px;font-size:11px;font-weight:700;letter-spacing:.08em}
+  .lphase{position:relative;z-index:1;display:flex;align-items:center;gap:10px;margin:14px 0 4px;padding:0;border:0}
+  .lphase span{background:#fff;padding-right:4px}
+  .lphase::after{content:"";flex:1;border-top:1px dashed var(--rule)}
+  .lrow{display:grid;grid-template-columns:40px repeat(var(--lanes),minmax(0,1fr));align-items:center;gap:0;margin:0;padding:5px 0;border:0}
+  .lrow>*{grid-row:1}
+  .lrow>.ln{position:relative;left:auto;top:auto;grid-column:1;justify-self:center;width:28px;height:28px;z-index:1}
+  .lbox,.lbox.to{justify-self:center;width:84%;margin:0;z-index:1}
+  .lbox .who{display:none}
+  .lline{display:block;align-self:center;height:0;border-top:2px solid var(--ink);margin:0 calc(100% / (2 * var(--k)))}
+  .lbox.in-l::before{content:"";position:absolute;left:-10px;top:50%;transform:translateY(-50%);border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:9px solid var(--ink)}
+  .lbox.in-r::after{content:"";position:absolute;right:-10px;top:50%;transform:translateY(-50%);border-top:6px solid transparent;border-bottom:6px solid transparent;border-right:9px solid var(--ink)}
+  .lbox.ret.in-l::before{left:-13px}
+  .lbox.ret.in-r::after{right:-13px}
+}
+
+/* Small screens and print */
+@media (max-width:640px){
+  .page{padding:24px 14px 48px}
+  .doc-head h1{font-size:23px}
+  .sec-head h2{font-size:20px}
+  .sec-num{flex-basis:42px;font-size:21px}
+  .role-body{padding:12px 10px 16px}
+  .role-head h3{font-size:18px}
+}
+@media print{
+  .page{max-width:none;padding:0 3px}
+  .toc{display:none}
+  .section{margin-top:0;break-before:page;page-break-before:always}
+  #ihb{margin-top:22px;break-before:auto;page-break-before:auto}
+  .sec-head,.role-head,.path-head,.phase,.lphase,.group-title,.lane-cap{break-after:avoid;page-break-after:avoid}
+  .role{break-inside:auto}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="doc-head">
+  <h1>PLAN2BUILD / IHB &amp; PROFESSIONAL USER FLOWS</h1>
+  <nav class="toc" aria-label="Sections">
+    <a href="#ihb">1. Independent Home Builder (IHB)</a>
+    <a href="#pro">2. Professionals / Service Providers</a>
+    <a href="#roles">3. Professional-Specific Flows</a>
+    <a href="#x">4. IHB &#8596; Professional Interaction</a>
+  </nav>
+  <div class="key">
+    <span class="k"><span class="k-box" aria-hidden="true"></span>Step</span>
+    <span class="k"><span class="k-dia" aria-hidden="true"><svg viewBox="0 0 200 100" preserveAspectRatio="none"><polygon points="100,3 197,50 100,97 3,50" fill="#fff" stroke="#111" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg></span>Decision</span>
+    <span class="k"><span class="k-ret" aria-hidden="true"></span>Role retained by Plan2Build</span>
+    <span class="k"><span class="k-dash" aria-hidden="true"></span>Optional path</span>
+    <span class="k"><span class="tbc" style="margin-top:0">Decision to be confirmed</span>Open business choice that changes the journey</span>
+  </div>
+</header>
+
+<!-- ============ SECTION 1 ============ -->
+<section class="section" id="ihb">
+  <div class="sec-head"><div class="sec-num">1</div><div><h2>Independent Home Builder (IHB)</h2><p class="sec-sub">How the homeowner moves through Plan2Build</p></div></div>
+  <div class="cq"><div class="flow">
+
+    <div class="phase top"><span>Discover</span></div>
+    <div class="conn"></div>
+    <article class="node"><div class="n">1</div><div class="nb"><p class="who">Homeowner</p><h3>Discover Plan2Build</h3><p class="d">The homeowner finds Plan2Build through videos, articles, search, social media or a shared Plan2Build document. In the pilot city, the team also visits families who have recently received a building permit.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">2</div><div class="nb"><p class="who">Homeowner</p><h3>Explore the website</h3><p class="d">No login needed. The pages explain the service, how Plan2Build stays independent and what its services cost, with a demo that compares three quotes on equal scope. Service categories, house plans and featured professionals can be browsed too.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">3</div><div class="nb"><p class="who">Homeowner &middot; optional</p><h3>Free cost estimate</h3><p class="d">The homeowner enters city, built-up area, number of floors and finish level, and sees a likely cost range, cost per sq ft, construction time and a stage-by-stage breakdown. No sign-up; a PDF copy can be requested with a mobile number.</p></div></article>
+    <div class="conn line"></div>
+    <div class="drow">
+      <div class="side left"></div>
+      <div class="mid"><span class="ftop"></span><div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>How does the homeowner start?</p></div><span class="fbot"></span></div>
+      <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">Talk to an expert</span><p style="margin-top:6px">The homeowner speaks with the Plan2Build team directly.</p></div></div>
+    </div>
+    <div class="split">
+      <div class="br">
+        <div class="conn t"><span class="chip">Start your build plan</span></div>
+        <article class="node"><div class="n">4</div><div class="nb"><p class="who">Homeowner &rarr; Plan2Build</p><h3>Send an enquiry</h3><p class="d">The homeowner shares the plot, the area and roughly when they want to start. Plan2Build replies with an indicative cost broken down by stage and the first decisions to make.</p></div></article>
+        <div class="conn"></div>
+        <article class="node"><div class="n">5</div><div class="nb"><p class="who">Homeowner</p><h3>Register and verify</h3><p class="d">The homeowner creates an account and verifies it by one-time password (OTP) or email. The verified identity is used for payments and approvals.</p></div></article>
+        <span class="fill"></span>
+      </div>
+      <div class="br">
+        <div class="conn t line"><span class="chip">Post your requirement</span></div>
+        <p class="bnote">Goes straight to step 6</p>
+        <span class="fill"></span>
+      </div>
+    </div>
+
+    <div class="phase"><span>Define the project</span></div>
+    <div class="conn"></div>
+    <article class="node"><div class="n">6</div><div class="nb"><p class="who">Homeowner</p><h3>Define the project</h3><p class="d">The homeowner picks the project type and describes the house: location, property type, plot size, built-up area, floors, budget range, preferred start, funding source and current stage. Services needed, style, notes, drawings and photos can be added, and a draft can be saved.</p></div></article>
+    <div class="conn line"></div>
+    <div class="drow">
+      <div class="side left"></div>
+      <div class="mid"><span class="ftop"></span><div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Building a new home?</p></div><span class="fbot"></span></div>
+      <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">No</span><h4>Other project types</h4><p>Renovation, interiors, kitchens, extensions and repairs appear as options on the website. Whether they are offered alongside new homes is still open.</p><span class="tbc">Decision to be confirmed</span></div></div>
+    </div>
+    <div class="conn t"><span class="chip">Yes</span></div>
+    <article class="node"><div class="n">7</div><div class="nb"><p class="who">Homeowner &rarr; Plan2Build</p><h3>Submit the requirement</h3><p class="d">The homeowner submits the project. The Plan2Build team reviews it and may get in touch for more details.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">8</div><div class="nb"><p class="who">Plan2Build</p><h3>Project workspace created</h3><p class="d">A private online workspace is set up for the house: 16 construction stages (some repeat for each floor) and 67 material and system decisions, each with a decide-by date. The homeowner, family members such as a spouse, the contractor and Plan2Build staff each get their own access.</p></div></article>
+
+    <div class="phase"><span>Plan</span></div>
+    <div class="conn line"></div>
+    <div class="drow">
+      <div class="side left"><div class="snote"><span class="tbc" style="margin-top:0">Decision to be confirmed</span><p style="margin-top:6px">Whether the Build Plan comes before contractor quotes, or quotes come before the plan, is a final business decision.</p></div></div>
+      <div class="mid"><span class="ftop"></span><div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Already holding contractor quotes?</p></div><span class="fbot"></span></div>
+      <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">Yes</span><h4>Quote Review or Compare &amp; Decide</h4><p>Plan2Build reviews one quote (what is included, missing or unclear, and the risk areas), or compares up to three on a common basis. Both include an expert discussion.</p><span class="tag dash">Optional next step: buy the Build Plan (step 9)</span></div></div>
+    </div>
+    <div class="conn t"><span class="chip">No</span></div>
+    <article class="node"><div class="n">9</div><div class="nb"><p class="who">Homeowner &rarr; Plan2Build</p><h3>Choose and pay for Plan2Build services</h3><p class="d">The homeowner pays for the chosen service, such as the first advisory instalment, through an online payment link or checkout. Construction money never passes through Plan2Build.</p><span class="tbc">Final business decision required</span><ul class="opts"><li>Three advisory packages paid at three points in the build: structure, concealed systems (wiring, plumbing, waterproofing) and finishes</li><li>Or one Complete Build Plan, with quote review, comparison, stage checks and assurance offered separately</li></ul></div></article>
+    <div class="conn line"></div>
+    <div class="drow nrow">
+      <div class="side left"><div class="sbox"><span class="sn">11</span><span class="chip">In parallel</span><h4>Specification decisions</h4><p>Each of the 67 decisions surfaces at its lead time. Plan2Build states the performance required (never a brand) and shows 3 to 5 qualifying products with prices; no brand can pay for position and Plan2Build never recommends one. The homeowner chooses and confirms with OTP.</p><span class="tag">Runs alongside steps 12 to 16 and continues during construction (step 17)</span></div><span class="hconn"></span></div>
+      <div class="mid"><span class="ftop"></span><article class="node"><div class="n">10</div><div class="nb"><p class="who">Plan2Build</p><h3>Build Plan issued</h3><p class="d">Plan2Build's advisor writes the plan: cost estimate, specifications, bill of quantities (BOQ), inclusions and exclusions, payment schedule, monthly cash-flow plan and decisions calendar. A registered structural engineer signs off the structural items. The issued plan is frozen (PDF and share link), and the structure package locks the baseline: cost, schedule and specification.</p><p class="aside">Whether architectural design drawings and 3D views are part of the plan is still to be confirmed.</p></div></article><span class="fbot"></span></div>
+      <div class="side right"></div>
+    </div>
+
+    <div class="phase"><span>Compare and choose</span></div>
+    <div class="conn"></div>
+    <div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Does the family already have a contractor?</p></div>
+    <div class="conn line s"></div>
+    <div class="split">
+      <div class="br">
+        <div class="conn t"><span class="chip">Yes</span></div>
+        <article class="node"><div class="n">12</div><div class="nb"><p class="who">Homeowner</p><h3>Nominate own contractor</h3><p class="d">The family names its own contractor. Plan2Build invites them by project link and OTP, and never replaces the contractor the family has chosen.</p></div></article>
+        <span class="fill"></span>
+      </div>
+      <div class="br">
+        <div class="conn t"><span class="chip">No</span></div>
+        <article class="node"><div class="n">13</div><div class="nb"><p class="who">Homeowner + Plan2Build</p><h3>Find contractors</h3><p class="d">Two possible routes:</p><ul class="opts"><li>Plan2Build introduces verified contractors</li><li>Or the homeowner searches listed professionals by service, location and experience, compares profiles side by side, gets matched and requests quotes</li></ul><span class="tbc">Decision to be confirmed</span></div></article>
+        <span class="fill"></span>
+      </div>
+    </div>
+    <div class="conn"></div>
+    <article class="node"><div class="n">14</div><div class="nb"><p class="who">Plan2Build &rarr; contractors</p><h3>Standard quote request</h3><p class="d">Every contractor receives the same request: drawings, BOQ, specifications, timeline and a fixed quote format. Each line must be priced or marked as excluded, and staff can enter a quote for a contractor who does not use the portal. Questions go through Plan2Build; no contractor sees another's prices.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">15</div><div class="nb"><p class="who">Plan2Build &rarr; homeowner</p><h3>Scope-normalised comparison</h3><p class="d">Each quote is shown as submitted, with every difference from the specification (for example missing waterproofing or a lower steel grade) and its rupee impact, then comparable totals. The headline is never who is cheapest; the homeowner chooses.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">16</div><div class="nb"><p class="who">Homeowner + contractor</p><h3>Award the contract</h3><p class="d">The homeowner signs the construction contract directly with the chosen contractor and pays the contractor directly. Plan2Build is not a party to the contract; it records the agreed baseline.</p></div></article>
+
+    <div class="phase"><span>Build</span></div>
+    <div class="conn"></div>
+    <article class="node"><div class="n">17</div><div class="nb"><p class="who">Contractor + homeowner</p><h3>Construction, stage by stage</h3><p class="d">The contractor builds through the 16 stages. The homeowner follows planned and actual dates, progress, upcoming decisions, documents and inspection evidence, while Plan2Build watches for overdue decisions, unanswered changes, open defects and stages behind plan.</p></div></article>
+    <div class="conn"></div>
+    <div class="group">
+      <p class="group-title">At every stage, alongside construction</p>
+      <div class="cards">
+        <article class="card">
+          <div class="card-head"><span class="n">18</span><h3>Materials and procurement</h3></div>
+          <div class="card-body"><p>Each chosen item moves from chosen to purchased, installed and verified, backed by bills, delivery challans or inspection evidence.</p><p>A different product bought instead is recorded as a switch. Plan2Build may supply some materials, with its margin printed on the homeowner's document.</p></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><span class="n">19</span><h3>Changes (variations)</h3></div>
+          <div class="card-body"><p>The homeowner or the contractor raises a change with its reason, affected stage and item, and cost and time impact.</p>
+            <div class="mini">
+              <div class="decision sm"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Other party acknowledges by OTP?</p></div>
+              <div class="conn s"></div>
+              <div class="mout"><span class="chip">Yes</span>The change takes effect; contract value and completion date update for both.</div>
+              <div class="mout"><span class="chip">No reply in time</span>The change is escalated visibly to both parties.</div>
+              <div class="mout"><span class="chip">Declined</span>Next step not yet defined.</div>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-head"><span class="n">20</span><h3>Money position</h3></div>
+          <div class="card-body"><p>Shows original contract value, approved changes, current contract value, paid to date, due now and projected final cost.</p><p>A stage payment falls due when the stage is complete and, at inspection stages, once the inspection is cleared. Either party records a payment; the other acknowledges it.</p></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><span class="n">21</span><h3>Inspections and assurance</h3></div>
+          <div class="card-body">
+            <div class="mini" style="margin-top:0">
+              <div class="decision sm"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Inspection stage, and assurance bought?</p></div>
+              <div class="conn s"></div>
+              <div class="mout"><span class="chip">Yes</span>An independent engineer retained by Plan2Build inspects, without being told who supplied the material, and issues a plain-language report. Defects stay open until the fix is checked.</div>
+              <div class="mout"><span class="chip">No</span>Construction continues.</div>
+            </div>
+            <p class="small" style="margin-top:8px">Inspection stages: foundation before pouring, plinth beam, every slab before pouring, before plastering, waterproofing and the final snag check. If a structural defect in inspected work appears later, Plan2Build pays to fix it, up to a cap.</p>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-head"><span class="n">22</span><h3>Issues and exceptions</h3></div>
+          <div class="card-body"><p>Plan2Build's operations team handles exceptions and disputes.</p><p>A step-by-step issue log for homeowners (raise, fix with proof, verify and close) is not yet confirmed for this service.</p></div>
+        </article>
+      </div>
+    </div>
+
+    <div class="phase"><span>Hand over and keep the record</span></div>
+    <div class="conn"></div>
+    <article class="node"><div class="n">23</div><div class="nb"><p class="who">Contractor + Plan2Build</p><h3>Handover</h3><p class="d">External works and snagging finish at stage 16 with the final snag inspection. The retention, the last stage payment, falls due here.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">24</div><div class="nb"><p class="who">Plan2Build &rarr; homeowner</p><h3>Permanent build record</h3><p class="d">Assembled automatically from the project: every specification, the product actually used, purchase evidence, inspections, changes and warranties with expiry and installer, plus a room-by-room map of the pipes and conduits hidden in the walls. It opens without an account and can be transferred to a new owner.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">25</div><div class="nb"><p class="who">Homeowner</p><h3>After handover</h3><p class="d">Warranty reminders, maintenance, repairs, renovation and upgrades through trusted professionals, and reviews of the professionals who worked on the house.</p><span class="tbc">Decision to be confirmed</span><p class="aside">Either way, the build record supports later renovation, resale, insurance and warranty claims.</p></div></article>
+
+    <div class="phase none"><span>Any time</span></div>
+    <article class="node"><div class="n">26</div><div class="nb"><p class="who">Homeowner</p><h3>Account and data</h3><p class="d">The homeowner manages profile, consents and notification preferences. House data belongs to the homeowner; brands never receive the homeowner's identity, address or contact details.</p></div></article>
+
+  </div></div>
+</section>
+
+<!-- ============ SECTION 2 ============ -->
+<section class="section" id="pro">
+  <div class="sec-head"><div class="sec-num">2</div><div><h2>Professionals / Service Providers</h2><p class="sec-sub">How professionals interact with Plan2Build</p></div></div>
+  <p class="scope">This shared flow applies to architects, contractors, interior designers and specialists. The structural engineer, the auditor, suppliers and brands work differently; their flows are in Section 3.</p>
+  <div class="cq"><div class="flow">
+
+    <div class="phase top"><span>Join</span></div>
+    <div class="conn"></div>
+    <article class="node"><div class="n">1</div><div class="nb"><p class="who">Professional</p><h3>Learn about Plan2Build</h3><p class="d">A professional reaches Plan2Build in one of three ways: an invitation to quote on a specific project, a local enrolment campaign that lists them in the public directory, or registering through the website's pages for professionals.</p><span class="tbc">Decision to be confirmed</span><p class="aside">Which route, or mix of routes, applies is a final business decision.</p></div></article>
+    <div class="conn line"></div>
+    <div class="drow">
+      <div class="side left"><div class="sbox"><span class="chip">Invited to one project</span><h4>Invitation (contractors only)</h4><p>The family nominates the contractor, or Plan2Build introduces one; the invitation arrives by project link and OTP. Continues in Section 3, Contractor, Path A.</p></div><span class="hconn"></span></div>
+      <div class="mid"><span class="ftop"></span><div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>How does the professional join?</p></div><span class="fbot"></span></div>
+      <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">Listed in the directory</span><h4>Public directory listing</h4><p>Basic listing is free and premium options exist. Homeowners view the profile and press Request Quote; what the professional receives after that is not yet designed.</p></div></div>
+    </div>
+    <div class="conn t"><span class="chip">Registers on the platform</span></div>
+    <article class="node"><div class="n">2</div><div class="nb"><p class="who">Professional</p><h3>Choose a category</h3><p class="d">Architect, civil contractor, interior designer or fit-out, or specialist (for example electrical, plumbing, waterproofing or solar), with the service area covered.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">3</div><div class="nb"><p class="who">Professional</p><h3>Build the profile and submit evidence</h3><p class="d">Identity, experience, portfolio and service area, plus registrations, licences, business and tax documents or insurance where the category asks for them.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">4</div><div class="nb"><p class="who">Plan2Build</p><h3>Verification review</h3><p class="d">The admin team checks the evidence against the rules for that category. A professional can be verified for one category and not yet for another.</p></div></article>
+    <div class="conn line"></div>
+    <div class="drow">
+      <div class="side left"><div class="sbox"><span class="chip">Rejected</span><p style="margin-top:6px">Cannot work as a verified professional. Whether they can apply again depends on Plan2Build's policy.</p></div><span class="hconn"></span></div>
+      <div class="mid"><span class="ftop"></span><div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Review outcome?</p></div><span class="fbot"></span></div>
+      <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">Changes requested</span><p style="margin-top:6px">The professional sees what to correct and resubmits; the review runs again (back to step 3).</p></div></div>
+    </div>
+    <div class="conn t"><span class="chip">Verified</span></div>
+    <div class="drow nrow">
+      <div class="side left"></div>
+      <div class="mid"><article class="node"><div class="n">5</div><div class="nb"><p class="who">Professional</p><h3>Profile live</h3><p class="d">The profile can now appear to homeowners. Only verified professionals are eligible to be discovered.</p></div></article><span class="fbot"></span></div>
+      <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">If suspended</span><p style="margin-top:6px">A policy breach or a lost credential suspends the account, or only the affected category: no new opportunities or quotes, existing records are kept, and Plan2Build later reinstates or closes it.</p></div></div>
+    </div>
+
+    <div class="phase"><span>Win work</span></div>
+    <div class="conn"></div>
+    <article class="node"><div class="n">6</div><div class="nb"><p class="who">Plan2Build &rarr; professional</p><h3>Receive matched opportunities</h3><p class="d">Plan2Build matches a project to eligible professionals by category, location, project type, budget, timing and availability, and alerts them. Professionals see project briefs, not a random lead feed.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">7</div><div class="nb"><p class="who">Professional</p><h3>View the opportunity</h3><p class="d">The brief shows location, budget band, scope, expected start and the service needed. The professional can save it and express interest.</p></div></article>
+    <div class="conn line"></div>
+    <div class="drow">
+      <div class="side left"></div>
+      <div class="mid"><span class="ftop"></span><div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Quote or decline?</p></div><span class="fbot"></span></div>
+      <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">Declines</span><p style="margin-top:6px">The opportunity closes for this professional.</p></div></div>
+    </div>
+    <div class="conn t"><span class="chip">Quotes</span></div>
+    <article class="node"><div class="n">8</div><div class="nb"><p class="who">Professional</p><h3>Review the brief and clarify</h3><p class="d">Invited to quote by the homeowner or the system (or quoting straight from the opportunity), the professional opens the full brief and documents, such as the quote request and BOQ, and asks questions in the project conversation. A material change to the request creates a revised version.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">9</div><div class="nb"><p class="who">Professional</p><h3>Submit the quote</h3><p class="d">Price, line items, inclusions and exclusions, timeline, warranty, payment terms and validity, plus the fields of the professional's own category (Section 3). A submitted quote is never changed; a revision becomes a new version.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">10</div><div class="nb"><p class="who">Homeowner</p><h3>Compare and shortlist</h3><p class="d">The homeowner compares quotes mapped to a common scope, with exclusions and missing scope shown, and can shortlist without committing.</p></div></article>
+    <div class="conn line"></div>
+    <div class="drow">
+      <div class="side left"></div>
+      <div class="mid"><span class="ftop"></span><div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Selected?</p></div><span class="fbot"></span></div>
+      <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">No</span><p style="margin-top:6px">Not selected: the opportunity closes for this professional.</p></div></div>
+    </div>
+    <div class="conn t"><span class="chip">Yes</span></div>
+
+    <div class="phase"><span>Deliver</span></div>
+    <div class="conn"></div>
+    <article class="node"><div class="n">11</div><div class="nb"><p class="who">Professional</p><h3>Accept the engagement</h3><p class="d">The professional confirms the selected quote and scope.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">12</div><div class="nb"><p class="who">Plan2Build</p><h3>Engagement activated</h3><p class="d">Work starts only once the agreed scope, verification, parties, payment schedule, required documents, start date and first milestone are in place. Selection alone never starts the work.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">13</div><div class="nb"><p class="who">Professional</p><h3>Deliver milestones with updates</h3><p class="d">Photos, videos, progress notes and documents are posted against each milestone. Progress is worked out from milestone weights; any percentage the professional proposes is stored next to it.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">14</div><div class="nb"><p class="who">Professional + homeowner</p><h3>Changes and issues</h3><p class="d">Scope changes go through change orders that the homeowner approves or rejects; nothing is applied silently. Issues the homeowner raises are fixed with proof, then verified and closed.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">15</div><div class="nb"><p class="who">Homeowner + professional</p><h3>Completion approval and payment</h3><p class="d">The professional requests completion of a milestone; the homeowner approves it or raises an issue.</p><span class="tbc">Final business decision required</span><ul class="opts"><li>Payment through the platform, released to the professional after approval</li><li>Or payment directly between homeowner and professional, with Plan2Build only recording it</li></ul></div></article>
+
+    <div class="phase"><span>Close and grow</span></div>
+    <div class="conn"></div>
+    <article class="node"><div class="n">16</div><div class="nb"><p class="who">Professional + homeowner</p><h3>Handover and warranty</h3><p class="d">Final documents, manuals, certificates and warranties are handed over and the snag list is closed. The homeowner accepts and the warranties are registered.</p></div></article>
+    <div class="conn"></div>
+    <article class="node"><div class="n">17</div><div class="nb"><p class="who">Homeowner &rarr; professional</p><h3>Reputation and repeat work</h3><p class="d">Reputation comes from verified activity: projects completed, on-time delivery, response rate, profile strength, repeat clients and, where enabled, homeowner reviews. A strong record brings repeat opportunities.</p><span class="tag">Returns to step 6 for new work</span></div></article>
+
+  </div></div>
+</section>
+
+<!-- ============ SECTION 3 ============ -->
+<section class="section" id="roles">
+  <div class="sec-head"><div class="sec-num">3</div><div><h2>Professional-Specific Flows</h2><p class="sec-sub">How each role works with Plan2Build</p></div></div>
+  <div class="roles">
+
+    <!-- Architect -->
+    <section class="role" id="role-architect">
+      <div class="role-head"><h3>Architect</h3><span class="role-tag">Marketplace professional</span></div>
+      <p class="role-note">Works before and during planning. Architects can also be listed in the public directory, where homeowners request quotes; what follows a request there is not yet designed.</p>
+      <div class="role-body cq compact"><div class="flow">
+        <article class="node"><div class="n">1</div><div class="nb"><h3>Register as an architect</h3><p class="d">Creates an account and chooses the Architect category.</p></div></article>
+        <div class="conn"></div>
+        <article class="node"><div class="n">2</div><div class="nb"><h3>Submit credentials and portfolio</h3><p class="d">Identity, professional registration or credential, design portfolio, specialisations and service area.</p></div></article>
+        <div class="conn"></div>
+        <article class="node"><div class="n">3</div><div class="nb"><p class="who">Plan2Build</p><h3>Verification review</h3><p class="d">The admin team checks the evidence; if changes are requested, the architect corrects and resubmits.</p></div></article>
+        <div class="conn"></div>
+        <article class="node"><div class="n">4</div><div class="nb"><h3>Profile live</h3><p class="d">Eligible for design and planning opportunities that match the profile.</p></div></article>
+        <div class="conn"></div>
+        <article class="node"><div class="n">5</div><div class="nb"><h3>Review the opportunity</h3><p class="d">Reviews the project brief, scope and budget, and clarifies requirements.</p></div></article>
+        <div class="conn"></div>
+        <article class="node"><div class="n">6</div><div class="nb"><h3>Design quote</h3><p class="d">Scope, deliverables, number of revisions, timeline, fee structure and site visits.</p></div></article>
+        <div class="conn"></div>
+        <article class="node"><div class="n">7</div><div class="nb"><p class="who">Homeowner</p><h3>Compared and selected</h3><p class="d">The homeowner compares quotes and selects the architect, after any negotiation.</p></div></article>
+        <div class="conn"></div>
+        <article class="node"><div class="n">8</div><div class="nb"><h3>Agreement and first payment</h3><p class="d">Accepts the engagement; the agreement and an advance or first milestone payment follow.</p></div></article>
+        <div class="conn"></div>
+        <article class="node"><div class="n">9</div><div class="nb"><h3>Concept design</h3><p class="d">Prepares the concept for the homeowner's approval.</p></div></article>
+        <div class="conn"></div>
+        <article class="node"><div class="n">10</div><div class="nb"><h3>Drawing package</h3><p class="d">Delivers the drawings and design documents.</p></div></article>
+        <div class="conn line"></div>
+        <div class="drow">
+          <div class="side left"></div>
+          <div class="mid"><span class="ftop"></span><div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Homeowner accepts the milestone?</p></div><span class="fbot"></span></div>
+          <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">Changes</span><p style="margin-top:6px">Design change or revision; the updated drawings come back for acceptance (back to step 10).</p></div></div>
+        </div>
+        <div class="conn t"><span class="chip">Accepts</span></div>
+        <article class="node"><div class="n">11</div><div class="nb"><h3>Final design pack</h3><p class="d">Hands over the final drawings and design documents.</p><p class="aside">How these drawings reach the contractor on the same project is not yet defined.</p></div></article>
+        <div class="conn"></div>
+        <article class="node"><div class="n">12</div><div class="nb"><h3>Payment, review and repeat work</h3><p class="d">Final payment and the homeowner's review, followed by repeat opportunities.</p></div></article>
+      </div></div>
+    </section>
+
+    <!-- Contractor -->
+    <section class="role" id="role-contractor">
+      <div class="role-head"><h3>Contractor</h3><span class="role-tag">Two possible paths</span></div>
+      <div class="role-note"><span class="tbc" style="margin-top:0">Decision to be confirmed</span><p style="margin-top:6px">Which path applies to contractors is a final business decision. Both are shown in full.</p></div>
+      <div class="role-body"><div class="paths">
+
+        <div class="path">
+          <div class="path-head"><h4>Path A: invited to a project</h4><p>One standard quote request per house, an independent auditor, no ratings or price ranking; Plan2Build never takes the contract.</p></div>
+          <div class="cq compact"><div class="flow">
+            <article class="node"><div class="n">A1</div><div class="nb"><p class="who">Homeowner or Plan2Build</p><h3>Nominated or introduced</h3><p class="d">The family nominates its own contractor, or Plan2Build introduces a verified one.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">A2</div><div class="nb"><h3>Invited by link and OTP</h3><p class="d">Receives a project link and one-time password; no lengthy sign-up before the work is clear.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">A3</div><div class="nb"><p class="who">Plan2Build</p><h3>Verified by Plan2Build</h3><p class="d">Reference calls and a site visit.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">A4</div><div class="nb"><h3>Standard quote request</h3><p class="d">Drawings, BOQ, specifications, timeline and a fixed quote format, the same for every invited contractor.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">A5</div><div class="nb"><h3>Quote line by line</h3><p class="d">On a phone or computer; every line is priced or marked as excluded before final submission. Plan2Build staff can enter the quote for the contractor.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">A6</div><div class="nb"><h3>Answer clarifications</h3><p class="d">Plan2Build asks questions about the quote; other contractors' prices are never shown.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">A7</div><div class="nb"><p class="who">Plan2Build + homeowner</p><h3>Compared and chosen</h3><p class="d">Quotes are compared on equal scope, never ranked by price; the homeowner chooses.</p></div></article>
+            <div class="conn line"></div>
+            <div class="drow">
+              <div class="side left"></div>
+              <div class="mid"><span class="ftop"></span><div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Chosen by the homeowner?</p></div><span class="fbot"></span></div>
+              <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">No</span><p style="margin-top:6px">Not chosen for this house.</p></div></div>
+            </div>
+            <div class="conn t"><span class="chip">Yes</span></div>
+            <article class="node"><div class="n">A8</div><div class="nb"><h3>Contract with the homeowner</h3><p class="d">Signs the contract directly with the homeowner and is paid directly; Plan2Build never takes the contract.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">A9</div><div class="nb"><h3>Build stage by stage</h3><p class="d">Stages are activated and the baseline is locked. Execution risk and site supervision stay with the contractor.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">A10</div><div class="nb"><h3>Changes by OTP</h3><p class="d">Raises changes, or acknowledges the homeowner's, by OTP before the work is done.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">A11</div><div class="nb"><h3>Inspections and fixes</h3><p class="d">An independent auditor inspects at the inspection stages; the contractor fixes any defects and the fix is checked again.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">A12</div><div class="nb"><h3>Payments recorded</h3><p class="d">Payments are recorded and acknowledged; money moves directly from the homeowner.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">A13</div><div class="nb"><h3>Handover and build record</h3><p class="d">Final snag inspection; the build record is completed.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">A14</div><div class="nb"><h3>Verified profile</h3><p class="d">A shareable profile with verification status, portfolio and an audit record of inspected work, with no star ratings.</p></div></article>
+          </div></div>
+        </div>
+
+        <div class="path">
+          <div class="path-head"><h4>Path B: marketplace</h4><p>Registered, verified and matched to opportunities; milestones approved and paid through the platform; homeowner reviews.</p></div>
+          <div class="cq compact"><div class="flow">
+            <article class="node"><div class="n">B1</div><div class="nb"><h3>Register as a civil contractor</h3><p class="d">Creates an account and chooses the Civil Contractor category.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">B2</div><div class="nb"><h3>Submit business evidence</h3><p class="d">Identity, business and GST details, experience, construction portfolio, team capacity, licences, and insurance if held.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">B3</div><div class="nb"><p class="who">Plan2Build</p><h3>Verified; profile live</h3><p class="d">Admin review against the contractor rules; changes can be requested before approval.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">B4</div><div class="nb"><h3>Construction opportunities</h3><p class="d">Receives matched construction opportunities.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">B5</div><div class="nb"><h3>Brief, BOQ and site</h3><p class="d">Reviews the standard brief and BOQ, and inspects the site where needed.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">B6</div><div class="nb"><h3>Structured quote</h3><p class="d">Scope, BOQ, exclusions, timeline, warranty, payment schedule and who supplies the materials.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">B7</div><div class="nb"><p class="who">Homeowner</p><h3>Shortlisted and selected</h3><p class="d">The homeowner compares, shortlists and selects.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">B8</div><div class="nb"><h3>Agreement and activation</h3><p class="d">Accepts the engagement; the project is activated once the start conditions are met.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">B9</div><div class="nb"><h3>Milestones and site updates</h3><p class="d">Posts site photos and progress for each milestone.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">B10</div><div class="nb"><h3>Request completion</h3><p class="d">Requests completion of a milestone, with evidence.</p></div></article>
+            <div class="conn line"></div>
+            <div class="drow">
+              <div class="side left"></div>
+              <div class="mid"><span class="ftop"></span><div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Homeowner approves?</p></div><span class="fbot"></span></div>
+              <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">Raises an issue</span><p style="margin-top:6px">The contractor fixes it with proof, then requests completion again.</p></div></div>
+            </div>
+            <div class="conn t"><span class="chip">Approves</span></div>
+            <article class="node"><div class="n">B11</div><div class="nb"><h3>Payment released</h3><p class="d">The milestone payment is released and settled to the contractor.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">B12</div><div class="nb"><h3>Issues and change orders</h3><p class="d">Change orders are approved or rejected by the homeowner; issues are fixed and closed.</p></div></article>
+            <div class="conn"></div>
+            <article class="node"><div class="n">B13</div><div class="nb"><h3>Handover, warranty and review</h3><p class="d">Uploads the handover documents; the homeowner accepts, the warranty is registered and the homeowner leaves a review.</p></div></article>
+          </div></div>
+        </div>
+
+      </div></div>
+    </section>
+
+    <div class="pair">
+      <!-- Interior designer -->
+      <section class="role" id="role-interior">
+        <div class="role-head"><h3>Interior Designer</h3><span class="role-tag">Marketplace professional</span></div>
+        <p class="role-note">Interior design and fit-out, during or after core construction.</p>
+        <div class="role-body cq compact"><div class="flow">
+          <article class="node"><div class="n">1</div><div class="nb"><h3>Register as an interior designer</h3><p class="d">Chooses the Interior Designer / Fit-out category.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">2</div><div class="nb"><h3>Submit portfolio and experience</h3><p class="d">Identity, portfolio, specialisation and experience, with business documents where needed.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">3</div><div class="nb"><p class="who">Plan2Build</p><h3>Verification review</h3><p class="d">Judged on specialisation, portfolio, rooms handled, finish knowledge and execution capability; the profile goes live once verified.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">4</div><div class="nb"><h3>Interior opportunity</h3><p class="d">Receives interior opportunities that match the profile.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">5</div><div class="nb"><h3>Review the scope</h3><p class="d">Reviews style, rooms, budget and finish scope.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">6</div><div class="nb"><h3>Concept and commercial quote</h3><p class="d">Rooms, concept, finishes, BOQ, procurement, execution timeline and warranty.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">7</div><div class="nb"><p class="who">Homeowner</p><h3>Selected</h3><p class="d">The homeowner compares quotes and selects the designer.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">8</div><div class="nb"><h3>Agreement and design approval</h3><p class="d">The agreement is made and the homeowner approves the design.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">9</div><div class="nb"><h3>Design deliverables</h3><p class="d">Drawings, BOQ and a procurement plan.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">10</div><div class="nb"><p class="who">Homeowner</p><h3>Material and finish approvals</h3><p class="d">The homeowner approves the materials and finishes.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">11</div><div class="nb"><h3>Execution updates</h3><p class="d">Progress and photos for each fit-out milestone; payments follow design approval, procurement and installation milestones.</p></div></article>
+          <div class="conn line"></div>
+          <div class="drow">
+            <div class="side left"></div>
+            <div class="mid"><span class="ftop"></span><div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Scope change?</p></div><span class="fbot"></span></div>
+            <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">Yes</span><p style="margin-top:6px">A change order covers the variation, then execution continues (back to step 11).</p></div></div>
+          </div>
+          <div class="conn t"><span class="chip">No</span></div>
+          <article class="node"><div class="n">12</div><div class="nb"><h3>Installation and snags</h3><p class="d">Final installation and snag closure.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">13</div><div class="nb"><h3>Handover and warranty</h3><p class="d">Handover with warranty and maintenance details.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">14</div><div class="nb"><h3>Review and reputation</h3><p class="d">The homeowner's review adds to the designer's track record.</p></div></article>
+        </div></div>
+      </section>
+
+      <!-- Specialist -->
+      <section class="role" id="role-specialist">
+        <div class="role-head"><h3>Specialist</h3><span class="role-tag">Marketplace professional</span></div>
+        <p class="role-note">Trades such as electrical, plumbing, waterproofing, solar and air conditioning. Plan2Build sets the list of trades.</p>
+        <div class="role-body cq compact"><div class="flow">
+          <article class="node"><div class="n">1</div><div class="nb"><h3>Register as a specialist</h3><p class="d">Chooses the trade and the service area covered.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">2</div><div class="nb"><h3>Submit licences and evidence</h3><p class="d">Identity, licence or certification where the trade requires it, past work, and equipment or team details.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">3</div><div class="nb"><p class="who">Plan2Build</p><h3>Verification review</h3><p class="d">Checked against the rules for that trade; the profile goes live once verified.</p></div></article>
+          <div class="conn"></div>
+          <div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Where does the work come from?</p></div>
+          <div class="conn line s"></div>
+          <div class="split">
+            <div class="br">
+              <div class="conn t"><span class="chip">During the build</span></div>
+              <article class="node"><div class="n">4</div><div class="nb"><h3>In-project work</h3><p class="d">Matched or invited to quote at whatever stage the trade is needed.</p></div></article>
+              <span class="fill"></span>
+            </div>
+            <div class="br">
+              <div class="conn t"><span class="chip">After handover</span></div>
+              <article class="node"><div class="n">5</div><div class="nb"><p class="who">Homeowner</p><h3>Service request</h3><p class="d">A homeowner asks for maintenance, a repair, renovation or an upgrade.</p><span class="tbc">Decision to be confirmed</span></div></article>
+              <span class="fill"></span>
+            </div>
+          </div>
+          <div class="conn"></div>
+          <article class="node"><div class="n">6</div><div class="nb"><h3>Review the problem</h3><p class="d">Reviews the problem, scope and property details.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">7</div><div class="nb"><h3>Service quote</h3><p class="d">Visit scope, diagnosis, material and labour split, timeline and warranty.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">8</div><div class="nb"><p class="who">Homeowner</p><h3>Selection and appointment</h3><p class="d">The homeowner selects; the service order is scheduled.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">9</div><div class="nb"><h3>Visit and service</h3><p class="d">Visits and diagnoses where needed, then carries out the work.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">10</div><div class="nb"><h3>Proof and invoice</h3><p class="d">Uploads before-and-after proof, a service report and the invoice.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">11</div><div class="nb"><p class="who">Homeowner</p><h3>Customer acceptance</h3><p class="d">The homeowner confirms the work is complete.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">12</div><div class="nb"><h3>Payment</h3><p class="d">Payment is settled.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">13</div><div class="nb"><h3>Warranty, reminders and review</h3><p class="d">Warranty and service reminders are set, and the homeowner reviews the work.</p></div></article>
+        </div></div>
+      </section>
+    </div>
+
+    <div class="pair">
+      <!-- Structural engineer -->
+      <section class="role ret" id="role-engineer">
+        <div class="role-head"><h3>Structural Engineer</h3><span class="role-tag">Retained by Plan2Build</span></div>
+        <p class="role-note">Works for Plan2Build on a monthly retainer. Never quotes to, is chosen by, or is paid by the homeowner.</p>
+        <div class="role-body cq compact"><div class="flow">
+          <article class="node"><div class="n">1</div><div class="nb"><p class="who">Plan2Build</p><h3>Structural items compiled</h3><p class="d">Plan2Build's advisor compiles the structural items: soil investigation, foundation type, the foundation, plinth beam, column and beam, and slab concrete, reinforcement steel, and lintels and sills.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">2</div><div class="nb"><h3>Engineer reviews</h3><p class="d">Reviews each item in a secure expert workspace.</p></div></article>
+          <div class="conn line"></div>
+          <div class="drow">
+            <div class="side left"></div>
+            <div class="mid"><span class="ftop"></span><div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Approve the item?</p></div><span class="fbot"></span></div>
+            <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">Exception</span><p style="margin-top:6px">The engineer reviews the exception and the item comes back for review (back to step 2).</p></div></div>
+          </div>
+          <div class="conn t"><span class="chip">Approves</span></div>
+          <article class="node"><div class="n">3</div><div class="nb"><h3>Issued under sign-off</h3><p class="d">Plan2Build compiles and communicates; the engineer specifies. No brand or commercial link can ever be attached to a structural item.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">4</div><div class="nb"><p class="who">Plan2Build</p><h3>Into the Build Plan</h3><p class="d">Signed-off items form the structure package, which locks the baseline and becomes part of the specification contractors quote against.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">5</div><div class="nb"><h3>Templates kept current</h3><p class="d">Updates the specification templates; a new version never changes items already issued to a project.</p></div></article>
+        </div></div>
+      </section>
+
+      <!-- Auditor -->
+      <section class="role ret" id="role-auditor">
+        <div class="role-head"><h3>Auditor / Inspector</h3><span class="role-tag">Retained by Plan2Build</span></div>
+        <p class="role-note">An independent engineer retained by Plan2Build and paid per inspection, kept separate from local business partners and never told who supplied the material. Inspection stages: foundation before pouring, plinth beam, every slab before pouring, before plastering, waterproofing and the final snag check.</p>
+        <div class="role-body cq compact"><div class="flow">
+          <article class="node"><div class="n">1</div><div class="nb"><p class="who">Plan2Build</p><h3>Assigned to an inspection</h3><p class="d">Operations assign the auditor to a project's inspection stage, planning by location and travel distance.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">2</div><div class="nb"><h3>Download the job pack</h3><p class="d">The inspection app works fully offline on site.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">3</div><div class="nb"><h3>Confirm readiness</h3><p class="d">Confirms the stage is ready and which checklist version applies.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">4</div><div class="nb"><h3>Inspect each checkpoint</h3><p class="d">Photos and videos are time- and location-stamped and cannot be backdated.</p></div></article>
+          <div class="conn"></div>
+          <div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Result for the checkpoint?</p></div>
+          <div class="conn line s"></div>
+          <div class="split three">
+            <div class="br"><div class="conn t"><span class="chip">Pass or not applicable</span></div><div class="mbox">Recorded</div><span class="fill"></span></div>
+            <div class="br"><div class="conn t"><span class="chip">Observation</span></div><div class="mbox">Recorded as an observation</div><span class="fill"></span></div>
+            <div class="br"><div class="conn t"><span class="chip">Defect</span></div><div class="mbox">Severity, note, photo or video, and the corrective action needed</div><span class="fill"></span></div>
+          </div>
+          <div class="conn"></div>
+          <article class="node"><div class="n">5</div><div class="nb"><h3>Acknowledgement</h3><p class="d">Captures the contractor's or homeowner's acknowledgement when relevant.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">6</div><div class="nb"><h3>Sync and lock</h3><p class="d">Syncs when back online; the report is locked and later corrections become separate amendments.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">7</div><div class="nb"><p class="who">Plan2Build</p><h3>Report approved and shared</h3><p class="d">Central operations approve the report. The homeowner gets a plain-language report; the contractor gets the findings.</p></div></article>
+          <div class="conn line"></div>
+          <div class="drow">
+            <div class="side left"></div>
+            <div class="mid"><span class="ftop"></span><div class="decision"><svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="100,2 198,50 100,98 2,50" fill="#fff" stroke="#111" stroke-width="1.75" vector-effect="non-scaling-stroke"/></svg><p>Open defects?</p></div><span class="fbot"></span></div>
+            <div class="side right"><span class="hconn"></span><div class="sbox"><span class="chip">Yes</span><p style="margin-top:6px">The contractor fixes the defect. A re-inspection with evidence and sign-off closes it, or an authorised reviewer closes it on the fix evidence (rule still to be confirmed). Then the stage is cleared.</p></div></div>
+          </div>
+          <div class="conn t"><span class="chip">No</span></div>
+          <article class="node"><div class="n">8</div><div class="nb"><h3>Stage cleared</h3><p class="d">The inspection stage is cleared; a stage payment linked to it can fall due.</p></div></article>
+        </div></div>
+      </section>
+    </div>
+
+    <div class="pair">
+      <!-- Supplier -->
+      <section class="role" id="role-supplier">
+        <div class="role-head"><h3>Supplier / Material Provider</h3><span class="role-tag">Defined portion only</span></div>
+        <p class="role-note">Suppliers currently appear as the source of qualifying products. Plan2Build may also supply some materials itself, with its margin shown on the homeowner's document.</p>
+        <div class="role-body cq compact"><div class="flow">
+          <article class="node"><div class="n">1</div><div class="nb"><p class="who">Plan2Build</p><h3>Performance specified</h3><p class="d">Plan2Build writes the performance required for an item, never a brand.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">2</div><div class="nb"><p class="who">Plan2Build</p><h3>Qualifying products shown</h3><p class="d">3 to 5 products with their price and supplier, in a separate step. Products qualify only on published technical criteria (test certificates or IS conformity); position is never for sale.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">3</div><div class="nb"><p class="who">Homeowner</p><h3>Homeowner chooses</h3><p class="d">Chooses unprompted and confirms with OTP.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">4</div><div class="nb"><p class="who">Contractor or Plan2Build</p><h3>Purchase recorded</h3><p class="d">The contractor buys to the specification, or Plan2Build supplies the item. A different product bought instead is recorded as a switch.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">5</div><div class="nb"><h3>Installed</h3><p class="d">The product is installed on site.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">6</div><div class="nb"><h3>Verified</h3><p class="d">Checked at an inspection, in the site log or against the delivery challan; the inspector is never told the supplier.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">7</div><div class="nb"><p class="who">Plan2Build</p><h3>Build record</h3><p class="d">Product, purchase evidence, installation date, warranty and installer are kept in the house's permanent record.</p></div></article>
+          <div class="conn dash line"></div>
+          <div class="endcap"><span class="tbc" style="margin-top:0">Final business decision required</span><p style="margin-top:6px">Supplier sign-up, product catalogue, ordering, delivery, returns and payment are not defined yet. The website shows a materials category from trusted suppliers and a Material Supply request, with no steps after them.</p></div>
+        </div></div>
+      </section>
+
+      <!-- Brand -->
+      <section class="role" id="role-brand">
+        <div class="role-head"><h3>Brand / Manufacturer</h3><span class="role-tag">Takes part through products</span></div>
+        <p class="role-note">Brands take part through their products, not as professionals on a project.</p>
+        <div class="role-body cq compact"><div class="flow">
+          <article class="node"><div class="n">1</div><div class="nb"><h3>Product qualifies</h3><p class="d">Only by meeting published technical criteria (test certificates or IS conformity); a product that fails cannot buy its way in.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">2</div><div class="nb"><h3>Shown as an option</h3><p class="d">Appears as a qualifying option in a separate step, never ordered by commercial relationship. A brand is never written into the specification itself and never earns from structural items.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">3</div><div class="nb"><p class="who">Homeowner</p><h3>Homeowner chooses</h3><p class="d">Plan2Build does not recommend one brand over another.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">4</div><div class="nb"><p class="who">Plan2Build</p><h3>Yearly review</h3><p class="d">Installation is verified; a product with repeated verified installation failures is removed from the options.</p></div></article>
+          <div class="conn"></div>
+          <article class="node"><div class="n">5</div><div class="nb"><h3>Later, at scale</h3><p class="d">Aggregated, anonymised data (specification share, switch rate, installation integrity) and warranty co-certification backed by inspection evidence. Brands never receive a homeowner's identity, address or contact.</p></div></article>
+        </div>
+          <div class="subflow">
+            <h4>Brand dashboard <span class="tag" style="margin:0 0 0 6px">Outside the pilot</span></h4>
+            <div class="chain"><span class="c">Create brand account</span><span class="a">&rarr;</span><span class="c">Business verification</span><span class="a">&rarr;</span><span class="c">Catalogue, territories and dealers</span><span class="a">&rarr;</span><span class="c">Publish profile</span><span class="a">&rarr;</span><span class="c">Receive product enquiries</span><span class="a">&rarr;</span><span class="c">Route to brand team or dealer</span><span class="a">&rarr;</span><span class="c">Respond with an offer or recommendation</span><span class="a">&rarr;</span><span class="c">Update lead status and view analytics</span><span class="a">&rarr;</span><span class="c">Renew the listing</span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ SECTION 4 ============ -->
+<section class="section" id="x">
+  <div class="sec-head"><div class="sec-num">4</div><div><h2>IHB &#8596; Professional Interaction</h2><p class="sec-sub">Where the homeowner, Plan2Build and professionals hand work to each other</p></div></div>
+  <p class="scope">Each row is one hand-off; the arrow points to whoever receives it.</p>
+
+  <div class="lane-cap"><h3>Invited contractor path</h3><p>One house, one standard quote request, an independent auditor and a permanent record. This matches Contractor Path A in Section 3.</p></div>
+  <div class="cq">
+  <div class="lanes" style="--lanes:5">
+    <div class="guides" aria-hidden="true"><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i><i style="--k:4"></i></div>
+    <div class="lane-head"><div></div><div>Homeowner</div><div>Plan2Build</div><div class="ret">Structural engineer<small>Retained</small></div><div>Contractor</div><div class="ret">Auditor<small>Retained</small></div></div>
+
+    <p class="lphase"><span>Plan</span></p>
+    <div class="lrow"><span class="ln">1</span><span class="lline" style="grid-column:2 / 4;--k:2"></span>
+      <div class="lbox" style="grid-column:2"><span class="who">Homeowner</span>Submits project facts and drawings; pays the first advisory instalment</div>
+      <div class="lbox p2b to in-l" style="grid-column:3"><span class="who">Plan2Build</span>Reviews the requirement and sets up the workspace</div></div>
+    <div class="lrow"><span class="ln">2</span><span class="lline" style="grid-column:3 / 5;--k:2"></span>
+      <div class="lbox p2b" style="grid-column:3"><span class="who">Plan2Build</span>Compiles the structural items</div>
+      <div class="lbox ret to in-l" style="grid-column:4"><span class="who">Structural engineer</span>Reviews and signs off each structural item</div></div>
+    <div class="lrow"><span class="ln">3</span><span class="lline" style="grid-column:2 / 4;--k:2"></span>
+      <div class="lbox p2b" style="grid-column:3"><span class="who">Plan2Build</span>Issues the Build Plan and decisions calendar</div>
+      <div class="lbox to in-r" style="grid-column:2"><span class="who">Homeowner</span>Receives the frozen plan (PDF and link)</div></div>
+    <div class="lrow"><span class="ln">4</span><span class="lline" style="grid-column:2 / 4;--k:2"></span>
+      <div class="lbox" style="grid-column:2"><span class="who">Homeowner</span>Chooses among qualifying products; confirms each by OTP</div>
+      <div class="lbox p2b to in-l" style="grid-column:3"><span class="who">Plan2Build</span>Fixes each choice in the baseline</div></div>
+
+    <p class="lphase"><span>Compare and choose</span></p>
+    <div class="lrow"><span class="ln">5</span><span class="lline" style="grid-column:2 / 4;--k:2"></span>
+      <div class="lbox" style="grid-column:2"><span class="who">Homeowner</span>Nominates own contractor or accepts verified introductions</div>
+      <div class="lbox p2b to in-l" style="grid-column:3"><span class="who">Plan2Build</span>Prepares the standard quote request</div></div>
+    <div class="lrow"><span class="ln">6</span><span class="lline" style="grid-column:3 / 6;--k:3"></span>
+      <div class="lbox p2b" style="grid-column:3"><span class="who">Plan2Build</span>Invites the contractor by link and OTP; verifies by reference calls and a site visit</div>
+      <div class="lbox to in-l" style="grid-column:5"><span class="who">Contractor</span>Receives drawings, BOQ, specifications, timeline and quote format</div></div>
+    <div class="lrow"><span class="ln">7</span><span class="lline" style="grid-column:3 / 6;--k:3"></span>
+      <div class="lbox" style="grid-column:5"><span class="who">Contractor</span>Prices every line or marks it excluded (staff can enter it)</div>
+      <div class="lbox p2b to in-r" style="grid-column:3"><span class="who">Plan2Build</span>Flags missing lines; keeps the quote as submitted</div></div>
+    <div class="lrow"><span class="ln">8</span><span class="lline" style="grid-column:3 / 6;--k:3"></span>
+      <div class="lbox p2b in-r" style="grid-column:3"><span class="who">Plan2Build</span>Asks clarification questions</div>
+      <div class="lbox to two in-l" style="grid-column:5"><span class="who">Contractor</span>Answers; never sees other contractors' prices</div></div>
+    <div class="lrow"><span class="ln">9</span><span class="lline" style="grid-column:2 / 4;--k:2"></span>
+      <div class="lbox p2b" style="grid-column:3"><span class="who">Plan2Build</span>Sends the scope-normalised comparison, with no price ranking</div>
+      <div class="lbox to in-r" style="grid-column:2"><span class="who">Homeowner</span>Reviews the differences and chooses</div></div>
+    <div class="lrow"><span class="ln">10</span><span class="lline" style="grid-column:2 / 6;--k:4"></span>
+      <div class="lbox in-r" style="grid-column:2"><span class="who">Homeowner</span>Signs the contract and pays the contractor directly</div>
+      <div class="lbox to two in-l" style="grid-column:5"><span class="who">Contractor</span>Signs the contract; Plan2Build is not a party</div></div>
+
+    <p class="lphase"><span>Build</span></p>
+    <div class="lrow"><span class="ln">11</span><span class="lline" style="grid-column:2 / 6;--k:4"></span>
+      <div class="lbox in-r" style="grid-column:2"><span class="who">Homeowner</span>Raises a change, or acknowledges the contractor's by OTP</div>
+      <div class="lbox p2b" style="grid-column:3"><span class="who">Plan2Build</span>Records it; contract value and completion date update</div>
+      <div class="lbox to two in-l" style="grid-column:5"><span class="who">Contractor</span>Raises a change, or acknowledges the homeowner's by OTP</div></div>
+    <div class="lrow"><span class="ln">12</span><span class="lline" style="grid-column:2 / 6;--k:4"></span>
+      <div class="lbox in-r" style="grid-column:2"><span class="who">Homeowner</span>Pays directly; records or acknowledges each payment</div>
+      <div class="lbox p2b" style="grid-column:3"><span class="who">Plan2Build</span>Shows the money position (recording only)</div>
+      <div class="lbox to two in-l" style="grid-column:5"><span class="who">Contractor</span>Records or acknowledges each payment</div></div>
+
+    <p class="lphase"><span>Assure</span></p>
+    <div class="lrow"><span class="ln">13</span><span class="lline" style="grid-column:3 / 7;--k:4"></span>
+      <div class="lbox p2b" style="grid-column:3"><span class="who">Plan2Build</span>Assigns the auditor to an inspection stage</div>
+      <div class="lbox ret to in-l" style="grid-column:6"><span class="who">Auditor</span>Downloads the job pack; inspects offline, blind to the supplier</div></div>
+    <div class="lrow"><span class="ln">14</span><span class="lline" style="grid-column:5 / 7;--k:2"></span>
+      <div class="lbox ret" style="grid-column:6"><span class="who">Auditor</span>Records findings; captures acknowledgement when relevant</div>
+      <div class="lbox to in-r" style="grid-column:5"><span class="who">Contractor</span>Acknowledges when asked</div></div>
+    <div class="lrow"><span class="ln">15</span><span class="lline" style="grid-column:3 / 7;--k:4"></span>
+      <div class="lbox ret" style="grid-column:6"><span class="who">Auditor</span>Syncs; the report is locked</div>
+      <div class="lbox p2b to in-r" style="grid-column:3"><span class="who">Plan2Build</span>Operations approve the report</div></div>
+    <div class="lrow"><span class="ln">16</span><span class="lline" style="grid-column:2 / 6;--k:4"></span>
+      <div class="lbox p2b" style="grid-column:3"><span class="who">Plan2Build</span>Shares the results</div>
+      <div class="lbox to in-r" style="grid-column:2"><span class="who">Homeowner</span>Receives a plain-language report</div>
+      <div class="lbox to in-l" style="grid-column:5"><span class="who">Contractor</span>Receives the findings to fix</div></div>
+    <div class="lrow"><span class="ln">17</span><span class="lline" style="grid-column:5 / 7;--k:2"></span>
+      <div class="lbox" style="grid-column:5"><span class="who">Contractor</span>Fixes the defects and submits evidence</div>
+      <div class="lbox ret to in-l" style="grid-column:6"><span class="who">Auditor</span>Re-inspects and closes the defect (or an authorised reviewer closes it)</div></div>
+    <div class="lrow"><span class="ln">18</span><span class="lline" style="grid-column:2 / 4;--k:2"></span>
+      <div class="lbox p2b" style="grid-column:3"><span class="who">Plan2Build</span>Shows the stage payment as due once the inspection is cleared</div>
+      <div class="lbox to in-r" style="grid-column:2"><span class="who">Homeowner</span>Pays the contractor directly</div></div>
+
+    <p class="lphase"><span>Record</span></p>
+    <div class="lrow"><span class="ln">19</span><span class="lline" style="grid-column:2 / 4;--k:2"></span>
+      <div class="lbox p2b" style="grid-column:3"><span class="who">Plan2Build</span>Assembles the permanent build record</div>
+      <div class="lbox to in-r" style="grid-column:2"><span class="who">Homeowner</span>Keeps it; can transfer it to a new owner</div></div>
+    <div class="lrow"><span class="ln">20</span><span class="lline" style="grid-column:3 / 6;--k:3"></span>
+      <div class="lbox p2b" style="grid-column:3"><span class="who">Plan2Build</span>Adds the inspection results to the contractor's audit record</div>
+      <div class="lbox to in-l" style="grid-column:5"><span class="who">Contractor</span>Verified profile with audit record</div></div>
+  </div>
+  </div>
+
+  <div class="lane-cap" style="margin-top:34px"><h3>Marketplace path</h3><span class="tbc">Decision to be confirmed</span><p style="margin-top:6px">Applies if Plan2Build runs as a marketplace for architects, contractors, interior designers and specialists. Homeowners can also request quotes from professionals listed in the public directory; the professional's steps after such a request are not yet designed.</p></div>
+  <div class="cq">
+  <div class="lanes" style="--lanes:3">
+    <div class="guides" aria-hidden="true"><i style="--k:1"></i><i style="--k:2"></i></div>
+    <div class="lane-head"><div></div><div>Homeowner</div><div>Plan2Build</div><div>Professional</div></div>
+
+    <div class="lrow"><span class="ln">1</span><span class="lline" style="grid-column:2 / 4;--k:2"></span>
+      <div class="lbox" style="grid-column:2"><span class="who">Homeowner</span>Posts the project need and chooses to compare professionals or request quotes</div>
+      <div class="lbox p2b to in-l" style="grid-column:3"><span class="who">Plan2Build</span>Matches eligible, verified professionals</div></div>
+    <div class="lrow"><span class="ln">2</span><span class="lline" style="grid-column:3 / 5;--k:2"></span>
+      <div class="lbox p2b" style="grid-column:3"><span class="who">Plan2Build</span>Alerts the matched professionals</div>
+      <div class="lbox to in-l" style="grid-column:4"><span class="who">Professional</span>Views the brief; may express interest or decline</div></div>
+    <div class="lrow"><span class="ln">3</span><span class="lline" style="grid-column:2 / 5;--k:3"></span>
+      <div class="lbox" style="grid-column:2"><span class="who">Homeowner</span>Invites professionals to quote (or the system invites them)</div>
+      <div class="lbox to in-l" style="grid-column:4"><span class="who">Professional</span>Receives the invitation and the full brief</div></div>
+    <div class="lrow"><span class="ln">4</span><span class="lline" style="grid-column:2 / 5;--k:3"></span>
+      <div class="lbox" style="grid-column:4"><span class="who">Professional</span>Submits a quote</div>
+      <div class="lbox to in-r" style="grid-column:2"><span class="who">Homeowner</span>Compares on a common scope and shortlists</div></div>
+    <div class="lrow"><span class="ln">5</span><span class="lline" style="grid-column:2 / 5;--k:3"></span>
+      <div class="lbox in-r" style="grid-column:2"><span class="who">Homeowner</span>Selects the professional</div>
+      <div class="lbox to two in-l" style="grid-column:4"><span class="who">Professional</span>Accepts the engagement</div></div>
+    <div class="lrow"><span class="ln">6</span><span class="lline" style="grid-column:2 / 5;--k:3"></span>
+      <div class="lbox p2b" style="grid-column:3"><span class="who">Plan2Build</span>Activates the engagement once start conditions are met</div>
+      <div class="lbox to in-r" style="grid-column:2"><span class="who">Homeowner</span>Project start notice</div>
+      <div class="lbox to in-l" style="grid-column:4"><span class="who">Professional</span>Project start notice</div></div>
+    <div class="lrow"><span class="ln">7</span><span class="lline" style="grid-column:2 / 5;--k:3"></span>
+      <div class="lbox" style="grid-column:4"><span class="who">Professional</span>Posts milestone updates; requests completion</div>
+      <div class="lbox to in-r" style="grid-column:2"><span class="who">Homeowner</span>Approves, or raises an issue</div></div>
+    <div class="lrow"><span class="ln">8</span><span class="lline" style="grid-column:2 / 5;--k:3"></span>
+      <div class="lbox" style="grid-column:2"><span class="who">Homeowner</span>Pays the milestone through the platform</div>
+      <div class="lbox p2b to in-l" style="grid-column:3"><span class="who">Plan2Build</span>Releases the payment after approval</div>
+      <div class="lbox to in-l" style="grid-column:4"><span class="who">Professional</span>Receives the settlement</div></div>
+    <div class="lrow"><span class="ln">9</span><span class="lline" style="grid-column:2 / 5;--k:3"></span>
+      <div class="lbox" style="grid-column:4"><span class="who">Professional</span>Submits change orders</div>
+      <div class="lbox to in-r" style="grid-column:2"><span class="who">Homeowner</span>Approves or rejects them</div></div>
+    <div class="lrow"><span class="ln">10</span><span class="lline" style="grid-column:2 / 5;--k:3"></span>
+      <div class="lbox" style="grid-column:4"><span class="who">Professional</span>Uploads the handover documents</div>
+      <div class="lbox to in-r" style="grid-column:2"><span class="who">Homeowner</span>Accepts the handover; warranty registered</div></div>
+    <div class="lrow"><span class="ln">11</span><span class="lline" style="grid-column:2 / 5;--k:3"></span>
+      <div class="lbox in-r" style="grid-column:2"><span class="who">Homeowner</span>Reviews the professional</div>
+      <div class="lbox to in-l" style="grid-column:4"><span class="who">Professional</span>Can respond to the review</div></div>
+  </div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

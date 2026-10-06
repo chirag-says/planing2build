@@ -1,0 +1,136 @@
+# LOCAL development stack (ENVIRONMENT_AND_DEPLOYMENT section 1 and 9).
+#   pnpm local:up    -> db, migrate, api, worker, caddy, mailpit, storage, clamav
+#   pnpm dev:web     -> Next.js on the host (fast reload), reached through Caddy
+# Browse http://ihb.localhost:8080, http://pro.localhost:8080, http://admin.localhost:8080.
+# Emails (OTP codes) land in Mailpit: http://localhost:8025.
+# Uploads go to SeaweedFS (S3 API) at http://localhost:9000, the stand-in for R2. MinIO no
+# longer publishes community images, so it is not used. ClamAV needs about a minute and 1.5 GB
+# of memory to load its signatures; until then uploads wait in SCANNING and the job retries.
+# Credentials and keys below are local-only development values, not secrets; every other
+# environment generates its own (apps/api/.env.example).
+name: p2b-local
+
+x-api-env: &api-env
+  P2B_ENV: local
+  P2B_DATABASE_URL: postgresql+asyncpg://p2b:p2b_local@db:5432/p2b
+  P2B_HOST_IHB: ihb.localhost
+  P2B_HOST_PRO: pro.localhost
+  P2B_HOST_OPS: admin.localhost
+  P2B_COOKIE_SECURE: "false"
+  P2B_LOG_LEVEL: INFO
+  P2B_OTP_PEPPER: local-otp-pepper-not-secret
+  P2B_IDENTIFIER_PEPPER: local-identifier-pepper-not-secret
+  P2B_ENCRYPTION_KEY: bG9jYWwtZGV2LWtleS0zMi1ieXRlcy1ub3RzZWNyZXQ=  # 32 bytes, local only
+  P2B_EMAIL_PROVIDER: smtp
+  P2B_SMTP_HOST: mailpit
+  P2B_SMTP_PORT: "1025"
+  P2B_EMAIL_FROM: "Plan2Build (local) <no-reply@plan2build.local>"
+  # Operations notices land in Mailpit under this reserved example address (local only, ruling 2.8).
+  P2B_OPS_NOTIFICATION_EMAIL: operations@example.in
+  P2B_STORAGE_PROVIDER: s3
+  P2B_STORAGE_ENDPOINT_INTERNAL: http://storage:8333
+  P2B_STORAGE_ENDPOINT_PUBLIC: http://localhost:9000
+  P2B_STORAGE_ACCESS_KEY: p2b-local-access          # matches seaweedfs/s3.json
+  P2B_STORAGE_SECRET_KEY: p2b-local-secret-not-secret
+  P2B_STORAGE_BUCKET_PRIVATE: p2b-local-private
+  P2B_SCANNER_PROVIDER: clamav
+  P2B_CLAMAV_HOST: clamav
+  P2B_CLAMAV_PORT: "3310"
+  P2B_GEOCODER_PROVIDER: nominatim                  # public OSM service: 1 request/s, dev only
+  P2B_AI_IMAGE_PROVIDER: demo                        # placeholder images, local only (AQ-15 open)
+  # Billing (Slice 3.3): the fake gateway, never live money; keys are local strings, never Razorpay's.
+  P2B_PAYMENT_PROVIDER: fake
+  P2B_PAYMENT_KEY_ID: fake_key_local
+  P2B_PAYMENT_KEY_SECRET: local-payment-key-secret-not-secret
+  P2B_PAYMENT_WEBHOOK_SECRET: local-webhook-secret-not-secret
+
+services:
+  db:
+    image: postgis/postgis:16-3.5
+    environment:
+      POSTGRES_USER: p2b
+      POSTGRES_PASSWORD: p2b_local
+      POSTGRES_DB: p2b
+    ports: ["127.0.0.1:55432:5432"]
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./postgres-init.sql:/docker-entrypoint-initdb.d/10-test-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U p2b -d p2b"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    build: ../../apps/api
+    image: p2b-api:local
+    # Migrate, then publish TEST billing configuration (local only; the seed refuses elsewhere).
+    command: ["sh", "-c", "alembic upgrade head && python -m p2b.identity.staff grant --email dev-admin@example.in --role ADMIN --reason 'local billing seed' && python -m p2b.billing.seed_dev --email dev-admin@example.in"]
+    environment: *api-env
+    depends_on:
+      db: {condition: service_healthy}
+
+  api:
+    image: p2b-api:local
+    command: ["uvicorn", "p2b.asgi:app", "--host", "0.0.0.0", "--port", "8000", "--reload",
+              "--reload-dir", "/app/src", "--no-access-log"]
+    environment: *api-env
+    # Exposed on loopback so a Next.js dev server running on the host can render server-side.
+    ports: ["127.0.0.1:8000:8000"]
+    volumes: ["../../apps/api/src:/app/src:ro"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      storage: {condition: service_started}
+
+  worker:
+    image: p2b-api:local
+    command: ["python", "-m", "p2b.worker"]
+    environment: *api-env
+    volumes: ["../../apps/api/src:/app/src:ro"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      mailpit: {condition: service_started}
+      storage: {condition: service_started}
+      clamav: {condition: service_started}
+    healthcheck:
+      test: ["CMD-SHELL", "test $$(( $$(date +%s) - $$(stat -c %Y /tmp/p2b-worker-heartbeat) )) -lt 90"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+
+  mailpit:
+    # Development email sink (ADR-020: Resend in staging and production).
+    image: axllent/mailpit:v1.27
+    ports: ["127.0.0.1:8025:8025"]
+
+  storage:
+    # S3-compatible object store for LOCAL only (ADR-006: Cloudflare R2 elsewhere). Browsers PUT
+    # to presigned URLs on localhost:9000; the homeowner and professionals hosts are the allowed
+    # CORS origins (professionals upload evidence and portfolio photos, Slice 3.2).
+    image: chrislusf/seaweedfs:4.48
+    command: ["mini", "-dir=/data", "-bucket=p2b-local-private",
+              "-s3.config=/etc/seaweedfs/s3.json", "-s3.allowedOrigins=http://ihb.localhost:8080,http://pro.localhost:8080",
+              "-admin.ui=false"]
+    ports: ["127.0.0.1:9000:8333"]
+    volumes:
+      - storage-data:/data
+      - ./seaweedfs/s3.json:/etc/seaweedfs/s3.json:ro
+
+  clamav:
+    # Malware scanning over clamd INSTREAM (INTEGRATION section 7). Signatures persist in a volume.
+    image: clamav/clamav:1.5.4
+    ports: ["127.0.0.1:3310:3310"]
+    volumes: ["clamav-db:/var/lib/clamav"]
+
+  caddy:
+    image: caddy:2.10-alpine
+    ports: ["127.0.0.1:8080:8080"]
+    volumes: ["./Caddyfile:/etc/caddy/Caddyfile:ro"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    depends_on: [api]
+
+volumes:
+  db-data:
+  storage-data:
+  clamav-db:

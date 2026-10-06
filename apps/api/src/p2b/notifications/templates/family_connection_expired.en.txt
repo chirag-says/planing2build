@@ -1,0 +1,5 @@
+Your Plan2Build connection request expired
+---
+$professional did not respond to your request for $category on project $code within $hours hours, so the request has expired.
+
+You can send a request to another professional from your project.

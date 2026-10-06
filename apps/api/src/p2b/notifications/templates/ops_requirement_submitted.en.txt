@@ -1,0 +1,9 @@
+New requirement submitted: $code
+---
+A requirement was submitted for review.
+
+Project: $code
+Locality: $locality
+Review flags: $flags
+
+Open the review queue on the operations site to review it.

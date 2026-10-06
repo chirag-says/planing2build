@@ -1,0 +1,10 @@
+packages:
+  - apps/web
+  - packages/*
+
+# Native build scripts are opt-in (supply chain, SECURITY_ARCHITECTURE section 5).
+# None of these is needed: images are not optimised on the VPS (TECH_STACK section 3), and the
+# watchers and compilers have pure-JS or prebuilt fallbacks.
+allowBuilds:
+  sharp: false
+  unrs-resolver: false
