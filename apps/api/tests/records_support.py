@@ -18,6 +18,8 @@ async def publish_gate6(s: Site) -> None:
     operations, published by ADMIN)."""
     versions = ok(await s.ops.client.get("/api/v1/ops/checklists"))
     v1 = next(v for v in versions if v["status"] == "PUBLISHED")
+    if any(c["gate"] == 6 for c in v1["checkpoints"]):
+        return  # already published by an earlier step of the same test
     draft = ok(await s.ops.client.post("/api/v1/ops/checklists",
                                        json={"from_version_id": v1["id"], "note": "Gate 6"},
                                        headers=ops_key()), 201)  # fmt: skip
@@ -52,8 +54,7 @@ async def cleared(
 
 async def opened(s: Site) -> dict[str, Any]:
     body: dict[str, Any] = ok(
-        await s.ops.client.post(f"/api/v1/ops/projects/{s.project_id}/handover",
-                                headers=ops_key())  # fmt: skip
+        await s.ops.client.post(f"/api/v1/ops/projects/{s.project_id}/handover", headers=ops_key())
     )
     return body
 
@@ -85,7 +86,8 @@ async def ready(s: Site, database: Database) -> dict[str, Any]:
         headers=ops_key(),
     ))  # fmt: skip
     body: dict[str, Any] = ok(
-        await s.ops.client.post(f"/api/v1/ops/projects/{s.project_id}/handover/ready",
-                                headers=ops_key())  # fmt: skip
+        await s.ops.client.post(
+            f"/api/v1/ops/projects/{s.project_id}/handover/ready", headers=ops_key()
+        )
     )
     return body

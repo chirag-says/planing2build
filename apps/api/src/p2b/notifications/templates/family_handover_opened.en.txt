@@ -1,0 +1,3 @@
+Your handover has started
+---
+Plan2Build opened the handover of project $code. Your contractor and Plan2Build are recording the documents and warranties.

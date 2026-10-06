@@ -93,7 +93,8 @@ APP_TABLES = (
     "build_plan_events, rfqs, rfq_invitations, quote_drafts, quote_versions, quote_lines, "
     "quote_adjustments, rfq_clarifications, comparisons, selections, rfq_events, "
     "stage_updates, construction_events, payment_marks, auditor_appointments, inspections, "
-    "inspection_results, non_conformances, inspection_reports, test_results, assurance_events"
+    "inspection_results, non_conformances, inspection_reports, test_results, assurance_events, "
+    "handovers, handover_documents, warranties, build_records, records_events"
 )
 
 

@@ -41,6 +41,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/acknowledgement-statements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Statement
+         * @description A DRAFT statement version; `$project_code` is the only placeholder.
+         */
+        post: operations["post_statement_api_v1_admin_acknowledgement_statements_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/acknowledgement-statements/{statement_id}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Activate Statement
+         * @description The DRAFT becomes ACTIVE; the previous ACTIVE one is RETIRED.
+         */
+        post: operations["post_activate_statement_api_v1_admin_acknowledgement_statements__statement_id__activate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/auditor-appointments": {
         parameters: {
             query?: never;
@@ -736,6 +776,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ops/acknowledgement-statements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Statements */
+        get: operations["get_statements_api_v1_ops_acknowledgement_statements_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ops/assurance": {
         parameters: {
             query?: never;
@@ -1205,6 +1262,44 @@ export interface paths {
          * @description DRAFT, IN_REVIEW or an unaccepted ISSUED version; never ACCEPTED.
          */
         post: operations["post_withdraw_version_api_v1_ops_build_plan_versions__version_id__withdraw_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/build-records/{record_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Record */
+        get: operations["get_record_api_v1_ops_build_records__record_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/build-records/{record_id}/issue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Issue
+         * @description Issue the DRAFT: snapshot hash, PDF and JSON; the previous version is SUPERSEDED. 409
+         *     NOT_DRAFT; or PACKAGE_REQUIRED.
+         */
+        post: operations["post_issue_api_v1_ops_build_records__record_id__issue_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1960,6 +2055,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ops/projects/{project_id}/build-record/assemble": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Assemble
+         * @description Re-assemble the DRAFT from the records, or start a corrected version after an issued one
+         *     (a reason is required). 409 NO_HANDOVER, REASON_REQUIRED.
+         */
+        post: operations["post_assemble_api_v1_ops_projects__project_id__build_record_assemble_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ops/projects/{project_id}/cancel": {
         parameters: {
             query?: never;
@@ -2029,6 +2145,156 @@ export interface paths {
         get: operations["get_project_execution_api_v1_ops_projects__project_id__execution_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Handover */
+        get: operations["get_handover_api_v1_ops_projects__project_id__handover_get"];
+        put?: never;
+        /**
+         * Post Open
+         * @description Open the handover (EX-15). 409 GATE6_NOT_CLEARED, OPEN_FINDINGS, ALREADY_OPEN.
+         */
+        post: operations["post_open_api_v1_ops_projects__project_id__handover_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover-files": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Handover File
+         * @description A handover document received outside the portal (raw body), scanned before use.
+         */
+        post: operations["post_handover_file_api_v1_ops_projects__project_id__handover_files_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Document */
+        post: operations["post_document_api_v1_ops_projects__project_id__handover_documents_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover/documents/{document_id}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Remove Document */
+        post: operations["post_remove_document_api_v1_ops_projects__project_id__handover_documents__document_id__remove_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover/issue-without-acknowledgement": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Issue Without Acknowledgement
+         * @description The owner did not respond: issue with a reason, recorded as an operations issue and never
+         *     as the owner's acknowledgement (EX-15). 409 NOT_READY.
+         */
+        post: operations["post_issue_without_acknowledgement_api_v1_ops_projects__project_id__handover_issue_without_acknowledgement_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover/ready": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Ready
+         * @description Confirm the required documents are recorded. 409 NO_DOCUMENTS, WARRANTY_MISSING.
+         */
+        post: operations["post_ready_api_v1_ops_projects__project_id__handover_ready_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover/reopen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Reopen */
+        post: operations["post_reopen_api_v1_ops_projects__project_id__handover_reopen_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover/warranties": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Warranty */
+        post: operations["post_warranty_api_v1_ops_projects__project_id__handover_warranties_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3484,6 +3750,97 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pro/engagements/{engagement_id}/handover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Pro Handover */
+        get: operations["get_pro_handover_api_v1_pro_engagements__engagement_id__handover_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/handover/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Pro Document
+         * @description Add a handover document while the handover is open. 409 NOT_OPEN, DUPLICATE.
+         */
+        post: operations["post_pro_document_api_v1_pro_engagements__engagement_id__handover_documents_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/handover/uploads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Handover Upload
+         * @description A presigned upload of a handover document (PDF, JPG or PNG), scanned before use.
+         */
+        post: operations["post_handover_upload_api_v1_pro_engagements__engagement_id__handover_uploads_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/handover/uploads/{file_id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Handover Upload Complete */
+        post: operations["post_handover_upload_complete_api_v1_pro_engagements__engagement_id__handover_uploads__file_id__complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/handover/warranties": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Pro Warranty */
+        post: operations["post_pro_warranty_api_v1_pro_engagements__engagement_id__handover_warranties_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/pro/engagements/{engagement_id}/non-conformances/{nc_id}/rectification": {
         parameters: {
             query?: never;
@@ -4393,6 +4750,63 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{project_id}/build-record": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Build Record
+         * @description Issued versions, newest last; superseded ones stay readable (EX-17).
+         */
+        get: operations["get_build_record_api_v1_projects__project_id__build_record_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/build-record/versions/{version_no}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Build Record Version */
+        get: operations["get_build_record_version_api_v1_projects__project_id__build_record_versions__version_no__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/build-record/versions/{version_no}/{form}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Build Record File
+         * @description `form` is pdf or json (logged).
+         */
+        get: operations["get_build_record_file_api_v1_projects__project_id__build_record_versions__version_no___form__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{project_id}/connection-target": {
         parameters: {
             query?: never;
@@ -4758,6 +5172,85 @@ export interface paths {
         };
         /** Get Project Files */
         get: operations["get_project_files_api_v1_projects__project_id__files_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/handover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Handover
+         * @description The handover: documents, warranties, and whether the owner acknowledged it or Plan2Build
+         *     issued it without acknowledgement.
+         */
+        get: operations["get_handover_api_v1_projects__project_id__handover_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/handover/acknowledge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Acknowledge
+         * @description Acknowledge with the code (EX-15). Free of the package (EX-18). 409 NOT_READY,
+         *     STATEMENT_CHANGED.
+         */
+        post: operations["post_acknowledge_api_v1_projects__project_id__handover_acknowledge_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/handover/acknowledgement-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Acknowledgement Code
+         * @description Send a one-time code to the owner's email; the response carries the statement.
+         */
+        post: operations["post_acknowledgement_code_api_v1_projects__project_id__handover_acknowledgement_code_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/handover/documents/{document_id}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Handover Document */
+        get: operations["get_handover_document_api_v1_projects__project_id__handover_documents__document_id__url_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5492,6 +5985,21 @@ export interface components {
             /** Checks */
             checks: components["schemas"]["EligibilityCheckIn"][];
         };
+        /** AcknowledgeIn */
+        AcknowledgeIn: {
+            /**
+             * Challenge Id
+             * Format: uuid
+             */
+            challenge_id: string;
+            /** Code */
+            code: string;
+            /**
+             * Statement Id
+             * Format: uuid
+             */
+            statement_id: string;
+        };
         /** AddCategoryIn */
         AddCategoryIn: {
             /** Category */
@@ -5614,6 +6122,14 @@ export interface components {
             ends_package: boolean;
             /** Reason */
             reason: string;
+        };
+        /** AssembleIn */
+        AssembleIn: {
+            /**
+             * Reason
+             * @description Required for a new version after an issued one
+             */
+            reason?: string | null;
         };
         /** AssuranceOut */
         AssuranceOut: {
@@ -5869,6 +6385,74 @@ export interface components {
          * @enum {string}
          */
         BuildPlanState: "DRAFT" | "IN_REVIEW" | "ISSUED" | "ACCEPTED" | "CHANGES_REQUESTED" | "SUPERSEDED" | "WITHDRAWN";
+        /**
+         * BuildRecordBasis
+         * @enum {string}
+         */
+        BuildRecordBasis: "ACKNOWLEDGED" | "ISSUED_BY_OPERATIONS";
+        /** BuildRecordSnapshotOut */
+        BuildRecordSnapshotOut: {
+            basis: components["schemas"]["BuildRecordBasis"];
+            /** Correction Reason */
+            correction_reason: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Issued At */
+            issued_at: string | null;
+            /** Json Sha256 */
+            json_sha256: string | null;
+            /** Pdf Sha256 */
+            pdf_sha256: string | null;
+            /** Snapshot */
+            snapshot: {
+                [key: string]: unknown;
+            };
+            /** Snapshot Sha256 */
+            snapshot_sha256: string | null;
+            state: components["schemas"]["BuildRecordState"];
+            /** Version No */
+            version_no: number;
+        };
+        /**
+         * BuildRecordState
+         * @enum {string}
+         */
+        BuildRecordState: "DRAFT" | "ISSUED" | "SUPERSEDED";
+        /** BuildRecordVersionOut */
+        BuildRecordVersionOut: {
+            basis: components["schemas"]["BuildRecordBasis"];
+            /** Correction Reason */
+            correction_reason: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Issued At */
+            issued_at: string | null;
+            /** Json Sha256 */
+            json_sha256: string | null;
+            /** Pdf Sha256 */
+            pdf_sha256: string | null;
+            /** Snapshot Sha256 */
+            snapshot_sha256: string | null;
+            state: components["schemas"]["BuildRecordState"];
+            /** Version No */
+            version_no: number;
+        };
+        /** BuildRecordsOut */
+        BuildRecordsOut: {
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            /** Versions */
+            versions: components["schemas"]["BuildRecordVersionOut"][];
+        };
         /** BuyerIn */
         BuyerIn: {
             /** Address */
@@ -6653,35 +7237,6 @@ export interface components {
              */
             order: "daily_shuffle";
         };
-        /** DocumentIn */
-        DocumentIn: {
-            /** Category Code */
-            category_code?: string | null;
-            /**
-             * File Id
-             * Format: uuid
-             */
-            file_id: string;
-            /**
-             * Gstin
-             * @description GSTIN (business), where registered
-             * @default
-             */
-            gstin: string;
-            /**
-             * Issuer
-             * @description Issuing body (registration)
-             * @default
-             */
-            issuer: string;
-            kind: components["schemas"]["ProfessionalDocumentKind"];
-            /**
-             * Number
-             * @description Registration or licence number
-             * @default
-             */
-            number: string;
-        };
         /** DocumentOut */
         DocumentOut: {
             /** Category Code */
@@ -7454,7 +8009,7 @@ export interface components {
          * @description Why a file exists; each purpose has its own limits (ADR-011).
          * @enum {string}
          */
-        FilePurpose: "REQUIREMENT_UPLOAD" | "AI_CONCEPT" | "VERIFICATION_EVIDENCE" | "PORTFOLIO" | "INVOICE" | "QUOTE_DOCUMENT" | "DRAWING" | "BUILD_PLAN_EVIDENCE" | "BUILD_PLAN_DOCUMENT" | "QUOTE_ATTACHMENT" | "COMPARISON_DOCUMENT" | "STAGE_EVIDENCE" | "INSPECTION_EVIDENCE" | "INSPECTION_REPORT";
+        FilePurpose: "REQUIREMENT_UPLOAD" | "AI_CONCEPT" | "VERIFICATION_EVIDENCE" | "PORTFOLIO" | "INVOICE" | "QUOTE_DOCUMENT" | "DRAWING" | "BUILD_PLAN_EVIDENCE" | "BUILD_PLAN_DOCUMENT" | "QUOTE_ATTACHMENT" | "COMPARISON_DOCUMENT" | "STAGE_EVIDENCE" | "INSPECTION_EVIDENCE" | "INSPECTION_REPORT" | "HANDOVER_DOCUMENT" | "BUILD_RECORD_DOCUMENT" | "BUILD_RECORD_EXPORT";
         /**
          * FileState
          * @description File object machine (STATE_MODEL section 16).
@@ -7535,6 +8090,84 @@ export interface components {
          * @enum {string}
          */
         GateStatus: "NOT_INSPECTED" | "SCHEDULED" | "OPEN_NC" | "CLEARED";
+        /**
+         * HandoverDocumentKind
+         * @enum {string}
+         */
+        HandoverDocumentKind: "WARRANTY" | "MANUAL" | "DRAWING" | "CERTIFICATE" | "PHOTO" | "OTHER";
+        /** HandoverDocumentOut */
+        HandoverDocumentOut: {
+            /**
+             * Added At
+             * Format: date-time
+             */
+            added_at: string;
+            /** Added Role */
+            added_role: string;
+            /**
+             * File Id
+             * Format: uuid
+             */
+            file_id: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["HandoverDocumentKind"];
+            /** Title */
+            title: string;
+        };
+        /** HandoverOut */
+        HandoverOut: {
+            /**
+             * Acknowledged At
+             * @description Set only by the owner's code
+             */
+            acknowledged_at: string | null;
+            /** Documents */
+            documents: components["schemas"]["HandoverDocumentOut"][];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Issue Reason */
+            issue_reason: string | null;
+            /** Issued At */
+            issued_at: string | null;
+            /** Issued Without Acknowledgement */
+            issued_without_acknowledgement: boolean;
+            /**
+             * Opened At
+             * Format: date-time
+             */
+            opened_at: string;
+            /** Ready At */
+            ready_at: string | null;
+            state: components["schemas"]["HandoverState"];
+            /** Statement Text */
+            statement_text: string | null;
+            /** Warranties */
+            warranties: components["schemas"]["WarrantyOut"][];
+        };
+        /**
+         * HandoverState
+         * @description EX-15: an operations issue is never an acknowledgement.
+         * @enum {string}
+         */
+        HandoverState: "OPEN" | "READY" | "ACKNOWLEDGED" | "ISSUED_BY_OPERATIONS";
+        /** HandoverViewOut */
+        HandoverViewOut: {
+            handover: components["schemas"]["HandoverOut"] | null;
+            /** Is Owner */
+            is_owner: boolean;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+        };
         /** InformationRequest */
         InformationRequest: {
             /**
@@ -8165,6 +8798,18 @@ export interface components {
             exception_days: number;
             /** Waiting */
             waiting: components["schemas"]["OpsWaitingOut"][];
+        };
+        /** OpsHandoverOut */
+        OpsHandoverOut: {
+            build_records: components["schemas"]["BuildRecordsOut"];
+            handover: components["schemas"]["HandoverOut"] | null;
+            /** Project Code */
+            project_code: string;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
         };
         /** OpsHistoryOut */
         OpsHistoryOut: {
@@ -11200,29 +11845,6 @@ export interface components {
          * @enum {string}
          */
         StageUpdateKind: "PROGRESS" | "COMPLETION_REQUEST";
-        /** StatementIn */
-        StatementIn: {
-            /** Note */
-            note: string;
-            /** Text */
-            text: string;
-        };
-        /** StatementOut */
-        StatementOut: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /** Note */
-            note: string;
-            /** Status */
-            status: string;
-            /** Text */
-            text: string;
-            /** Version */
-            version: number;
-        };
         /** SubmitIn */
         SubmitIn: {
             /**
@@ -11469,6 +12091,50 @@ export interface components {
             /** Version No */
             version_no: number;
         };
+        /**
+         * WarrantyIn
+         * @description MVP P8: every warranty carries its term, expiry and installer.
+         */
+        WarrantyIn: {
+            /** Document Id */
+            document_id?: string | null;
+            /**
+             * Expiry Date
+             * Format: date
+             */
+            expiry_date: string;
+            /** Installer */
+            installer: string;
+            /** Item */
+            item: string;
+            /** Spec Line Code */
+            spec_line_code?: string | null;
+            /** Term */
+            term: string;
+        };
+        /** WarrantyOut */
+        WarrantyOut: {
+            /** Document Id */
+            document_id: string | null;
+            /**
+             * Expiry Date
+             * Format: date
+             */
+            expiry_date: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Installer */
+            installer: string;
+            /** Item */
+            item: string;
+            /** Spec Line Code */
+            spec_line_code: string | null;
+            /** Term */
+            term: string;
+        };
         /** WebhookAck */
         WebhookAck: {
             /**
@@ -11710,6 +12376,29 @@ export interface components {
             /** Entries */
             entries: components["schemas"]["ScheduleEntryIn"][];
         };
+        /** StatementIn */
+        p2b__buildplan__schemas__StatementIn: {
+            /** Note */
+            note: string;
+            /** Text */
+            text: string;
+        };
+        /** StatementOut */
+        p2b__buildplan__schemas__StatementOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Note */
+            note: string;
+            /** Status */
+            status: string;
+            /** Text */
+            text: string;
+            /** Version */
+            version: number;
+        };
         /** UploadIn */
         p2b__buildplan__schemas__UploadIn: {
             /** Content Type */
@@ -11844,6 +12533,35 @@ export interface components {
             /** Note */
             note?: string | null;
         };
+        /** DocumentIn */
+        p2b__professionals__schemas__DocumentIn: {
+            /** Category Code */
+            category_code?: string | null;
+            /**
+             * File Id
+             * Format: uuid
+             */
+            file_id: string;
+            /**
+             * Gstin
+             * @description GSTIN (business), where registered
+             * @default
+             */
+            gstin: string;
+            /**
+             * Issuer
+             * @description Issuing body (registration)
+             * @default
+             */
+            issuer: string;
+            kind: components["schemas"]["ProfessionalDocumentKind"];
+            /**
+             * Number
+             * @description Registration or licence number
+             * @default
+             */
+            number: string;
+        };
         /** DownloadOut */
         p2b__professionals__schemas__DownloadOut: {
             /** Url */
@@ -11883,6 +12601,83 @@ export interface components {
              * @enum {string}
              */
             purpose: "VERIFICATION_EVIDENCE" | "PORTFOLIO";
+            /** Size Bytes */
+            size_bytes: number;
+        };
+        /** StatementIn */
+        p2b__records__ops_router__StatementIn: {
+            /** Note */
+            note: string;
+            /** Text */
+            text: string;
+        };
+        /** StatementOut */
+        p2b__records__ops_router__StatementOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Note */
+            note: string;
+            /** Status */
+            status: string;
+            /** Text */
+            text: string;
+            /** Version */
+            version: number;
+        };
+        /** ChallengeOut */
+        p2b__records__schemas__ChallengeOut: {
+            /**
+             * Challenge Id
+             * Format: uuid
+             */
+            challenge_id: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Sent To */
+            sent_to: string;
+            /**
+             * Statement Id
+             * Format: uuid
+             */
+            statement_id: string;
+            /** Statement Text */
+            statement_text: string;
+            /** Statement Version */
+            statement_version: number;
+        };
+        /** DocumentIn */
+        p2b__records__schemas__DocumentIn: {
+            /**
+             * File Id
+             * Format: uuid
+             */
+            file_id: string;
+            kind: components["schemas"]["HandoverDocumentKind"];
+            /** Title */
+            title: string;
+        };
+        /** DownloadOut */
+        p2b__records__schemas__DownloadOut: {
+            /** Url */
+            url: string;
+        };
+        /** ReasonIn */
+        p2b__records__schemas__ReasonIn: {
+            /** Reason */
+            reason: string;
+        };
+        /** UploadIn */
+        p2b__records__schemas__UploadIn: {
+            /** Content Type */
+            content_type: string;
+            /** File Name */
+            file_name: string;
             /** Size Bytes */
             size_bytes: number;
         };
@@ -11999,6 +12794,29 @@ export interface components {
             /** Reason */
             reason: string;
         };
+        /** StatementIn */
+        p2b__rfq__schemas__StatementIn: {
+            /** Note */
+            note: string;
+            /** Text */
+            text: string;
+        };
+        /** StatementOut */
+        p2b__rfq__schemas__StatementOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Note */
+            note: string;
+            /** Status */
+            status: string;
+            /** Text */
+            text: string;
+            /** Version */
+            version: number;
+        };
         /** UploadIn */
         p2b__rfq__schemas__UploadIn: {
             /** Content Type */
@@ -12029,7 +12847,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["StatementIn"];
+                "application/json": components["schemas"]["p2b__buildplan__schemas__StatementIn"];
             };
         };
         responses: {
@@ -12039,7 +12857,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__StatementOut"];
                 };
             };
             /** @description Client error */
@@ -12079,7 +12897,95 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"][];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__StatementOut"][];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_statement_api_v1_admin_acknowledgement_statements_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__records__ops_router__StatementIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__records__ops_router__StatementOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_activate_statement_api_v1_admin_acknowledgement_statements__statement_id__activate_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                statement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__records__ops_router__StatementOut"];
                 };
             };
             /** @description Client error */
@@ -12871,7 +13777,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["StatementIn"];
+                "application/json": components["schemas"]["p2b__rfq__schemas__StatementIn"];
             };
         };
         responses: {
@@ -12881,7 +13787,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"];
+                    "application/json": components["schemas"]["p2b__rfq__schemas__StatementOut"];
                 };
             };
             /** @description Client error */
@@ -12921,7 +13827,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"][];
+                    "application/json": components["schemas"]["p2b__rfq__schemas__StatementOut"][];
                 };
             };
             /** @description Client error */
@@ -12956,7 +13862,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["StatementIn"];
+                "application/json": components["schemas"]["p2b__buildplan__schemas__StatementIn"];
             };
         };
         responses: {
@@ -12966,7 +13872,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__StatementOut"];
                 };
             };
             /** @description Client error */
@@ -13006,7 +13912,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"][];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__StatementOut"][];
                 };
             };
             /** @description Client error */
@@ -13726,7 +14632,45 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"][];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__StatementOut"][];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_statements_api_v1_ops_acknowledgement_statements_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__records__ops_router__StatementOut"][];
                 };
             };
             /** @description Client error */
@@ -14844,6 +15788,89 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OpsVersionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_record_api_v1_ops_build_records__record_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                record_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildRecordSnapshotOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_issue_api_v1_ops_build_records__record_id__issue_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                record_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
                 };
             };
             /** @description Client error */
@@ -16703,6 +17730,53 @@ export interface operations {
             };
         };
     };
+    post_assemble_api_v1_ops_projects__project_id__build_record_assemble_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssembleIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     post_cancel_api_v1_ops_projects__project_id__cancel_post: {
         parameters: {
             query?: never;
@@ -16855,6 +17929,415 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OpsExecutionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_handover_api_v1_ops_projects__project_id__handover_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_open_api_v1_ops_projects__project_id__handover_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_handover_file_api_v1_ops_projects__project_id__handover_files_post: {
+        parameters: {
+            query: {
+                file_name: string;
+            };
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/pdf": string;
+                "image/jpeg": string;
+                "image/png": string;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_document_api_v1_ops_projects__project_id__handover_documents_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__records__schemas__DocumentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_remove_document_api_v1_ops_projects__project_id__handover_documents__document_id__remove_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_issue_without_acknowledgement_api_v1_ops_projects__project_id__handover_issue_without_acknowledgement_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__records__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_ready_api_v1_ops_projects__project_id__handover_ready_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_reopen_api_v1_ops_projects__project_id__handover_reopen_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__records__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_warranty_api_v1_ops_projects__project_id__handover_warranties_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WarrantyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
                 };
             };
             /** @description Client error */
@@ -18183,7 +19666,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"][];
+                    "application/json": components["schemas"]["p2b__rfq__schemas__StatementOut"][];
                 };
             };
             /** @description Client error */
@@ -18221,7 +19704,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"][];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__StatementOut"][];
                 };
             };
             /** @description Client error */
@@ -19812,7 +21295,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DocumentIn"];
+                "application/json": components["schemas"]["p2b__professionals__schemas__DocumentIn"];
             };
         };
         responses: {
@@ -20197,6 +21680,225 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["p2b__engagements__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_pro_handover_api_v1_pro_engagements__engagement_id__handover_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoverOut"] | null;
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_pro_document_api_v1_pro_engagements__engagement_id__handover_documents_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__records__schemas__DocumentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_handover_upload_api_v1_pro_engagements__engagement_id__handover_uploads_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__records__schemas__UploadIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadTicketOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_handover_upload_complete_api_v1_pro_engagements__engagement_id__handover_uploads__file_id__complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_pro_warranty_api_v1_pro_engagements__engagement_id__handover_warranties_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WarrantyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoverOut"];
                 };
             };
             /** @description Client error */
@@ -22401,6 +24103,129 @@ export interface operations {
             };
         };
     };
+    get_build_record_api_v1_projects__project_id__build_record_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildRecordsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_build_record_version_api_v1_projects__project_id__build_record_versions__version_no__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                version_no: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildRecordSnapshotOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_build_record_file_api_v1_projects__project_id__build_record_versions__version_no___form__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                version_no: number;
+                form: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__records__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_connection_target_api_v1_projects__project_id__connection_target_get: {
         parameters: {
             query: {
@@ -23298,6 +25123,174 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FileView"][];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_handover_api_v1_projects__project_id__handover_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoverViewOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_acknowledge_api_v1_projects__project_id__handover_acknowledge_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AcknowledgeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoverViewOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_acknowledgement_code_api_v1_projects__project_id__handover_acknowledgement_code_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__records__schemas__ChallengeOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_handover_document_api_v1_projects__project_id__handover_documents__document_id__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__records__schemas__DownloadOut"];
                 };
             };
             /** @description Client error */

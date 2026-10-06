@@ -180,7 +180,7 @@ Each module lists: responsibility; owned entities (tables are detailed in DATA_A
 
 ### 3.12 construction
 
-- Responsibility: stage instances with planned and actual dates and progress, the standard update (CD-19) with photos, notes and documents against a stage or milestone, completion requests and approvals (authority default in STATE_MODEL.md section 7, PC-023 open), the exception feed (overdue decisions, unacknowledged changes, open defects, stages behind plan), and the planned-versus-actual schedule.
+- Responsibility: stage instances with planned and actual dates and progress, the standard update (CD-19) with photos, notes and documents against a stage or milestone, completion requests and approvals (authority default in STATE_MODEL.md section 6, corrected under H-10; decided by EX-03: the owner, or operations with a reason), the exception feed (overdue decisions, unacknowledged changes, open defects, stages behind plan), and the planned-versus-actual schedule. [SUPERSEDED] as built (3.7A): no planned dates, progress percentage, behind-plan flag or delay attribution until BP-07A (EX-04).
 - Owns: `stage_instances`, `stage_updates`, `exception_feed_items` (materialised).
 - Interface: `instantiate_stages(project, floors)`, `post_update(stage, payload, files)`, `request_completion(stage, evidence)`, `approve_completion(stage, actor)`, `raise_block(stage, issue)`, `reschedule(stage, dates, reason)`, `schedule_position(project)`, `exceptions(project | all)`.
 - Dependencies: projects, catalog, documents, specification (deadlines), money (milestone due), assurance (gate clearance), issues, audit, notifications.
@@ -193,7 +193,7 @@ Each module lists: responsibility; owned entities (tables are detailed in DATA_A
 ### 3.13 variations
 
 - Responsibility: change control (CD-08): raise with reason, stage, line, cost and time impact, evidence; Plan2Build's qualification and quantification; OTP acknowledgement by the other party; escalation after the configured window; the discussion step; closure with an outcome; the numbered register per project; delay-day attribution.
-- Owns: `variations`, `variation_events`, `variation_discussions`.
+- Owns: `variations`, `variation_events`, `variation_discussions`. [OPEN] H-10: none of these exists; variations are out of 3.7 (EX-24) and DATA has no `variation_discussions`.
 - Interface: `raise(project, by, payload)`, `assess(variation, valid, cost, time, notes)`, `acknowledge(variation, otp)`, `escalate_due()` (scheduled), `open_discussion`, `add_discussion_note`, `close(variation, outcome, decider)`, `register(project)`.
 - Dependencies: projects, specification (affected line), construction (affected stage, completion date), money (contract value), identity (OTP), documents, audit, notifications.
 - Events emitted: `variation.raised`, `variation.assessed`, `variation.acknowledged`, `variation.activated`, `variation.escalated`, `variation.discussion_opened`, `variation.closed`.
@@ -205,7 +205,7 @@ Each module lists: responsibility; owned entities (tables are detailed in DATA_A
 ### 3.14 money
 
 - Responsibility: the money position without payment amounts (CD-09): contract value at award, approved change costs, current contract value and projected final cost, payment milestones derived from stage flags and the schedule, due state (stage complete and gate cleared), paid and received marks, retention at stage 16, mismatch detection (CQ-13 default: flag after a configured number of days), and what each party may see (contractor sees marks and approved changes; amounts of payments never exist).
-- Owns: `contract_values`, `payment_milestones`, `payment_marks`.
+- Owns: `contract_values`, `payment_milestones`, `payment_marks`. [SUPERSEDED] H-10, EX-05: as built (3.7A) the module owns only `payment_marks` (DATA 4.21); milestones are the stage masters' flags and no contract value is stored.
 - Interface: `record_award(project, contract_value, dates)`, `apply_change(variation, cost)`, `milestones(project)`, `mark_paid(milestone, otp?)`, `mark_received(milestone)`, `money_position(project, viewer_role)`.
 - Dependencies: projects, construction, assurance (gate cleared), variations, buildplan (schedule), audit, notifications.
 - Events emitted: `milestone.due`, `milestone.paid_marked`, `milestone.received_marked`, `milestone.settled`, `milestone.mismatch`, `contract_value.changed`.
@@ -434,7 +434,7 @@ Each workflow names the transaction boundaries. Inside one boundary, all writes 
 2. Operations add adjustments; Transaction B: `rfq.adjustments_complete` when every live quote is adjusted.
 3. Handler: recommendation computes the quote recommendation; operations review; `recommendation.approved`.
 4. Transaction C (rfq): comparison finalised with a frozen snapshot that includes the recommendation; `rfq.comparison_finalised`; documents renders the comparison PDF.
-5. Transaction D (rfq): selection recorded with contract value and dates; `rfq.selection_recorded`. Handlers: money records the award and creates payment milestones; projects adds the contractor membership and moves to CONTRACTED; leads marks selected and not selected; notifications to all parties.
+5. Transaction D (rfq): selection recorded with contract value and dates; `rfq.selection_recorded`. Handlers: money records the award and creates payment milestones; projects adds the contractor membership and moves to CONTRACTED; leads marks selected and not selected; notifications to all parties. [SUPERSEDED] H-10: as built (3.6, ADR-024) the selection engages the contractor with no contract value, no payment milestones and no project status move.
 
 ### 6.5 Variation to money (J18, J19)
 

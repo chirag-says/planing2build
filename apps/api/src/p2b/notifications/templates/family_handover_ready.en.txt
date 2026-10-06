@@ -1,0 +1,3 @@
+Your handover is ready to acknowledge
+---
+The handover of project $code is ready. Sign in to Plan2Build to read the documents and warranties and acknowledge the handover with a one-time code.

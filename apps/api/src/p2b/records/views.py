@@ -13,10 +13,10 @@ from p2b.core.vocabulary import (
 from p2b.records import service
 from p2b.records.models import BuildRecord, Handover
 from p2b.records.schemas import (
-    BuildRecordsOut,
     BuildRecordSnapshotOut,
+    BuildRecordsOut,
     BuildRecordVersionOut,
-    DocumentOut,
+    HandoverDocumentOut,
     HandoverOut,
     WarrantyOut,
 )
@@ -29,7 +29,7 @@ async def handover_out(session: AsyncSession, row: Handover | None) -> HandoverO
     return HandoverOut(
         id=row.id, state=HandoverState(row.state), opened_at=row.opened_at, ready_at=row.ready_at,
         documents=[
-            DocumentOut(id=d.id, kind=HandoverDocumentKind(d.kind), title=d.title,
+            HandoverDocumentOut(id=d.id, kind=HandoverDocumentKind(d.kind), title=d.title,
                         file_id=d.file_id, added_role=d.added_role, added_at=d.added_at)
             for d in await service.documents_of(session, row.id)
         ],
@@ -60,8 +60,9 @@ async def records_out(
     rows = await service.records_of(session, project_id)
     return BuildRecordsOut(
         project_id=project_id,
-        versions=[version_out(r) for r in rows
-                  if include_draft or r.state != BuildRecordState.DRAFT.value],  # fmt: skip
+        versions=[
+            version_out(r) for r in rows if include_draft or r.state != BuildRecordState.DRAFT.value
+        ],
     )
 
 

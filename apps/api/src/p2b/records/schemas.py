@@ -98,7 +98,7 @@ class ChallengeOut(BaseModel):
     statement_text: str
 
 
-class DocumentOut(BaseModel):
+class HandoverDocumentOut(BaseModel):
     id: uuid.UUID
     kind: HandoverDocumentKind
     title: str
@@ -122,7 +122,7 @@ class HandoverOut(BaseModel):
     state: HandoverState
     opened_at: datetime
     ready_at: datetime | None
-    documents: list[DocumentOut]
+    documents: list[HandoverDocumentOut]
     warranties: list[WarrantyOut]
     acknowledged_at: datetime | None = Field(description="Set only by the owner's code")
     statement_text: str | None

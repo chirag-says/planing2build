@@ -1,0 +1,3 @@
+Handover acknowledged
+---
+The owner of project $code acknowledged the handover. A draft Build Record is assembled; review and issue it.

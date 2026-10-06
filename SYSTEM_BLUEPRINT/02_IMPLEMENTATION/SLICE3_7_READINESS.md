@@ -282,6 +282,7 @@ No ordering guard: any stage may start. Stage `sequence` is display order, not b
 - **Configuration:** a versioned gate checklist, prepared by operations and published by ADMIN, like rate cards (BP-06). Each checkpoint has a gate, text, an expected evidence type, a critical flag, and an optional specification line code. [SOURCE] TPB §10 ("Gate checklist templates are versioned"), DATA `checkpoint_masters`; [REC] process.
 - **Version 1, sourced part:** each specification line whose S04 "verified at" names a gate becomes a checkpoint of that gate. Its criteria come from the accepted value, plus the named test where given (cube test, mill test certificate, ponding test, resistance test, pressure test, against drawing). [SOURCE] SCH §1 ("is the audit checklist at each inspection gate").
 - **Version 1, missing part:** Gate 6 (snag) has no sourced checkpoint, and no source gives further checkpoints for any gate. Without approved content there is no production inspection. [PD] EX-08.
+- **Correction found during implementation (2026-10-06):** S04's "verified at" column does map one line to Gate 6: C24 External works. Version 1 still holds Gates 1 to 5 only, as EX-08 decides; C24 is recorded in version 1's note as a sourced input for the Gate 6 draft. See SLICE3_7_IMPLEMENTATION_REPORT section E.
 - **Evidence the auditor never sees:** brand categories and chosen products. [SOURCE] BR-122.
 
 ### F.5 Inspection, findings, outcome

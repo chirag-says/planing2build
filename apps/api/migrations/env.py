@@ -29,6 +29,7 @@ import p2b.money.models
 import p2b.operations.models
 import p2b.professionals.models
 import p2b.projects.models
+import p2b.records.models
 import p2b.rfq.models
 import p2b.specification.models  # noqa: F401  (registers tables on the metadata)
 from p2b.core.db import Base

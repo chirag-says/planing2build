@@ -27,8 +27,8 @@ from p2b.records import service
 from p2b.records.models import AcknowledgementStatement, BuildRecord
 from p2b.records.schemas import (
     AssembleIn,
-    BuildRecordsOut,
     BuildRecordSnapshotOut,
+    BuildRecordsOut,
     DocumentIn,
     FileOut,
     HandoverOut,

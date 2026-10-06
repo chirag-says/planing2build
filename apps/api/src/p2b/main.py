@@ -39,6 +39,8 @@ from p2b.operations.professionals_router import router as professional_review_ro
 from p2b.operations.router import router as operations_router
 from p2b.professionals.router import router as professionals_router
 from p2b.projects.router import router as projects_router
+from p2b.records.ops_router import router as records_ops_router
+from p2b.records.router import router as records_router
 from p2b.rfq.ops_router import router as rfq_ops_router
 from p2b.rfq.router import router as rfq_router
 
@@ -110,6 +112,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     api.include_router(money_router)
     api.include_router(assurance_router)
     api.include_router(assurance_ops_router)
+    api.include_router(records_router)
+    api.include_router(records_ops_router)
     if settings.payment_provider == "fake":  # local development and tests only (Settings)
         api.include_router(billing_dev_router)
     app.include_router(api)

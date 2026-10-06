@@ -62,7 +62,8 @@ def render_record(
         line(f"The handover was issued by Plan2Build without the owner's acknowledgement on "
              f"{forced.get('issued_at')}: {forced.get('reason')}", 9, 5)  # fmt: skip
     elif handover["acknowledgement"]:
-        line(f"The owner acknowledged the handover on {handover['acknowledgement']['acknowledged_at']}.")
+        when = handover["acknowledgement"]["acknowledged_at"]
+        line(f"The owner acknowledged the handover on {when}.")
 
     heading("Plan")
     plan = snapshot["plan"]

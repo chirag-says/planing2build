@@ -45,12 +45,12 @@ export function problem(result: Result): string {
 
 function isPhotoCheckPending(result: Result): boolean {
   const fields = (result.body as { error?: { details?: { fields?: Record<string, string[]> } } })?.error?.details?.fields;
-  return result.status === 422 && Boolean(fields?.file_ids);
+  return result.status === 422 && Boolean(fields?.file_ids ?? fields?.file_id);
 }
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** Post once the photos have passed the scan: a 422 on `file_ids` means "not checked yet". */
+/** Post once the files have passed the scan: a 422 on `file_ids` or `file_id` means "not checked yet". */
 export async function postWhenChecked(url: string, body: unknown, method = "POST"): Promise<Result> {
   const key = crypto.randomUUID();
   let result: Result = { ok: false, status: 0, body: null };
@@ -72,11 +72,12 @@ export async function postWhenChecked(url: string, body: unknown, method = "POST
   return result;
 }
 
-/** Upload one photo through an evidence route (`base` + "", then `base/{id}/complete`). */
-export async function uploadEvidence(base: string, file: File): Promise<string | null> {
-  const captured = new Date(file.lastModified).toISOString();
+/** Upload one file through an upload route (`base`, then `base/{id}/complete`). Photos carry the
+ * device's capture time as a claim (EX-22); documents do not. */
+export async function uploadEvidence(base: string, file: File, withCaptureClaim = true): Promise<string | null> {
+  const claim = withCaptureClaim ? { captured_at: new Date(file.lastModified).toISOString() } : {};
   const ticket = await call("POST", base, {
-    file_name: file.name.slice(0, 200), content_type: file.type, size_bytes: file.size, captured_at: captured,
+    file_name: file.name.slice(0, 200), content_type: file.type, size_bytes: file.size, ...claim,
   });
   if (!ticket.ok) return null;
   const { file: info, upload_url, headers } = ticket.body as { file: { file_id: string }; upload_url: string; headers: Record<string, string> };

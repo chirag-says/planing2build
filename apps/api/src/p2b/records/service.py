@@ -150,7 +150,9 @@ async def notify(
     )  # fmt: skip
 
 
-async def _tell_contractor(session: AsyncSession, project_id: uuid.UUID, notice: str, ref: str) -> None:
+async def _tell_contractor(
+    session: AsyncSession, project_id: uuid.UUID, notice: str, ref: str
+) -> None:
     current = await contractor_of_record(session, project_id)
     if current is not None and current.party == EngagementParty.LISTED.value:
         await notify(session, "contractor", notice, project_id, ref=ref, aggregate_id=current.id)
@@ -475,20 +477,25 @@ async def snapshot(session: AsyncSession, project_id: uuid.UUID, row: Handover) 
             "accepted_at": manifest.get("accepted_at"),
         },
         "drawings": [
-            {k: d.get(k) for k in ("file_id", "drawing_class", "floor", "title", "sheet_no",
-                                   "sha256")}
+            {
+                k: d.get(k)
+                for k in ("file_id", "drawing_class", "floor", "title", "sheet_no", "sha256")
+            }
             for d in manifest.get("drawings", [])
-        ],  # fmt: skip
+        ],
         "specification": [
             {
-                "code": m.code, "item": m.item,
+                "code": m.code,
+                "item": m.item,
                 "accepted_value": values.get(m.code, {}).get("value"),
                 "applicability": values.get(m.code, {}).get("applicability"),
                 "verification": line_results.get(m.code, []),
-                "product": NOT_RECORDED, "purchase": NOT_RECORDED, "installation": NOT_RECORDED,
+                "product": NOT_RECORDED,
+                "purchase": NOT_RECORDED,
+                "installation": NOT_RECORDED,
             }
             for m in await active_spec_masters(session)
-        ],  # fmt: skip
+        ],
         "contractors": await contractor_history(session, project_id),
         "execution": await execution_summary(session, project_id),
         "assurance": {"inspections": assurance["inspections"], "findings": assurance["findings"]},
@@ -497,23 +504,37 @@ async def snapshot(session: AsyncSession, project_id: uuid.UUID, row: Handover) 
             "state": row.state,
             "opened_at": row.opened_at.isoformat(),
             "documents": [
-                {"kind": d.kind, "title": d.title, "file_id": str(d.file_id),
-                 "sha256": files[d.file_id].sha256 if d.file_id in files else None}
+                {
+                    "kind": d.kind,
+                    "title": d.title,
+                    "file_id": str(d.file_id),
+                    "sha256": files[d.file_id].sha256 if d.file_id in files else None,
+                }
                 for d in documents
             ],
             "warranties": [
-                {"item": w.item, "term": w.term, "expiry_date": w.expiry_date.isoformat(),
-                 "installer": w.installer, "spec_line_code": w.spec_line_code}
+                {
+                    "item": w.item,
+                    "term": w.term,
+                    "expiry_date": w.expiry_date.isoformat(),
+                    "installer": w.installer,
+                    "spec_line_code": w.spec_line_code,
+                }
                 for w in await warranties_of(session, row.id)
             ],
             "acknowledgement": {
                 "acknowledged_at": row.acknowledged_at.isoformat(),
                 "statement_text": row.statement_text,
-            } if row.state == H.ACKNOWLEDGED.value and row.acknowledged_at else None,
+            }
+            if row.state == H.ACKNOWLEDGED.value and row.acknowledged_at
+            else None,
             "issued_without_acknowledgement": {
-                "issued_at": row.forced_at.isoformat(), "reason": row.forced_reason,
-            } if row.state == H.ISSUED_BY_OPERATIONS.value and row.forced_at else None,
-        },  # fmt: skip
+                "issued_at": row.forced_at.isoformat(),
+                "reason": row.forced_reason,
+            }
+            if row.state == H.ISSUED_BY_OPERATIONS.value and row.forced_at
+            else None,
+        },
     }
 
 

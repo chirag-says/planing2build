@@ -41,6 +41,34 @@
         "title": "AcceptRequest",
         "type": "object"
       },
+      "AcknowledgeIn": {
+        "additionalProperties": false,
+        "properties": {
+          "challenge_id": {
+            "format": "uuid",
+            "title": "Challenge Id",
+            "type": "string"
+          },
+          "code": {
+            "maxLength": 10,
+            "minLength": 4,
+            "title": "Code",
+            "type": "string"
+          },
+          "statement_id": {
+            "format": "uuid",
+            "title": "Statement Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "challenge_id",
+          "code",
+          "statement_id"
+        ],
+        "title": "AcknowledgeIn",
+        "type": "object"
+      },
       "AddCategoryIn": {
         "properties": {
           "category": {
@@ -468,6 +496,26 @@
           "reason"
         ],
         "title": "ApproveRefundIn",
+        "type": "object"
+      },
+      "AssembleIn": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Required for a new version after an issued one",
+            "title": "Reason"
+          }
+        },
+        "title": "AssembleIn",
         "type": "object"
       },
       "AssuranceOut": {
@@ -1180,6 +1228,227 @@
         ],
         "title": "BuildPlanState",
         "type": "string"
+      },
+      "BuildRecordBasis": {
+        "enum": [
+          "ACKNOWLEDGED",
+          "ISSUED_BY_OPERATIONS"
+        ],
+        "title": "BuildRecordBasis",
+        "type": "string"
+      },
+      "BuildRecordSnapshotOut": {
+        "properties": {
+          "basis": {
+            "$ref": "#/components/schemas/BuildRecordBasis"
+          },
+          "correction_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correction Reason"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "issued_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issued At"
+          },
+          "json_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Json Sha256"
+          },
+          "pdf_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pdf Sha256"
+          },
+          "snapshot": {
+            "additionalProperties": true,
+            "title": "Snapshot",
+            "type": "object"
+          },
+          "snapshot_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshot Sha256"
+          },
+          "state": {
+            "$ref": "#/components/schemas/BuildRecordState"
+          },
+          "version_no": {
+            "title": "Version No",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "version_no",
+          "state",
+          "basis",
+          "correction_reason",
+          "snapshot_sha256",
+          "pdf_sha256",
+          "json_sha256",
+          "issued_at",
+          "snapshot"
+        ],
+        "title": "BuildRecordSnapshotOut",
+        "type": "object"
+      },
+      "BuildRecordState": {
+        "enum": [
+          "DRAFT",
+          "ISSUED",
+          "SUPERSEDED"
+        ],
+        "title": "BuildRecordState",
+        "type": "string"
+      },
+      "BuildRecordVersionOut": {
+        "properties": {
+          "basis": {
+            "$ref": "#/components/schemas/BuildRecordBasis"
+          },
+          "correction_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correction Reason"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "issued_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issued At"
+          },
+          "json_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Json Sha256"
+          },
+          "pdf_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pdf Sha256"
+          },
+          "snapshot_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshot Sha256"
+          },
+          "state": {
+            "$ref": "#/components/schemas/BuildRecordState"
+          },
+          "version_no": {
+            "title": "Version No",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "version_no",
+          "state",
+          "basis",
+          "correction_reason",
+          "snapshot_sha256",
+          "pdf_sha256",
+          "json_sha256",
+          "issued_at"
+        ],
+        "title": "BuildRecordVersionOut",
+        "type": "object"
+      },
+      "BuildRecordsOut": {
+        "properties": {
+          "project_id": {
+            "format": "uuid",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "versions": {
+            "items": {
+              "$ref": "#/components/schemas/BuildRecordVersionOut"
+            },
+            "title": "Versions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "project_id",
+          "versions"
+        ],
+        "title": "BuildRecordsOut",
+        "type": "object"
       },
       "BuyerIn": {
         "additionalProperties": false,
@@ -3238,57 +3507,6 @@
           "next_cursor"
         ],
         "title": "DirectoryPageOut",
-        "type": "object"
-      },
-      "DocumentIn": {
-        "properties": {
-          "category_code": {
-            "anyOf": [
-              {
-                "maxLength": 40,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Category Code"
-          },
-          "file_id": {
-            "format": "uuid",
-            "title": "File Id",
-            "type": "string"
-          },
-          "gstin": {
-            "default": "",
-            "description": "GSTIN (business), where registered",
-            "maxLength": 20,
-            "title": "Gstin",
-            "type": "string"
-          },
-          "issuer": {
-            "default": "",
-            "description": "Issuing body (registration)",
-            "maxLength": 120,
-            "title": "Issuer",
-            "type": "string"
-          },
-          "kind": {
-            "$ref": "#/components/schemas/ProfessionalDocumentKind"
-          },
-          "number": {
-            "default": "",
-            "description": "Registration or licence number",
-            "maxLength": 60,
-            "title": "Number",
-            "type": "string"
-          }
-        },
-        "required": [
-          "kind",
-          "file_id"
-        ],
-        "title": "DocumentIn",
         "type": "object"
       },
       "DocumentOut": {
@@ -5496,7 +5714,10 @@
           "COMPARISON_DOCUMENT",
           "STAGE_EVIDENCE",
           "INSPECTION_EVIDENCE",
-          "INSPECTION_REPORT"
+          "INSPECTION_REPORT",
+          "HANDOVER_DOCUMENT",
+          "BUILD_RECORD_DOCUMENT",
+          "BUILD_RECORD_EXPORT"
         ],
         "title": "FilePurpose",
         "type": "string"
@@ -5680,6 +5901,208 @@
         ],
         "title": "GateStatus",
         "type": "string"
+      },
+      "HandoverDocumentKind": {
+        "enum": [
+          "WARRANTY",
+          "MANUAL",
+          "DRAWING",
+          "CERTIFICATE",
+          "PHOTO",
+          "OTHER"
+        ],
+        "title": "HandoverDocumentKind",
+        "type": "string"
+      },
+      "HandoverDocumentOut": {
+        "properties": {
+          "added_at": {
+            "format": "date-time",
+            "title": "Added At",
+            "type": "string"
+          },
+          "added_role": {
+            "title": "Added Role",
+            "type": "string"
+          },
+          "file_id": {
+            "format": "uuid",
+            "title": "File Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/HandoverDocumentKind"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "file_id",
+          "added_role",
+          "added_at"
+        ],
+        "title": "HandoverDocumentOut",
+        "type": "object"
+      },
+      "HandoverOut": {
+        "properties": {
+          "acknowledged_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Set only by the owner's code",
+            "title": "Acknowledged At"
+          },
+          "documents": {
+            "items": {
+              "$ref": "#/components/schemas/HandoverDocumentOut"
+            },
+            "title": "Documents",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "issue_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issue Reason"
+          },
+          "issued_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issued At"
+          },
+          "issued_without_acknowledgement": {
+            "title": "Issued Without Acknowledgement",
+            "type": "boolean"
+          },
+          "opened_at": {
+            "format": "date-time",
+            "title": "Opened At",
+            "type": "string"
+          },
+          "ready_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ready At"
+          },
+          "state": {
+            "$ref": "#/components/schemas/HandoverState"
+          },
+          "statement_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statement Text"
+          },
+          "warranties": {
+            "items": {
+              "$ref": "#/components/schemas/WarrantyOut"
+            },
+            "title": "Warranties",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "opened_at",
+          "ready_at",
+          "documents",
+          "warranties",
+          "acknowledged_at",
+          "statement_text",
+          "issued_without_acknowledgement",
+          "issued_at",
+          "issue_reason"
+        ],
+        "title": "HandoverOut",
+        "type": "object"
+      },
+      "HandoverState": {
+        "description": "EX-15: an operations issue is never an acknowledgement.",
+        "enum": [
+          "OPEN",
+          "READY",
+          "ACKNOWLEDGED",
+          "ISSUED_BY_OPERATIONS"
+        ],
+        "title": "HandoverState",
+        "type": "string"
+      },
+      "HandoverViewOut": {
+        "properties": {
+          "handover": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HandoverOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_owner": {
+            "title": "Is Owner",
+            "type": "boolean"
+          },
+          "project_id": {
+            "format": "uuid",
+            "title": "Project Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "is_owner",
+          "handover"
+        ],
+        "title": "HandoverViewOut",
+        "type": "object"
       },
       "InformationRequest": {
         "properties": {
@@ -7405,6 +7828,40 @@
           "waiting"
         ],
         "title": "OpsExecutionQueueOut",
+        "type": "object"
+      },
+      "OpsHandoverOut": {
+        "properties": {
+          "build_records": {
+            "$ref": "#/components/schemas/BuildRecordsOut"
+          },
+          "handover": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HandoverOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "project_code": {
+            "title": "Project Code",
+            "type": "string"
+          },
+          "project_id": {
+            "format": "uuid",
+            "title": "Project Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "project_code",
+          "handover",
+          "build_records"
+        ],
+        "title": "OpsHandoverOut",
         "type": "object"
       },
       "OpsHistoryOut": {
@@ -16692,63 +17149,6 @@
         "title": "StageUpdateKind",
         "type": "string"
       },
-      "StatementIn": {
-        "additionalProperties": false,
-        "properties": {
-          "note": {
-            "maxLength": 2000,
-            "minLength": 1,
-            "title": "Note",
-            "type": "string"
-          },
-          "text": {
-            "maxLength": 2000,
-            "minLength": 1,
-            "title": "Text",
-            "type": "string"
-          }
-        },
-        "required": [
-          "text",
-          "note"
-        ],
-        "title": "StatementIn",
-        "type": "object"
-      },
-      "StatementOut": {
-        "properties": {
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "note": {
-            "title": "Note",
-            "type": "string"
-          },
-          "status": {
-            "title": "Status",
-            "type": "string"
-          },
-          "text": {
-            "title": "Text",
-            "type": "string"
-          },
-          "version": {
-            "title": "Version",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "id",
-          "version",
-          "text",
-          "status",
-          "note"
-        ],
-        "title": "StatementOut",
-        "type": "object"
-      },
       "SubmitIn": {
         "additionalProperties": false,
         "properties": {
@@ -17449,6 +17849,128 @@
         "title": "VersionSummaryOut",
         "type": "object"
       },
+      "WarrantyIn": {
+        "additionalProperties": false,
+        "description": "MVP P8: every warranty carries its term, expiry and installer.",
+        "properties": {
+          "document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id"
+          },
+          "expiry_date": {
+            "format": "date",
+            "title": "Expiry Date",
+            "type": "string"
+          },
+          "installer": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Installer",
+            "type": "string"
+          },
+          "item": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Item",
+            "type": "string"
+          },
+          "spec_line_code": {
+            "anyOf": [
+              {
+                "maxLength": 3,
+                "minLength": 3,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spec Line Code"
+          },
+          "term": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Term",
+            "type": "string"
+          }
+        },
+        "required": [
+          "item",
+          "term",
+          "expiry_date",
+          "installer"
+        ],
+        "title": "WarrantyIn",
+        "type": "object"
+      },
+      "WarrantyOut": {
+        "properties": {
+          "document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id"
+          },
+          "expiry_date": {
+            "format": "date",
+            "title": "Expiry Date",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "installer": {
+            "title": "Installer",
+            "type": "string"
+          },
+          "item": {
+            "title": "Item",
+            "type": "string"
+          },
+          "spec_line_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spec Line Code"
+          },
+          "term": {
+            "title": "Term",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "item",
+          "term",
+          "expiry_date",
+          "installer",
+          "spec_line_code",
+          "document_id"
+        ],
+        "title": "WarrantyOut",
+        "type": "object"
+      },
       "WebhookAck": {
         "properties": {
           "status": {
@@ -18107,6 +18629,63 @@
         "title": "ScheduleIn",
         "type": "object"
       },
+      "p2b__buildplan__schemas__StatementIn": {
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Note",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "note"
+        ],
+        "title": "StatementIn",
+        "type": "object"
+      },
+      "p2b__buildplan__schemas__StatementOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "text",
+          "status",
+          "note"
+        ],
+        "title": "StatementOut",
+        "type": "object"
+      },
       "p2b__buildplan__schemas__UploadIn": {
         "additionalProperties": false,
         "properties": {
@@ -18577,6 +19156,57 @@
         "title": "DecisionIn",
         "type": "object"
       },
+      "p2b__professionals__schemas__DocumentIn": {
+        "properties": {
+          "category_code": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Code"
+          },
+          "file_id": {
+            "format": "uuid",
+            "title": "File Id",
+            "type": "string"
+          },
+          "gstin": {
+            "default": "",
+            "description": "GSTIN (business), where registered",
+            "maxLength": 20,
+            "title": "Gstin",
+            "type": "string"
+          },
+          "issuer": {
+            "default": "",
+            "description": "Issuing body (registration)",
+            "maxLength": 120,
+            "title": "Issuer",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ProfessionalDocumentKind"
+          },
+          "number": {
+            "default": "",
+            "description": "Registration or licence number",
+            "maxLength": 60,
+            "title": "Number",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "file_id"
+        ],
+        "title": "DocumentIn",
+        "type": "object"
+      },
       "p2b__professionals__schemas__DownloadOut": {
         "properties": {
           "url": {
@@ -18697,6 +19327,187 @@
         },
         "required": [
           "purpose",
+          "file_name",
+          "content_type",
+          "size_bytes"
+        ],
+        "title": "UploadIn",
+        "type": "object"
+      },
+      "p2b__records__ops_router__StatementIn": {
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Note",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 4000,
+            "minLength": 20,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "note"
+        ],
+        "title": "StatementIn",
+        "type": "object"
+      },
+      "p2b__records__ops_router__StatementOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "status",
+          "text",
+          "note"
+        ],
+        "title": "StatementOut",
+        "type": "object"
+      },
+      "p2b__records__schemas__ChallengeOut": {
+        "properties": {
+          "challenge_id": {
+            "format": "uuid",
+            "title": "Challenge Id",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "sent_to": {
+            "title": "Sent To",
+            "type": "string"
+          },
+          "statement_id": {
+            "format": "uuid",
+            "title": "Statement Id",
+            "type": "string"
+          },
+          "statement_text": {
+            "title": "Statement Text",
+            "type": "string"
+          },
+          "statement_version": {
+            "title": "Statement Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "challenge_id",
+          "sent_to",
+          "expires_at",
+          "statement_id",
+          "statement_version",
+          "statement_text"
+        ],
+        "title": "ChallengeOut",
+        "type": "object"
+      },
+      "p2b__records__schemas__DocumentIn": {
+        "additionalProperties": false,
+        "properties": {
+          "file_id": {
+            "format": "uuid",
+            "title": "File Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/HandoverDocumentKind"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "title",
+          "file_id"
+        ],
+        "title": "DocumentIn",
+        "type": "object"
+      },
+      "p2b__records__schemas__DownloadOut": {
+        "properties": {
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "DownloadOut",
+        "type": "object"
+      },
+      "p2b__records__schemas__ReasonIn": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "ReasonIn",
+        "type": "object"
+      },
+      "p2b__records__schemas__UploadIn": {
+        "additionalProperties": false,
+        "properties": {
+          "content_type": {
+            "maxLength": 100,
+            "title": "Content Type",
+            "type": "string"
+          },
+          "file_name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "File Name",
+            "type": "string"
+          },
+          "size_bytes": {
+            "exclusiveMinimum": 0.0,
+            "title": "Size Bytes",
+            "type": "integer"
+          }
+        },
+        "required": [
           "file_name",
           "content_type",
           "size_bytes"
@@ -19056,6 +19867,63 @@
         "title": "ReasonIn",
         "type": "object"
       },
+      "p2b__rfq__schemas__StatementIn": {
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Note",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "note"
+        ],
+        "title": "StatementIn",
+        "type": "object"
+      },
+      "p2b__rfq__schemas__StatementOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "text",
+          "status",
+          "note"
+        ],
+        "title": "StatementOut",
+        "type": "object"
+      },
       "p2b__rfq__schemas__UploadIn": {
         "additionalProperties": false,
         "properties": {
@@ -19113,7 +19981,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StatementIn"
+                "$ref": "#/components/schemas/p2b__buildplan__schemas__StatementIn"
               }
             }
           },
@@ -19124,7 +19992,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StatementOut"
+                  "$ref": "#/components/schemas/p2b__buildplan__schemas__StatementOut"
                 }
               }
             },
@@ -19178,7 +20046,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/StatementOut"
+                    "$ref": "#/components/schemas/p2b__buildplan__schemas__StatementOut"
                   },
                   "title": "Response Post Activate Acceptance Statement Api V1 Admin Acceptance Statements  Statement Id  Activate Post",
                   "type": "array"
@@ -19211,6 +20079,136 @@
         "summary": "Post Activate Acceptance Statement",
         "tags": [
           "buildplan-operations"
+        ]
+      }
+    },
+    "/api/v1/admin/acknowledgement-statements": {
+      "post": {
+        "description": "A DRAFT statement version; `$project_code` is the only placeholder.",
+        "operationId": "post_statement_api_v1_admin_acknowledgement_statements_post",
+        "parameters": [
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/p2b__records__ops_router__StatementIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/p2b__records__ops_router__StatementOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Statement",
+        "tags": [
+          "records-operations"
+        ]
+      }
+    },
+    "/api/v1/admin/acknowledgement-statements/{statement_id}/activate": {
+      "post": {
+        "description": "The DRAFT becomes ACTIVE; the previous ACTIVE one is RETIRED.",
+        "operationId": "post_activate_statement_api_v1_admin_acknowledgement_statements__statement_id__activate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "statement_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Statement Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/p2b__records__ops_router__StatementOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Activate Statement",
+        "tags": [
+          "records-operations"
         ]
       }
     },
@@ -20275,7 +21273,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StatementIn"
+                "$ref": "#/components/schemas/p2b__rfq__schemas__StatementIn"
               }
             }
           },
@@ -20286,7 +21284,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StatementOut"
+                  "$ref": "#/components/schemas/p2b__rfq__schemas__StatementOut"
                 }
               }
             },
@@ -20340,7 +21338,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/StatementOut"
+                    "$ref": "#/components/schemas/p2b__rfq__schemas__StatementOut"
                   },
                   "title": "Response Post Activate Statement Api V1 Admin Selection Statements  Statement Id  Activate Post",
                   "type": "array"
@@ -20396,7 +21394,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StatementIn"
+                "$ref": "#/components/schemas/p2b__buildplan__schemas__StatementIn"
               }
             }
           },
@@ -20407,7 +21405,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StatementOut"
+                  "$ref": "#/components/schemas/p2b__buildplan__schemas__StatementOut"
                 }
               }
             },
@@ -20461,7 +21459,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/StatementOut"
+                    "$ref": "#/components/schemas/p2b__buildplan__schemas__StatementOut"
                   },
                   "title": "Response Post Activate Statement Api V1 Admin Signoff Statements  Statement Id  Activate Post",
                   "type": "array"
@@ -21362,7 +22360,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/StatementOut"
+                    "$ref": "#/components/schemas/p2b__buildplan__schemas__StatementOut"
                   },
                   "title": "Response Get Acceptance Statements Api V1 Ops Acceptance Statements Get",
                   "type": "array"
@@ -21395,6 +22393,51 @@
         "summary": "Get Acceptance Statements",
         "tags": [
           "buildplan-operations"
+        ]
+      }
+    },
+    "/api/v1/ops/acknowledgement-statements": {
+      "get": {
+        "operationId": "get_statements_api_v1_ops_acknowledgement_statements_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/p2b__records__ops_router__StatementOut"
+                  },
+                  "title": "Response Get Statements Api V1 Ops Acknowledgement Statements Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Get Statements",
+        "tags": [
+          "records-operations"
         ]
       }
     },
@@ -23024,6 +24067,124 @@
         "summary": "Post Withdraw Version",
         "tags": [
           "buildplan-operations"
+        ]
+      }
+    },
+    "/api/v1/ops/build-records/{record_id}": {
+      "get": {
+        "operationId": "get_record_api_v1_ops_build_records__record_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildRecordSnapshotOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Get Record",
+        "tags": [
+          "records-operations"
+        ]
+      }
+    },
+    "/api/v1/ops/build-records/{record_id}/issue": {
+      "post": {
+        "description": "Issue the DRAFT: snapshot hash, PDF and JSON; the previous version is SUPERSEDED. 409\nNOT_DRAFT; or PACKAGE_REQUIRED.",
+        "operationId": "post_issue_api_v1_ops_build_records__record_id__issue_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Record Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpsHandoverOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Issue",
+        "tags": [
+          "records-operations"
         ]
       }
     },
@@ -25748,6 +26909,81 @@
         ]
       }
     },
+    "/api/v1/ops/projects/{project_id}/build-record/assemble": {
+      "post": {
+        "description": "Re-assemble the DRAFT from the records, or start a corrected version after an issued one\n(a reason is required). 409 NO_HANDOVER, REASON_REQUIRED.",
+        "operationId": "post_assemble_api_v1_ops_projects__project_id__build_record_assemble_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssembleIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpsHandoverOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Assemble",
+        "tags": [
+          "records-operations"
+        ]
+      }
+    },
     "/api/v1/ops/projects/{project_id}/cancel": {
       "post": {
         "description": "Decline with a reason the family sees (ruling 2.1).",
@@ -26001,6 +27237,657 @@
         "summary": "Get Project Execution",
         "tags": [
           "execution-operations"
+        ]
+      }
+    },
+    "/api/v1/ops/projects/{project_id}/handover": {
+      "get": {
+        "operationId": "get_handover_api_v1_ops_projects__project_id__handover_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpsHandoverOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Get Handover",
+        "tags": [
+          "records-operations"
+        ]
+      },
+      "post": {
+        "description": "Open the handover (EX-15). 409 GATE6_NOT_CLEARED, OPEN_FINDINGS, ALREADY_OPEN.",
+        "operationId": "post_open_api_v1_ops_projects__project_id__handover_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpsHandoverOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Open",
+        "tags": [
+          "records-operations"
+        ]
+      }
+    },
+    "/api/v1/ops/projects/{project_id}/handover-files": {
+      "post": {
+        "description": "A handover document received outside the portal (raw body), scanned before use.",
+        "operationId": "post_handover_file_api_v1_ops_projects__project_id__handover_files_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "file_name",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "title": "File Name",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/pdf": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "image/jpeg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "image/png": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Handover File",
+        "tags": [
+          "records-operations"
+        ]
+      }
+    },
+    "/api/v1/ops/projects/{project_id}/handover/documents": {
+      "post": {
+        "operationId": "post_document_api_v1_ops_projects__project_id__handover_documents_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/p2b__records__schemas__DocumentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpsHandoverOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Document",
+        "tags": [
+          "records-operations"
+        ]
+      }
+    },
+    "/api/v1/ops/projects/{project_id}/handover/documents/{document_id}/remove": {
+      "post": {
+        "operationId": "post_remove_document_api_v1_ops_projects__project_id__handover_documents__document_id__remove_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpsHandoverOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Remove Document",
+        "tags": [
+          "records-operations"
+        ]
+      }
+    },
+    "/api/v1/ops/projects/{project_id}/handover/issue-without-acknowledgement": {
+      "post": {
+        "description": "The owner did not respond: issue with a reason, recorded as an operations issue and never\nas the owner's acknowledgement (EX-15). 409 NOT_READY.",
+        "operationId": "post_issue_without_acknowledgement_api_v1_ops_projects__project_id__handover_issue_without_acknowledgement_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/p2b__records__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpsHandoverOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Issue Without Acknowledgement",
+        "tags": [
+          "records-operations"
+        ]
+      }
+    },
+    "/api/v1/ops/projects/{project_id}/handover/ready": {
+      "post": {
+        "description": "Confirm the required documents are recorded. 409 NO_DOCUMENTS, WARRANTY_MISSING.",
+        "operationId": "post_ready_api_v1_ops_projects__project_id__handover_ready_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpsHandoverOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Ready",
+        "tags": [
+          "records-operations"
+        ]
+      }
+    },
+    "/api/v1/ops/projects/{project_id}/handover/reopen": {
+      "post": {
+        "operationId": "post_reopen_api_v1_ops_projects__project_id__handover_reopen_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/p2b__records__schemas__ReasonIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpsHandoverOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Reopen",
+        "tags": [
+          "records-operations"
+        ]
+      }
+    },
+    "/api/v1/ops/projects/{project_id}/handover/warranties": {
+      "post": {
+        "operationId": "post_warranty_api_v1_ops_projects__project_id__handover_warranties_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WarrantyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpsHandoverOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Warranty",
+        "tags": [
+          "records-operations"
         ]
       }
     },
@@ -28014,7 +29901,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/StatementOut"
+                    "$ref": "#/components/schemas/p2b__rfq__schemas__StatementOut"
                   },
                   "title": "Response Get Statements Api V1 Ops Selection Statements Get",
                   "type": "array"
@@ -28059,7 +29946,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/StatementOut"
+                    "$ref": "#/components/schemas/p2b__buildplan__schemas__StatementOut"
                   },
                   "title": "Response Get Statements Api V1 Ops Signoff Statements Get",
                   "type": "array"
@@ -30368,7 +32255,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DocumentIn"
+                "$ref": "#/components/schemas/p2b__professionals__schemas__DocumentIn"
               }
             }
           },
@@ -30953,6 +32840,343 @@
         "summary": "Get Engagement File Url",
         "tags": [
           "engagements"
+        ]
+      }
+    },
+    "/api/v1/pro/engagements/{engagement_id}/handover": {
+      "get": {
+        "operationId": "get_pro_handover_api_v1_pro_engagements__engagement_id__handover_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "engagement_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Engagement Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/HandoverOut"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Get Pro Handover Api V1 Pro Engagements  Engagement Id  Handover Get"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Get Pro Handover",
+        "tags": [
+          "records"
+        ]
+      }
+    },
+    "/api/v1/pro/engagements/{engagement_id}/handover/documents": {
+      "post": {
+        "description": "Add a handover document while the handover is open. 409 NOT_OPEN, DUPLICATE.",
+        "operationId": "post_pro_document_api_v1_pro_engagements__engagement_id__handover_documents_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "engagement_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Engagement Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/p2b__records__schemas__DocumentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HandoverOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Pro Document",
+        "tags": [
+          "records"
+        ]
+      }
+    },
+    "/api/v1/pro/engagements/{engagement_id}/handover/uploads": {
+      "post": {
+        "description": "A presigned upload of a handover document (PDF, JPG or PNG), scanned before use.",
+        "operationId": "post_handover_upload_api_v1_pro_engagements__engagement_id__handover_uploads_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "engagement_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Engagement Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/p2b__records__schemas__UploadIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadTicketOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Handover Upload",
+        "tags": [
+          "records"
+        ]
+      }
+    },
+    "/api/v1/pro/engagements/{engagement_id}/handover/uploads/{file_id}/complete": {
+      "post": {
+        "operationId": "post_handover_upload_complete_api_v1_pro_engagements__engagement_id__handover_uploads__file_id__complete_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "engagement_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Engagement Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "file_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "File Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Handover Upload Complete",
+        "tags": [
+          "records"
+        ]
+      }
+    },
+    "/api/v1/pro/engagements/{engagement_id}/handover/warranties": {
+      "post": {
+        "operationId": "post_pro_warranty_api_v1_pro_engagements__engagement_id__handover_warranties_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "engagement_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Engagement Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WarrantyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HandoverOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Pro Warranty",
+        "tags": [
+          "records"
         ]
       }
     },
@@ -34169,6 +36393,194 @@
         ]
       }
     },
+    "/api/v1/projects/{project_id}/build-record": {
+      "get": {
+        "description": "Issued versions, newest last; superseded ones stay readable (EX-17).",
+        "operationId": "get_build_record_api_v1_projects__project_id__build_record_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildRecordsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Get Build Record",
+        "tags": [
+          "records"
+        ]
+      }
+    },
+    "/api/v1/projects/{project_id}/build-record/versions/{version_no}": {
+      "get": {
+        "operationId": "get_build_record_version_api_v1_projects__project_id__build_record_versions__version_no__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version_no",
+            "required": true,
+            "schema": {
+              "title": "Version No",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildRecordSnapshotOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Get Build Record Version",
+        "tags": [
+          "records"
+        ]
+      }
+    },
+    "/api/v1/projects/{project_id}/build-record/versions/{version_no}/{form}/url": {
+      "get": {
+        "description": "`form` is pdf or json (logged).",
+        "operationId": "get_build_record_file_api_v1_projects__project_id__build_record_versions__version_no___form__url_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version_no",
+            "required": true,
+            "schema": {
+              "title": "Version No",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "form",
+            "required": true,
+            "schema": {
+              "title": "Form",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/p2b__records__schemas__DownloadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Get Build Record File",
+        "tags": [
+          "records"
+        ]
+      }
+    },
     "/api/v1/projects/{project_id}/connection-target": {
       "get": {
         "description": "The request screen: whether a request can be sent now, and why not.",
@@ -35642,6 +38054,252 @@
         "summary": "Get Project Files",
         "tags": [
           "documents"
+        ]
+      }
+    },
+    "/api/v1/projects/{project_id}/handover": {
+      "get": {
+        "description": "The handover: documents, warranties, and whether the owner acknowledged it or Plan2Build\nissued it without acknowledgement.",
+        "operationId": "get_handover_api_v1_projects__project_id__handover_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HandoverViewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Get Handover",
+        "tags": [
+          "records"
+        ]
+      }
+    },
+    "/api/v1/projects/{project_id}/handover/acknowledge": {
+      "post": {
+        "description": "Acknowledge with the code (EX-15). Free of the package (EX-18). 409 NOT_READY,\nSTATEMENT_CHANGED.",
+        "operationId": "post_acknowledge_api_v1_projects__project_id__handover_acknowledge_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcknowledgeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HandoverViewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Acknowledge",
+        "tags": [
+          "records"
+        ]
+      }
+    },
+    "/api/v1/projects/{project_id}/handover/acknowledgement-code": {
+      "post": {
+        "description": "Send a one-time code to the owner's email; the response carries the statement.",
+        "operationId": "post_acknowledgement_code_api_v1_projects__project_id__handover_acknowledgement_code_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/p2b__records__schemas__ChallengeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post Acknowledgement Code",
+        "tags": [
+          "records"
+        ]
+      }
+    },
+    "/api/v1/projects/{project_id}/handover/documents/{document_id}/url": {
+      "get": {
+        "operationId": "get_handover_document_api_v1_projects__project_id__handover_documents__document_id__url_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/p2b__records__schemas__DownloadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Get Handover Document",
+        "tags": [
+          "records"
         ]
       }
     },

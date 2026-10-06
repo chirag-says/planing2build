@@ -29,6 +29,7 @@ from p2b.core.messaging import EmailMessage, MessageProvider
 from p2b.engagements.interface import connection_notice, quote_review_notice
 from p2b.identity.interface import primary_emails
 from p2b.projects.interface import enquiry_summary, review_snapshots
+from p2b.records.interface import records_notice
 from p2b.rfq.interface import contractor_notice, family_notice, ops_notice
 
 log = structlog.get_logger(__name__)
@@ -94,6 +95,14 @@ class Kind(StrEnum):
     AUDITOR_INSPECTION_CANCELLED = "auditor_inspection_cancelled"
     OPS_INSPECTION_SUBMITTED = "ops_inspection_submitted"
     OPS_RECTIFICATION_SUBMITTED = "ops_rectification_submitted"
+    # Handover and Build Record (Slice 3.7C).
+    FAMILY_HANDOVER_OPENED = "family_handover_opened"
+    FAMILY_HANDOVER_READY = "family_handover_ready"
+    FAMILY_BUILD_RECORD_ISSUED = "family_build_record_issued"
+    PRO_HANDOVER_OPENED = "pro_handover_opened"
+    PRO_HANDOVER_ACKNOWLEDGED = "pro_handover_acknowledged"
+    OPS_HANDOVER_ACKNOWLEDGED = "ops_handover_acknowledged"
+    OPS_BUILD_RECORD_DRAFT = "ops_build_record_draft"
 
 
 OPS_KINDS = frozenset(
@@ -195,7 +204,28 @@ ASSURANCE_KINDS = {
     for event, kinds in ASSURANCE_NOTICES.items()
     for kind in kinds.values()
 }
-NOTICES = {**RFQ_NOTICES, **EXECUTION_NOTICES, **ASSURANCE_NOTICES}
+# Handover and Build Record notices (`records.<audience>_notice`, Slice 3.7C).
+RECORDS_NOTICES: dict[str, dict[str, Kind]] = {
+    "records.family_notice": {
+        "HANDOVER_OPENED": Kind.FAMILY_HANDOVER_OPENED,
+        "HANDOVER_READY": Kind.FAMILY_HANDOVER_READY,
+        "BUILD_RECORD_ISSUED": Kind.FAMILY_BUILD_RECORD_ISSUED,
+    },
+    "records.contractor_notice": {
+        "HANDOVER_OPENED": Kind.PRO_HANDOVER_OPENED,
+        "HANDOVER_ACKNOWLEDGED": Kind.PRO_HANDOVER_ACKNOWLEDGED,
+    },
+    "records.ops_notice": {
+        "HANDOVER_ACKNOWLEDGED": Kind.OPS_HANDOVER_ACKNOWLEDGED,
+        "BUILD_RECORD_DRAFT": Kind.OPS_BUILD_RECORD_DRAFT,
+    },
+}
+RECORDS_KINDS = {
+    kind: event.removeprefix("records.").removesuffix("_notice")
+    for event, kinds in RECORDS_NOTICES.items()
+    for kind in kinds.values()
+}
+NOTICES = {**RFQ_NOTICES, **EXECUTION_NOTICES, **ASSURANCE_NOTICES, **RECORDS_NOTICES}
 
 # Event type to the notifications it produces. `requirement.submitted` with review flags also
 # produces the flagged notice.
@@ -225,6 +255,10 @@ BY_EVENT: dict[str, tuple[Kind, ...]] = {
     "assurance.contractor_notice": (),
     "assurance.auditor_notice": (),
     "assurance.ops_notice": (),
+    # Slice 3.7C: likewise.
+    "records.family_notice": (),
+    "records.contractor_notice": (),
+    "records.ops_notice": (),
 }
 
 FLAG_LABELS = {
@@ -300,6 +334,14 @@ async def _prepare(
             return Prepared(settings.ops_notification_email, rfq_notice.values)
         to = (await primary_emails(session, [rfq_notice.user_id])).get(rfq_notice.user_id)
         return Prepared(to, rfq_notice.values)
+    if kind in RECORDS_KINDS:
+        handover = await records_notice(session, RECORDS_KINDS[kind], ref_id, payload)
+        if handover is None:
+            return Prepared(None, {})
+        if handover.user_id is None:
+            return Prepared(settings.ops_notification_email, handover.values)
+        recipient = (await primary_emails(session, [handover.user_id])).get(handover.user_id)
+        return Prepared(recipient, handover.values)
     if kind in ASSURANCE_KINDS:
         found = await assurance_notice(session, ASSURANCE_KINDS[kind], ref_id, payload)
         if found is None:

@@ -16,7 +16,7 @@ export type SecuritySeverity = (typeof SecuritySeverityValues)[number];
 export const ContactKindValues = ["EMAIL", "PHONE"] as const;
 export type ContactKind = (typeof ContactKindValues)[number];
 
-export const OtpPurposeValues = ["LOGIN", "ACCEPT_BUILD_PLAN", "SIGN_STRUCTURAL", "SELECT_QUOTE", "SUBMIT_INSPECTION"] as const;
+export const OtpPurposeValues = ["LOGIN", "ACCEPT_BUILD_PLAN", "SIGN_STRUCTURAL", "SELECT_QUOTE", "SUBMIT_INSPECTION", "ACKNOWLEDGE_HANDOVER"] as const;
 export type OtpPurpose = (typeof OtpPurposeValues)[number];
 
 export const OtpStateValues = ["ISSUED", "VERIFIED", "EXPIRED", "LOCKED"] as const;
@@ -46,7 +46,7 @@ export type ComingSoonWork = (typeof ComingSoonWorkValues)[number];
 export const FileStateValues = ["PENDING_UPLOAD", "UPLOADED", "SCANNING", "AVAILABLE", "QUARANTINED", "FAILED", "DELETED"] as const;
 export type FileState = (typeof FileStateValues)[number];
 
-export const FilePurposeValues = ["REQUIREMENT_UPLOAD", "AI_CONCEPT", "VERIFICATION_EVIDENCE", "PORTFOLIO", "INVOICE", "QUOTE_DOCUMENT", "DRAWING", "BUILD_PLAN_EVIDENCE", "BUILD_PLAN_DOCUMENT", "QUOTE_ATTACHMENT", "COMPARISON_DOCUMENT", "STAGE_EVIDENCE", "INSPECTION_EVIDENCE", "INSPECTION_REPORT"] as const;
+export const FilePurposeValues = ["REQUIREMENT_UPLOAD", "AI_CONCEPT", "VERIFICATION_EVIDENCE", "PORTFOLIO", "INVOICE", "QUOTE_DOCUMENT", "DRAWING", "BUILD_PLAN_EVIDENCE", "BUILD_PLAN_DOCUMENT", "QUOTE_ATTACHMENT", "COMPARISON_DOCUMENT", "STAGE_EVIDENCE", "INSPECTION_EVIDENCE", "INSPECTION_REPORT", "HANDOVER_DOCUMENT", "BUILD_RECORD_DOCUMENT", "BUILD_RECORD_EXPORT"] as const;
 export type FilePurpose = (typeof FilePurposeValues)[number];
 
 export const ConfigStatusValues = ["DRAFT", "ACTIVE", "RETIRED"] as const;
@@ -300,3 +300,15 @@ export type Severity = (typeof SeverityValues)[number];
 
 export const NcStateValues = ["OPEN", "RECTIFICATION_SUBMITTED", "REINSPECTION_SCHEDULED", "CLOSED"] as const;
 export type NcState = (typeof NcStateValues)[number];
+
+export const HandoverStateValues = ["OPEN", "READY", "ACKNOWLEDGED", "ISSUED_BY_OPERATIONS"] as const;
+export type HandoverState = (typeof HandoverStateValues)[number];
+
+export const HandoverDocumentKindValues = ["WARRANTY", "MANUAL", "DRAWING", "CERTIFICATE", "PHOTO", "OTHER"] as const;
+export type HandoverDocumentKind = (typeof HandoverDocumentKindValues)[number];
+
+export const BuildRecordStateValues = ["DRAFT", "ISSUED", "SUPERSEDED"] as const;
+export type BuildRecordState = (typeof BuildRecordStateValues)[number];
+
+export const BuildRecordBasisValues = ["ACKNOWLEDGED", "ISSUED_BY_OPERATIONS"] as const;
+export type BuildRecordBasis = (typeof BuildRecordBasisValues)[number];

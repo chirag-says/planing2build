@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { AssuranceSection } from "@/components/plan2build/assurance-view";
 import { ActionButton } from "@/components/plan2build/build-plan";
 import { UpdateForm } from "@/components/plan2build/execution";
+import { HandoverDocumentForm, WarrantyForm } from "@/components/plan2build/records";
 import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
 import { DownloadLink } from "@/components/plan2build/rfq";
 import { serverApi } from "@/lib/api/server";
@@ -22,14 +23,16 @@ export default async function ProExecutionPage({ params }: { params: Promise<{ e
   if (!UUID.test(engagementId)) notFound();
   const api = await serverApi();
   const path = { params: { path: { engagement_id: engagementId } } };
-  const [execution, marks, assurance] = await Promise.all([
+  const [execution, marks, assurance, handover] = await Promise.all([
     api.GET("/api/v1/pro/engagements/{engagement_id}/execution", path),
     api.GET("/api/v1/pro/engagements/{engagement_id}/payment-marks", path),
     api.GET("/api/v1/pro/engagements/{engagement_id}/assurance", path),
+    api.GET("/api/v1/pro/engagements/{engagement_id}/handover", path),
   ]);
   if (execution.response.status === 401) redirect("/sign-in");
   if (!execution.data || !marks.data || !assurance.data) notFound();
   const t = getTranslator("Execution");
+  const r = getTranslator("Records");
   const data = execution.data;
   const base = `/api/v1/pro/engagements/${engagementId}`;
   const label = (s: { stage_number: number; name: string; floor?: number | null }) =>
@@ -72,6 +75,24 @@ export default async function ProExecutionPage({ params }: { params: Promise<{ e
         </ol>
       </section>
       <AssuranceSection data={assurance.data} engagementId={engagementId} />
+      {handover.data && (
+        <section aria-labelledby="handover" className="flex flex-col gap-2 text-sm">
+          <SectionHeader id="handover" title={r("handover")} />
+          <p data-testid="handover-state">{r(`states.${handover.data.state}`)}</p>
+          <ul className="flex flex-col gap-1">
+            {handover.data.documents.map((d) => <li key={d.id}>{r(`kinds.${d.kind}`)}: {d.title}</li>)}
+            {handover.data.warranties.map((w) => (
+              <li key={w.id}>{r("warranty", { item: w.item, term: w.term, expiry: w.expiry_date, installer: w.installer })}</li>
+            ))}
+          </ul>
+          {handover.data.state === "OPEN" && (
+            <>
+              <HandoverDocumentForm engagementId={engagementId} />
+              <WarrantyForm engagementId={engagementId} documents={handover.data.documents} />
+            </>
+          )}
+        </section>
+      )}
       <section aria-labelledby="marks" className="flex flex-col gap-2">
         <SectionHeader id="marks" title={t("marks")} description={t("marksIntro")} />
         <ul className="flex flex-col gap-2">

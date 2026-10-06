@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { JsonForm } from "@/components/plan2build/build-plan";
@@ -35,6 +36,10 @@ export default async function OpsProjectExecutionPage({ params }: { params: Prom
     <PageContainer width="wide">
       <PageHeader title={t("opsProject", { code: data.project_code })}
         description={data.contractor ? t("contractor", { name: `${data.contractor.name ?? ""} · ${data.contractor.party}` }) : t("noContractor")} />
+      <span className="flex flex-wrap gap-4 text-sm">
+        <Link href={`/assurance/${projectId}`} className="underline underline-offset-4">{getTranslator("Ops")("nav.assurance")}</Link>
+        <Link href={`/handover/${projectId}`} className="underline underline-offset-4">{getTranslator("Records")("openHandover")}</Link>
+      </span>
       <ol className="flex flex-col gap-2">
         {data.stages.map((s) => (
           <li key={s.id} className="flex flex-col gap-2 rounded-md border border-border p-3 text-sm" data-testid={`ops-stage-${s.stage_number}-${s.floor ?? "x"}`}>

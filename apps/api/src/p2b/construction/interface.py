@@ -143,7 +143,9 @@ async def milestone_stages(session: AsyncSession, project_id: uuid.UUID) -> list
     return [_facts(r) for r in rows]
 
 
-async def execution_summary(session: AsyncSession, project_id: uuid.UUID) -> list[dict[str, object]]:
+async def execution_summary(
+    session: AsyncSession, project_id: uuid.UUID
+) -> list[dict[str, object]]:
     """Each stage instance's actual dates, state, gate status and update count (Build Record
     section Execution, I.1): no planned date, no percentage."""
     from p2b.construction import execution  # at call time (module docstring)

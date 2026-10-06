@@ -175,7 +175,7 @@ Legend for the tables: Actor shows who may call; Authz the rule beyond the role;
 | `POST /ops/rfqs/{id}/comparison/finalise` | Freeze the comparison with the approved recommendation | ops with MFA | `version` | comparison (PUBLISHED) | PUBLISHED; snapshot; A; E `rfq.comparison_finalised`; J render; N homeowner | IK; T2; 409 unless adjustments are complete and the recommendation is APPROVED |
 | `GET /projects/{id}/comparison` | The comparison for the homeowner: quotes as submitted, adjustment list first, totals, recommendation with reasons and fit labels, risk flags | owner, household | none | comparison view | access log; `recommendation.shown` recorded | T2; contractor internals never included |
 | `GET /pro/quotes/{id}` | Own quote and versions; never the comparison or others' prices | owner of the quote | none | quote detail | none | T2 |
-| `POST /projects/{id}/comparison/select` | Record the selection (J15) | owner | `quote_version_id`, `contract_value`, `start_date`, `end_date`, `otp_challenge_id`, `otp_code`, `version` | selection | Selection; quote versions SELECTED and NOT_SELECTED; rfq CLOSED; leads updated; contract value recorded; project CONTRACTED; A; E `rfq.selection_recorded`; N all parties | IK; T1 for the OTP; 409 if the selected version is EXPIRED |
+| `POST /projects/{id}/comparison/select` | Record the selection (J15) | owner | `quote_version_id`, `contract_value`, `start_date`, `end_date`, `otp_challenge_id`, `otp_code`, `version` | selection | Selection; quote versions SELECTED and NOT_SELECTED; rfq CLOSED; leads updated; contract value recorded; project CONTRACTED; A; E `rfq.selection_recorded`; N all parties | IK; T1 for the OTP; 409 if the selected version is EXPIRED. [SUPERSEDED] H-10: as built in 3.6 (QD-12) the selection records no contract value or dates and moves no project status (N-03, EX-01) |
 
 ## 11. Recommendations (operations review; homeowner reads through sections 9 and 10)
 
@@ -289,7 +289,7 @@ Legend for the tables: Actor shows who may call; Authz the rule beyond the role;
 | Account (§2) | `/auth/otp/verify`, `/admin/users/{id}/*`, `/me/close` |
 | Verification (§3) | `/pro/verification/submit`, `/ops/verifications/{id}/*`, `/ops/projects/{id}/own-contractor/invite` |
 | Club membership (§4) | `/pro/club/apply`, `/ops/club/{id}/curate`, `/ops/club/{id}/*` |
-| Project (§5) | `/projects`, `/projects/{id}/requirement/submit`, requirement review in `/ops/queues`, webhook (PLANNING), build plan issue (PLAN_ISSUED), leads or RFQ (SOURCING), selection (CONTRACTED), first update (BUILDING), gate 6 clearance (HANDOVER_PENDING), record issue (COMPLETED), `/hold`, `/resume`, `/cancel` |
+| Project (§5) | `/projects`, `/projects/{id}/requirement/submit`, requirement review in `/ops/queues`, webhook (PLANNING), build plan issue (PLAN_ISSUED), leads or RFQ (SOURCING), selection (CONTRACTED), first update (BUILDING), gate 6 clearance (HANDOVER_PENDING), record issue (COMPLETED), `/hold`, `/resume`, `/cancel`. [SUPERSEDED] H-10, N-03, EX-01: no project status moves during construction; execution, inspection, handover and Build Record states are their own records (Slice 3.7) |
 | Stage instance (§6) | updates, `/complete`, `/return`, `/reschedule`, inspection approval |
 | Specification line (§7) | `/options`, `/choose`, `/purchase`, `/install`, inspection approval (VERIFIED), `/override` |
 | Build Plan and baseline (§8) | draft versions, `/request-signoff`, signoffs, `/issue` |
@@ -476,3 +476,4 @@ Slice 3.6 (2026-10-06). Creating and transition POSTs take `Idempotency-Key`; re
 | `POST /ops/projects/{id}/rfq-files` (raw body), `GET /ops/rfq-files/{fid}/url` | OPS or ADMIN with MFA | Quote documents received outside the portal; logged downloads |
 | `PUT /ops/quote-versions/{qid}/adjustments`, `POST .../reviewed`, `POST /ops/rfqs/{rid}/clarifications`, `POST /ops/rfq-clarifications/{cid}/answer`, `.../close`, `POST /ops/rfqs/{rid}/comparisons` | OPS or ADMIN with MFA | Review, questions, publication with the PDF |
 | `GET /ops/selection-statements`, `POST /admin/selection-statements`, `.../{id}/activate` | OPS reads, ADMIN | Versioned selection statement |
+

@@ -1,0 +1,3 @@
+Your Build Record is issued
+---
+A version of the Build Record of project $code is issued. Sign in to Plan2Build to read it or download the PDF and the data file.

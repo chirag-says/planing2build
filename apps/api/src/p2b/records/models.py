@@ -21,6 +21,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     Uuid,
+    func,
     text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
@@ -51,7 +52,7 @@ class AcknowledgementStatement(Base):
     note: Mapped[str] = mapped_column(Text)
     # Reference data: user ids without foreign keys, as for the other statements.
     created_by: Mapped[uuid.UUID | None]
-    created_at: Mapped[datetime] = mapped_column(server_default=text("now()"))
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     activated_by: Mapped[uuid.UUID | None]
     activated_at: Mapped[datetime | None]
 
