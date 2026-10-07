@@ -1,0 +1,510 @@
+/*
+ * Services page hero, concrete ground with the crane (the only variant this site uses).
+ *
+ * --pagehero-size  headline size per layout
+ * --pagehero-s     scale of the crane's 440 x 460 drawing board: 34% of the page column on
+ *                  desktop (at most 1.25), 38% on tablet (at most 0.74), the full column less
+ *                  36px on phone (at most 0.8). tan(atan2(a, b)) is a / b as a plain number,
+ *                  which scale() needs.
+ */
+.gd.pagehero {
+  display: flex;
+  flex-direction: column;
+  min-height: min(94vh, 880px);
+  min-height: min(94svh, 880px);
+  overflow: hidden;
+  background: var(--gd-bone);
+  color: var(--gd-ink);
+  padding: calc(var(--gd-hdh, 76px) + clamp(44px, 5.2vw, 84px)) 0 0;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  --pagehero-ln: var(--gd-ink);
+  --pagehero-steel: color-mix(in srgb, var(--gd-ink) 86%, var(--gd-bone));
+  --pagehero-gr: color-mix(in srgb, var(--gd-fog) 70%, transparent);
+  --pagehero-size: clamp(84px, 8.2vw, 132px);
+  --pagehero-s: min(1.25, tan(atan2(34cqw, 440px)));
+}
+.gd.pagehero .gd-wrap {
+  --pad: 56px;
+}
+.pagehero-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(var(--pagehero-gr) 1px, transparent 1px),
+    linear-gradient(90deg, var(--pagehero-gr) 1px, transparent 1px);
+  background-size: 72px 72px;
+  background-position: 56px 0;
+  -webkit-mask-image: linear-gradient(180deg, var(--gd-black) 0, var(--gd-black) 55%, transparent 94%);
+  mask-image: linear-gradient(180deg, var(--gd-black) 0, var(--gd-black) 55%, transparent 94%);
+  pointer-events: none;
+}
+
+/* eyebrow = the hero's site label: mono caps + the square live dot */
+.gd.pagehero .gd-eb {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: inherit;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+}
+.gd.pagehero .gd-eb i {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 1.5px var(--gd-ink);
+  animation: gd-blink 1.6s ease-in-out 3;
+}
+
+/* headline: display caps; the accent run rides the yellow beam, lowered in from above on two slings */
+.gd.pagehero .gd-hd {
+  letter-spacing: -0.004em;
+  text-transform: uppercase;
+  text-wrap: normal;
+  font-weight: var(--gd-font-dw, 800);
+}
+.gd.pagehero .gd-hd-w {
+  position: relative;
+  isolation: isolate;
+  padding: 0.07em 0.04em 0.1em;
+  margin: -0.07em -0.04em -0.1em;
+}
+.gd.pagehero .gd-it {
+  font: inherit;
+  font-style: normal;
+  letter-spacing: inherit;
+  color: var(--gd-ink);
+  padding: 0;
+}
+/* the beam behind each accent word */
+.gd.pagehero .gd-hd-w.is-accw::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0.15em;
+  bottom: 0.1em;
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 0.05em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent),
+    inset 0 -0.05em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent);
+  translate: 0 -135%;
+  transition: translate 1.25s cubic-bezier(0.3, 1.35, 0.45, 1) 0.75s;
+}
+/* the slings above it: drawn only at the run's two ends (--c1 on the first word, --c2 on the last) */
+.gd.pagehero .gd-hd-w.is-accw::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 0.15em;
+  background-image:
+    linear-gradient(var(--c1, transparent), var(--c1, transparent)),
+    linear-gradient(var(--c2, transparent), var(--c2, transparent));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position:
+    22% 0,
+    78% 0;
+  translate: 0 -900%;
+  transition: translate 1.25s cubic-bezier(0.3, 1.35, 0.45, 1) 0.75s;
+}
+.gd.pagehero.is-in .gd-hd-w.is-accw::before,
+.gd.pagehero.is-in .gd-hd-w.is-accw::after {
+  translate: 0 0;
+}
+.gd.pagehero .gd-hd-w:not(.is-accw) + .gd-hd-w.is-accw,
+.gd.pagehero .gd-hd-w.is-accw:first-child {
+  padding-left: 0.16em;
+  margin-left: 0;
+  --c1: var(--pagehero-ln);
+}
+.gd.pagehero .gd-hd-w.is-accw:last-child {
+  white-space: nowrap;
+  padding-right: 0.16em;
+  --c2: var(--pagehero-ln);
+}
+.gd.pagehero.is-final .gd-hd-w.is-accw::before,
+.gd.pagehero.is-final .gd-hd-w.is-accw::after {
+  transition: none;
+}
+
+.pagehero-in {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(28px, 4vw, 72px);
+  align-items: end;
+  padding-bottom: clamp(52px, 5.4vw, 88px);
+}
+.pagehero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+.pagehero-h {
+  margin-top: clamp(18px, 1.8vw, 28px) !important;
+}
+.pagehero-lead {
+  margin: clamp(22px, 2.2vw, 34px) 0 0;
+  max-width: 520px;
+  font-size: clamp(17px, 1.32vw, 19px);
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--gd-ink) 82%, var(--gd-bone));
+}
+.pagehero-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: clamp(24px, 2.4vw, 36px);
+}
+
+/* ---- the crane: drawn on a 440 x 460 board, scaled as one piece ---- */
+.pagehero-obj {
+  position: relative;
+  flex: none;
+  justify-self: end;
+  width: round(nearest, 440px * var(--pagehero-s), 1px);
+  height: round(nearest, 460px * var(--pagehero-s), 1px);
+}
+/* parallax: the crane drifts up 90px over the hero's pass through the viewport */
+.pagehero-par {
+  position: absolute;
+  inset: 0;
+  translate: 0 calc((var(--sp, 0.5) - 0.5) * -90px);
+}
+.pagehero-box {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 440px;
+  height: 460px;
+  transform-origin: 0 0;
+  transform: scale(round(nearest, var(--pagehero-s), 0.0001));
+}
+.pagehero-ties {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+.pagehero-ties path,
+.pagehero-slings path {
+  fill: none;
+  stroke: var(--pagehero-ln);
+  stroke-width: 1.5;
+}
+.pagehero-mast {
+  position: absolute;
+  left: 330px;
+  top: 58px;
+  bottom: 0;
+  width: 22px;
+  border-inline: 3px solid var(--pagehero-steel);
+  background:
+    repeating-linear-gradient(45deg, transparent 0 6px, var(--pagehero-steel) 6px 7.5px),
+    repeating-linear-gradient(-45deg, transparent 0 6px, var(--pagehero-steel) 6px 7.5px);
+}
+.pagehero-apex {
+  position: absolute;
+  left: 340px;
+  top: 20px;
+  width: 2px;
+  height: 38px;
+  background: var(--pagehero-steel);
+}
+.pagehero-cab {
+  position: absolute;
+  left: 296px;
+  top: 80px;
+  width: 34px;
+  height: 26px;
+  background: var(--gd-brass);
+  box-shadow: inset 0 0 0 2px var(--gd-ink);
+}
+.pagehero-jib {
+  position: absolute;
+  left: 14px;
+  top: 58px;
+  width: 338px;
+  height: 13px;
+  border-block: 2.5px solid var(--gd-brass);
+  background:
+    repeating-linear-gradient(60deg, transparent 0 7px, var(--gd-brass) 7px 9px),
+    repeating-linear-gradient(-60deg, transparent 0 7px, var(--gd-brass) 7px 9px);
+}
+.pagehero-cjib {
+  position: absolute;
+  left: 352px;
+  top: 58px;
+  width: 78px;
+  height: 13px;
+  border-block: 2.5px solid var(--gd-brass);
+  background: repeating-linear-gradient(60deg, transparent 0 7px, var(--gd-brass) 7px 9px);
+}
+/* counterweight */
+.pagehero-cjib::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: 30px;
+  height: 26px;
+  background: var(--pagehero-steel);
+}
+.pagehero-foot {
+  position: absolute;
+  left: 296px;
+  bottom: 0;
+  width: 90px;
+  height: 10px;
+  background: repeating-linear-gradient(-45deg, var(--gd-brass) 0 10px, var(--gd-ink) 10px 20px);
+}
+.pagehero-gl {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  background: var(--pagehero-ln);
+}
+/* the trolley runs 150px along the jib over the hero's pass through the viewport */
+.pagehero-trolley {
+  position: absolute;
+  left: 150px;
+  top: 71px;
+  width: 18px;
+  height: 7px;
+  margin-left: -9px;
+  background: var(--pagehero-ln);
+  translate: calc((var(--sp, 0.5) - 0.5) * 150px);
+}
+.pagehero-drop {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 0;
+  height: 372px;
+  clip-path: inset(0 -320px -20px -320px);
+}
+.pagehero-load {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+/* lowered from 78px up, overshoots 7px, rocks and settles, holds, then hoisted for the next word */
+.pagehero.is-run .pagehero-load {
+  animation: pagehero-hoist 3.6s cubic-bezier(0.45, 0, 0.3, 1) infinite;
+}
+/* the hoist pauses while the hero is hovered or holds focus (WCAG 2.2.2) */
+.pagehero:is(:hover, :focus-within) .pagehero-load {
+  animation-play-state: paused;
+}
+@keyframes pagehero-hoist {
+  0% {
+    transform: translateY(-78px);
+  }
+  15% {
+    transform: translateY(7px) rotate(1.3deg);
+  }
+  22% {
+    transform: translateY(-3px) rotate(-0.8deg);
+  }
+  29% {
+    transform: translateY(0) rotate(0.3deg);
+  }
+  36%,
+  84% {
+    transform: none;
+  }
+  100% {
+    transform: translateY(-78px);
+  }
+}
+.pagehero-cable {
+  position: absolute;
+  left: -0.75px;
+  top: -140px;
+  width: 1.5px;
+  height: 300px;
+  background: var(--pagehero-ln);
+}
+.pagehero-hook {
+  position: absolute;
+  left: -6px;
+  top: 156px;
+  width: 12px;
+  height: 12px;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 2px var(--gd-ink);
+}
+.pagehero-slings {
+  position: absolute;
+  left: -70px;
+  top: 168px;
+}
+.pagehero-plate {
+  position: absolute;
+  left: 0;
+  top: 202px;
+  translate: -50% 0;
+  display: grid;
+  width: max-content;
+  min-width: 150px;
+  padding: 9px 20px 6px;
+  background: var(--gd-brass);
+  color: var(--gd-ink);
+  font-size: 50px;
+  line-height: 1;
+  letter-spacing: 0.006em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-align: center;
+  overflow: hidden;
+  box-shadow:
+    inset 0 5px 0 color-mix(in srgb, var(--gd-ink) 22%, transparent),
+    inset 0 -5px 0 color-mix(in srgb, var(--gd-ink) 22%, transparent);
+}
+/* every word shares one grid cell, so the plate is as wide as the longest word */
+.pagehero-plate b {
+  grid-area: 1/1;
+  font-weight: inherit;
+  visibility: hidden;
+}
+.pagehero-plate b.is-cur {
+  visibility: visible;
+}
+.pagehero.is-run .pagehero-plate b.is-cur {
+  animation: pagehero-word 0.7s cubic-bezier(0.2, 0.85, 0.15, 1) both;
+}
+@keyframes pagehero-word {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: none;
+  }
+}
+.pagehero-count {
+  position: absolute;
+  left: 0;
+  top: 278px;
+  translate: -50% 0;
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  padding: 3px 7px;
+  color: var(--pagehero-ln);
+  box-shadow: 0 0 0 1.5px var(--pagehero-ln);
+}
+.pagehero.is-final .pagehero-par,
+.pagehero.is-final .pagehero-trolley {
+  translate: none;
+}
+
+/* the ground line under the hero */
+.pagehero-ground {
+  position: relative;
+  z-index: 2;
+  border-top: 2px solid var(--gd-ink);
+  background: inherit;
+}
+.pagehero-ground .gd-wrap {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+.pagehero-ground p {
+  margin: 0;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  color: var(--gd-mut);
+}
+
+@container site (max-width: 1099.98px) {
+  .gd.pagehero {
+    min-height: 0;
+  }
+}
+@container site (min-width: 810px) and (max-width: 1099.98px) {
+  .gd.pagehero {
+    --pagehero-size: clamp(62px, 9.4vw, 92px);
+    --pagehero-s: min(0.74, tan(atan2(38cqw, 440px)));
+  }
+  .gd.pagehero .gd-wrap {
+    --pad: 32px;
+  }
+  .pagehero .pagehero-grid {
+    background-position: 32px 0;
+  }
+}
+@container site (max-width: 809.98px) {
+  .gd.pagehero {
+    --pagehero-size: clamp(52px, 15.5vw, 68px);
+    --pagehero-s: min(0.8, tan(atan2(100cqw - 36px, 440px)));
+  }
+  .gd.pagehero .gd-wrap {
+    --pad: 18px;
+  }
+  .pagehero .pagehero-grid {
+    background-position: 18px 0;
+  }
+  .pagehero .pagehero-in {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 44px;
+    padding-bottom: 0;
+  }
+  .pagehero .pagehero-lead {
+    font-size: 16px;
+    margin-top: 18px;
+  }
+  .pagehero .pagehero-btns {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 22px;
+  }
+  .pagehero .pagehero-obj {
+    justify-self: center;
+  }
+  /* no parallax on phones */
+  .pagehero .pagehero-par,
+  .pagehero .pagehero-trolley {
+    translate: none;
+  }
+  .pagehero .pagehero-ground p {
+    font-size: 11px;
+  }
+  /* phones show the proof line only */
+  .pagehero .pagehero-lic {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gd.pagehero .gd-hd-w.is-accw::before,
+  .gd.pagehero .gd-hd-w.is-accw::after {
+    translate: 0 0 !important;
+  }
+  .pagehero-load {
+    animation: none !important;
+  }
+}

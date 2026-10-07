@@ -22,7 +22,12 @@
     },
     "signIn": {
       "title": "Sign in or register",
-      "intro": "Use your email address. New here? The same code creates your professional account; nothing is public until Plan2Build approves a category."
+      "intro": "Use your email address. New here? The same code creates your professional account; nothing is public until Plan2Build approves a category.",
+      "card": {
+        "eyebrow": "For professionals",
+        "label": "Sign in or register",
+        "note": "Takes one minute"
+      }
     },
     "dashboard": {
       "title": "Your professional profile",
@@ -196,7 +201,8 @@
         "NOT_LISTED": "You are not listed for this service now."
       },
       "back": "All requests"
-    }
+    },
+    "tag": "Professionals"
   },
   "Ops": {
     "title": "Plan2Build operations",
@@ -520,6 +526,13 @@
       "VALIDATION_ERROR": "Check the email address or code and try again.",
       "FORBIDDEN": "This account cannot sign in here.",
       "default": "Something went wrong. Try again shortly."
+    },
+    "card": {
+      "eyebrow": "Plan a project",
+      "label": "Sign in",
+      "note": "Takes one minute",
+      "stepEmail": "Your email",
+      "stepCode": "Your code"
     }
   },
   "Common": {
@@ -758,7 +771,8 @@
     "menu": "Menu",
     "skip": "Skip to main content",
     "professionals": "Find professionals",
-    "billing": "Billing"
+    "billing": "Billing",
+    "tag": "Homeowner"
   },
   "Status": {
     "label": "Status",

@@ -1,0 +1,31 @@
+/*
+ * Document rules of the public website, scoped to its pages. In the original project these sat on
+ * <body>; here the signed-in screens share the document, so they hang off the page column
+ * (`.mk`) instead. The night ground shows behind the footer lift and on overscroll.
+ */
+html:has(.mk) {
+  background: var(--gd-night);
+}
+html:has(.mk) body {
+  background: var(--gd-night);
+}
+/* The original document defaults (no Tailwind base): 12px sans-serif at normal line height.
+   On <body>, so the header, loader and page transition outside the page column get them too. */
+html:has(.mk) body,
+html:has(.mk) body :where(input, textarea, select, button) {
+  font-family: sans-serif;
+  font-size: 12px;
+  line-height: normal;
+}
+
+/*
+ * The page column. Sections switch layout on the width they are given (phone under 810px,
+ * tablet under 1100px), which excludes the scrollbar, so they query this container rather
+ * than the viewport.
+ */
+.site {
+  container: site / inline-size;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}

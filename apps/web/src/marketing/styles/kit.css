@@ -1,0 +1,567 @@
+/*
+ * Girder UI kit: the rules every section shares.
+ * Buttons, eyebrow pill, word-by-word headline reveal, section shell, the "lift" reveal used by
+ * the footer, and the focus rings. Section stylesheets restyle these per section.
+ *
+ * Reveal contract: a section gets `is-in` once it has scrolled into view (see useReveal); every
+ * `.gd-eb` and `.gd-hd` inside it animates in from that one class.
+ */
+:where(.gd) {
+  position: relative;
+  z-index: 10;
+}
+.gd,
+.gd * {
+  box-sizing: border-box;
+  min-width: 0;
+}
+.gd-sr {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  border: 0 !important;
+}
+:where(.gd) a {
+  color: inherit;
+}
+html,
+body {
+  overflow-x: clip;
+}
+:where(
+  a[href],
+  button,
+  input,
+  select,
+  textarea,
+  summary,
+  [tabindex]:not([tabindex="-1"]),
+  [role="button"]
+):focus-visible {
+  outline: 3px solid var(--gd-ink) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px var(--gd-bone) !important;
+}
+:where(.gd-dark)
+  :where(
+    a[href],
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    [tabindex]:not([tabindex="-1"])
+  ):focus-visible {
+  outline-color: var(--gd-cloud) !important;
+  box-shadow: 0 0 0 2px var(--gd-night) !important;
+}
+:where(.gd)
+  :is(
+    input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),
+    textarea,
+    select
+  ):focus-visible {
+  outline: 2px solid currentColor !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
+}
+:where(.gd) textarea {
+  resize: none;
+}
+html {
+  scroll-padding-top: 96px;
+  scroll-padding-bottom: 88px;
+}
+/* any other focusable (e.g. a keyboard-focusable scroll row) gets the kit ring, never the browser default */
+:where(.gd) :focus-visible {
+  outline: 3px solid var(--gd-ink);
+  outline-offset: 2px;
+}
+:where(.gd-dark) :focus-visible {
+  outline-color: var(--gd-cloud);
+}
+/* a light card inside a dark section keeps the INK ring (a white ring on a white card is invisible) */
+:where(.gd-dark)
+  :where(.gd-lt)
+  :where(
+    a[href],
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    [tabindex]:not([tabindex="-1"])
+  ):focus-visible {
+  outline-color: var(--gd-ink) !important;
+  box-shadow: 0 0 0 2px var(--gd-cloud) !important;
+}
+.gd-btn {
+  text-transform: uppercase;
+  position: relative;
+  display: inline-flex;
+  min-height: 52px;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--fg);
+  perspective: 500px;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.gd-face {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: inherit;
+  padding: 6px 24px 6px 6px;
+  border-radius: inherit;
+  background: var(--face);
+  box-shadow:
+    inset 0 0 0 1px var(--rim),
+    0 16px 32px -20px color-mix(in srgb, var(--gd-black) 60%, transparent);
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    box-shadow 0.4s,
+    background 0.4s;
+}
+.gd-chip {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 5px;
+  background: var(--chip);
+  color: var(--chipfg);
+  overflow: hidden;
+  transition:
+    background 0.4s,
+    color 0.4s,
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.gd-chip svg {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  transition:
+    transform 0.55s cubic-bezier(0.7, 0, 0.2, 1),
+    opacity 0.3s;
+}
+.gd-g2 {
+  transform: translateY(22px);
+  opacity: 0;
+}
+.gd-btn:hover .gd-g1,
+.gd-btn:focus-visible .gd-g1 {
+  transform: translateY(-22px);
+  opacity: 0;
+}
+.gd-btn:hover .gd-g2,
+.gd-btn:focus-visible .gd-g2 {
+  transform: none;
+  opacity: 1;
+}
+.gd-btn:hover .gd-chip,
+.gd-btn:focus-visible .gd-chip {
+  background: var(--chip2);
+  color: var(--chipfg2);
+  transform: rotate(-8deg);
+}
+.gd-lbl {
+  position: static;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.15;
+  z-index: 1;
+}
+.gd-sub {
+  position: relative;
+  display: block;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+  margin-bottom: 1px;
+}
+.gd-mark {
+  position: static;
+  display: inline-block;
+}
+.gd-hl {
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: inherit;
+  background: var(--hl);
+  transform: translateY(104%);
+  transition: transform 0.6s cubic-bezier(0.3, 1.25, 0.5, 1);
+}
+.gd-btn:hover .gd-hl,
+.gd-btn:focus-visible .gd-hl {
+  transform: none;
+}
+.gd-btn:hover .gd-mark,
+.gd-btn:focus-visible .gd-mark,
+.gd-btn:hover .gd-sub,
+.gd-btn:focus-visible .gd-sub {
+  color: var(--hlfg);
+}
+.gd-mark,
+.gd-sub {
+  transition: color 0.3s 0.08s;
+}
+.gd-btn:hover,
+.gd-btn:focus-visible {
+  transform: translate(var(--mx, 0px), calc(var(--my, 0px) - 2px));
+}
+.gd-btn.gd-solid {
+  --face: var(--gd-ink);
+  --rim: color-mix(in srgb, var(--gd-cloud) 12%, transparent);
+  --fg: var(--gd-cloud);
+  --chip: var(--gd-brass);
+  --chipfg: var(--gd-ink);
+  --chip2: var(--gd-cloud);
+  --chipfg2: var(--gd-ink);
+  --hl: var(--gd-brass);
+  --hlfg: var(--gd-ink);
+}
+.gd-btn.gd-ghost {
+  --face: color-mix(in srgb, var(--gd-cloud) 8%, transparent);
+  --rim: color-mix(in srgb, var(--gd-cloud) 34%, transparent);
+  --fg: var(--gd-cloud);
+  --chip: color-mix(in srgb, var(--gd-cloud) 14%, transparent);
+  --chipfg: var(--gd-cloud);
+  --chip2: var(--gd-cloud);
+  --chipfg2: var(--gd-ink);
+  --hl: var(--gd-brass);
+  --hlfg: var(--gd-ink);
+}
+.gd-btn.gd-quiet {
+  min-height: 44px;
+  font-size: 12.5px;
+  --face: var(--gd-ink);
+  --rim: transparent;
+  --fg: var(--gd-cloud);
+  --chip: var(--gd-brass);
+  --chipfg: var(--gd-ink);
+  --chip2: var(--gd-cloud);
+  --chipfg2: var(--gd-ink);
+  --hl: var(--gd-brass);
+  --hlfg: var(--gd-ink);
+}
+.gd-btn.gd-quiet .gd-chip {
+  width: 32px;
+  height: 32px;
+}
+.gd-btn.gd-quiet .gd-face {
+  padding: 6px 18px 6px 6px;
+  gap: 10px;
+}
+.gd:not(.gd-dark) .gd-btn.gd-ghost,
+.gd-lt .gd-btn.gd-ghost {
+  --face: color-mix(in srgb, var(--gd-ink) 3%, transparent);
+  --rim: color-mix(in srgb, var(--gd-ink) 26%, transparent);
+  --fg: var(--gd-ink);
+  --chip: color-mix(in srgb, var(--gd-ink) 7%, transparent);
+  --chipfg: var(--gd-ink);
+  --chip2: var(--gd-ink);
+  --chipfg2: var(--gd-cloud);
+  --hlfg: var(--gd-ink);
+}
+.gd .gd-dark .gd-btn.gd-ghost {
+  --face: color-mix(in srgb, var(--gd-cloud) 8%, transparent);
+  --rim: color-mix(in srgb, var(--gd-cloud) 34%, transparent);
+  --fg: var(--gd-cloud);
+  --chip: color-mix(in srgb, var(--gd-cloud) 14%, transparent);
+  --chipfg: var(--gd-cloud);
+}
+@media (max-width: 600px), (hover: none) {
+  .gd .gd-btn {
+    white-space: normal;
+    text-align: left;
+    line-height: 1.25;
+    max-width: 100%;
+  }
+}
+button.gd-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.gd-btn:active {
+  transform: translate(var(--mx, 0px), var(--my, 0px)) scale(0.96) !important;
+  transition-duration: 0.12s;
+}
+/* TEXT-SAFE accents: coral is a SURFACE colour on paper (chips, fills, rings) — accent text on paper is the deep mix; on night grounds the coral itself reads */
+.gd {
+  --gd-acc: color-mix(in srgb, var(--gd-brass) 38%, var(--gd-ink));
+  --gd-acc-lg: var(--gd-brass);
+  --gd-hl: var(--gd-brass);
+  --gd-mut: color-mix(in srgb, var(--gd-stone) 60%, var(--gd-ink));
+  --gd-acc-d: var(--gd-brass);
+}
+.gd-lt,
+.gd .gd-lt {
+  --gd-acc: color-mix(in srgb, var(--gd-brass) 38%, var(--gd-ink));
+  --gd-acc-lg: var(--gd-brass);
+  --gd-hl: var(--gd-brass);
+  --gd-mut: color-mix(in srgb, var(--gd-stone) 60%, var(--gd-ink));
+}
+.gd-dark,
+.gd.gd-dark {
+  --gd-acc: color-mix(in srgb, var(--gd-brass) 45%, var(--gd-cloud));
+  --gd-acc-lg: var(--gd-brass);
+  --gd-hl: transparent;
+  --gd-mut: color-mix(in srgb, var(--gd-stone) 45%, var(--gd-cloud));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gd * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+.gd[data-kb] *,
+.gd[data-kb] *::before,
+.gd[data-kb] *::after,
+.gd [data-kb],
+.gd [data-kb] *,
+.gd [data-kb] *::before,
+.gd [data-kb] *::after {
+  transition: none !important;
+}
+.gd-sec {
+  position: relative;
+  z-index: 10;
+  display: block;
+  width: 100%;
+  --sp: 0.5;
+  --pp: 0;
+}
+.gd-rev {
+  position: relative;
+  width: 100%;
+  --rv: 1;
+}
+.gd-rev-in {
+  position: relative;
+}
+.gd-rev-sp {
+  height: 0;
+}
+.gd-rev.is-act {
+  --rv: 0;
+  --t: min(var(--h), 100vh);
+  --t: min(var(--h), 100svh);
+  z-index: var(--layer, 9);
+  margin-top: calc(var(--t) * -1);
+}
+.gd-rev.is-act > .gd-rev-in {
+  position: sticky;
+  top: calc(100vh - var(--t));
+  top: calc(100svh - var(--t));
+}
+.gd-rev.is-act > .gd-rev-sp {
+  height: var(--t);
+}
+/* the lifting edge throws a shadow on the section beneath, and that section comes out of the dark as it is uncovered */
+.gd-rev.is-act > .gd-rev-in::before {
+  content: "";
+  position: absolute;
+  z-index: 40;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 120px;
+  translate: 0 calc((1 - var(--rv)) * var(--t));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--gd-black) 20%, transparent), color-mix(in srgb, var(--gd-black) 0%, transparent));
+  opacity: min(1, calc(var(--rv) * (1 - var(--rv)) * 9));
+  pointer-events: none;
+}
+.gd-rev.is-act > .gd-rev-in::after {
+  content: "";
+  position: absolute;
+  z-index: 39;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--t);
+  background: var(--gd-black);
+  opacity: calc((1 - var(--rv)) * 0.16);
+  pointer-events: none;
+}
+.gd-wrap {
+  --pad: 56px;
+  width: 100%;
+  max-width: calc(clamp(1280px, 92vw, 1520px) + var(--pad) * 2);
+  margin: 0 auto;
+  padding-left: var(--pad);
+  padding-right: var(--pad);
+}
+.gd-eb {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  width: max-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 7px 13px 7px 11px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--gd-ink) 6%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gd-ink) 12%, transparent);
+  color: var(--gd-ink);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  opacity: 0;
+  translate: 0 10px;
+  transition:
+    opacity 0.8s ease,
+    translate 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.is-in .gd-eb {
+  opacity: 1;
+  translate: 0 0;
+}
+.gd-eb i {
+  display: block;
+  flex: none;
+  order: -1;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gd-brass);
+}
+.gd-dark .gd-eb {
+  color: var(--gd-cloud);
+  background: color-mix(in srgb, var(--gd-cloud) 9%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gd-cloud) 18%, transparent);
+}
+.gd-hd {
+  margin: 0;
+  letter-spacing: -0.042em;
+  text-wrap: balance;
+  font-weight: var(--gd-font-dw, 600);
+}
+.gd-hd-l {
+  display: block;
+}
+.gd-hd-w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding: 0 0.04em 0.12em;
+  margin: 0 -0.04em -0.12em;
+  white-space: pre;
+}
+.gd-hd-i {
+  position: relative;
+  display: inline-block;
+  translate: 0 108%;
+  transition: translate 1.05s cubic-bezier(0.2, 0.85, 0.15, 1);
+}
+.is-in .gd-hd .gd-hd-i {
+  translate: 0 0;
+}
+.gd-hd-w.is-accw {
+  overflow: hidden;
+}
+.gd-it {
+  position: relative;
+  color: var(--gd-acc);
+  font-family: var(--gd-font-a, "Source Serif 4"), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  padding-right: 0.04em;
+}
+.gd-dark .gd-it {
+  color: color-mix(in srgb, var(--gd-brass) 34%, var(--gd-cloud));
+}
+
+.gd-um {
+  position: relative;
+  overflow: hidden;
+  transition: clip-path 1.35s cubic-bezier(0.7, 0, 0.2, 1);
+  background: color-mix(in srgb, var(--gd-stone) 22%, transparent);
+}
+.gd-um img {
+  position: absolute;
+  left: 0;
+  top: -9%;
+  width: 100%;
+  height: 118%;
+  display: block;
+  object-fit: cover;
+  scale: 1.28;
+  translate: 0 calc((var(--sp, 0.5) - 0.5) * var(--par, 1) * -7%);
+  transition: scale 1.9s cubic-bezier(0.16, 0.84, 0.24, 1);
+  user-select: none;
+}
+.gd-um.is-on img {
+  scale: 1;
+}
+@media (max-width: 1099px) {
+  .gd-wrap {
+    --pad: 32px;
+  }
+}
+@media (max-width: 699px) {
+  .gd-wrap {
+    --pad: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gd-hd-i {
+    translate: 0 0 !important;
+  }
+  .gd-um {
+    clip-path: none !important;
+  }
+  .gd-um img {
+    scale: 1 !important;
+    translate: 0 0 !important;
+  }
+}
+
+@keyframes gd-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/*
+ * Generic entrance for content inside a section: fades in and rises --rv-y (22px) after
+ * --rv-d once the section has the `is-in` class. Set both through revealDelay() in lib/css.ts.
+ */
+.gd-rv {
+  opacity: 0;
+  translate: 0 var(--rv-y, 22px);
+  transition:
+    opacity 0.9s ease var(--rv-d, 0ms),
+    translate 1s cubic-bezier(0.2, 0.8, 0.2, 1) var(--rv-d, 0ms);
+}
+.is-in .gd-rv {
+  opacity: 1;
+  translate: 0 0;
+}

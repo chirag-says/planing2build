@@ -1,0 +1,354 @@
+/*
+ * First-visit loader: a crane lowers the yellow beam carrying the wordmark onto a night hoarding,
+ * a counter climbs to the top level, then the beam is hoisted away and the hoarding rises off
+ * the page.
+ *
+ * Visibility is driven by classes on <html> so the pre-paint script can show it before React
+ * runs: `loader-go` while it is on screen, `loader-open` once the lift-off has started (scrolling
+ * is allowed again from then on).
+ */
+.loader {
+  display: none;
+}
+html.loader-go:not(.loader-open) {
+  overflow: hidden !important;
+}
+html.loader-go .loader {
+  display: block;
+}
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  color: var(--gd-cloud);
+  cursor: pointer;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  /* The intro's timings scale with the run length (see LoaderStage): a late start plays faster. */
+  --k: var(--loader-k, 1);
+}
+.loader * {
+  box-sizing: border-box;
+}
+
+/* The hoarding: a night panel with the blueprint grid and a hazard-stripe bottom edge (the edge
+   that leaves the ground when it is lifted). */
+.loader-wall {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -40px;
+  bottom: 0;
+  background: var(--gd-night);
+  will-change: transform;
+}
+.loader-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--gd-cloud) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--gd-cloud) 5%, transparent) 1px, transparent 1px);
+  background-size: 72px 72px;
+  background-position: 50% 40px;
+}
+.loader-edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 12px;
+  background: repeating-linear-gradient(-45deg, var(--gd-brass) 0 12px, var(--gd-ink) 12px 24px);
+}
+
+/* The crane jib along the top: a steel lattice with the trolley over the hook line. */
+.loader-jib {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 18px;
+  border-bottom: 2px solid color-mix(in srgb, var(--gd-cloud) 46%, transparent);
+  background:
+    repeating-linear-gradient(45deg, transparent 0 10px, color-mix(in srgb, var(--gd-cloud) 22%, transparent) 10px 11.5px),
+    repeating-linear-gradient(-45deg, transparent 0 10px, color-mix(in srgb, var(--gd-cloud) 22%, transparent) 10px 11.5px);
+}
+.loader-trolley {
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  width: 34px;
+  height: 12px;
+  margin-left: -17px;
+  background: var(--gd-brass);
+  box-shadow: inset 0 0 0 2px var(--gd-ink);
+}
+
+.loader-top {
+  position: absolute;
+  z-index: 3;
+  left: clamp(18px, 4vw, 56px);
+  right: clamp(18px, 4vw, 56px);
+  top: clamp(38px, 3.6vw, 52px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.loader-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-cloud) 82%, transparent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.loader-tag i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--gd-brass);
+}
+.loader-tag em {
+  font-style: normal;
+  opacity: 0.72;
+}
+.loader-skip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--gd-cloud) 8%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gd-cloud) 30%, transparent);
+  color: var(--gd-cloud);
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.25s,
+    color 0.25s;
+}
+.loader-skip:hover,
+.loader-skip:focus-visible {
+  background: var(--gd-brass);
+  color: var(--gd-ink);
+}
+.loader-skip:focus-visible {
+  outline: 3px solid var(--gd-cloud);
+  outline-offset: 2px;
+}
+
+/* The lift: cable, hook, two slings and the yellow beam. The group ends at the middle of the
+   screen and the beam hangs half below it. It waits above the screen until stage 1 drops it in
+   on an overshooting spring. */
+.loader-lift {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  pointer-events: none;
+  transform: translateY(calc(-100% - var(--fs) * 1.3));
+  will-change: transform;
+}
+.loader.st-1 .loader-lift,
+.loader.st-2 .loader-lift {
+  transform: translateY(0);
+  transition: transform calc(1.15s * var(--k)) cubic-bezier(0.3, 1.32, 0.45, 1);
+}
+.loader-cable {
+  position: relative;
+  flex: 1 1 auto;
+  width: 2px;
+  background: color-mix(in srgb, var(--gd-cloud) 62%, transparent);
+}
+/* Carries the cable up past the top of the screen while the lift travels. */
+.loader-cable::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  width: 2px;
+  height: 120vh;
+  background: inherit;
+}
+.loader-hook {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 0 0 2px var(--gd-ink),
+    0 0 0 1px color-mix(in srgb, var(--gd-cloud) 40%, transparent);
+}
+.loader-slings {
+  flex: none;
+  display: block;
+  width: calc(var(--bw) * 0.72);
+  height: clamp(34px, 7vh, 72px);
+  overflow: visible;
+}
+.loader-slings path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--gd-cloud) 70%, transparent);
+  stroke-width: 2;
+}
+.loader-beam {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--bw);
+  height: calc(var(--fs) * 1.06);
+  margin-bottom: calc(var(--fs) * -0.53);
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 calc(var(--fs) * 0.07) 0 color-mix(in srgb, var(--gd-ink) 22%, transparent),
+    inset 0 calc(var(--fs) * -0.07) 0 color-mix(in srgb, var(--gd-ink) 22%, transparent),
+    0 30px 60px -30px color-mix(in srgb, var(--gd-black) 80%, transparent);
+}
+.loader-wm {
+  display: block;
+  font-size: var(--fs);
+  line-height: 0.8;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--gd-ink);
+  padding-top: 0.04em;
+}
+
+.loader-foot {
+  position: absolute;
+  z-index: 3;
+  left: clamp(18px, 4vw, 56px);
+  right: clamp(18px, 4vw, 56px);
+  bottom: clamp(30px, 4.6vh, 52px);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+}
+.loader-st {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-cloud) 80%, transparent);
+}
+.loader-st i {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  background: var(--gd-brass);
+  animation: loader-blink 1.1s steps(2, jump-none) infinite;
+}
+@keyframes loader-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+.loader-cn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.loader-cn small {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-cloud) 64%, transparent);
+}
+.loader-cn b {
+  font-size: clamp(40px, 5.4vw, 84px);
+  line-height: 0.8;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--gd-cloud);
+  font-variant-numeric: tabular-nums;
+}
+.loader-line {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  height: 3px;
+  background: color-mix(in srgb, var(--gd-cloud) 10%, transparent);
+}
+.loader-line i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--gd-brass);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+/* The lift-off: the beam is hoisted up and out first, then the hoarding rises off the page.
+   Fixed length (--lift, 950ms) whatever the intro's speed. */
+.loader.is-open {
+  pointer-events: none;
+  cursor: default;
+}
+.loader.is-open .loader-lift {
+  transform: translateY(calc(-100% - var(--fs) * 1.3));
+  transition: transform calc(var(--lift) * 0.55) cubic-bezier(0.6, 0, 0.75, 0.2);
+}
+.loader.is-open .loader-wall {
+  animation: loader-up calc(var(--lift) * 0.78) cubic-bezier(0.7, 0, 0.2, 1) calc(var(--lift) * 0.22) both;
+}
+@keyframes loader-up {
+  to {
+    transform: translateY(-100%);
+  }
+}
+.loader.is-open .loader-jib {
+  animation: loader-jb calc(var(--lift) * 0.5) cubic-bezier(0.6, 0, 0.4, 1) calc(var(--lift) * 0.2) both;
+}
+@keyframes loader-jb {
+  to {
+    transform: translateY(-60px);
+  }
+}
+.loader.is-open .loader-top,
+.loader.is-open .loader-foot,
+.loader.is-open .loader-line {
+  animation: loader-fo calc(var(--lift) * 0.24) ease both;
+}
+@keyframes loader-fo {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 809px) {
+  .loader-grid {
+    background-size: 48px 48px;
+  }
+  .loader-tag em {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .loader {
+    display: none !important;
+  }
+}

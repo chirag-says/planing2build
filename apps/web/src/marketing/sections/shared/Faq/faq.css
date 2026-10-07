@@ -1,0 +1,437 @@
+/*
+ * "09 · Questions": sticky intro on the left, group tabs and the accordion on the right.
+ * Phone (< 810px) and tablet (810–1099px) rules sit in the container queries at the end so they
+ * win over the base rules with the same specificity.
+ */
+.gd.faq {
+  --faq-hd: clamp(44px, 4.4vw, 64px);
+  padding: clamp(96px, 9.4vw, 152px) 0;
+}
+.gd.faq .gd-wrap {
+  --pad: 56px;
+}
+
+/* eyebrow = the hero's site label: mono caps + the square live dot */
+.gd.faq .gd-eb {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: inherit;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+}
+.gd.faq .gd-eb i {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 1.5px var(--gd-ink);
+  animation: gd-blink 1.6s ease-in-out 3;
+}
+
+/* headline: display caps; the accent run rides the yellow beam, lowered in from above on two slings */
+.gd.faq .gd-hd {
+  letter-spacing: 0.004em;
+  text-transform: uppercase;
+  text-wrap: normal;
+  font-weight: var(--gd-font-dw, 800);
+}
+.gd.faq .gd-hd-w {
+  position: relative;
+  isolation: isolate;
+  padding: 0.07em 0.04em 0.1em;
+  margin: -0.07em -0.04em -0.1em;
+}
+.gd.faq .gd-it {
+  font: inherit;
+  font-style: normal;
+  letter-spacing: inherit;
+  color: var(--gd-ink);
+  padding: 0;
+}
+.gd.faq .gd-hd-w.is-accw::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0.15em;
+  bottom: 0.1em;
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 0.05em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent),
+    inset 0 -0.05em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent);
+  translate: 0 -135%;
+  transition: translate 1.15s cubic-bezier(0.3, 1.35, 0.45, 1) 0.5s;
+}
+.gd.faq .gd-hd-w.is-accw::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 0.15em;
+  background-image:
+    linear-gradient(var(--c1, transparent), var(--c1, transparent)),
+    linear-gradient(var(--c2, transparent), var(--c2, transparent));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position:
+    22% 0,
+    78% 0;
+  translate: 0 -900%;
+  transition: translate 1.15s cubic-bezier(0.3, 1.35, 0.45, 1) 0.5s;
+}
+.gd.faq.is-in .gd-hd .gd-hd-w.is-accw::before,
+.gd.faq.is-in .gd-hd .gd-hd-w.is-accw::after {
+  translate: 0 0;
+}
+/* the slings: one at the left of the first accent word, one at the right of the last */
+.gd.faq .gd-hd-w:not(.is-accw) + .gd-hd-w.is-accw,
+.gd.faq .gd-hd-w.is-accw:first-child {
+  padding-left: 0.16em;
+  margin-left: 0;
+  --c1: var(--gd-ink);
+}
+.gd.faq .gd-hd-w.is-accw:last-child {
+  white-space: nowrap;
+  padding-right: 0.16em;
+  --c2: var(--gd-ink);
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(40px, 6vw, 112px);
+  align-items: start;
+}
+.faq-side {
+  position: sticky;
+  top: 112px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.faq-h {
+  margin-top: 22px !important;
+}
+.faq-sub {
+  margin: 26px 0 30px;
+  max-width: 400px;
+  font-size: 17px;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--gd-ink) 82%, var(--gd-bone));
+}
+/* phone and email: a brass underline that fills the link on hover */
+.faq-sub a {
+  color: var(--gd-ink);
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  background: linear-gradient(var(--gd-brass), var(--gd-brass)) 0 100% / 100% 3px no-repeat;
+  padding-bottom: 2px;
+  transition: background-size 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.faq-sub a:hover,
+.faq-sub a:focus-visible {
+  background-size: 100% 100%;
+}
+
+/* group tabs: square site tags */
+.faq-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 26px;
+}
+.faq-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  box-shadow: inset 0 0 0 2px var(--gd-ink);
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    translate 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.faq-tabs button i {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--gd-mut);
+  transition: color 0.3s;
+}
+.faq-tabs button:hover {
+  translate: 0 -2px;
+  background: color-mix(in srgb, var(--gd-ink) 7%, transparent);
+}
+.faq-tabs button.is-on {
+  background: var(--gd-ink);
+  color: var(--gd-cloud);
+}
+.faq-tabs button.is-on i {
+  color: var(--gd-brass);
+}
+
+/* rows between 2px ink rules */
+.faq-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 2px solid var(--gd-ink);
+}
+.faq-row {
+  position: relative;
+  border-top: 2px solid var(--gd-ink);
+  --t: 1;
+}
+/*
+ * Scroll entrance: a row's progress --t runs 0 -> 1 over the 1/9 of the section's pass (--sp)
+ * that follows its own start point --a, fading it in and lifting it the last 52px.
+ */
+.faq-main.is-sc .faq-row {
+  --t: clamp(0, calc((var(--sp) - var(--a)) * 9), 1);
+  opacity: var(--t);
+  translate: 0 calc((1 - var(--t)) * 52px);
+}
+.faq-q {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+.faq-q button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 22px;
+  width: 100%;
+  padding: 24px 0;
+  border: 0;
+  background: none;
+  color: var(--gd-ink);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+/*
+ * The reference also declares min-width: 40px here, but the kit's later `.gd * { min-width: 0 }`
+ * (same specificity) overrode it on desktop and tablet, so the tag hugs its text. Only the
+ * phone rule, which is more specific, sets a minimum.
+ */
+.faq-tag {
+  align-self: start;
+  margin: 0.5em 0 0 2px;
+  text-align: center;
+  padding: 3px 0;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  box-shadow: 0 0 0 1.5px var(--gd-ink);
+  transition: background 0.35s;
+}
+.faq-row.is-open .faq-tag {
+  background: var(--gd-brass);
+}
+.faq-qt {
+  font-size: clamp(27px, 2.15vw, 32px);
+  line-height: 0.98;
+  letter-spacing: 0.006em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+/* plus/minus: the vertical bar drops out through the bottom of the box when the row opens */
+.faq-pm {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 2px var(--gd-ink);
+  overflow: hidden;
+  transition: background 0.35s;
+}
+.faq-pm i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 2.5px;
+  margin: -1.25px 0 0 -7px;
+  background: var(--gd-ink);
+  transition:
+    transform 0.5s cubic-bezier(0.6, 0, 0.2, 1),
+    opacity 0.3s ease 0.1s;
+}
+.faq-pm i:last-child {
+  transform: rotate(90deg);
+}
+.faq-row.is-open .faq-pm {
+  background: var(--gd-brass);
+}
+.faq-row.is-open .faq-pm i:last-child {
+  transform: translateY(30px) rotate(90deg);
+  opacity: 0;
+}
+/*
+ * Answer: the grid row animates 0fr <-> 1fr. Closing keeps it visible until the 0.6s collapse
+ * is over, then hides it from assistive tech and the tab order.
+ */
+.faq-a {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+    visibility 0s linear 0.6s;
+}
+.faq-row.is-open .faq-a {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition:
+    grid-template-rows 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+    visibility 0s;
+}
+.faq-ai {
+  min-height: 0;
+  overflow: hidden;
+  padding-left: 64px;
+  padding-right: 60px;
+}
+.faq-ai p {
+  margin: 0;
+  max-width: 600px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--gd-ink) 84%, var(--gd-bone));
+}
+.faq-grp {
+  display: block;
+  margin-top: 14px;
+  padding-bottom: 28px;
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+}
+.faq-ai p:last-child {
+  padding-bottom: 28px;
+}
+.faq-grp::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+  margin-right: 10px;
+  vertical-align: middle;
+  background: var(--gd-ink);
+}
+/* hover: a yellow beam grows along the rule under the row */
+.faq-beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: var(--gd-brass);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+}
+.faq-row:hover .faq-beam,
+.faq-row:focus-within .faq-beam {
+  transform: none;
+}
+.faq-row:hover .faq-pm {
+  background: var(--gd-brass);
+}
+
+/* tablet */
+@container site (min-width: 810px) and (max-width: 1099.98px) {
+  .gd.faq .gd-wrap {
+    --pad: 32px;
+  }
+  .faq .faq-grid {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: 36px;
+  }
+}
+
+/* phone */
+@container site (max-width: 809.98px) {
+  .gd.faq {
+    --faq-hd: clamp(40px, 11.6vw, 52px);
+    padding: 76px 0 84px;
+  }
+  .gd.faq .gd-wrap {
+    --pad: 18px;
+  }
+  .faq .faq-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 44px;
+  }
+  .faq .faq-side {
+    position: static;
+  }
+  .faq .faq-sub {
+    font-size: 16px;
+    margin: 20px 0 24px;
+  }
+  .faq .faq-tabs {
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .faq .faq-tabs button {
+    min-height: 44px;
+    padding: 0 12px;
+    font-size: 11.5px;
+    gap: 8px;
+  }
+  .faq .faq-q button {
+    gap: 12px;
+    padding: 20px 0;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  .faq .faq-qt {
+    font-size: 25px;
+  }
+  .faq .faq-pm {
+    width: 34px;
+    height: 34px;
+  }
+  .faq .faq-ai {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .faq .faq-ai p {
+    font-size: 16px;
+  }
+  .faq .faq-tag {
+    font-size: 11px;
+    min-width: 34px;
+    padding: 2px 0;
+    margin-top: 0.45em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gd.faq .gd-hd-w.is-accw::before,
+  .gd.faq .gd-hd-w.is-accw::after {
+    translate: 0 0 !important;
+  }
+}

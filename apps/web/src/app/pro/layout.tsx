@@ -22,7 +22,7 @@ export default async function ProLayout({ children }: { children: React.ReactNod
   ];
   return (
     <>
-      <HeaderNav brand={t("title")} signedIn={signedIn} links={signedIn ? links : []} />
+      <HeaderNav brand={t("title")} tag={t("tag")} signedIn={signedIn} links={signedIn ? links : []} />
       {children}
     </>
   );

@@ -2,6 +2,7 @@
 
 import { cn } from "cn";
 import { CircleUserRoundIcon, LogOutIcon, MenuIcon, FolderOpenIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -25,6 +26,7 @@ import {
 } from "@/components/ui/sheet";
 import { browserApi } from "@/lib/api/browser";
 import { getTranslator } from "@/lib/i18n";
+import logo from "@/marketing/assets/plan2build-logo.png";
 
 const t = getTranslator("Nav");
 
@@ -55,16 +57,20 @@ function useSignOut() {
 /**
  * The shell header shared by every host (UI_DESIGN_SYSTEM.md section 9). Each host passes its own
  * brand, links and account links; the behaviour (current page, account menu, phone menu, skip
- * link) is the same everywhere.
+ * link) is the same everywhere. The look is the public website's header bar: the logo with its
+ * mono tag, mono caps links, and the brass square on the current page.
  */
 export function HeaderNav({
   brand,
+  tag,
   links,
   accountLinks = [],
   signedIn,
   signInHref = "/sign-in",
 }: {
   brand: string;
+  /** Small caps line under the logo ("Homeowner", "Professionals"). */
+  tag?: string;
   links: NavLink[];
   accountLinks?: NavLink[];
   signedIn: boolean;
@@ -84,30 +90,40 @@ export function HeaderNav({
           onClick={onNavigate}
           aria-current={current ? "page" : undefined}
           className={cn(
-            "inline-flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground sm:min-h-10",
-            current && "text-foreground underline decoration-2 underline-offset-8",
-            stacked && "w-full text-base",
+            "inline-flex min-h-11 items-center gap-2 rounded-md px-3 font-mono text-xs tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground sm:min-h-10",
+            current && "text-foreground",
+            stacked && "w-full text-sm",
           )}
         >
+          <span
+            aria-hidden="true"
+            className={cn(
+              "size-2 bg-brand ring-1 ring-foreground transition-transform",
+              current ? "scale-100" : "scale-0",
+            )}
+          />
           {link.label}
         </Link>
       );
     });
 
   return (
-    <header className="border-b border-border bg-background">
+    <header className="border-b-2 border-foreground/10 bg-background">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2"
       >
         {t("skip")}
       </a>
-      <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Link
-          href="/"
-          className="font-heading text-lg font-semibold tracking-tight"
-        >
-          {brand}
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:h-18 sm:px-6">
+        <Link href="/" className="flex shrink-0 flex-col gap-1 rounded-md">
+          <Image src={logo} alt="" className="h-7 w-auto sm:h-8" priority />
+          <span className="sr-only">{brand}</span>
+          {tag && (
+            <span aria-hidden="true" className="font-mono text-[0.625rem] tracking-widest text-muted-foreground uppercase">
+              {tag}
+            </span>
+          )}
         </Link>
 
         <nav aria-label={t("main")} className="hidden items-center gap-1 sm:flex">

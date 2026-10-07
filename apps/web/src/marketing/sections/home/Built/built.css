@@ -1,0 +1,689 @@
+/*
+ * "Built by Girder" (reference class prefix `gdbl`).
+ *
+ * Variables written per frame by BuiltSection while pinned:
+ *   --car  lift position on the level rail, 0 (first floor) to 1 (last floor)
+ *   --cw   wipe progress of the photo currently coming in (0 when none is), drives the slab
+ *   --c    per photo: how far it has wiped up over the photos below it
+ *
+ * Layouts: `.built-pin` (desktop, tablet) and `.built-stackwrap` (phone under 810px, or reduced
+ * motion). Only one is mounted once the section has measured itself; before that both are
+ * rendered and the rules at the end of this file show the right one.
+ */
+.built {
+  --car: 0;
+  --cw: 0;
+  /* every stage photo is this shape; frames take it so no photo is ever cropped */
+  --photo-ratio: 1240 / 1268;
+  --line: color-mix(in srgb, var(--gd-cloud) 22%, transparent);
+}
+.built-pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  min-height: 600px;
+  overflow: hidden;
+}
+.built-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--gd-cloud) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--gd-cloud) 5%, transparent) 1px, transparent 1px);
+  background-size: 72px 72px;
+  background-position: 56px 0;
+  -webkit-mask-image: linear-gradient(90deg, var(--gd-black) 0, transparent 60%);
+  mask-image: linear-gradient(90deg, var(--gd-black) 0, transparent 60%);
+}
+.gd.built .gd-eb {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: inherit;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-cloud) 80%, transparent);
+}
+.gd.built .gd-eb i {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  background: var(--gd-brass);
+}
+.built-stage {
+  position: relative;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) clamp(390px, 31vw, 470px);
+  column-gap: 44px;
+  /* clear the fixed site header, which drops back in whenever the page scrolls up */
+  padding-top: calc(var(--gd-hdh, 82px) + clamp(20px, 3.5vh, 36px));
+  padding-bottom: clamp(24px, 5vh, 56px);
+}
+.gd.built .gd-btn.gd-solid {
+  --face: var(--gd-cloud);
+  --rim: transparent;
+  --fg: var(--gd-ink);
+  --chip: var(--gd-brass);
+  --chipfg: var(--gd-ink);
+  --chip2: var(--gd-ink);
+  --chipfg2: var(--gd-brass);
+  --hl: var(--gd-brass);
+  --hlfg: var(--gd-ink);
+}
+
+/* level rail: L01 at the bottom, the yellow lift car rides up it with --car */
+.built-rail {
+  position: relative;
+  padding: 38px 0 10px;
+}
+.built-track {
+  position: relative;
+  height: 100%;
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+}
+.built-track::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--line);
+}
+.built-done {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--gd-brass);
+  transform-origin: 50% 100%;
+  transform: scaleY(var(--car));
+}
+.built-lv {
+  position: absolute;
+  left: 50%;
+  padding: 5px 0;
+  translate: -50% -50%;
+  background: var(--gd-night);
+  color: color-mix(in srgb, var(--gd-cloud) 62%, transparent);
+  white-space: nowrap;
+}
+.built-lift {
+  position: absolute;
+  inset: 0;
+  transform: translateY(calc((1 - var(--car)) * 100%));
+  pointer-events: none;
+  will-change: transform;
+}
+.built-car {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 34px;
+  translate: -50% -50%;
+  background: var(--gd-brass);
+  color: var(--gd-ink);
+  font-weight: 600;
+  box-shadow:
+    inset 0 3px 0 color-mix(in srgb, var(--gd-ink) 24%, transparent),
+    inset 0 -3px 0 color-mix(in srgb, var(--gd-ink) 24%, transparent);
+}
+
+/* photo: a dimension line draws across on hover; photos wipe up over each other */
+.built-view {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 0;
+  container-type: size;
+  /* the largest box of the photo's shape that fits under the dimension line */
+  --fw: min(100cqw, (100cqh - 38px) * var(--photo-ratio));
+}
+.built-dim {
+  position: relative;
+  flex: none;
+  width: var(--fw);
+  height: 38px;
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gd-brass);
+}
+.built-dim i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 14px;
+  height: 1.5px;
+  background: var(--gd-brass);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  transition: transform 0.9s cubic-bezier(0.7, 0, 0.2, 1);
+}
+.built-dim::before,
+.built-dim::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  width: 1.5px;
+  height: 13px;
+  background: var(--gd-brass);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.built-dim::before {
+  left: 0;
+}
+.built-dim::after {
+  right: 0;
+  transition-delay: 0.7s;
+}
+.built-dim span {
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  translate: -50% 0;
+  padding: 0 12px;
+  background: var(--gd-night);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.35s;
+}
+.built-view:hover .built-dim i {
+  transform: none;
+}
+.built-view:hover .built-dim::before,
+.built-view:hover .built-dim::after,
+.built-view:hover .built-dim span {
+  opacity: 1;
+}
+.built-frame {
+  position: relative;
+  display: block;
+  flex: none;
+  width: var(--fw);
+  aspect-ratio: var(--photo-ratio);
+  border-radius: 6px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--gd-cloud) 8%, var(--gd-night));
+}
+.built-zoom {
+  position: absolute;
+  inset: 0;
+}
+.built-ph {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(calc((1 - var(--c)) * 100%) 0 0 0);
+}
+.built-ph img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+/* the slab: a yellow floor plate riding the top edge of the photo being wiped in, visible only mid-wipe */
+.built-slab {
+  position: absolute;
+  z-index: 8;
+  inset: 0;
+  transform: translateY(calc((1 - var(--cw)) * 100%));
+  opacity: min(1, calc(var(--cw) * (1 - var(--cw)) * 60));
+  pointer-events: none;
+}
+.built-slab::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -5px;
+  height: 10px;
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 2px 0 color-mix(in srgb, var(--gd-ink) 26%, transparent),
+    inset 0 -2px 0 color-mix(in srgb, var(--gd-ink) 26%, transparent);
+}
+.built-tag {
+  position: absolute;
+  z-index: 9;
+  left: 14px;
+  bottom: 14px;
+  padding: 7px 10px;
+  background: var(--gd-brass);
+  color: var(--gd-ink);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* copy */
+.built-info {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-top: 6px;
+}
+.built-info-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--line);
+}
+.built-count {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: color-mix(in srgb, var(--gd-cloud) 72%, transparent);
+  white-space: nowrap;
+}
+.built-count b {
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--gd-cloud);
+  font-variant-numeric: tabular-nums;
+}
+.built-body {
+  display: flex;
+  flex-direction: column;
+  margin: auto 0;
+  padding: 20px 0;
+}
+.built-name {
+  margin: 0;
+  font-size: clamp(56px, min(5.4vw, 10.4vh), 92px);
+  line-height: 0.88;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.built-meta {
+  margin: 16px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-cloud) 76%, transparent);
+}
+.built-sum {
+  margin: 14px 0 0;
+  max-width: 420px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--gd-cloud) 86%, transparent);
+}
+/* text swap: every changing piece of copy is remounted per project and rises in */
+.built-sw {
+  display: inline-block;
+  animation: built-sw 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes built-sw {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.built-specs {
+  margin: 22px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+.built-spec {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.built-spec dt {
+  flex: none;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-cloud) 70%, transparent);
+}
+.built-spec dd {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--gd-cloud);
+}
+.built-spec.is-res {
+  margin-top: 12px;
+  padding: 13px 16px;
+  border: 0;
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 4px 0 color-mix(in srgb, var(--gd-ink) 20%, transparent),
+    inset 0 -4px 0 color-mix(in srgb, var(--gd-ink) 20%, transparent);
+}
+.built-spec.is-res dt {
+  color: var(--gd-ink);
+}
+.built-spec.is-res dd {
+  color: var(--gd-ink);
+  font-size: 24px;
+}
+.built-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+.built-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 18px;
+  border-top: 2px solid var(--line);
+}
+.built-nb {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gd-cloud) 40%, transparent);
+  color: var(--gd-cloud);
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    box-shadow 0.3s,
+    transform 0.4s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.built-nb:hover {
+  background: var(--gd-brass);
+  color: var(--gd-ink);
+  box-shadow: inset 0 0 0 2px var(--gd-brass);
+}
+.built-nb:active {
+  transform: scale(0.94);
+}
+.built-nb[aria-disabled='true'] {
+  cursor: default;
+  background: none;
+  color: color-mix(in srgb, var(--gd-cloud) 38%, transparent);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gd-cloud) 15%, transparent);
+}
+.built-pips {
+  display: flex;
+  gap: 5px;
+  flex: 1;
+  margin-left: 14px;
+}
+.built-pips i {
+  flex: 1;
+  height: 4px;
+  background: color-mix(in srgb, var(--gd-cloud) 20%, transparent);
+  transition: background 0.4s;
+}
+.built-pips i.is-on {
+  background: var(--gd-brass);
+}
+
+/*
+ * Pinned only (never phone or reduced motion): the section is (n + 0.6) viewports tall, and on
+ * short screens the copy column tightens. The reference keyed these on its `is-pin` class.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @container site (min-width: 810px) {
+    .built.is-pin {
+      height: calc((var(--n) + 0.6) * 100vh);
+      height: calc((var(--n) + 0.6) * 100svh);
+    }
+    @media (max-height: 800px) {
+      .built.is-pin .built-spec {
+        padding: 8px 0;
+      }
+      .built.is-pin .built-spec dd {
+        font-size: 22px;
+      }
+      .built.is-pin .built-spec.is-res {
+        padding: 10px 14px;
+      }
+      .built.is-pin .built-btns {
+        margin-top: 16px;
+      }
+      .built.is-pin .built-specs {
+        margin-top: 16px;
+      }
+      .built.is-pin .built-body {
+        padding: 12px 0;
+      }
+      .built.is-pin .built-nav,
+      .built.is-pin .built-info-top {
+        padding-block: 12px;
+      }
+    }
+  }
+  @container site (min-width: 1100px) {
+    @media (max-height: 800px) {
+      .built.is-pin .built-sum {
+        display: none;
+      }
+    }
+  }
+}
+
+/*
+ * Tablet: photo on top, copy in two columns under it. Same specificity as the short-screen
+ * rules above and later, so it wins over them as the reference's `.is-tab` rules did.
+ */
+@container site (min-width: 810px) and (max-width: 1099.98px) {
+  .gd.built .built-stage {
+    grid-template-columns: 52px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    column-gap: 28px;
+    row-gap: 22px;
+    padding-top: calc(var(--gd-hdh, 64px) + 20px);
+    padding-bottom: 32px;
+  }
+  .gd.built .built-rail {
+    grid-row: 1/3;
+  }
+  .gd.built .built-car {
+    width: 52px;
+  }
+  .gd.built .built-info {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 28px;
+    padding-top: 0;
+  }
+  .gd.built .built-info-top {
+    grid-column: 1/-1;
+    padding-bottom: 14px;
+  }
+  .gd.built .built-body {
+    grid-column: 1/-1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 28px;
+    align-items: start;
+    margin: 0;
+    padding: 18px 0;
+  }
+  .gd.built .built-name {
+    grid-column: 1;
+    font-size: clamp(48px, 6.6vw, 64px);
+  }
+  .gd.built .built-meta {
+    grid-column: 1;
+  }
+  .gd.built .built-sum {
+    grid-column: 1;
+    font-size: 16px;
+  }
+  .gd.built .built-btns {
+    grid-column: 1;
+    margin-top: 18px;
+  }
+  .gd.built .built-specs {
+    grid-column: 2;
+    grid-row: 1/6;
+    margin-top: 0;
+  }
+  .gd.built .built-nav {
+    grid-column: 1/-1;
+    padding-top: 14px;
+  }
+}
+
+/* stacked: phone and reduced motion */
+.built-stackwrap {
+  padding-top: 96px;
+  padding-bottom: 104px;
+}
+.built-shead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  margin-bottom: 28px;
+  border-bottom: 2px solid var(--line);
+}
+.built-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 72px 40px;
+}
+.built-card-ph {
+  position: relative;
+  margin-bottom: 22px;
+}
+/* the whole photo, no parallax overscan (the kit's reveal still settles it from 1.28x to 1x) */
+.built-card-ph .gd-um {
+  aspect-ratio: var(--photo-ratio);
+}
+.built-card-ph .gd-um img {
+  top: 0;
+  height: 100%;
+  object-fit: contain;
+  translate: none;
+}
+/* comes after the tablet block at equal specificity, so it wins there, as in the reference */
+.built .built-stackwrap .built-name {
+  font-size: clamp(44px, 5vw, 72px);
+}
+.built-all {
+  margin-top: 56px;
+  padding-top: 28px;
+  border-top: 2px solid var(--line);
+}
+/* each card's copy rises in when that card reveals (its own `is-on`), not with the section */
+.built-rv {
+  opacity: 0;
+  translate: 0 var(--rv-y, 22px);
+  transition:
+    opacity 0.9s ease var(--rv-d, 0ms),
+    translate 1s cubic-bezier(0.2, 0.8, 0.2, 1) var(--rv-d, 0ms);
+}
+.built-card.is-on .built-rv {
+  opacity: 1;
+  translate: 0 0;
+}
+@container site (max-width: 809.98px) {
+  .built .built-stackwrap {
+    --pad: 18px;
+    padding-top: 72px;
+    padding-bottom: 80px;
+  }
+  .built-stackwrap .built-cards {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 56px;
+  }
+  .built-stackwrap .built-card-ph {
+    margin-bottom: 18px;
+  }
+  .built .built-stackwrap .built-name {
+    font-size: clamp(40px, 12.4vw, 72px);
+  }
+  .built-stackwrap .built-meta {
+    margin-top: 12px;
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+  }
+  .built-stackwrap .built-sum {
+    font-size: 16px;
+    margin-top: 12px;
+  }
+  .built-stackwrap .built-specs {
+    margin-top: 18px;
+  }
+  .built-stackwrap .built-spec dd {
+    font-size: 24px;
+  }
+  .built-stackwrap .built-spec.is-res {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .built-stackwrap .built-spec.is-res dd {
+    text-align: left;
+  }
+  .built-stackwrap .built-btns {
+    margin-top: 20px;
+  }
+  .built-stackwrap .built-all {
+    margin-top: 44px;
+    padding-top: 24px;
+  }
+}
+
+/* which layout shows before the section has measured itself (afterwards only one is mounted) */
+@container site (max-width: 809.98px) {
+  .built-pin {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .built-pin {
+    display: none;
+  }
+  .gd.built .built-sw {
+    animation: none !important;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @container site (min-width: 810px) {
+    .built-stackwrap {
+      display: none;
+    }
+  }
+}

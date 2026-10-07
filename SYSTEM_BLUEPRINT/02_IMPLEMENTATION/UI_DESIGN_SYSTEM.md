@@ -3,9 +3,9 @@
 | Item | Value |
 |---|---|
 | Document | `SYSTEM_BLUEPRINT/02_IMPLEMENTATION/UI_DESIGN_SYSTEM.md` |
-| Version | 1.1 (2026-10-04: approved by Chirag as the frontend standard for all three hosts; desktop step row; desktop axe; page titles; raw-colour check) |
-| Status | APPROVED (Chirag, 2026-10-04) as the frontend implementation standard for every homeowner, professional and operations screen. A change to a rule here is a change to this document, with a reason |
-| Decided by | Chirag, 2026-10-04: shadcn/ui on Radix, Tailwind CSS, Lucide; no other component library; restrained construction look; light theme only |
+| Version | 1.2 DRAFT (2026-10-07: UI-01 resolved with the Plan2Build brand of the public website; brand tokens and typefaces; dark brand surfaces; motion from the public website; public website layer, section 16). 1.1 (2026-10-04: approved by Chirag as the frontend standard for all three hosts; desktop step row; desktop axe; page titles; raw-colour check) |
+| Status | 1.1 APPROVED (Chirag, 2026-10-04) as the frontend implementation standard for every homeowner, professional and operations screen. 1.2 requested by Chirag on 2026-10-07 (every screen in the look and motion of the public website) and awaits sign-off. A change to a rule here is a change to this document, with a reason |
+| Decided by | Chirag, 2026-10-04: shadcn/ui on Radix, Tailwind CSS, Lucide; no other component library; restrained construction look; light theme only. Chirag, 2026-10-07: the public website's brand (bone, ink and brass; Big Shoulders Display, Barlow, Reddit Mono; blueprint grid, site boards, hazard edge) and its motion apply to every screen |
 | Code | `apps/web/src/app/globals.css` (tokens), `apps/web/src/components/ui/` (primitives), `apps/web/src/components/plan2build/` (Plan2Build components), `apps/web/components.json` (shadcn configuration) |
 | Checks | `python tools/check_contrast.py` (token contrast), `python tools/check_ui_tokens.py` (no raw colours outside the token file), axe in the Playwright suite on a phone and a desktop viewport (WCAG 2.0, 2.1 and 2.2 A/AA), `pnpm lint:web` |
 
@@ -41,17 +41,31 @@ All values live in `globals.css` as CSS variables in OKLCH, mapped to Tailwind t
 
 ### 3.1 Colour
 
-Warm stone neutrals and a charcoal primary. Colour carries state, selection and focus; it is never decoration. No brand colour and no brand typeface until the brand specification is approved (UI-01); `tools/check_ui_tokens.py` fails on any colour value outside `globals.css`.
+The Plan2Build brand of the public website (UI-01, resolved in 1.2): bone grounds, ink text and actions, brass for selection and highlight. Colour carries brand surfaces, state, selection and focus. Brass is a surface colour (selected chip, accent plate, step marker); it is never body text on a light ground. `tools/check_ui_tokens.py` fails on any colour value outside `globals.css`.
+
+| Brand token | Value | Use |
+|---|---|---|
+| `bone` | `oklch(0.925 0.008 91.5)` | Page ground |
+| `ink` | `oklch(0.203 0.008 248.2)` | Text, primary actions, site boards |
+| `brass` | `oklch(0.848 0.168 85.2)` | Selection, accent plates, chips, hazard stripe |
+| `pine` | `oklch(0.302 0.025 241.7)` | Secondary dark surface |
+| `fog` | `oklch(0.845 0.011 89.7)` | Quiet panels |
+| `stone` | `oklch(0.543 0.008 248)` | Rules and marks on dark grounds |
+| `cloud` | `oklch(1 0 0)` | Answer chips, text on dark grounds |
+| `night` | `oklch(0.171 0.006 237)` | Dark page ground (sign-in backdrop, footer) |
+
+Dark brand surfaces (a site board, the footer, the sign-in backdrop) set the class `surface-dark`, which redefines `background`, `foreground`, `muted-foreground`, `border` and `ring` inside it. This is a surface, not a dark mode: there is no theme switch.
 
 | Token | Use | Contrast (checked) |
 |---|---|---|
 | `background`, `foreground` | Page and body text | 17.5:1 |
 | `muted`, `muted-foreground` | Panels; secondary text, help text, captions | 7.6:1 on background, 7.0:1 on muted |
-| `primary`, `primary-foreground` | Primary actions, selected choice, rank numbers | 14.6:1 |
+| `primary`, `primary-foreground` | Primary actions, rank numbers | 14.6:1 |
+| `brand`, `brand-foreground` | Selected choice, accent plate, current step (brass with ink text) | 11.2:1 |
 | `secondary`, `accent` | Secondary buttons; hover and selected backgrounds | text on accent 15.3:1 |
 | `border` | Dividers and card outlines (decorative) | not a boundary of a control |
 | `input` | Every control border (inputs, choice cards, checkboxes) | 4.3:1 (WCAG 1.4.11 needs 3:1) |
-| `ring` | Focus indicator (blue) | 6.7:1 |
+| `ring` | Focus indicator (ink on light grounds, cloud inside `surface-dark`) | 14.4:1 |
 | `destructive`, `destructive-muted` | Errors, failed and rejected states | 6.4:1; 5.9:1 on its background |
 | `success`, `success-muted` | Done, available, accepted | 6.8:1 on its background |
 | `warning`, `warning-muted` | Needs attention, demo data, on hold | 6.9:1 on its background |
@@ -61,11 +75,12 @@ State colours come in pairs: the strong value for text, icons and borders, `-mut
 
 ### 3.2 Typography
 
-System font stack (`ui-sans-serif, system-ui, Segoe UI, Roboto`) until brand typography is chosen; nothing is fetched from font services. Body text is 16 px everywhere, including inputs (no zoom on iOS).
+Three self-hosted typefaces (UI-01), loaded with `next/font/local` from `apps/web/src/fonts` (latin subsets only); nothing is fetched from font services. Big Shoulders Display for headings (uppercase, 800), Barlow for body text, Reddit Mono for labels, eyebrows, figures and status text. Body text is 16 px everywhere, including inputs (no zoom on iOS).
 
 | Role | Classes |
 |---|---|
-| Page title (h1, `PageHeader`) | `text-2xl sm:text-3xl font-semibold tracking-tight`; home hero `text-3xl sm:text-5xl` |
+| Page title (h1, `PageHeader`) | `font-heading uppercase` `text-4xl sm:text-5xl`, the accent words on the brass plate; home hero as in the public website |
+| Eyebrow and labels | `font-mono uppercase text-xs tracking-widest` with a brass square marker |
 | Section (h2, `SectionHeader`, wizard step) | `text-xl` (step `sm:text-2xl`) `font-semibold` |
 | Sub-section (h3, card titles) | `text-base` or `text-lg font-semibold` |
 | Body | `text-base` |
@@ -91,9 +106,9 @@ Tailwind's 4 px scale only; no arbitrary pixel values.
 
 ### 3.4 Radius, borders, elevation
 
-`--radius` is 0.375 rem (6 px): `rounded-md` for controls, `rounded-lg` for cards, `rounded-sm` for badges. Pills and large radii are not used.
+`--radius` is 0.5 rem (8 px): `rounded-md` for controls and chips, `rounded-lg` for cards and buttons, `rounded-sm` for badges. Pills and large radii are not used, except the eyebrow tag of the public website.
 
-Cards have a 1 px `border` outline and no shadow. Shadows are reserved for surfaces that float above the page (dropdown menus, dialogs, sheets). Overlays dim the page (`bg-foreground/40`) and do not blur it.
+Cards have a 1 px `border` outline and no shadow. Two brand surfaces carry the public website's single soft drop shadow: the hanging card (sign-in and form screens) and the site board. Shadows are reserved for surfaces that float above the page (dropdown menus, dialogs, sheets). Overlays dim the page (`bg-foreground/40`) and do not blur it.
 
 ### 3.5 Breakpoints
 
@@ -185,13 +200,24 @@ Homeowner host: `HomeownerHeader` (server, reads `/me`) with `HeaderNav` (client
 
 The professional and operations hosts use the same tokens and primitives with their own header and navigation when their slices start; until then they render `FoundationShell`.
 
+Public pages of the homeowner host (home, services, for homeowners, for professionals) use the public website header and footer (section 16). That header does not read the session, so the pages stay static; it always offers Sign in, and signed-in pages use `HomeownerHeader`. Header bars, logo and type are the same on both.
+
 ## 10. Icons
 
 Lucide only, imported by name. Size 16 px in buttons and badges (`size-4`, default in the primitives), 20 px in file rows, 24 px for empty and drop areas. Icons next to text are `aria-hidden`; an icon-only button has an `aria-label` that names the action and its object ("Remove site.png", "Move Quality of work up"). Icons support meaning; they never replace a word the user needs.
 
 ## 11. Motion
 
-Only for feedback: dialog and sheet enter and exit, menu open, spinners, progress bars. No decorative or looping animation. `prefers-reduced-motion: reduce` turns transitions and animations off globally.
+The motion of the public website, reused and never reinvented. One signature animation per section; small elements get subtle feedback; much stays still.
+
+| Where | Allowed |
+|---|---|
+| Every screen | Page transition (the hoist plate); the h1 word rise with the brass plate; section entrance (fade and rise once); button feedback (glyph swap, fill, magnetic lean on fine pointers, press); dialog, sheet and menu enter and exit; spinners and progress |
+| Public pages | The loader on the first visit; the section animations of the public website (site board, quote sheets, elevation drawing, stage chart, hanging photo and card, crane, footer lift); smooth scrolling on fine pointers |
+| Sign-in and form screens | The hanging card lowering once on load |
+| Signed-in screens | At most one signature animation per section, playing once; nothing loops |
+
+Looping animation is allowed only on public pages (status dot, handover ticker). `prefers-reduced-motion: reduce` turns transitions and animations off globally. Every animation ends before the Playwright axe check runs.
 
 ## 12. Accessibility standard
 
@@ -222,27 +248,45 @@ Edits made to the generated primitives:
 | spinner | Decorative (`aria-hidden`) instead of a hard-coded English "Loading" status | Text carries meaning; i18n |
 | progress | Track in `border` colour, 8 px | Visible track |
 | alert-dialog, sheet | Overlay `bg-foreground/40`, no backdrop blur | No glass effects |
+| button (1.2) | Label in caps, semibold, wide tracking; 8 px radius; primary carries `p2b-rise` (brass fill rising behind the label, brass chip with an arrow on full-size buttons without an icon); outline and secondary carry `p2b-lift` (lift with an ink underside); press scales to 0.97. Effects live in `globals.css` | The public website's button |
+| input, select, textarea (1.2) | Cloud field (`bg-secondary`), ink border on hover | The public website's answer chip |
+| card (1.2) | Outline in `foreground` at 15% | Paper sheet on the bone ground |
+| badge (1.2) | Mono caps with wide tracking | The public website's labels |
 
-Plan2Build components in `components/plan2build/`: PageContainer, PageHeader, SectionHeader; FormField, FormFieldset, ChoiceGroup, CheckboxGroup, OptionalMark; FormActions; WizardProgress; ConfirmationDialog; Notice, EmptyState, LoadingState; StatusBadge; FileRow; AnswerSummary; ProjectSummaryCard; ProjectBreadcrumb; HomeownerHeader and HeaderNav; feature components (sign-in form, entry questions, enquiry form and page, estimator, create-project button, download button, requirement wizard with its location, ranking, question and uploads fields).
+Plan2Build components in `components/plan2build/`: PageContainer, PageHeader, SectionHeader; HangingCard and CardStep (1.2: sign-in and form screens on the public website's hanging card); FormField, FormFieldset, ChoiceGroup, CheckboxGroup, OptionalMark; FormActions; WizardProgress; ConfirmationDialog; Notice, EmptyState, LoadingState; StatusBadge; FileRow; AnswerSummary; ProjectSummaryCard; ProjectBreadcrumb; HomeownerHeader and HeaderNav; feature components (sign-in form, entry questions, enquiry form and page, estimator, create-project button, download button, requirement wizard with its location, ranking, question and uploads fields).
 
 ## 14. Forbidden patterns
 
 - Another component library, icon set or font service.
-- Raw colour values or Tailwind palette colours in components; colour used as decoration; gradients; glows; glass and blur effects; decorative blobs or illustrations.
-- Large radii and pills on cards and controls; shadows on cards; stacked shadows.
-- Decorative or looping animation; animation that ignores reduced motion.
+- Raw colour values or Tailwind palette colours in components; gradients other than the hazard stripe and the lift shadow of the public website; glows; glass and blur effects; decorative blobs or illustrations other than the blueprint drawings of the public website.
+- Large radii and pills on cards and controls; shadows on plain cards; stacked shadows.
+- Animation outside section 11; looping animation on signed-in screens; animation that ignores reduced motion.
 - Changing page, submitting or saving when an option is chosen.
 - Placeholder text as the only statement of a requirement; asterisks without explanation.
 - Business rules written into components when the API contract publishes them.
-- Marketing copy not supplied by the client.
+- Marketing copy not supplied or approved by the client. Copy drafted from client material ships only after the client approves it (W-01).
 - A separate mobile interface; duplicate JSX for the same pattern on two screens.
-- Dark mode or theme variants before one is approved.
+- Dark mode or theme variants before one is approved (dark brand surfaces, section 3.1, are not a theme).
 
 ## 15. Open points
 
 | ID | Point | Owner |
 |---|---|---|
-| UI-01 | Brand typography and any brand colour; until then system fonts and the charcoal primary | Chirag with the client |
+| UI-01 | Brand typography and colour. Resolved in 1.2 (2026-10-07) with the public website's brand; awaits sign-off | Chirag with the client |
 | UI-02 | Labels for project states after SUBMITTED (section 8) are provisional | With each slice |
 | UI-03 | Nonce-based Content Security Policy (FOUNDATION_PLAN section 6 item 4) | Before Handover 1 |
 | UI-04 | Public pages render on request because the header reads the session (N-29) | Later performance work |
+
+## 16. Public website layer
+
+The public website (home, services, for homeowners, for professionals) was built as its own Next.js project and is ported into `apps/web/src/marketing/`.
+
+| Rule | Value |
+|---|---|
+| Place | `src/marketing/` (sections, layout pieces, hooks, styles); pages in `src/app/ihb/(marketing)/` |
+| Styling | Plain CSS files per section, as in the original project. Pixel values are allowed here; colours only through tokens (`var(--gd-*)` mapped to the brand tokens in `globals.css`, or `color-mix()` of them) |
+| Rendering | Statically generated; the header does not read the session |
+| Copy | In `messages/en.json` under `Marketing`, `ForHomeowners`, `ForProfessionals`; drafted copy waits for the client (W-01) |
+| Assets | Fonts through `next/font/local`; images through static imports, so they are served from `/_next/static` and need no proxy or image change |
+| Budget | 170 KB of JavaScript (gzipped) per public page, IMPLEMENTATION_CONTRACT section 21 |
+

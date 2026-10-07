@@ -1,0 +1,204 @@
+/*
+ * Page transition "hoist": on an internal link a full-screen yellow plate is hoisted up from
+ * below until it covers the screen, the next page renders behind it, and the plate carries on
+ * up and out. Hidden until a navigation starts.
+ */
+.hoist {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  overflow: hidden;
+  display: none;
+  color: var(--gd-ink);
+  -webkit-font-smoothing: antialiased;
+}
+.hoist * {
+  box-sizing: border-box;
+}
+.hoist-on {
+  display: block;
+}
+
+/* The plate: a full-screen yellow beam, 14px taller than the screen at each end so the
+   hazard-stripe edges only show while it travels. */
+.hoist-plate {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -14px;
+  bottom: -14px;
+  background: var(--gd-brass);
+  will-change: transform;
+}
+.hoist-edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: repeating-linear-gradient(-45deg, var(--gd-brass) 0 12px, var(--gd-ink) 12px 24px);
+}
+.hoist-edge.is-t {
+  top: 0;
+}
+.hoist-edge.is-b {
+  bottom: 0;
+}
+/* The beam's flanges. */
+.hoist-fl {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(10px, 1.6vh, 18px);
+  background: color-mix(in srgb, var(--gd-ink) 20%, transparent);
+}
+.hoist-fl.is-t {
+  top: calc(14px + clamp(22px, 4vh, 44px));
+}
+.hoist-fl.is-b {
+  bottom: calc(14px + clamp(22px, 4vh, 44px));
+}
+/* The two slings the plate hangs from, running up off the screen. */
+.hoist-sling {
+  position: absolute;
+  bottom: 100%;
+  width: 2px;
+  height: 120vh;
+  background: var(--gd-ink);
+}
+.hoist-sling.is-l {
+  left: 14%;
+}
+.hoist-sling.is-r {
+  right: 14%;
+}
+
+.hoist-top {
+  position: absolute;
+  left: clamp(18px, 4vw, 56px);
+  right: clamp(18px, 4vw, 56px);
+  top: calc(14px + clamp(54px, 9vh, 96px));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+}
+.hoist-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+}
+.hoist-k {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  white-space: nowrap;
+}
+.hoist-k i {
+  width: 8px;
+  height: 8px;
+  background: var(--gd-ink);
+}
+.hoist-mid {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: calc(100vw - 36px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 2vw, 26px);
+  text-align: center;
+}
+.hoist-nm {
+  margin: 0;
+  max-width: 100%;
+  font-size: clamp(64px, 13vw, 220px);
+  line-height: 0.84;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.hoist-path {
+  margin: 0;
+  display: inline-block;
+  max-width: 100%;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: var(--gd-ink);
+  color: var(--gd-brass);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Leaving: the plate is hoisted up from below the screen until it covers it; the name rides up
+   a beat behind. */
+.hoist-leave .hoist-plate {
+  animation: hoist-in var(--dl) cubic-bezier(0.62, 0, 0.2, 1) both;
+}
+@keyframes hoist-in {
+  0% {
+    transform: translateY(calc(100% + 2px));
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.hoist-leave .hoist-mid {
+  animation: hoist-tx calc(var(--dl) * 0.8) cubic-bezier(0.2, 0.85, 0.2, 1) calc(var(--dl) * 0.3) both;
+}
+@keyframes hoist-tx {
+  from {
+    opacity: 0;
+    translate: -50% calc(-50% + 40px);
+  }
+}
+
+/* Arriving: the next page has rendered behind the plate; the plate carries on up and out. */
+.hoist-enter .hoist-plate {
+  animation: hoist-out var(--de) cubic-bezier(0.7, 0, 0.3, 1) 0.05s both;
+}
+@keyframes hoist-out {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(calc(-100% - 2px));
+  }
+}
+
+@media (max-width: 809px) {
+  .hoist-brand {
+    font-size: 22px;
+  }
+  .hoist-k {
+    font-size: 10.5px;
+  }
+  .hoist-nm {
+    font-size: clamp(54px, 19vw, 120px);
+  }
+  .hoist-path {
+    font-size: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hoist {
+    display: none !important;
+  }
+}

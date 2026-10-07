@@ -17,6 +17,7 @@ export async function HomeownerHeader() {
   return (
     <HeaderNav
       brand={getTranslator("App")("name")}
+      tag={t("tag")}
       signedIn={signedIn}
       links={[
         { href: "/estimate", label: t("estimate") },

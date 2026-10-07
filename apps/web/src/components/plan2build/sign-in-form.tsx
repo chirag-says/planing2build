@@ -4,9 +4,10 @@
 // code. The session arrives as an HttpOnly cookie set by the API; this component never sees it.
 import { ArrowLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 
 import { FormField } from "@/components/plan2build/form-field";
+import { CardStep } from "@/components/plan2build/hanging-card";
 import { Notice } from "@/components/plan2build/states";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,8 +36,12 @@ function messageFor(error: unknown): string {
 
 type Step = { kind: "email" } | { kind: "code"; challengeId: string; maskedContact: string };
 
-/** `next` is where to go after signing in; anything but a same-site path falls back to home. */
-export function SignInForm({ next }: { next?: string }) {
+/**
+ * `next` is where to go after signing in; anything but a same-site path falls back to home.
+ * `framed` lays the two steps out as the numbered steps of a HangingCard (homeowner and
+ * professional sign-in); labels, buttons and messages are the same either way.
+ */
+export function SignInForm({ next, framed = false }: { next?: string; framed?: boolean }) {
   const router = useRouter();
   const [step, setStep] = useState<Step>({ kind: "email" });
   const [email, setEmail] = useState("");
@@ -87,6 +92,15 @@ export function SignInForm({ next }: { next?: string }) {
     }
   }
 
+  const framedStep = (number: number, title: string, body: ReactNode) =>
+    framed ? (
+      <CardStep number={number} title={title}>
+        {body}
+      </CardStep>
+    ) : (
+      body
+    );
+
   const problem = error && (
     <Notice tone="error" live="assertive">
       {error}
@@ -96,7 +110,7 @@ export function SignInForm({ next }: { next?: string }) {
   if (step.kind === "email") {
     return (
       <form onSubmit={requestCode} className="flex flex-col gap-6">
-        <FormField id="email" label={t("emailLabel")} required>
+        {framedStep(1, t("card.stepEmail"), <FormField id="email" label={t("emailLabel")} required>
           {(control) => (
             <Input
               {...control}
@@ -108,7 +122,7 @@ export function SignInForm({ next }: { next?: string }) {
               onChange={(e) => setEmail(e.target.value)}
             />
           )}
-        </FormField>
+        </FormField>)}
         {problem}
         <Button type="submit" size="lg" disabled={busy}>
           {busy && <Spinner />}
@@ -123,7 +137,7 @@ export function SignInForm({ next }: { next?: string }) {
       <Notice tone="info" live="polite">
         {t("codeSent", { contact: step.maskedContact })}
       </Notice>
-      <FormField id="code" label={t("codeLabel")} required>
+      {framedStep(2, t("card.stepCode"), <FormField id="code" label={t("codeLabel")} required>
         {(control) => (
           <Input
             {...control}
@@ -138,7 +152,7 @@ export function SignInForm({ next }: { next?: string }) {
             className="max-w-48 font-mono text-lg tracking-[0.4em]"
           />
         )}
-      </FormField>
+      </FormField>)}
       {problem}
       <div className="flex flex-col gap-3">
         <Button type="submit" size="lg" disabled={busy || code.length !== 6}>

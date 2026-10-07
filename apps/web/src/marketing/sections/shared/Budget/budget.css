@@ -1,0 +1,698 @@
+/*
+ * "08 · A rough budget": the estimate sheet.
+ * Phone (< 810px) and tablet (810–1099px) rules sit in the container queries at the end so they
+ * win over the base rules with the same specificity.
+ */
+.gd.budget {
+  --budget-hd: clamp(44px, 4.4vw, 64px);
+  padding: clamp(96px, 9.4vw, 152px) 0;
+  overflow: clip;
+}
+.gd.budget .gd-wrap {
+  --pad: 56px;
+}
+/* drafting grid behind the section, faded out at the top and bottom */
+.budget-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--gd-fog) 70%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--gd-fog) 70%, transparent) 1px, transparent 1px);
+  background-size: 72px 72px;
+  background-position: 56px 0;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, var(--gd-black) 16%, var(--gd-black) 78%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, var(--gd-black) 16%, var(--gd-black) 78%, transparent 100%);
+}
+
+/* eyebrow = the hero's site label: mono caps + the square live dot */
+.gd.budget .gd-eb {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: inherit;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+}
+.gd.budget .gd-eb i {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 1.5px var(--gd-ink);
+  animation: gd-blink 1.6s ease-in-out 3;
+}
+
+/* headline: display caps; the accent run rides the yellow beam, lowered in from above on two slings */
+.gd.budget .gd-hd {
+  letter-spacing: 0.004em;
+  text-transform: uppercase;
+  text-wrap: normal;
+  font-weight: var(--gd-font-dw, 800);
+}
+.gd.budget .gd-hd-w {
+  position: relative;
+  isolation: isolate;
+  padding: 0.07em 0.04em 0.1em;
+  margin: -0.07em -0.04em -0.1em;
+}
+.gd.budget .gd-it {
+  font: inherit;
+  font-style: normal;
+  letter-spacing: inherit;
+  color: var(--gd-ink);
+  padding: 0;
+}
+.gd.budget .gd-hd-w.is-accw::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0.15em;
+  bottom: 0.1em;
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 0.05em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent),
+    inset 0 -0.05em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent);
+  translate: 0 -135%;
+  transition: translate 1.15s cubic-bezier(0.3, 1.35, 0.45, 1) 0.5s;
+}
+.gd.budget .gd-hd-w.is-accw::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 0.15em;
+  background-image:
+    linear-gradient(var(--c1, transparent), var(--c1, transparent)),
+    linear-gradient(var(--c2, transparent), var(--c2, transparent));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position:
+    22% 0,
+    78% 0;
+  translate: 0 -900%;
+  transition: translate 1.15s cubic-bezier(0.3, 1.35, 0.45, 1) 0.5s;
+}
+.gd.budget.is-in .gd-hd .gd-hd-w.is-accw::before,
+.gd.budget.is-in .gd-hd .gd-hd-w.is-accw::after {
+  translate: 0 0;
+}
+/* the slings: one at the left of the first accent word, one at the right of the last */
+.gd.budget .gd-hd-w:not(.is-accw) + .gd-hd-w.is-accw,
+.gd.budget .gd-hd-w.is-accw:first-child {
+  padding-left: 0.16em;
+  margin-left: 0;
+  --c1: var(--gd-ink);
+}
+.gd.budget .gd-hd-w.is-accw:last-child {
+  white-space: nowrap;
+  padding-right: 0.16em;
+  --c2: var(--gd-ink);
+}
+
+.budget-cols {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(40px, 5.4vw, 96px);
+  align-items: stretch;
+}
+.budget-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.budget-h {
+  margin-top: 22px !important;
+}
+.budget-sub {
+  margin: 26px 0 0;
+  max-width: 420px;
+  font-size: 17px;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--gd-ink) 82%, var(--gd-bone));
+}
+
+/* the one key number, on a beam */
+.budget-fact {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  margin-top: auto;
+  padding-top: 56px;
+}
+.budget-fact-n {
+  position: relative;
+  isolation: isolate;
+  padding: 0 0.12em;
+  font-size: clamp(120px, 12.5vw, 184px);
+  line-height: 0.82;
+  letter-spacing: -0.01em;
+  color: var(--gd-ink);
+  font-variant-numeric: tabular-nums;
+}
+.budget-fact-n i {
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0.07em;
+  bottom: -0.04em;
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 0.04em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent),
+    inset 0 -0.04em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent);
+}
+.budget-fact-n i::before,
+.budget-fact-n i::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  width: 2px;
+  height: 34px;
+  background: var(--gd-ink);
+}
+.budget-fact-n i::before {
+  left: 22%;
+}
+.budget-fact-n i::after {
+  right: 22%;
+}
+.budget-fact-l {
+  max-width: 170px;
+  padding-bottom: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+}
+
+/*
+ * The estimate card. Its face (::before) and contents lift 6px on hover while the ink slab
+ * behind (::after) drops 2px, so a thick ink edge opens up under the card.
+ */
+.budget-card {
+  position: relative;
+  background: var(--gd-cloud);
+  color: var(--gd-ink);
+  border: 2px solid var(--gd-ink);
+  border-radius: 10px;
+  box-shadow: 0 0 0 0 var(--gd-ink);
+}
+.budget-card::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -2px;
+  border-radius: 10px;
+  background: var(--gd-ink);
+  transition: transform 0.5s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+.budget-card > * {
+  position: relative;
+  transition: transform 0.5s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+.budget-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: var(--gd-cloud);
+  box-shadow: 0 0 0 2px var(--gd-ink);
+  transition: transform 0.5s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+@media (hover: hover) {
+  .budget-card:hover::before,
+  .budget-card:hover > * {
+    transform: translateY(-6px);
+  }
+  .budget-card:hover::after {
+    transform: translateY(2px);
+  }
+}
+.budget-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0;
+  padding: 16px 28px;
+  border-bottom: 2px solid var(--gd-ink);
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+}
+.budget-top span {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.budget-top span:last-child {
+  color: var(--gd-mut);
+}
+.budget-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 1.5px var(--gd-ink);
+}
+.budget-row {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  padding: 22px 28px;
+  border-bottom: 1px solid var(--gd-fog);
+}
+.budget-lab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  min-height: 44px;
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+}
+.budget-lab b {
+  font-weight: inherit;
+  padding: 2px 5px;
+  box-shadow: 0 0 0 1.5px var(--gd-ink);
+}
+
+/* segmented control: square cells, the chosen one is yellow */
+.budget-seg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.budget-seg button {
+  flex: 1 1 auto;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--gd-ink) 34%, transparent);
+  font: inherit;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.3s,
+    box-shadow 0.3s,
+    translate 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.budget-seg button:hover {
+  box-shadow: inset 0 0 0 2px var(--gd-ink);
+  translate: 0 -2px;
+}
+.budget-seg button.is-on {
+  background: var(--gd-brass);
+  box-shadow: inset 0 0 0 2px var(--gd-ink);
+  font-weight: 600;
+}
+.budget-seg.is-eq button {
+  flex: 1 1 0;
+}
+
+/* size: big mono readout + a square-thumb slider whose track fills to the thumb (--f) */
+.budget-size {
+  display: flex;
+  flex-direction: column;
+}
+.budget-read {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 40px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--gd-ink);
+}
+.budget-read small {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--gd-mut);
+}
+.budget-range {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 40px;
+  margin: 6px 0 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.budget-range::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 0;
+  background: linear-gradient(
+    90deg,
+    var(--gd-ink) 0,
+    var(--gd-ink) calc(var(--f) * 100%),
+    color-mix(in srgb, var(--gd-ink) 16%, transparent) calc(var(--f) * 100%)
+  );
+}
+.budget-range::-moz-range-track {
+  height: 8px;
+  border-radius: 0;
+  background: linear-gradient(
+    90deg,
+    var(--gd-ink) 0,
+    var(--gd-ink) calc(var(--f) * 100%),
+    color-mix(in srgb, var(--gd-ink) 16%, transparent) calc(var(--f) * 100%)
+  );
+}
+.budget-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  margin-top: -10px;
+  border-radius: 4px;
+  background: var(--gd-brass);
+  border: 2px solid var(--gd-ink);
+  box-shadow: 0 4px 0 -1px var(--gd-ink);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.budget-range::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: var(--gd-brass);
+  border: 2px solid var(--gd-ink);
+  box-shadow: 0 4px 0 -1px var(--gd-ink);
+}
+.budget-range:hover::-webkit-slider-thumb,
+.budget-range:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+.budget-ends {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0 0;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+}
+
+/* the result */
+.budget-out {
+  padding: 26px 28px 28px;
+  background: color-mix(in srgb, var(--gd-bone) 55%, var(--gd-cloud));
+  border-radius: 0 0 8px 8px;
+  border-top: 2px solid var(--gd-ink);
+  margin-top: -1px;
+}
+.budget-nums {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px 24px;
+}
+.budget-k {
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+}
+.budget-big {
+  display: flex;
+  align-items: baseline;
+  gap: 0.16em;
+  margin: 0;
+  font-size: clamp(56px, 5.3vw, 80px);
+  line-height: 0.86;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+.budget-big i {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--gd-mut);
+}
+.budget-sch {
+  text-align: right;
+}
+.budget-wk {
+  margin: 0;
+  font-size: clamp(26px, 2.1vw, 31px);
+  line-height: 0.92;
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/*
+ * Measuring tape: the case on the left, the blade pulled out to the high number, the range
+ * between two ticks. --lo / --hi (0–1) are written by useEstimateMotion.
+ */
+.budget-tape {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  height: 64px;
+  margin: 22px 0 22px;
+}
+.budget-case {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  background: var(--gd-ink);
+}
+.budget-case i {
+  position: absolute;
+  inset: 9px;
+  background: var(--gd-brass);
+}
+.budget-run {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  margin-left: -2px;
+}
+/* graduations: a minor tick every 2.5%, a major one every 12.5% */
+.budget-rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34px;
+  border-bottom: 2px solid var(--gd-ink);
+  background-image:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--gd-ink) 34%, transparent) 0 1px, transparent 1px 2.5%),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--gd-ink) 60%, transparent) 0 1.5px, transparent 1.5px 12.5%);
+  background-size:
+    100% 7px,
+    100% 13px;
+  background-position:
+    0 100%,
+    0 100%;
+  background-repeat: no-repeat;
+}
+.budget-blade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  height: 18px;
+  background: color-mix(in srgb, var(--gd-brass) 42%, var(--gd-cloud));
+  box-shadow:
+    inset 0 2px 0 color-mix(in srgb, var(--gd-ink) 18%, transparent),
+    inset 0 -2px 0 color-mix(in srgb, var(--gd-ink) 18%, transparent);
+  clip-path: inset(0 calc((1 - var(--hi)) * 100%) 0 0);
+}
+.budget-span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  height: 18px;
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 2px 0 var(--gd-ink),
+    inset 0 -2px 0 var(--gd-ink);
+  clip-path: inset(0 calc((1 - var(--hi)) * 100%) 0 calc(var(--lo) * 100%));
+}
+.budget-mk {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.budget-mk.is-lo {
+  transform: translateX(calc(var(--lo) * 100%));
+}
+.budget-mk.is-hi {
+  transform: translateX(calc(var(--hi) * 100%));
+}
+.budget-mk i {
+  position: absolute;
+  left: -1px;
+  bottom: 0;
+  width: 2px;
+  height: 46px;
+  background: var(--gd-ink);
+}
+.budget-mk b {
+  position: absolute;
+  top: 0;
+  font-weight: inherit;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+}
+.budget-mk.is-lo b {
+  right: 100%;
+  margin-right: 7px;
+}
+.budget-mk.is-hi b {
+  left: 0;
+  margin-left: 7px;
+}
+.budget-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px 24px;
+  flex-wrap: wrap;
+}
+.budget-note {
+  margin: 0;
+  max-width: 240px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+}
+
+/* tablet */
+@container site (min-width: 810px) and (max-width: 1099.98px) {
+  .gd.budget {
+    --budget-hd: clamp(40px, 5.4vw, 52px);
+  }
+  .gd.budget .gd-wrap {
+    --pad: 32px;
+  }
+  .budget .budget-cols {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 44px;
+  }
+  .budget .budget-fact {
+    margin-top: 0;
+    padding-top: 52px;
+  }
+  .budget .budget-fact-n {
+    font-size: 120px;
+  }
+}
+
+/* phone */
+@container site (max-width: 809.98px) {
+  .gd.budget {
+    --budget-hd: clamp(38px, 11vw, 50px);
+    padding: 76px 0 84px;
+  }
+  .gd.budget .gd-wrap {
+    --pad: 18px;
+  }
+  .budget .budget-cols {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+  }
+  .budget .budget-sub {
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  .budget .budget-fact {
+    margin-top: 0;
+    padding-top: 52px;
+  }
+  .budget .budget-fact-n {
+    font-size: 104px;
+  }
+  .budget .budget-top {
+    padding: 14px 18px;
+  }
+  .budget .budget-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+    padding: 16px 18px 20px;
+  }
+  .budget .budget-lab {
+    min-height: 34px;
+  }
+  .budget .budget-out {
+    padding: 22px 18px 22px;
+  }
+  .budget .budget-nums {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+  .budget .budget-sch {
+    text-align: left;
+  }
+  .budget .budget-big {
+    font-size: clamp(44px, 13.2vw, 58px);
+  }
+  .budget .budget-seg button {
+    padding: 0 12px;
+    font-size: 11.5px;
+  }
+  .budget .budget-read {
+    font-size: 34px;
+  }
+  .budget .budget-foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .budget .budget-foot .gd-btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gd.budget .gd-hd-w.is-accw::before,
+  .gd.budget .gd-hd-w.is-accw::after {
+    translate: 0 0 !important;
+  }
+}

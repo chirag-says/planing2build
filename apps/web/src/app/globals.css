@@ -3,11 +3,12 @@
 @import "shadcn/tailwind.css";
 
 /*
- * Plan2Build design tokens (SYSTEM_BLUEPRINT/02_IMPLEMENTATION/UI_DESIGN_SYSTEM.md).
- * Warm stone neutrals and a charcoal primary; colour is reserved for state (success, warning,
- * info, danger) and focus. Contrast targets: text 4.5:1, control borders and focus 3:1.
- * Light theme only (no approved dark theme). Components read these through the @theme mapping;
- * never write raw colour values in components.
+ * Plan2Build design tokens (SYSTEM_BLUEPRINT/02_IMPLEMENTATION/UI_DESIGN_SYSTEM.md 1.2).
+ * The brand of the public website: bone grounds, ink text and actions, brass for selection and
+ * highlight (a surface colour, never body text on a light ground). State colours (success,
+ * warning, info, danger) keep their pairs. Contrast targets: text 4.5:1, control borders and
+ * focus 3:1 (tools/check_contrast.py). No theme switch; dark brand surfaces use `surface-dark`.
+ * Components read these through the @theme mapping; never write raw colour values in components.
  */
 
 /* Class-based dark variant that nothing activates, so the generated components' dark: classes
@@ -15,9 +16,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* System fonts until brand typography is chosen; nothing is fetched from third parties. */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-heading: var(--font-sans);
+  /* Self-hosted brand faces (src/fonts): latin first, latin-ext for the rupee sign, then system. */
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-display);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -33,9 +34,20 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* Brand surfaces by name, for the site boards and the blueprint ground. */
+  --color-bone: var(--gd-bone);
+  --color-ink: var(--gd-ink);
+  --color-brass: var(--gd-brass);
+  --color-night: var(--gd-night);
+  --color-cloud: var(--gd-cloud);
+  --color-pine: var(--gd-pine);
+  --color-fog: var(--gd-fog);
 
   /* State colours: the strong value is for text, icons and borders; -muted is a background. */
   --color-destructive: var(--destructive);
@@ -47,46 +59,99 @@
   --color-info: var(--info);
   --color-info-muted: var(--info-muted);
 
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-xl: calc(var(--radius) * 1.25);
+  --radius-2xl: calc(var(--radius) * 1.5);
+  --radius-3xl: calc(var(--radius) * 2);
+  --radius-4xl: calc(var(--radius) * 2.5);
 }
 
 :root {
-  --radius: 0.375rem;
+  /* Brand palette (UI-01). The public website's styles read these names directly. */
+  --gd-bone: oklch(0.925 0.008 91.5);
+  --gd-ink: oklch(0.203 0.008 248.2);
+  --gd-brass: oklch(0.848 0.168 85.2);
+  --gd-pine: oklch(0.302 0.025 241.7);
+  --gd-fog: oklch(0.845 0.011 89.7);
+  --gd-stone: oklch(0.543 0.008 248);
+  --gd-cloud: oklch(1 0 0);
+  --gd-night: oklch(0.171 0.006 237);
+  --gd-black: oklch(0 0 0);
+  /* Newsletter error text on the night footer. */
+  --gd-coral: oklch(0.79 0.11 27);
+  --gd-coral-soft: oklch(0.84 0.08 28);
+  /* Glass tints in the sample-plan drawings. */
+  --gd-glass-sand: oklch(0.79 0.033 79);
+  --gd-glass-bronze: oklch(0.59 0.04 69);
+  --gd-glass-sky: oklch(0.69 0.05 232);
+  --gd-glass-sage: oklch(0.74 0.04 169);
 
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.216 0.006 56); /* stone-900, 16:1 */
-  --card: oklch(1 0 0);
+  --radius: 0.5rem;
+
+  --background: oklch(0.925 0.008 91.5); /* bone */
+  --foreground: oklch(0.203 0.008 248.2); /* ink, 14.4:1 */
+  --card: oklch(0.958 0.004 91.4); /* paper: cloud into bone */
   --card-foreground: var(--foreground);
-  --popover: oklch(1 0 0);
+  --popover: oklch(0.958 0.004 91.4);
   --popover-foreground: var(--foreground);
 
-  --primary: oklch(0.268 0.007 34); /* stone-800 charcoal, 14:1 with white */
-  --primary-foreground: oklch(0.985 0.001 106);
-  --secondary: oklch(0.97 0.001 106); /* stone-100 */
+  --primary: oklch(0.203 0.008 248.2); /* ink */
+  --primary-foreground: oklch(1 0 0); /* cloud, 17.6:1 */
+  --secondary: oklch(1 0 0); /* the white answer chip */
   --secondary-foreground: var(--primary);
-  --muted: oklch(0.97 0.001 106);
-  --muted-foreground: oklch(0.444 0.011 73); /* stone-600, 7:1 */
-  --accent: oklch(0.955 0.003 75); /* hover and selected backgrounds */
+  --muted: oklch(0.881 0.008 98.9);
+  --muted-foreground: oklch(0.415 0.008 255.5); /* 6.9:1 on bone, 6.0:1 on muted */
+  --accent: oklch(0.881 0.008 98.9); /* hover backgrounds */
   --accent-foreground: var(--foreground);
+  --brand: oklch(0.848 0.168 85.2); /* brass: selection, accent plate, current step */
+  --brand-foreground: oklch(0.203 0.008 248.2); /* ink on brass, 11.2:1 */
 
-  --border: oklch(0.923 0.003 48); /* stone-200: dividers and card outlines (decorative) */
-  --input: oklch(0.58 0.012 58); /* control borders, 3.9:1 (WCAG 1.4.11) */
-  --ring: oklch(0.488 0.217 264); /* focus, blue-700 */
+  --border: oklch(0.823 0.007 97.4); /* dividers and card outlines (decorative) */
+  --input: oklch(0.509 0.004 248); /* control borders, 4.6:1 (WCAG 1.4.11) */
+  --ring: oklch(0.203 0.008 248.2); /* focus: ink */
 
-  --destructive: oklch(0.505 0.213 27.5); /* red-700, 6.5:1 */
+  --destructive: oklch(0.505 0.213 27.5); /* red-700 */
   --destructive-muted: oklch(0.971 0.013 17.4);
-  --success: oklch(0.448 0.119 151.3); /* green-800, 7:1 */
+  --success: oklch(0.448 0.119 151.3); /* green-800 */
   --success-muted: oklch(0.982 0.018 155.8);
-  --warning: oklch(0.473 0.137 46.2); /* amber-800, 7:1 */
+  --warning: oklch(0.473 0.137 46.2); /* amber-800 */
   --warning-muted: oklch(0.987 0.022 95.3);
-  --info: oklch(0.488 0.217 264); /* blue-700, 6.7:1 */
+  --info: oklch(0.45 0.15 255); /* blue, darkened for bone */
   --info-muted: oklch(0.97 0.014 254.6);
+}
+
+/* Brand type stacks (src/fonts): latin face, then latin-ext for the rupee sign, then system.
+   Kept out of the colour block above, which tools/check_contrast.py reads. */
+:root {
+  --font-display: var(--p2b-display), var(--p2b-display-ext), "Arial Narrow", Impact, Arial, sans-serif;
+  --font-body: var(--p2b-body), var(--p2b-body-ext), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: var(--p2b-mono), var(--p2b-mono-ext), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/*
+ * Dark brand surfaces (site board, sign-in backdrop, footer). Not a theme: a surface redefines
+ * the tokens for what sits on it. `.gd-dark` is the public website's name for the same thing.
+ */
+.surface-dark {
+  --background: oklch(0.171 0.006 237); /* night */
+  --foreground: oklch(1 0 0);
+  --card: oklch(0.203 0.008 248.2); /* ink */
+  --card-foreground: oklch(1 0 0);
+  --popover: oklch(0.203 0.008 248.2);
+  --popover-foreground: oklch(1 0 0);
+  --primary: oklch(1 0 0);
+  --primary-foreground: oklch(0.203 0.008 248.2);
+  --secondary: oklch(0.302 0.025 241.7); /* pine */
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.302 0.025 241.7);
+  --muted-foreground: oklch(0.845 0.011 89.7); /* fog, 11.9:1 on night */
+  --accent: oklch(0.302 0.025 241.7);
+  --accent-foreground: oklch(1 0 0);
+  --border: oklch(0.36 0.01 248);
+  --input: oklch(0.62 0.008 248);
+  --ring: oklch(1 0 0);
 }
 
 @layer base {
@@ -133,8 +198,78 @@
   text-decoration: underline;
 }
 
-/* The plot pin on the Leaflet map uses the focus/info blue. */
+/* The plot pin on the Leaflet map: ink with a brass fill, the site's marker. */
 .leaflet-container .p2b-pin {
-  stroke: var(--ring);
-  fill: var(--ring);
+  stroke: var(--foreground);
+  fill: var(--brand);
+}
+
+/*
+ * Button effects from the public website's kit (UI_DESIGN_SYSTEM.md 11), on the shadcn button.
+ * Unlayered on purpose: they replace the variants' hover colours, which the variants no longer set.
+ *   p2b-rise  primary: a brass fill rises behind the label (kit .gd-hl); a brass chip with an
+ *             arrow sits before the label, turning and going cloud on hover (kit .gd-chip).
+ *             Only on full-size buttons without their own icon or spinner.
+ *   p2b-lift  outline and secondary: the answer chip's lift with an ink underside.
+ */
+.p2b-btn {
+  transition:
+    background-size 0.55s cubic-bezier(0.3, 1.25, 0.5, 1),
+    color 0.3s 0.05s,
+    box-shadow 0.3s,
+    transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.p2b-rise {
+  background-image: linear-gradient(var(--brand), var(--brand));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0%;
+}
+.p2b-rise:not(:disabled):hover,
+.p2b-rise:focus-visible {
+  background-size: 100% 100%;
+  color: var(--brand-foreground);
+}
+.p2b-rise:is([data-size="default"], [data-size="lg"]):not(:has(svg)) {
+  justify-content: flex-start;
+  gap: 0.75rem;
+  padding-left: 0.375rem;
+  padding-right: 1.25rem;
+}
+.p2b-rise:is([data-size="default"], [data-size="lg"]):not(:has(svg))::before {
+  content: "";
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.3rem;
+  background: var(--brand);
+  transition:
+    background-color 0.4s,
+    rotate 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.p2b-rise:is([data-size="default"], [data-size="lg"]):not(:has(svg))::after {
+  content: "";
+  position: absolute;
+  left: calc(0.375rem + 0.4375rem);
+  top: 50%;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: -0.4375rem;
+  background: var(--brand-foreground);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 5l7 7-7 7'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 5l7 7-7 7'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: translate 0.55s cubic-bezier(0.7, 0, 0.2, 1);
+}
+.p2b-rise:not(:disabled):hover::before,
+.p2b-rise:focus-visible::before {
+  background: var(--primary-foreground);
+  rotate: -8deg;
+}
+.p2b-rise:not(:disabled):hover::after,
+.p2b-rise:focus-visible::after {
+  translate: 0.125rem 0;
+}
+.p2b-lift:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 0 var(--foreground);
 }

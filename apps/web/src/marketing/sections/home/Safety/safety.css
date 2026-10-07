@@ -1,0 +1,538 @@
+/* "Safety & quality" elevation drawing (original prefix gdsf). Container queries replace is-ph / is-tab. */
+.safety {
+  overflow: clip;
+}
+.safety-wrap {
+  padding-top: 128px;
+  padding-bottom: 124px;
+}
+
+/* shared pieces restyled for Girder: mono eyebrow with the square dot, caps headline */
+.gd.safety .gd-eb {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: inherit;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+}
+.gd.safety .gd-eb i {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 1.5px var(--gd-ink);
+}
+.gd.safety .gd-hd {
+  margin-top: 18px;
+  letter-spacing: 0.002em;
+  text-transform: uppercase;
+  font-weight: var(--gd-font-dw, 800);
+  text-wrap: normal;
+  color: var(--gd-ink);
+}
+.gd.safety .gd-hd-w {
+  padding: 0.07em 0.02em 0.05em;
+  margin: -0.07em -0.02em -0.05em;
+}
+/* the accent words do not rise: they are a yellow beam lowered in on two cables */
+.gd.safety .gd-hd-w.is-accw {
+  overflow: visible;
+}
+.gd.safety .gd-hd-i.is-acc {
+  translate: 0 0;
+  transition: none;
+}
+.gd.safety .gd-it {
+  display: inline-block;
+  font: inherit;
+  font-style: normal;
+  letter-spacing: inherit;
+  color: var(--gd-ink);
+  padding: 0.09em 0.14em 0.01em;
+  margin: -0.09em 0 -0.01em -0.02em;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--gd-ink) 22%, var(--gd-brass)) 0 6%,
+    var(--gd-brass) 6% 94%,
+    color-mix(in srgb, var(--gd-ink) 22%, var(--gd-brass)) 94% 100%
+  );
+  opacity: 0;
+  translate: 0 -120%;
+  transition:
+    translate 1.15s cubic-bezier(0.3, 1.35, 0.45, 1) var(--pd),
+    opacity 0.25s ease var(--pd);
+}
+.gd.safety.is-in .gd-hd .gd-it {
+  opacity: 1;
+  translate: 0 0;
+}
+.gd.safety .gd-hd-w.is-accw:has(+ .is-accw) .gd-it {
+  padding-right: 0.4em;
+  margin-right: -0.26em;
+}
+.gd.safety .gd-hd-l + .gd-hd-l {
+  margin-top: 0.1em;
+}
+/* the two cables, which reel up 1.1s after the beam starts dropping */
+.gd.safety .gd-it::before,
+.gd.safety .gd-it::after {
+  content: "";
+  position: absolute;
+  bottom: 92%;
+  left: 14%;
+  width: 2px;
+  height: 0.42em;
+  background: var(--gd-ink);
+  transform-origin: 50% 0;
+  transition: transform 0.5s ease calc(var(--pd) + 1100ms);
+}
+.gd.safety .gd-it::after {
+  left: auto;
+  right: 14%;
+}
+.gd.safety.is-in .gd-hd .gd-it::before,
+.gd.safety.is-in .gd-hd .gd-it::after {
+  transform: scaleY(0);
+}
+.safety-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* ---- stage: drawing in the middle, cards hung on its leader lines ---- */
+.safety-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) min(640px, 46%) minmax(0, 1fr);
+  margin-top: 48px;
+  padding-bottom: 36px;
+}
+.safety-grid {
+  position: absolute;
+  inset: -24px 0 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--gd-fog) 78%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--gd-fog) 78%, transparent) 1px, transparent 1px);
+  background-size: 72px 72px;
+  background-position: 50% 0;
+  -webkit-mask-image: radial-gradient(ellipse 62% 60% at 50% 50%, var(--gd-black) 55%, transparent 100%);
+  mask-image: radial-gradient(ellipse 62% 60% at 50% 50%, var(--gd-black) 55%, transparent 100%);
+}
+.safety-fig {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+}
+.safety-dw {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+/*
+ * Draw-in: each part has --a (when it appears, 0 at the bottom of the drawing, 0.82 at the top).
+ * --dd ramps 0 → 1 over 1/7 of the draw progress after --a and drives the stroke; fills (--df)
+ * follow over the last 28% of that.
+ */
+.safety-ln path {
+  --dd: clamp(0, calc((var(--dr) - var(--a)) * 7), 1);
+  --df: clamp(0, calc((var(--dd) - 0.72) * 3.6), 1);
+  fill: none;
+  stroke: var(--gd-ink);
+  stroke-width: 1.5;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--dd));
+}
+.safety-ln .k-h {
+  stroke-width: 2.6;
+}
+.safety-ln .k-l {
+  stroke-width: 0.9;
+}
+.safety-ln .k-f {
+  fill: var(--gd-ink);
+  fill-opacity: var(--df);
+  stroke-width: 1;
+}
+.safety-ln .k-c {
+  fill: color-mix(in srgb, var(--gd-cloud) 70%, var(--gd-bone));
+  fill-opacity: var(--df);
+}
+.safety-ln .k-x {
+  fill: url(#safety-hc);
+  fill-opacity: var(--df);
+  stroke-width: 1.8;
+}
+.safety-ln .k-y {
+  fill: var(--gd-brass);
+  fill-opacity: var(--df);
+  stroke-width: 1.6;
+}
+.safety-tx text {
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  fill: var(--gd-ink);
+  opacity: clamp(0, calc((var(--dr) - var(--a)) * 7), 1);
+}
+.safety-ld path {
+  fill: none;
+  stroke: var(--gd-ink);
+  stroke-width: 1.2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - clamp(0, calc((var(--dr) - var(--a)) * 8), 1));
+  transition: stroke-width 0.3s;
+}
+.safety-ld path.is-on {
+  stroke-width: 2.4;
+}
+.safety-zone {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.safety-zone.is-on {
+  opacity: 1;
+}
+.safety-zone.is-hat :is(rect, path) {
+  fill: url(#safety-hy);
+}
+.safety-zone.is-sol :is(rect, path) {
+  fill: var(--gd-brass);
+  stroke: var(--gd-ink);
+  stroke-width: 1.4;
+}
+
+/* markers */
+.safety-mk {
+  position: absolute;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  scale: clamp(0, calc((var(--dr) - var(--a)) * 9), 1);
+}
+.safety-mk span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--gd-brass);
+  color: var(--gd-ink);
+  box-shadow:
+    0 0 0 2px var(--gd-ink),
+    0 8px 16px -8px color-mix(in srgb, var(--gd-black) 50%, transparent);
+  font-size: 19px;
+  line-height: 1;
+  padding-top: 1px;
+  transition:
+    transform 0.45s cubic-bezier(0.3, 1.6, 0.5, 1),
+    background 0.3s,
+    color 0.3s;
+}
+/* a 48px hit area around the 30px marker */
+.safety-mk::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+}
+.safety-mk:focus-visible {
+  scale: 1;
+}
+.safety-mk.is-on span {
+  transform: scale(1.22);
+  background: var(--gd-ink);
+  color: var(--gd-brass);
+}
+
+/* cards: --y is where the leader line meets the card's side, as a share of the drawing height */
+.safety-slot {
+  position: absolute;
+  top: calc(var(--y) - 30px);
+  width: min(100%, 336px);
+  opacity: clamp(0, calc((var(--dr) - var(--a)) * 8), 1);
+  translate: 0 calc((1 - clamp(0, calc((var(--dr) - var(--a)) * 8), 1)) * 16px);
+}
+.safety-slot.is-l {
+  grid-column: 1/2;
+  grid-row: 1/2;
+  right: 0;
+}
+.safety-slot.is-r {
+  grid-column: 3/4;
+  grid-row: 1/2;
+  left: 0;
+}
+.safety-card {
+  position: relative;
+  padding: 18px 22px 20px;
+  background: var(--gd-cloud);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 0 1px var(--gd-fog),
+    0 24px 40px -34px color-mix(in srgb, var(--gd-black) 50%, transparent);
+  transition:
+    transform 0.5s cubic-bezier(0.3, 1.4, 0.5, 1),
+    box-shadow 0.35s,
+    opacity 0.35s;
+}
+.safety-card::before {
+  content: "";
+  position: absolute;
+  top: 25px;
+  width: 10px;
+  height: 10px;
+  background: var(--gd-ink);
+}
+.safety-slot.is-l .safety-card::before {
+  right: -5px;
+}
+.safety-slot.is-r .safety-card::before {
+  left: -5px;
+}
+.safety-cn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+}
+.safety-cn b {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding-top: 1px;
+  background: var(--gd-brass);
+  color: var(--gd-ink);
+  box-shadow: 0 0 0 1.5px var(--gd-ink);
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+.safety-ch {
+  margin: 0;
+  font-size: 32px;
+  line-height: 0.94;
+  letter-spacing: 0.006em;
+  text-transform: uppercase;
+  font-weight: var(--gd-font-dw, 800);
+  color: var(--gd-ink);
+}
+.safety-cp {
+  margin: 8px 0 0;
+  font-size: 15.5px;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--gd-ink) 80%, var(--gd-cloud));
+}
+.safety-card.is-on {
+  transform: translateY(-6px);
+  box-shadow:
+    inset 0 0 0 2px var(--gd-ink),
+    0 30px 44px -30px color-mix(in srgb, var(--gd-black) 60%, transparent);
+}
+.safety.has-act .safety-card:not(.is-on) {
+  opacity: 0.55;
+}
+
+/* certification plates */
+.safety-certs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px 26px;
+  margin-top: 56px;
+  padding-top: 30px;
+  border-top: 2px solid var(--gd-ink);
+}
+.safety-cl {
+  margin: 0;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+}
+.safety-plates {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.safety-plates li {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 18px 11px 12px;
+  border: 2px solid var(--gd-ink);
+  border-radius: 4px;
+  font-size: 12.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+  background: color-mix(in srgb, var(--gd-cloud) 55%, transparent);
+}
+.safety-plates i {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 1.5px var(--gd-ink);
+  color: var(--gd-ink);
+}
+.safety-plates svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+/* phone and tablet: cards flow in the stage instead of hanging beside the drawing */
+@container site (max-width: 1099.98px) {
+  .safety .safety-slot {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    width: auto;
+    grid-column: auto;
+    grid-row: auto;
+    display: flex;
+  }
+  .safety .safety-card {
+    flex: 1;
+  }
+  .safety .safety-card::before {
+    display: none;
+  }
+  .safety .safety-grid {
+    -webkit-mask-image: linear-gradient(180deg, var(--gd-black) 0, var(--gd-black) 52%, transparent 66%);
+    mask-image: linear-gradient(180deg, var(--gd-black) 0, var(--gd-black) 52%, transparent 66%);
+  }
+}
+
+/* tablet: drawing on top, cards in two columns */
+@container site (min-width: 810px) and (max-width: 1099.98px) {
+  .safety .safety-wrap {
+    padding-top: 104px;
+    padding-bottom: 100px;
+  }
+  .safety .safety-stage {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    padding-bottom: 0;
+  }
+  .safety .safety-fig {
+    grid-column: 1/-1;
+    width: min(100%, 580px);
+    margin: 0 auto 26px;
+  }
+  .safety .safety-slot:last-child:nth-child(odd) {
+    grid-column: 1/-1;
+  }
+  .safety .safety-ln path {
+    stroke-width: 1.7;
+  }
+  .safety .safety-ln .k-h {
+    stroke-width: 2.9;
+  }
+  .safety .safety-ln .k-l {
+    stroke-width: 1.05;
+  }
+  .safety .safety-tx text {
+    font-size: 12.5px;
+  }
+}
+
+/* phone: drawing (finished), cards stacked */
+@container site (max-width: 809.98px) {
+  .safety .safety-wrap {
+    --pad: 18px;
+    padding-top: 80px;
+    padding-bottom: 76px;
+  }
+  .safety .safety-top {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .safety .safety-stage {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
+    padding-bottom: 0;
+  }
+  .safety .safety-fig {
+    margin: 0 -6px 18px;
+  }
+  .safety .safety-slot {
+    opacity: 1;
+    translate: 0 0;
+  }
+  .safety .safety-ln path {
+    stroke-width: 2.3;
+  }
+  .safety .safety-ln .k-h {
+    stroke-width: 3.8;
+  }
+  .safety .safety-ln .k-l {
+    stroke-width: 1.5;
+  }
+  .safety .safety-ln .k-f {
+    stroke-width: 1;
+  }
+  .safety .safety-tx text {
+    font-size: 19px;
+    letter-spacing: 0.02em;
+  }
+  .safety .safety-mk {
+    width: 26px;
+    height: 26px;
+    margin: -13px 0 0 -13px;
+  }
+  .safety .safety-mk span {
+    font-size: 16px;
+  }
+  .safety .safety-ch {
+    font-size: 30px;
+  }
+  .safety .safety-certs {
+    justify-content: flex-start;
+    margin-top: 36px;
+    padding-top: 24px;
+  }
+  .safety .safety-plates {
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gd.safety .gd-it {
+    opacity: 1 !important;
+    translate: 0 0 !important;
+  }
+  .gd.safety .gd-it::before,
+  .gd.safety .gd-it::after {
+    display: none;
+  }
+}

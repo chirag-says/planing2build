@@ -1,0 +1,622 @@
+/*
+ * 06 · The crew: site-ID badges hanging on straps from hooks along a rail.
+ * Each badge drops onto its hook as the section scrolls in (`is-dropped`), swings when the
+ * pointer arrives, and turns over to its dark back on hover or keyboard focus (not on phones,
+ * where the row scrolls sideways instead and the back's content moves onto the front).
+ */
+.crew {
+  overflow: clip;
+  background: var(--gd-bone);
+  color: var(--gd-ink);
+}
+.crew-wrap {
+  padding-top: 128px;
+  padding-bottom: 124px;
+}
+
+/* eyebrow + headline: a square marker and the yellow beam that drops onto the accent words */
+.gd.crew .gd-eb {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: inherit;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+}
+.gd.crew .gd-eb i {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 1.5px var(--gd-ink);
+}
+.gd.crew .gd-hd {
+  margin-top: 18px;
+  letter-spacing: 0.002em;
+  text-transform: uppercase;
+  font-weight: var(--gd-font-dw, 800);
+  text-wrap: normal;
+  color: var(--gd-ink);
+}
+.gd.crew .gd-hd-w {
+  padding: 0.07em 0.02em 0.05em;
+  margin: -0.07em -0.02em -0.05em;
+}
+.gd.crew .gd-hd-w.is-accw {
+  overflow: visible;
+}
+/* accent words do not rise; their beam drops in from above instead */
+.gd.crew .gd-hd-i.is-acc {
+  translate: 0 0;
+  transition: none;
+}
+.gd.crew .gd-it {
+  display: inline-block;
+  font: inherit;
+  font-style: normal;
+  letter-spacing: inherit;
+  color: var(--gd-ink);
+  padding: 0.09em 0.14em 0.01em;
+  margin: -0.09em 0 -0.01em -0.02em;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--gd-ink) 22%, var(--gd-brass)) 0 6%,
+    var(--gd-brass) 6% 94%,
+    color-mix(in srgb, var(--gd-ink) 22%, var(--gd-brass)) 94% 100%
+  );
+  opacity: 0;
+  translate: 0 -120%;
+  transition:
+    translate 1.15s cubic-bezier(0.3, 1.35, 0.45, 1) var(--pd),
+    opacity 0.25s ease var(--pd);
+}
+.gd.crew.is-in .gd-hd .gd-it {
+  opacity: 1;
+  translate: 0 0;
+}
+.gd.crew .gd-hd-w.is-accw:has(+ .is-accw) .gd-it {
+  padding-right: 0.4em;
+  margin-right: -0.26em;
+}
+.gd.crew .gd-hd-l + .gd-hd-l {
+  margin-top: 0.1em;
+}
+/* the two cables the beam is lowered on, retracting once it lands */
+.gd.crew .gd-it::before,
+.gd.crew .gd-it::after {
+  content: "";
+  position: absolute;
+  bottom: 92%;
+  left: 14%;
+  width: 2px;
+  height: 0.42em;
+  background: var(--gd-ink);
+  transform-origin: 50% 0;
+  transition: transform 0.5s ease calc(var(--pd) + 1100ms);
+}
+.gd.crew .gd-it::after {
+  left: auto;
+  right: 14%;
+}
+.gd.crew.is-in .gd-hd .gd-it::before,
+.gd.crew.is-in .gd-hd .gd-it::after {
+  transform: scaleY(0);
+}
+
+.crew-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px 48px;
+  flex-wrap: wrap;
+  margin-bottom: 72px;
+}
+.crew-sub {
+  margin: 22px 0 0;
+  max-width: 520px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--gd-ink) 82%, var(--gd-bone));
+}
+
+/* ---- the rail and the badges ---- */
+.crew-row {
+  --gap: 24px;
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 344px));
+  justify-content: center;
+  gap: 64px var(--gap);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.crew-col {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-top: 2px;
+}
+/* each column draws its stretch of the rail, overlapping half the gap on both sides */
+.crew-col::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--gap) / -2);
+  right: calc(var(--gap) / -2);
+  top: 0;
+  height: 2px;
+  background: var(--gd-ink);
+}
+.crew-col:first-child::before {
+  left: -10px;
+}
+.crew-col:last-child::before {
+  right: -10px;
+}
+.crew-hook {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 26px;
+  height: 9px;
+  margin-left: -13px;
+  background: var(--gd-ink);
+  z-index: 2;
+}
+.crew-hook::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border: 2px solid var(--gd-ink);
+  border-top: 0;
+  background: var(--gd-bone);
+}
+
+/* the drop: falls 54px tilted -14deg, overshoots to 6deg and settles like a pendulum */
+.crew-hang {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  transform-origin: 50% 0;
+  opacity: 0;
+}
+.crew-hang.is-dropped {
+  animation: crew-drop 1.7s cubic-bezier(0.33, 0.6, 0.4, 1) both;
+  animation-delay: calc(var(--i) * 120ms);
+}
+.crew.is-flat .crew-hang {
+  opacity: 1;
+  animation: none;
+}
+@keyframes crew-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-54px) rotate(-14deg);
+  }
+  12% {
+    opacity: 1;
+  }
+  30% {
+    transform: translateY(0) rotate(6deg);
+  }
+  52% {
+    transform: translateY(0) rotate(-2.6deg);
+  }
+  74% {
+    transform: translateY(0) rotate(0.9deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+/* the nudge: one damped swing about the hook whenever the pointer or focus arrives */
+.crew-swing {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  transform-origin: 50% 0;
+}
+.crew-swing:hover,
+.crew-swing:focus-within {
+  animation: crew-sw 1s cubic-bezier(0.3, 0.6, 0.4, 1);
+}
+@keyframes crew-sw {
+  0% {
+    transform: rotate(0deg);
+  }
+  22% {
+    transform: rotate(3.2deg);
+  }
+  50% {
+    transform: rotate(-2deg);
+  }
+  76% {
+    transform: rotate(0.7deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+.crew-strap {
+  align-self: center;
+  width: 18px;
+  height: 46px;
+  margin-top: 8px;
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 0 0 1.5px var(--gd-ink),
+    inset 7.5px 0 0 0 var(--gd-brass),
+    inset 9px 0 0 0 color-mix(in srgb, var(--gd-ink) 30%, transparent);
+}
+.crew-clip {
+  position: relative;
+  z-index: 3;
+  align-self: center;
+  width: 30px;
+  height: 20px;
+  margin: -2px 0 -15px;
+  background: color-mix(in srgb, var(--gd-ink) 78%, var(--gd-bone));
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 2px var(--gd-ink);
+}
+.crew-clip::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 6px;
+  height: 3px;
+  background: var(--gd-bone);
+  opacity: 0.5;
+}
+
+/* the flip */
+.crew-flip {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  perspective: 1400px;
+  border-radius: 10px;
+}
+.crew-card {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.3, 1.2, 0.4, 1);
+}
+.crew-face {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 34px 16px 20px;
+  border-radius: 10px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.crew-front {
+  background: var(--gd-cloud);
+  color: var(--gd-ink);
+  box-shadow:
+    inset 0 0 0 1px var(--gd-fog),
+    0 34px 46px -36px color-mix(in srgb, var(--gd-black) 60%, transparent);
+}
+.crew-back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+  background: var(--gd-ink);
+  color: var(--gd-cloud);
+  padding: 34px 22px 22px;
+  box-shadow: 0 34px 46px -36px color-mix(in srgb, var(--gd-black) 60%, transparent);
+}
+/* hazard tape along the bottom edge of the back */
+.crew-back::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 8px;
+  border-radius: 0 0 10px 10px;
+  background: repeating-linear-gradient(-45deg, var(--gd-brass) 0 10px, transparent 10px 20px);
+}
+.crew-slot {
+  position: absolute;
+  left: 50%;
+  top: 12px;
+  width: 50px;
+  height: 10px;
+  margin-left: -25px;
+  border-radius: 5px;
+  background: var(--gd-bone);
+  box-shadow: inset 0 1.5px 2px color-mix(in srgb, var(--gd-black) 35%, transparent);
+}
+.crew-back .crew-slot {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gd-cloud) 20%, transparent);
+}
+.crew-id {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 2px 12px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+  white-space: nowrap;
+}
+.crew-id span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.crew-id i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 1.5px var(--gd-ink);
+}
+.crew-back .crew-id {
+  color: color-mix(in srgb, var(--gd-cloud) 76%, transparent);
+}
+.crew-back .crew-id i {
+  box-shadow: none;
+}
+.crew-pic {
+  position: relative;
+  aspect-ratio: 4/5;
+  border-radius: 6px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--gd-stone) 22%, transparent);
+}
+.crew-pic img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: 50% 22%;
+}
+.crew-name {
+  margin: 16px 2px 0;
+  font-size: 32px;
+  line-height: 0.94;
+  letter-spacing: 0.006em;
+  text-transform: uppercase;
+  font-weight: var(--gd-font-dw, 800);
+}
+.crew-role {
+  margin: 6px 2px 0;
+  font-size: 15.5px;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--gd-ink) 80%, var(--gd-cloud));
+}
+.crew-meta {
+  margin: 14px 2px 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--gd-fog);
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+}
+.crew-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 12px 2px 0;
+  padding: 0;
+}
+.crew-chips li {
+  padding: 5px 9px;
+  border: 1.5px solid var(--gd-ink);
+  border-radius: 3px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+/* the back */
+.crew-by {
+  flex: 1;
+  margin: 0 0 20px;
+  font-size: 11.5px;
+  line-height: 1.6;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-cloud) 76%, transparent);
+}
+.crew-q {
+  position: relative;
+  margin: 26px 0 20px;
+  font-size: clamp(28px, 2.4vw, 35px);
+  line-height: 1;
+  letter-spacing: 0.006em;
+  text-transform: uppercase;
+  font-weight: var(--gd-font-dw, 800);
+  color: var(--gd-cloud);
+}
+.crew-q i {
+  display: block;
+  width: 26px;
+  height: 8px;
+  margin-bottom: 16px;
+  background: var(--gd-brass);
+}
+.crew-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 18px;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+}
+.crew-links a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--gd-brass);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+}
+.crew-links a:hover {
+  color: var(--gd-brass);
+}
+.crew-act {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.gd.crew .crew-back .gd-btn.gd-quiet {
+  --face: var(--gd-brass);
+  --fg: var(--gd-ink);
+  --chip: var(--gd-ink);
+  --chipfg: var(--gd-brass);
+  --chip2: var(--gd-ink);
+  --chipfg2: var(--gd-cloud);
+  --hl: var(--gd-cloud);
+  --hlfg: var(--gd-ink);
+}
+/* the phone front's pull quote */
+.crew-q1 {
+  margin: 12px 2px 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--gd-brass);
+  font-size: 15.5px;
+  line-height: 1.45;
+  color: var(--gd-ink);
+}
+
+/* tablet and desktop: hovering the badge or focusing it turns it over */
+@container site (min-width: 810px) {
+  .crew-swing:hover .crew-card,
+  .crew-flip:focus .crew-card,
+  .crew-flip:focus-within .crew-card {
+    transform: rotateY(180deg);
+  }
+}
+
+/* tablet: 2 × 2 */
+@container site (min-width: 810px) and (max-width: 1099.98px) {
+  .crew .crew-wrap {
+    padding-top: 104px;
+    padding-bottom: 100px;
+  }
+  .crew-top {
+    margin-bottom: 60px;
+  }
+  .crew-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    --gap: 22px;
+    gap: 60px var(--gap);
+  }
+  .crew-col:nth-child(odd)::before {
+    left: -10px;
+  }
+  .crew-col:nth-child(even)::before {
+    right: -10px;
+  }
+}
+
+/* phone: sideways scroll-snap, no flip */
+@container site (max-width: 809.98px) {
+  .crew .crew-wrap {
+    --pad: 18px;
+    padding-top: 80px;
+    padding-bottom: 64px;
+  }
+  .crew-top {
+    margin-bottom: 44px;
+  }
+  .crew-sub {
+    font-size: 16px;
+    margin-top: 18px;
+  }
+  .crew-scroll {
+    margin: 0 -18px;
+    padding: 0 18px 28px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 18px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .crew-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .crew-row {
+    display: flex;
+    --gap: 14px;
+    gap: var(--gap);
+    width: max-content;
+    justify-content: flex-start;
+  }
+  .crew-col {
+    flex: none;
+    width: min(76vw, 320px);
+    scroll-snap-align: start;
+  }
+  .crew-col:first-child::before {
+    left: -18px;
+  }
+  .crew-col:last-child::before {
+    right: -18px;
+  }
+  .crew-links a:hover {
+    color: inherit;
+  }
+  .crew-act {
+    margin: 16px 2px 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--gd-fog);
+  }
+  .crew-chips {
+    margin-bottom: 0;
+  }
+  .crew-meta {
+    margin-top: auto;
+    padding-top: 12px;
+  }
+  .crew-q1 {
+    margin-bottom: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gd.crew .gd-it {
+    opacity: 1 !important;
+    translate: 0 0 !important;
+  }
+  .gd.crew .gd-it::before,
+  .gd.crew .gd-it::after {
+    display: none;
+  }
+  .crew-hang {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+  .crew-swing {
+    animation: none !important;
+  }
+}

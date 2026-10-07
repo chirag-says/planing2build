@@ -45,7 +45,16 @@ export async function codeFor(
 /** WCAG 2.0 A/AA and 2.2 AA on whatever the page shows now (UI_DESIGN_SYSTEM.md section 12). */
 export async function expectAccessible(page: Page) {
   // Colours are measured once running transitions end (a button leaving its busy state fades).
-  await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => null))));
+  // Endless loops (the public website's ticker and crane, UI_DESIGN_SYSTEM.md 11) never finish
+  // and change no colour, so only finite animations are waited for.
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((animation) => animation.effect?.getComputedTiming().iterations !== Infinity)
+        .map((animation) => animation.finished.catch(() => null)),
+    ),
+  );
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
     .analyze();

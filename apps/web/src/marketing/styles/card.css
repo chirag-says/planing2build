@@ -1,0 +1,283 @@
+/*
+ * The hanging card and its photo backdrop, shared by the public website's "Plan a project"
+ * section (bid.css, scroll-driven) and the sign-in and form screens (hanging-card.css, played
+ * once on load). Moved verbatim from bid.css; the motion variables are:
+ *   --zo photo zoom-out, --dr card drop, --sw sway (deg), --dl deal progress of the answers.
+ */
+
+/* the site photo: one layer, zooms out as the section scrolls in */
+.bid-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.bid-bg img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: 50% 42%;
+  transform: scale(calc(1.14 - var(--zo) * 0.14));
+  transform-origin: 50% 60%;
+  user-select: none;
+}
+.bid-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--gd-night) 90%, transparent) 0%,
+      color-mix(in srgb, var(--gd-night) 66%, transparent) 58%,
+      color-mix(in srgb, var(--gd-night) 50%, transparent) 100%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--gd-night) 40%, transparent) 0%,
+      transparent 34%,
+      color-mix(in srgb, var(--gd-night) 86%, transparent) 100%
+    );
+}
+.bid-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--gd-cloud) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--gd-cloud) 7%, transparent) 1px, transparent 1px);
+  background-size: 72px 72px;
+  background-position: var(--pad, 56px) 0;
+  -webkit-mask-image: linear-gradient(180deg, var(--gd-black) 0, var(--gd-black) 55%, transparent 100%);
+  mask-image: linear-gradient(180deg, var(--gd-black) 0, var(--gd-black) 55%, transparent 100%);
+}
+.bid-rig {
+  position: relative;
+  transform-origin: 50% -900px;
+  transform: translate3d(0, calc((1 - var(--dr)) * var(--trav)), 0) rotate(calc(var(--sw) * 1deg));
+  will-change: transform;
+}
+.bid-sl {
+  position: absolute;
+  bottom: calc(100% - 2px);
+  width: 2px;
+  height: 1600px;
+  background: color-mix(in srgb, var(--gd-cloud) 74%, transparent);
+}
+.bid-sl.is-l {
+  left: 12%;
+}
+.bid-sl.is-r {
+  right: 12%;
+}
+.bid-sl::after {
+  content: "";
+  position: absolute;
+  left: -5px;
+  bottom: -4px;
+  width: 12px;
+  height: 12px;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 2px var(--gd-ink);
+}
+.bid-card {
+  position: relative;
+  padding: 38px 30px 30px;
+  border-radius: 10px;
+  background: var(--gd-bone);
+  color: var(--gd-ink);
+  box-shadow: 0 50px 70px -40px color-mix(in srgb, var(--gd-black) 80%, transparent);
+  overflow: hidden;
+  transition: translate 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.bid-haz {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 10px;
+  background: repeating-linear-gradient(-45deg, var(--gd-brass) 0 12px, var(--gd-ink) 12px 24px);
+}
+.bid-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 4px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--gd-ink);
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+}
+.bid-top span {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.bid-top span + span {
+  color: var(--gd-mut);
+}
+.bid-top i {
+  width: 8px;
+  height: 8px;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 1.5px var(--gd-ink);
+}
+.bid-step {
+  padding: 18px 0 20px;
+  border-bottom: 1px solid var(--gd-fog);
+}
+.bid-st {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 13px;
+}
+.bid-st b {
+  flex: none;
+  padding: 3px 6px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  background: var(--gd-ink);
+  color: var(--gd-cloud);
+}
+.bid-st span {
+  font-size: 25px;
+  line-height: 1;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+}
+.bid-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+/*
+ * Dealt in one by one: each piece waits 0.07 of --dl per place in the order (--i), then fades,
+ * rises 18px and (chips) straightens from -5deg over the next 1/3.2 of --dl.
+ */
+.bid-chip,
+.bid-drop,
+.bid-go {
+  --c: clamp(0, calc((var(--dl) - var(--i) * 0.07) * 3.2), 1);
+  opacity: var(--c);
+  translate: 0 calc((1 - var(--c)) * 18px);
+}
+.bid-chip {
+  rotate: calc((1 - var(--c)) * -5deg);
+}
+.bid-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  min-height: 42px;
+  padding: 8px 15px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--gd-cloud);
+  box-shadow: inset 0 0 0 1.5px var(--gd-ink);
+  color: var(--gd-ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.1;
+  cursor: pointer;
+  transition:
+    transform 0.4s cubic-bezier(0.3, 1.5, 0.5, 1),
+    box-shadow 0.3s,
+    background 0.25s,
+    gap 0.3s;
+}
+.bid-chip i {
+  display: block;
+  width: 0;
+  height: 9px;
+  background: var(--gd-ink);
+  transition: width 0.3s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.bid-chip:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 0 0 1.5px var(--gd-ink),
+    0 4px 0 var(--gd-ink);
+}
+.bid-chip.is-sel {
+  background: var(--gd-brass);
+  color: var(--gd-ink);
+  box-shadow: inset 0 0 0 2px var(--gd-ink);
+  gap: 9px;
+}
+.bid-chip.is-sel i {
+  width: 9px;
+}
+.bid-chip.is-sel:hover {
+  box-shadow:
+    inset 0 0 0 2px var(--gd-ink),
+    0 4px 0 var(--gd-ink);
+}
+.bid-chip:active {
+  transform: translateY(0);
+}
+/* the drop zone is a look only: it opens the bid page */
+.bid-drop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 18px;
+  border: 2px dashed var(--gd-ink);
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--gd-ink);
+  background: color-mix(in srgb, var(--gd-cloud) 55%, transparent);
+  transition:
+    background 0.3s,
+    border-color 0.3s;
+}
+.bid-drop-ic {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  background: var(--gd-brass);
+  box-shadow: inset 0 0 0 2px var(--gd-ink);
+  color: var(--gd-ink);
+  transition: transform 0.5s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.bid-drop-ic svg {
+  width: 34px;
+  height: 34px;
+}
+.bid-drop-tx {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bid-drop-t {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.bid-drop small {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+}
+.bid-drop:hover {
+  background: var(--gd-cloud);
+  border-style: solid;
+}
+.bid-drop:hover .bid-drop-ic {
+  transform: translateY(-4px) rotate(-4deg);
+}
+.bid-go {
+  margin-top: 22px;
+}

@@ -1,0 +1,540 @@
+/*
+ * Site footer. --rv (0 → 1) is how far the footer has been uncovered: set by the lift wrapper
+ * (LiftReveal) or, when there is no active lift, by FooterRoot from scroll progress.
+ * Breakpoints follow the page column: phone under 810px, tablet 810–1099px.
+ */
+.footer {
+  position: relative;
+  background: var(--gd-night);
+  color: var(--gd-cloud);
+  padding: 60px 0 24px;
+  overflow: hidden;
+  --line: color-mix(in srgb, var(--gd-cloud) 16%, transparent);
+  --soft: color-mix(in srgb, var(--gd-cloud) 74%, transparent);
+  /* side gutter the slings run down */
+  --gx: 38px;
+  --tilt: 0;
+  --dy: 0;
+  /* how far above its resting place the beam starts (fraction of its own height) */
+  --trv: -120%;
+  /* wordmark size: 26% of the column width between 140 and 460px, but never wider than the
+     column minus its padding (--fp) allows for the letters (--fn = letters × 0.47), and never
+     under 56px; rounded to 0.1px as the reference did */
+  --fp: 56px;
+  --F: round(max(56px, min(460px, max(140px, 26cqw), (100cqw - var(--fp) * 2) / var(--fn))), 0.1px);
+}
+.footer-wrap {
+  position: relative;
+  z-index: 2;
+}
+.footer-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 24px;
+  margin: 0 0 16px;
+}
+.footer-kick {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-cloud) 86%, transparent);
+}
+.footer-kick i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--gd-brass);
+}
+
+/* the title block: ruled cells like the corner of a drawing */
+.footer-tb {
+  display: grid;
+  grid-template-columns: var(--tb-cols);
+  border-top: 2px solid var(--gd-cloud);
+  border-bottom: 1px solid var(--line);
+}
+.footer-cols {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr));
+}
+.footer-cell {
+  padding: 22px 30px 40px;
+  border-left: 1px solid var(--line);
+}
+.footer-office {
+  padding-left: 0;
+  border-left: 0;
+}
+.footer-news {
+  padding-right: 0;
+}
+.footer-ch {
+  margin: 0 0 22px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+.footer-addr {
+  margin: 0;
+  max-width: 330px;
+  font-size: clamp(30px, 2.5vw, 38px);
+  line-height: 0.95;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.footer-hours {
+  margin: 14px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  margin-top: 22px;
+}
+.footer-contact a {
+  font-size: 17px;
+  text-decoration: none;
+  color: var(--gd-cloud);
+  padding-bottom: 2px;
+  background: linear-gradient(var(--gd-brass), var(--gd-brass)) 0 100% / 0% 2px no-repeat;
+  transition: background-size 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.footer-contact a:is(:hover, :focus-visible) {
+  background-size: 100% 2px;
+}
+.footer-soc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.footer-soc a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-cloud) 90%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gd-cloud) 30%, transparent);
+  transition:
+    background 0.3s,
+    color 0.3s,
+    box-shadow 0.3s,
+    transform 0.4s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.footer-soc a:is(:hover, :focus-visible) {
+  background: var(--gd-brass);
+  color: var(--gd-ink);
+  box-shadow: inset 0 0 0 1px var(--gd-brass);
+  transform: translateY(-3px);
+}
+.footer-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.footer-col a {
+  position: relative;
+  display: inline-block;
+  padding: 6px 0;
+  text-decoration: none;
+  font-size: 16.5px;
+  color: color-mix(in srgb, var(--gd-cloud) 90%, transparent);
+  transition:
+    color 0.3s,
+    translate 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+/* a yellow square pops in where the link slides away from */
+.footer-col a::before {
+  content: "";
+  position: absolute;
+  left: -17px;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin-top: -4px;
+  background: var(--gd-brass);
+  scale: 0;
+  transition: scale 0.45s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.footer-col a:is(:hover, :focus-visible) {
+  color: var(--gd-cloud);
+  translate: 17px 0;
+}
+.footer-col a:is(:hover, :focus-visible)::before {
+  scale: 1;
+}
+.footer-nt {
+  margin: 0;
+  max-width: 340px;
+  font-size: clamp(28px, 2.3vw, 34px);
+  line-height: 0.95;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.footer-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 4px 4px 4px 16px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--gd-cloud) 7%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gd-cloud) 30%, transparent);
+  transition: box-shadow 0.3s;
+}
+.footer-form:focus-within {
+  box-shadow: inset 0 0 0 2px var(--gd-cloud);
+}
+.footer-form.is-err {
+  box-shadow: inset 0 0 0 2px var(--gd-coral);
+}
+/* the form draws the focus ring for the field */
+.footer-form input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  border: 0;
+  background: none;
+  color: var(--gd-cloud);
+  font: inherit;
+  font-size: 16px;
+  outline: none !important;
+  box-shadow: none !important;
+}
+.footer-form input::placeholder {
+  color: color-mix(in srgb, var(--gd-cloud) 64%, transparent);
+}
+.gd.footer .footer-go {
+  flex: none;
+  --face: var(--gd-cloud);
+  --fg: var(--gd-ink);
+  --chip: var(--gd-brass);
+  --chipfg: var(--gd-ink);
+  --chip2: var(--gd-ink);
+  --chipfg2: var(--gd-cloud);
+  --hl: var(--gd-brass);
+  --hlfg: var(--gd-ink);
+}
+.gd.footer .footer-go:focus-visible {
+  outline: 3px solid var(--gd-cloud) !important;
+  outline-offset: 3px !important;
+}
+.footer-err {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--gd-coral-soft);
+}
+.footer-ok {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 0;
+  padding: 12px 16px 12px 12px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--gd-cloud) 9%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gd-cloud) 22%, transparent);
+  font-size: 15.5px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+.footer-ok span {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  background: var(--gd-brass);
+  color: var(--gd-ink);
+}
+.footer-ok svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ---- the girder: ink letters on a yellow beam, lowered on two slings that run down the side gutters ---- */
+.footer-bay {
+  position: relative;
+  z-index: 1;
+  margin-top: 46px;
+  padding: 0 calc(var(--gx) - 18px);
+  /* --be: descent progress. Starts once --rv passes 0.06, done by 0.56, eased with a slight
+     overshoot near the end (1 + 1.9m³ + 0.9m², m = progress - 1) so the beam settles. */
+  --bk: clamp(0, calc((var(--rv, 1) - 0.06) / 0.5), 1);
+  --bm: calc(var(--bk) - 1);
+  --be: calc(1 + 1.9 * var(--bm) * var(--bm) * var(--bm) + 0.9 * var(--bm) * var(--bm));
+}
+.footer.is-fin .footer-bay {
+  --be: 1;
+}
+.footer-rig {
+  position: relative;
+  translate: 0 calc((1 - var(--be)) * var(--trv));
+  will-change: translate;
+}
+.footer[data-flat] {
+  --trv: -22%;
+}
+.footer-sl {
+  position: absolute;
+  z-index: 0;
+  bottom: calc(100% - 6px);
+  width: 2px;
+  height: 3000px;
+  background: color-mix(in srgb, var(--gd-cloud) 62%, transparent);
+}
+/* the slings follow the beam's ends as it tilts */
+.footer-sl.is-l {
+  left: 17px;
+  translate: 0 calc(var(--dy) * -1px);
+}
+.footer-sl.is-r {
+  right: 17px;
+  translate: 0 calc(var(--dy) * 1px);
+}
+.footer-sl::after {
+  content: "";
+  position: absolute;
+  left: -6px;
+  bottom: -5px;
+  width: 14px;
+  height: 14px;
+  background: var(--gd-ink);
+  box-shadow: 0 0 0 2px var(--gd-brass);
+}
+/* flange depth --fl; the inset shadows draw the top and bottom flanges */
+.footer-beam {
+  position: relative;
+  z-index: 1;
+  padding: calc(var(--fl) + var(--F) * 0.1) 18px calc(var(--fl) + var(--F) * 0.075);
+  --fl: clamp(10px, calc(var(--F) * 0.05), 20px);
+  background: var(--gd-brass);
+  color: var(--gd-ink);
+  rotate: calc(var(--tilt) * 1deg);
+  box-shadow:
+    inset 0 var(--fl) 0 color-mix(in srgb, var(--gd-ink) 13%, var(--gd-brass)),
+    inset 0 calc(var(--fl) + 2px) 0 color-mix(in srgb, var(--gd-ink) 34%, var(--gd-brass)),
+    inset 0 calc(var(--fl) * -1) 0 color-mix(in srgb, var(--gd-ink) 13%, var(--gd-brass)),
+    inset 0 calc(var(--fl) * -1 - 2px) 0 color-mix(in srgb, var(--gd-ink) 34%, var(--gd-brass));
+}
+.footer-word {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0 calc(var(--gx) - 18px);
+  font-size: var(--F);
+  line-height: 0.8;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--gd-ink);
+  user-select: none;
+}
+.footer-word span {
+  display: block;
+}
+/* three bolts down each end of the beam */
+.footer-bolts {
+  position: absolute;
+  top: calc(var(--fl) + 18%);
+  bottom: calc(var(--fl) + 18%);
+  width: 7px;
+  background:
+    linear-gradient(var(--gd-ink), var(--gd-ink)) 0 0 / 7px 7px no-repeat,
+    linear-gradient(var(--gd-ink), var(--gd-ink)) 0 50% / 7px 7px no-repeat,
+    linear-gradient(var(--gd-ink), var(--gd-ink)) 0 100% / 7px 7px no-repeat;
+  opacity: 0.82;
+}
+.footer-bolts.is-l {
+  left: 14px;
+}
+.footer-bolts.is-r {
+  right: 14px;
+}
+.footer-base {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 30px;
+  margin-top: 30px;
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+.footer-built {
+  margin-left: auto;
+}
+
+/* tablet */
+@container site (min-width: 810px) and (max-width: 1099.98px) {
+  .footer {
+    --gx: 22px;
+    --fp: 32px;
+  }
+  .footer .footer-tb {
+    grid-template-columns: var(--tb-cols-tab);
+  }
+  .footer .footer-cell {
+    padding: 20px 20px 36px;
+  }
+  .footer .footer-office {
+    padding-left: 0;
+  }
+  .footer .footer-cols .footer-cell:last-child {
+    padding-right: 0;
+  }
+  .footer .footer-news {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 0 32px;
+    align-items: end;
+    padding: 20px 0 34px;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+  .footer .footer-news .footer-ch {
+    grid-column: 1 / -1;
+  }
+  .footer .footer-form,
+  .footer .footer-ok {
+    margin-top: 0;
+  }
+  .footer .footer-err {
+    grid-column: 2;
+  }
+  .footer .footer-col a {
+    font-size: 16px;
+  }
+  .footer .footer-addr {
+    font-size: 30px;
+  }
+  .footer .footer-bay {
+    padding: 0 10px;
+  }
+  .footer .footer-sl.is-l {
+    left: 10px;
+  }
+  .footer .footer-sl.is-r {
+    right: 10px;
+  }
+  .footer .footer-bolts {
+    display: none;
+  }
+  .footer .footer-word {
+    padding: 0 8px;
+  }
+}
+
+/* phone: one column */
+@container site (max-width: 809.98px) {
+  .footer {
+    padding: 52px 0 24px;
+    --gx: 16px;
+    --fp: 20px;
+  }
+  .footer .footer-tb {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .footer .footer-head {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 22px;
+  }
+  .footer .footer-cell {
+    padding: 20px 0 34px;
+    border-left: 0;
+  }
+  .footer .footer-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 20px;
+    border-top: 1px solid var(--line);
+  }
+  .footer .footer-col:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+    grid-column: 1 / -1;
+  }
+  .footer .footer-news {
+    border-top: 1px solid var(--line);
+  }
+  .footer .footer-col a {
+    padding: 9px 0;
+    font-size: 16.5px;
+  }
+  .footer .footer-soc a {
+    min-height: 44px;
+    padding: 8px 14px;
+  }
+  .footer .footer-bay {
+    margin-top: 44px;
+    padding: 0 6px;
+  }
+  .footer .footer-sl.is-l {
+    left: 9px;
+  }
+  .footer .footer-sl.is-r {
+    right: 9px;
+  }
+  .footer .footer-sl::after {
+    left: -4px;
+    width: 10px;
+    height: 10px;
+  }
+  .footer .footer-beam {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .footer .footer-word {
+    padding: 0 6px;
+  }
+  .footer .footer-bolts {
+    display: none;
+  }
+  .footer .footer-base {
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 26px;
+    line-height: 1.5;
+  }
+  .footer .footer-built {
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-rig {
+    translate: 0 0 !important;
+  }
+  .footer-beam {
+    rotate: 0deg !important;
+  }
+  .footer-sl {
+    translate: 0 0 !important;
+  }
+}

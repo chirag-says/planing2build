@@ -27,6 +27,9 @@ PAIRS = [
     ("info", "info-muted", 4.5, "info alert and badge"),
     ("foreground", "warning-muted", 4.5, "alert description on warning"),
     ("foreground", "accent", 4.5, "text on hover and selected rows"),
+    ("brand-foreground", "brand", 4.5, "ink on brass: selected choices, plates, current step"),
+    ("muted-foreground", "card", 4.5, "secondary text on cards"),
+    ("foreground", "card", 4.5, "text on cards"),
 ]
 
 

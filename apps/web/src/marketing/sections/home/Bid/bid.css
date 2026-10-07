@@ -1,0 +1,353 @@
+/*
+ * "Request a bid". The scroll choreography variables (--zo, --dr, --sw, --dl) are written on
+ * the section by useCardDrop; the defaults below are the finished state.
+ *
+ * Sizes the reference computed from the section width in JS:
+ *   --bid-q  the content width: the page column less its padding, held to 1280–1520px
+ *   --cw     the card column, 41% of that held to 500–560px (desktop only)
+ *   --F      the headline size that fits the longest line (--fe characters, set inline) into
+ *            the space left beside the card, 40–150px
+ */
+/*
+ * The reference also declared display:flex / column / justify-content:center here, but a later
+ * copy of the kit's .gd-sec{display:block} overrode it on the live page, so the content sits at
+ * the top of the full-height section. Block layout is what it rendered.
+ */
+.bid {
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--gd-night);
+  color: var(--gd-cloud);
+  --zo: 1;
+  --dr: 1;
+  --sw: 0;
+  --dl: 9;
+  --trav: -860px;
+  --bid-pad: 56px;
+  --bid-q: min(100cqw - var(--bid-pad) * 2, min(1520px, max(1280px, 92cqw)));
+  --bid-card: min(560px, max(500px, var(--bid-q) * 0.41));
+  --bid-room: calc(var(--bid-q) - var(--bid-card) - 64px);
+  --cw: round(nearest, var(--bid-card), 1px);
+  --F: round(nearest, max(40px, min(150px, var(--bid-room) / (var(--fe) * 0.425))), 0.1px);
+}
+.bid.is-fin {
+  --zo: 1 !important;
+  --dr: 1 !important;
+  --sw: 0 !important;
+  --dl: 9 !important;
+}
+/* keyboard focus inside: the card is in place at once, never mid-air or half dealt */
+.bid[data-kb] {
+  --dr: 1 !important;
+  --sw: 0 !important;
+  --dl: 9 !important;
+}
+
+.bid-wrap {
+  position: relative;
+  z-index: 2;
+  padding-top: 112px;
+  padding-bottom: 36px;
+}
+.bid-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--cw);
+  gap: 64px;
+  align-items: stretch;
+}
+.bid-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 56px;
+  padding-bottom: 4px;
+}
+.bid-eb {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-cloud) 86%, transparent);
+}
+.bid-eb i {
+  display: block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 1.5px var(--gd-night);
+  animation: gd-blink 1.6s ease-in-out 3;
+}
+.bid-h {
+  margin: 0;
+  font-size: var(--F);
+  line-height: 0.9;
+  letter-spacing: -0.008em;
+  text-transform: uppercase;
+  color: var(--gd-cloud);
+}
+.bid-ln {
+  display: block;
+  overflow: hidden;
+  padding: 0.06em 0 0.07em;
+  margin: -0.06em 0 -0.07em;
+}
+.bid-lni {
+  display: block;
+  white-space: nowrap;
+  translate: 0 110%;
+  transition: translate 1.15s cubic-bezier(0.2, 0.85, 0.15, 1);
+}
+.bid.is-in .bid-lni,
+.bid.is-fin .bid-lni {
+  translate: 0 0;
+}
+/* the accent rides the yellow beam, lowered in on two slings (ink text on yellow) */
+.bid-acc {
+  position: relative;
+  display: inline-block;
+  padding: 0 0.14em;
+  margin-left: -0.02em;
+  color: var(--gd-ink);
+}
+.bid-beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -0.005em;
+  bottom: -0.03em;
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 0.05em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent),
+    inset 0 -0.05em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent);
+  translate: 0 -130%;
+  transition: translate 1.25s cubic-bezier(0.3, 1.35, 0.45, 1) var(--sd);
+}
+.bid.is-in .bid-beam,
+.bid.is-fin .bid-beam {
+  translate: 0 0;
+}
+.bid-acct {
+  position: relative;
+}
+.bid-sub {
+  margin: 28px 0 0;
+  max-width: 420px;
+  text-wrap: balance;
+  font-size: 17px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--gd-cloud) 88%, transparent);
+}
+
+/* the card on its slings: hoisted --trav above its place, lowered as --dr runs 0 -> 1 */
+.bid-bay {
+  position: relative;
+}
+.gd.bid .bid-go .gd-btn {
+  display: flex;
+  width: 100%;
+}
+.gd.bid .bid-go .gd-face {
+  justify-content: flex-start;
+}
+
+/* under the card */
+.bid-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 40px;
+  margin-top: 52px;
+  padding-top: 20px;
+  border-top: 1px solid color-mix(in srgb, var(--gd-cloud) 26%, transparent);
+}
+.bid-proof {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-cloud) 84%, transparent);
+}
+.bid-proof i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--gd-brass);
+}
+.bid-call {
+  margin: 0 0 0 auto;
+  font-size: 16px;
+  color: color-mix(in srgb, var(--gd-cloud) 84%, transparent);
+}
+.bid-call a {
+  color: var(--gd-cloud);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  padding-bottom: 2px;
+  background: linear-gradient(var(--gd-brass), var(--gd-brass)) 0 100%/100% 2px no-repeat;
+  transition:
+    background-size 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 0.3s;
+}
+.bid-call a:hover {
+  background-size: 100% 100%;
+  color: var(--gd-ink);
+}
+.bid-lic {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-cloud) 74%, transparent);
+}
+
+/* tablet + phone: stacked. The card hangs from a short yellow rail under the headline */
+@container site (max-width: 1099.98px) {
+  .bid {
+    --trav: -74px;
+    --bid-room: var(--bid-q);
+  }
+  .bid .bid-main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .bid .bid-copy {
+    gap: 26px;
+    padding-bottom: 44px;
+  }
+  .bid .bid-bay {
+    padding-top: 84px;
+  }
+  .bid .bid-bay::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 10px;
+    background: var(--gd-brass);
+    box-shadow:
+      inset 0 2px 0 color-mix(in srgb, var(--gd-ink) 26%, transparent),
+      inset 0 -2px 0 color-mix(in srgb, var(--gd-ink) 26%, transparent);
+  }
+  /* the slings shorten to the gap between the rail and the card, stretching as it drops */
+  .bid .bid-sl {
+    height: calc(84px + (1 - var(--dr)) * var(--trav) - 8px);
+    min-height: 0;
+  }
+  .bid .bid-rig {
+    transform-origin: 50% -84px;
+  }
+}
+@container site (min-width: 810px) and (max-width: 1099.98px) {
+  .bid {
+    --bid-pad: 32px;
+  }
+  .bid .bid-wrap {
+    padding-top: 96px;
+  }
+  .bid .bid-card {
+    padding: 40px 36px 34px;
+  }
+  .bid .bid-chip {
+    min-height: 44px;
+  }
+  .bid .bid-foot {
+    gap: 12px 32px;
+  }
+}
+@container site (max-width: 809.98px) {
+  .bid {
+    --trav: -60px;
+    --bid-pad: 20px;
+  }
+  .bid .bid-wrap {
+    padding-top: 72px;
+    padding-bottom: 30px;
+  }
+  .bid .bid-sub {
+    margin-top: 20px;
+    font-size: 16px;
+  }
+  .bid .bid-bay {
+    padding-top: 70px;
+  }
+  .bid .bid-sl {
+    height: calc(70px + (1 - var(--dr)) * var(--trav) - 8px);
+  }
+  .bid .bid-rig {
+    transform-origin: 50% -70px;
+  }
+  .bid .bid-card {
+    padding: 32px 18px 20px;
+  }
+  .bid .bid-st span {
+    font-size: 23px;
+  }
+  .bid .bid-chip {
+    min-height: 44px;
+    font-size: 15px;
+    padding: 8px 13px;
+  }
+  .bid .bid-drop {
+    padding: 14px;
+    gap: 13px;
+  }
+  .bid .bid-drop-ic {
+    width: 50px;
+    height: 50px;
+  }
+  .bid .bid-drop-t {
+    font-size: 15px;
+  }
+  .bid .bid-top {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+  .bid .bid-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    margin-top: 36px;
+  }
+  .bid .bid-call {
+    margin-left: 0;
+  }
+  .bid .bid-proof {
+    align-items: flex-start;
+    line-height: 1.6;
+  }
+  .bid .bid-proof i {
+    margin-top: 5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bid-lni,
+  .bid-beam {
+    translate: 0 0 !important;
+    transition: none !important;
+  }
+  .bid-bg img {
+    transform: none !important;
+  }
+  .bid-rig {
+    transform: none !important;
+  }
+  .bid-chip,
+  .bid-drop,
+  .bid-go {
+    opacity: 1 !important;
+    translate: 0 0 !important;
+    rotate: 0deg !important;
+  }
+}

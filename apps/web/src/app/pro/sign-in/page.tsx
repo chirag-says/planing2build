@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 
-import { PageContainer, PageHeader } from "@/components/plan2build/page-header";
+import { HangingCard } from "@/components/plan2build/hanging-card";
 import { SignInForm } from "@/components/plan2build/sign-in-form";
-import { Card, CardContent } from "@/components/ui/card";
 import { getTranslator } from "@/lib/i18n";
 
 export const metadata: Metadata = { title: getTranslator("Pro")("signIn.title") };
@@ -17,13 +16,14 @@ export default async function ProSignInPage({
   const t = getTranslator("Pro");
   const { next } = await searchParams;
   return (
-    <PageContainer width="narrow">
-      <PageHeader title={t("signIn.title")} description={t("signIn.intro")} />
-      <Card>
-        <CardContent>
-          <SignInForm next={typeof next === "string" ? next : undefined} />
-        </CardContent>
-      </Card>
-    </PageContainer>
+    <HangingCard
+      eyebrow={t("signIn.card.eyebrow")}
+      title={t("signIn.title")}
+      description={t("signIn.intro")}
+      label={t("signIn.card.label")}
+      note={t("signIn.card.note")}
+    >
+      <SignInForm framed next={typeof next === "string" ? next : undefined} />
+    </HangingCard>
   );
 }

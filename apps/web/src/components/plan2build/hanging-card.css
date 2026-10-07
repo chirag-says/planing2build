@@ -1,0 +1,178 @@
+/*
+ * Night backdrop and load-time motion for HangingCard. The card itself is styled by
+ * marketing/styles/card.css. The scroll-driven variables of the public website are pinned to
+ * their finished values, and the same motion plays once as CSS animations instead, so it ends
+ * before the accessibility checks measure colours (they wait for document.getAnimations()):
+ *   - the photo zooms out from 1.14 to 1;
+ *   - the card drops on its slings with the website's overshoot (dropEase in Bid/model.ts,
+ *     sampled into linear()) and two and a half dying swings;
+ *   - the steps are dealt in one after another.
+ */
+.hc {
+  position: relative;
+  isolation: isolate;
+  flex: 1;
+  display: flex;
+  min-height: calc(100svh - 4rem);
+  overflow: hidden;
+  background: var(--gd-night);
+  color: var(--gd-cloud);
+  --zo: 1;
+  --dr: 1;
+  --sw: 0;
+  --dl: 9;
+  --trav: 0px;
+}
+.hc .bid-bg img {
+  animation: hc-zoom 1.8s cubic-bezier(0.16, 0.84, 0.24, 1) both;
+}
+.hc-wrap {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 32rem);
+  align-items: center;
+  gap: 4rem;
+  width: 100%;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 6rem 1.5rem 4rem;
+}
+.hc-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: hc-rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s both;
+}
+.hc-eb {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  font-size: 0.8125rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-cloud) 80%, transparent);
+}
+.hc-eb i {
+  width: 0.625rem;
+  height: 0.625rem;
+  background: var(--gd-brass);
+  box-shadow: inset 0 0 0 1.5px var(--gd-ink);
+}
+.hc-h {
+  margin: 0;
+  font-size: clamp(3.5rem, 7vw, 6.5rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.hc-sub {
+  max-width: 28rem;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--gd-cloud) 82%, transparent);
+}
+.hc-bay {
+  position: relative;
+}
+.hc-rig {
+  transform-origin: 50% -56rem;
+  animation:
+    hc-drop 1.3s linear(0 0%, 0.173 4.2%, 0.328 8.3%, 0.464 12.5%, 0.583 16.7%, 0.687 20.8%, 0.775 25%, 0.849 29.2%, 0.911 33.3%, 0.961 37.5%, 1 41.7%, 1.029 45.8%, 1.05 50%, 1.063 54.2%, 1.069 58.3%, 1.07 62.5%, 1.067 66.7%, 1.06 70.8%, 1.05 75%, 1.039 79.2%, 1.028 83.3%, 1.017 87.5%, 1.008 91.7%, 1.002 95.8%, 1 100%) 0.15s both,
+    hc-sway 1.3s linear 0.15s both;
+}
+.hc-card {
+  color: var(--gd-ink);
+}
+.hc-step {
+  animation: hc-deal 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(0.8s + var(--i, 1) * 0.08s);
+}
+/* Controls on the card take the card's ink type, not the night ground's. */
+.hc-card :where(label, legend) {
+  color: var(--gd-ink);
+}
+
+@keyframes hc-zoom {
+  from {
+    transform: scale(1.14);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes hc-drop {
+  from {
+    translate: 0 -110vh;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes hc-sway {
+  0% { rotate: 0deg; }
+  10% { rotate: 0.83deg; }
+  20% { rotate: 1.04deg; }
+  30% { rotate: 0.64deg; }
+  40% { rotate: 0deg; }
+  50% { rotate: -0.46deg; }
+  60% { rotate: -0.52deg; }
+  70% { rotate: -0.28deg; }
+  80% { rotate: 0deg; }
+  90% { rotate: 0.09deg; }
+  100% { rotate: 0deg; }
+}
+@keyframes hc-deal {
+  from {
+    opacity: 0;
+    translate: 0 1.125rem;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes hc-rise {
+  from {
+    opacity: 0;
+    translate: 0 1.5rem;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (max-width: 1023.98px) {
+  .hc-wrap {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    padding: 3rem 1rem 3rem;
+  }
+  .hc-bay {
+    width: 100%;
+    max-width: 34rem;
+    margin: 0 auto;
+  }
+  .hc-rig {
+    transform-origin: 50% -24rem;
+  }
+  /* Stacked: the card hangs from short slings, clear of the heading (the website's short rail). */
+  .hc .bid-sl {
+    height: 2.5rem;
+  }
+  .hc-bay {
+    margin-top: 1.5rem;
+  }
+}
+@media (max-width: 639.98px) {
+  .hc-h {
+    font-size: 3rem;
+  }
+  .hc .bid-card {
+    padding: 2rem 1.25rem 1.5rem;
+  }
+}

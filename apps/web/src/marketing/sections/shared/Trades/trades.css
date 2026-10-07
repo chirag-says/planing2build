@@ -1,0 +1,656 @@
+/*
+ * "02 · What we build": a stack of service rows that wipe in as they scroll up, a yellow beam
+ * that rises behind the hovered row, and (desktop with a mouse) the hovered service's photo
+ * hanging from the cursor on a cable.
+ *
+ * Per-row scroll variables, written by Trades.tsx (all 1 when nothing writes them):
+ *   --e  eased entrance: fades and lifts the row
+ *   --a  wipes the row's top rule and the service name in from the left
+ *   --b  wipes the brass beam behind the name back out, so it sweeps across once
+ */
+.trades-wrap {
+  padding-top: 120px;
+  padding-bottom: 128px;
+}
+
+/* eyebrow and headline: square marker, upper-case headline, brass beam dropping behind the accent */
+.gd.trades .gd-eb {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: inherit;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+}
+.gd.trades .gd-eb i {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 1.5px var(--gd-ink);
+}
+.gd.trades .gd-hd {
+  text-transform: uppercase;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+.gd.trades .gd-hd-w {
+  padding: 0.08em 0.04em 0.1em;
+  margin: -0.08em -0.04em -0.1em;
+}
+.gd.trades .gd-it {
+  display: inline-block;
+  isolation: isolate;
+  padding: 0 0.14em;
+  font-family: inherit;
+  font-style: normal;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  color: var(--gd-ink);
+}
+.gd.trades .gd-it::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0.04em;
+  bottom: 0.02em;
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 0.05em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent),
+    inset 0 -0.05em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent);
+  translate: 0 -135%;
+  transition: translate 1.15s cubic-bezier(0.3, 1.35, 0.45, 1) var(--pd, 600ms);
+}
+.gd.trades.is-in .gd-hd .gd-it::before {
+  translate: 0 0;
+}
+/* consecutive accent words share one beam */
+.gd.trades .gd-hd-w.is-accw:has(+ .is-accw) .gd-it::before {
+  right: -0.6em;
+}
+.gd.trades .gd-hd-w.is-accw + .is-accw .gd-it {
+  padding-left: 0;
+}
+
+.trades-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 56px;
+}
+.trades-top-l {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* the stack */
+.trades-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 2px solid var(--gd-ink);
+}
+.trades-li {
+  --e: 1;
+  --a: 1;
+  --b: 1;
+  border-top: 2px solid color-mix(in srgb, var(--gd-ink) calc(var(--a) * 100%), transparent);
+}
+.trades-row {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) clamp(260px, 25vw, 360px) 56px;
+  column-gap: 32px;
+  align-items: center;
+  padding: 30px 0;
+  text-decoration: none;
+  color: var(--gd-ink);
+  opacity: min(1, calc(var(--e) * 3));
+  transform: translateY(calc((1 - var(--e)) * 40px));
+}
+/* the yellow beam that rises from the bottom rule on hover */
+.trades-row::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 5px 0 color-mix(in srgb, var(--gd-ink) 18%, transparent),
+    inset 0 -5px 0 color-mix(in srgb, var(--gd-ink) 18%, transparent);
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition: transform 0.55s cubic-bezier(0.3, 1.2, 0.4, 1);
+}
+.trades-ix {
+  align-self: start;
+  padding-top: 0.5em;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--gd-mut);
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 0.3s;
+}
+.trades-nm {
+  position: relative;
+  justify-self: start;
+  margin: 0;
+  font-size: clamp(56px, 7.4vw, 128px);
+  line-height: 0.88;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.trades-nm-b {
+  position: absolute;
+  left: -0.07em;
+  right: -0.07em;
+  top: 0.02em;
+  bottom: 0.03em;
+  background: var(--gd-brass);
+  box-shadow:
+    inset 0 0.045em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent),
+    inset 0 -0.045em 0 color-mix(in srgb, var(--gd-ink) 22%, transparent);
+  clip-path: inset(0 calc((1 - var(--a)) * 100%) 0 calc(var(--b) * 100%));
+}
+.trades-nm-t {
+  position: relative;
+  display: block;
+  clip-path: inset(-0.1em calc((1 - var(--a)) * 100%) -0.1em -0.1em);
+}
+.trades-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.trades-line {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--gd-ink) 84%, var(--gd-bone));
+}
+.trades-spec {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gd-mut);
+  transition: color 0.3s;
+}
+/* "includes" chips: hidden on desktop until the row is hovered */
+.trades-inc {
+  position: absolute;
+  left: 88px;
+  right: 120px;
+  bottom: 14px;
+  display: flex;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  pointer-events: none;
+}
+.trades-inc li {
+  padding: 5px 9px;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1.5px var(--gd-ink);
+  color: var(--gd-ink);
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s ease;
+}
+.trades-go {
+  justify-self: end;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 2px var(--gd-ink);
+  color: var(--gd-ink);
+  transition:
+    background 0.35s,
+    color 0.35s,
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.trades-go svg {
+  transform: rotate(-45deg);
+  transition: transform 0.5s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+/* in-row photo: tablet and phone only */
+.trades-th {
+  display: none;
+  width: 112px;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--gd-stone) 22%, transparent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .trades-row:hover::before {
+    transform: none;
+  }
+  .trades-row:hover :is(.trades-ix, .trades-spec) {
+    color: var(--gd-ink);
+  }
+  .trades-row:hover .trades-ix {
+    transform: translate(20px, -8px);
+  }
+  .trades-row:hover .trades-nm {
+    transform: translate(0, -12px);
+  }
+  .trades-row:hover .trades-meta {
+    transform: translate(0, -12px);
+  }
+  .trades-row:hover .trades-go {
+    background: var(--gd-ink);
+    color: var(--gd-brass);
+    transform: translateX(-20px);
+  }
+  .trades-row:hover .trades-go svg {
+    transform: none;
+  }
+  .trades-row:hover .trades-inc li {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.4s ease calc(0.12s + var(--k) * 0.05s),
+      transform 0.55s cubic-bezier(0.3, 1.3, 0.5, 1) calc(0.12s + var(--k) * 0.05s);
+  }
+}
+.trades-row:focus-visible::before {
+  transform: none;
+}
+.trades-row:focus-visible :is(.trades-ix, .trades-spec) {
+  color: var(--gd-ink);
+}
+.trades-row:focus-visible .trades-ix {
+  transform: translate(20px, -8px);
+}
+.trades-row:focus-visible :is(.trades-nm, .trades-meta) {
+  transform: translate(0, -12px);
+}
+.trades-row:focus-visible .trades-go {
+  background: var(--gd-ink);
+  color: var(--gd-brass);
+  transform: translateX(-20px);
+}
+.trades-row:focus-visible .trades-go svg {
+  transform: none;
+}
+.trades-row:focus-visible .trades-inc li {
+  opacity: 1;
+  transform: none;
+}
+.gd.trades .trades-row:focus-visible {
+  outline-offset: -3px !important;
+  box-shadow: none !important;
+}
+
+/*
+ * The photo on the sling. The element sits at the cursor (0×0, transformed per frame); the
+ * cable and hook drop from it and the photo hangs 62px below, swinging from its top edge.
+ */
+.trades-hang {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 60;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.trades-hang-l {
+  position: absolute;
+  left: -1px;
+  top: 18px;
+  width: 2px;
+  height: 46px;
+  background: var(--gd-ink);
+  transform-origin: 50% 0;
+  transform: scaleY(0);
+  transition: transform 0.35s ease;
+}
+.trades-hang-h {
+  position: absolute;
+  left: -6px;
+  top: 14px;
+  width: 12px;
+  height: 12px;
+  background: var(--gd-brass);
+  box-shadow: 0 0 0 2px var(--gd-ink);
+  transform: scale(0);
+  transition: transform 0.35s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.trades-hang-p {
+  position: absolute;
+  left: -140px;
+  top: 62px;
+  width: 280px;
+  aspect-ratio: 1/1;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--gd-ink);
+  box-shadow:
+    0 0 0 2px var(--gd-ink),
+    0 30px 50px -24px color-mix(in srgb, var(--gd-black) 55%, transparent);
+  opacity: 0;
+  transform-origin: 50% 0;
+  transform: translateY(-22px) scale(0.86);
+  transition:
+    opacity 0.3s ease,
+    transform 0.5s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+.trades-hang-p img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.trades-hang-p img.is-on {
+  opacity: 1;
+}
+.trades-hang.is-on .trades-hang-l {
+  transform: none;
+}
+.trades-hang.is-on .trades-hang-h {
+  transform: none;
+}
+.trades-hang.is-on .trades-hang-p {
+  opacity: 1;
+  transform: none;
+}
+
+/* flipped near the bottom of the section: the cable rises from the cursor and the photo sits above */
+.trades-hang[data-up] .trades-hang-l {
+  top: -64px;
+  transform-origin: 50% 100%;
+}
+.trades-hang[data-up] .trades-hang-h {
+  top: -26px;
+}
+.trades-hang[data-up] .trades-hang-p {
+  top: auto;
+  bottom: 62px;
+  transform-origin: 50% 100%;
+}
+.trades-hang[data-up]:not(.is-on) .trades-hang-p {
+  transform: translateY(22px) scale(0.86);
+}
+
+/* desktop on a touch screen: the chips sit under the line instead of waiting for a hover */
+@media (hover: none) {
+  @container site (min-width: 1100px) {
+    .trades .trades-inc {
+      position: static;
+      grid-column: 2/4;
+      margin-top: 14px;
+    }
+    .trades .trades-inc li {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* tablet and phone: thumb in the row, chips always shown, no arrow box and no hanging photo */
+@container site (max-width: 1099.98px) {
+  .trades .trades-inc {
+    position: static;
+    grid-column: 2;
+    grid-row: 3;
+    flex-wrap: wrap;
+    white-space: normal;
+    overflow: visible;
+  }
+  .trades .trades-inc li {
+    opacity: 1;
+    transform: none;
+  }
+  .trades .trades-go,
+  .trades .trades-hang {
+    display: none;
+  }
+  .trades .trades-th {
+    display: block;
+  }
+}
+
+/* tablet: thumb at the right, chips under the line */
+@container site (min-width: 810px) and (max-width: 1099.98px) {
+  .trades .trades-wrap {
+    padding-top: 104px;
+    padding-bottom: 112px;
+  }
+  .trades .trades-row {
+    grid-template-columns: 40px minmax(0, 1fr) 128px;
+    column-gap: 24px;
+    row-gap: 14px;
+    padding: 28px 0;
+    align-items: start;
+  }
+  .trades .trades-nm {
+    grid-column: 2;
+    font-size: clamp(60px, 8.4vw, 92px);
+  }
+  .trades .trades-meta {
+    grid-column: 2;
+    grid-row: 2;
+    max-width: 460px;
+  }
+  .trades .trades-th {
+    grid-column: 3;
+    grid-row: 1/4;
+    align-self: center;
+  }
+}
+
+/* phone */
+@container site (max-width: 809.98px) {
+  .trades .trades-wrap {
+    --pad: 18px;
+    padding-top: 72px;
+    padding-bottom: 80px;
+  }
+  .trades .trades-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+  .trades .trades-top-l {
+    gap: 18px;
+  }
+  .trades .trades-row {
+    grid-template-columns: minmax(0, 1fr) 96px;
+    column-gap: 16px;
+    row-gap: 12px;
+    padding: 20px 0 24px;
+    align-items: start;
+  }
+  .trades .trades-ix {
+    grid-column: 1/-1;
+    padding-top: 0;
+  }
+  .trades .trades-nm {
+    grid-column: 1/-1;
+    font-size: clamp(44px, 14.4vw, 84px);
+  }
+  .trades .trades-meta {
+    grid-column: 1;
+    grid-row: 3;
+    gap: 8px;
+  }
+  .trades .trades-line {
+    font-size: 16px;
+  }
+  .trades .trades-spec {
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+  }
+  .trades .trades-th {
+    grid-column: 2;
+    grid-row: 3;
+    width: 96px;
+  }
+  .trades .trades-inc {
+    grid-column: 1/-1;
+    grid-row: 4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gd.trades .gd-it::before {
+    translate: 0 0 !important;
+  }
+}
+
+/*
+ * One screen, from tablet up: the section is exactly one viewport tall (the header slides away
+ * while scrolling down, so it takes no room).
+ * `--row` is one sixth of what the padding and headline leave, and the service name is sized
+ * from it (capped by the width so the longest name fits), so the type is as large as the screen
+ * allows. Rows stay one line: on desktop the chips swap in over the line on hover; on tablet the
+ * thumb sits in the row.
+ */
+@container site (min-width: 810px) {
+  .trades {
+    --pt: clamp(20px, 4svh, 48px);
+    --pb: clamp(20px, 4svh, 48px);
+    --hd: clamp(30px, min(4.4vw, 5svh), 64px);
+    --hd-gap: 1.4svh;
+    --mb: 2.2svh;
+    /* eyebrow line (15px), the two headline lines, list rules and a little slack */
+    --row: calc(
+      (100svh - var(--pt) - var(--pb) - 15px - var(--hd-gap) - var(--hd) * 1.8 - var(--mb) - 10px) / 6
+    );
+  }
+  .trades .trades-wrap {
+    padding-top: var(--pt);
+    padding-bottom: var(--pb);
+  }
+  .trades .trades-top {
+    margin-bottom: var(--mb);
+  }
+  .trades .trades-top-l {
+    gap: var(--hd-gap);
+  }
+  .trades .trades-li {
+    height: var(--row);
+  }
+  .trades .trades-row {
+    height: 100%;
+    padding: 0;
+    align-items: center;
+  }
+  .trades .trades-ix {
+    align-self: center;
+    padding-top: 0;
+  }
+  .trades .trades-nm {
+    /* 100px: the longest name still fits on one line once the column stops widening (1632px) */
+    font-size: clamp(28px, min(5.2vw, var(--row) * 0.74), 100px);
+  }
+  .trades .trades-meta {
+    gap: clamp(2px, 0.6svh, 8px);
+    transition:
+      transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 0.25s ease;
+  }
+  .trades .trades-line {
+    font-size: clamp(14px, 2svh, 19px);
+    line-height: 1.3;
+  }
+  .trades .trades-spec {
+    font-size: clamp(11px, 1.5svh, 13px);
+  }
+}
+
+@container site (min-width: 1100px) {
+  .trades .trades-row {
+    --meta: clamp(300px, 30vw, 460px);
+    --go: clamp(40px, 6svh, 56px);
+    grid-template-columns: 56px minmax(0, 1fr) var(--meta) var(--go);
+  }
+  .trades .trades-go {
+    width: var(--go);
+    height: var(--go);
+  }
+  /* the chips take the line's place in its column */
+  .trades .trades-inc {
+    left: auto;
+    right: calc(var(--go) + 32px);
+    top: 50%;
+    bottom: auto;
+    width: var(--meta);
+    translate: 0 -50%;
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  @container site (min-width: 1100px) {
+    .trades .trades-row:hover .trades-meta {
+      opacity: 0;
+    }
+  }
+}
+.trades .trades-row:focus-visible .trades-meta {
+  opacity: 0;
+}
+
+@container site (min-width: 810px) and (max-width: 1099.98px) {
+  .trades .trades-row {
+    grid-template-columns: 40px minmax(0, 1fr) minmax(220px, 34%) clamp(64px, 9svh, 112px);
+    column-gap: 20px;
+    row-gap: 0;
+  }
+  .trades .trades-nm {
+    font-size: clamp(28px, min(4.7vw, var(--row) * 0.74), 72px);
+  }
+  .trades .trades-meta {
+    grid-column: 3;
+    grid-row: 1;
+    max-width: none;
+  }
+  .trades .trades-th {
+    grid-column: 4;
+    grid-row: 1;
+    width: 100%;
+  }
+  /* no hover to reveal them, and rows stay one line, so the chips are left out */
+  .trades .trades-inc {
+    display: none;
+  }
+}
+@media (hover: none) {
+  @container site (min-width: 810px) {
+    .trades .trades-inc {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+<rect width="400" height="500" fill="#E8E6E0"/>
+<g stroke="#D6D3CB" stroke-width="1"><path d="M0 0V500" /><path d="M25 0V500" /><path d="M50 0V500" /><path d="M75 0V500" /><path d="M100 0V500" /><path d="M125 0V500" /><path d="M150 0V500" /><path d="M175 0V500" /><path d="M200 0V500" /><path d="M225 0V500" /><path d="M250 0V500" /><path d="M275 0V500" /><path d="M300 0V500" /><path d="M325 0V500" /><path d="M350 0V500" /><path d="M375 0V500" /><path d="M400 0V500" /><path d="M0 0H400" /><path d="M0 25H400" /><path d="M0 50H400" /><path d="M0 75H400" /><path d="M0 100H400" /><path d="M0 125H400" /><path d="M0 150H400" /><path d="M0 175H400" /><path d="M0 200H400" /><path d="M0 225H400" /><path d="M0 250H400" /><path d="M0 275H400" /><path d="M0 300H400" /><path d="M0 325H400" /><path d="M0 350H400" /><path d="M0 375H400" /><path d="M0 400H400" /><path d="M0 425H400" /><path d="M0 450H400" /><path d="M0 475H400" /><path d="M0 500H400" /></g>
+<rect x="250" y="70" width="90" height="90" fill="#FFC31F"/>
+<rect x="60" y="360" width="60" height="60" fill="#FFC31F"/>
+<g fill="none" stroke="#14171A" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter"><path d="M120 120H280V390H120Z"/><path d="M165 105H235V140H165Z" fill="#FFC31F"/>
+<path d="M145 190L160 205L185 180M205 195H255"/>
+<path d="M145 250L160 265L185 240M205 255H255"/>
+<path d="M145 315H180V340H145ZM205 327H255"/></g>
+<g stroke="#14171A" stroke-width="1.5" fill="none"><path d="M60 450H340M60 444V456M340 444V456"/></g>
+<text x="200" y="478" font-family="monospace" font-size="15" letter-spacing="3" text-anchor="middle" fill="#14171A">OPERATIONS</text>
+</svg>

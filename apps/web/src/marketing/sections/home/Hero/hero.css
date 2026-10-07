@@ -1,0 +1,520 @@
+/*
+ * Home hero: "Build with clarity". The copy column on the left, the half-built, half-drawn house
+ * flush to the right edge with four labelled pointers, and the six-step rail
+ * under a 2px ink rule along the bottom.
+ *
+ * Geometry follows the Plan2Build reference frame (1536 x 1024): the drawing is up to 75% of the page
+ * width and sits 14px above the rail; the pointers are placed in percentages of the drawing and
+ * their leader lines in `cqw` of it, so they stay on the same corners of the house at any width.
+ * Sections switch layout on the page column's width (tablet under 1100px, phone under 810px).
+ */
+.ph {
+  --pad: 56px;
+  --maxw: clamp(1280px, 92vw, 1520px);
+  /* Left/right inset that lines the content up with the header bar. */
+  --edge: max(var(--pad), (100cqw - var(--maxw)) / 2);
+  --line: color-mix(in srgb, var(--gd-ink) 4%, transparent);
+  --body: color-mix(in srgb, var(--gd-ink) 80%, var(--gd-bone));
+  --mut: color-mix(in srgb, var(--gd-ink) 66%, var(--gd-bone));
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: max(100svh, 860px);
+  padding-top: var(--gd-hdh);
+  overflow: clip;
+  font-family: var(--font-body);
+  color: var(--gd-ink);
+  background-color: var(--gd-bone);
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 68px 68px;
+  background-position: -11px 14px;
+}
+/* The hairline under the header bar. */
+.ph::before {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  top: var(--gd-hdh);
+  height: 2px;
+  background: color-mix(in srgb, var(--gd-ink) 4.5%, var(--gd-bone));
+}
+
+/* ---------- Main band: copy and drawing ---------- */
+/* The copy sits in the middle of the band, level with the drawing beside it. */
+.ph-main {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 36px var(--edge) 51px;
+}
+.ph-copy {
+  position: relative;
+  z-index: 2;
+  width: min(640px, 42cqw);
+  /* Holds the 126px the stats row used to take (54px margin + 72px row), split above and
+     below, so the band, and the drawing anchored to its bottom, stay exactly where they were. */
+  padding-block: 63px;
+}
+
+.ph-eb {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.2;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--gd-ink) 88%, var(--gd-bone));
+}
+.ph-eb i,
+.ph-tag-mk {
+  flex: none;
+  display: block;
+  width: 10px;
+  height: 10px;
+  background: var(--gd-brass);
+  box-shadow: inset 0 0 0 1.5px var(--gd-ink);
+}
+
+/* Headline: three lines, the accent word on a yellow plate, the last line set smaller so it
+   runs the same width as the line above. The display face is drawn 20% narrower (`scale`, which
+   leaves the entrance's `transform` free) to reach the reference's tall, condensed caps. */
+.ph-h1 {
+  margin: 14px 0 0 -3px;
+  font-size: clamp(84px, 9.375cqw, 150px);
+  line-height: 0.89;
+  letter-spacing: -0.004em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+}
+.ph-ln {
+  display: block;
+}
+.ph-ln:nth-child(3) {
+  font-size: 0.85em;
+  line-height: 0.92;
+  margin-top: 0.03em;
+}
+.ph-lni {
+  display: block;
+  white-space: nowrap;
+  scale: 0.8 1;
+  transform-origin: 0 50%;
+}
+.ph-acc {
+  display: inline-block;
+  padding: 0.06em 0.1em 0.03em 0.1em;
+  margin: -0.06em 0 -0.03em -0.02em;
+  border-radius: 4px;
+  background: var(--gd-brass);
+}
+
+.ph-sub {
+  margin: 18px 0 0;
+  max-width: 420px;
+  font-size: 18px;
+  line-height: 1.42;
+  color: var(--body);
+}
+
+.ph-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 18px;
+}
+.ph .gd-btn {
+  min-height: 52px;
+  border-radius: 7px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.03em;
+}
+.ph .gd-face {
+  padding: 7px 25px 7px 7px;
+  gap: 22px;
+  box-shadow:
+    inset 0 0 0 1px var(--rim),
+    0 18px 30px -18px color-mix(in srgb, var(--gd-night) 55%, transparent);
+}
+.ph .gd-chip {
+  width: 38px;
+  height: 38px;
+  border-radius: 4px;
+}
+/* The secondary button: a clear outline with a square stud, the same shape as the primary's. */
+.ph .gd-btn.ph-pro {
+  --face: color-mix(in srgb, var(--gd-cloud) 22%, transparent);
+  --rim: color-mix(in srgb, var(--gd-ink) 28%, transparent);
+  --chip: var(--gd-cloud);
+  --chipfg: var(--gd-ink);
+  --chip2: var(--gd-ink);
+  --chipfg2: var(--gd-brass);
+}
+.ph .ph-pro .gd-face {
+  padding-left: 9px;
+  gap: 16px;
+  box-shadow: inset 0 0 0 1px var(--rim);
+}
+.ph .ph-pro .gd-chip {
+  box-shadow:
+    0 0 0 1.5px color-mix(in srgb, var(--gd-ink) 22%, transparent),
+    0 2px 6px -2px color-mix(in srgb, var(--gd-night) 25%, transparent);
+}
+
+/* ---------- The drawing ---------- */
+.ph-art {
+  /* No z-index, opacity or transform here: any of them would isolate the drawing's multiply
+     blend from the page grid. The copy stacks above it with their own z-index. */
+  position: absolute;
+  right: 0;
+  bottom: 14px;
+  /* 75% of the page, but never taller than the band leaves room for. Any bigger and the yellow
+     block at its bottom left runs into the buttons. */
+  width: min(75cqw, (max(100svh, 860px) - var(--gd-hdh) - 178px) * 1.5);
+  /* The pointers size themselves off the drawing (`cqw` and @container below). */
+  container-type: inline-size;
+}
+.ph-pic {
+  position: relative;
+  aspect-ratio: 3 / 2;
+}
+.ph-pic img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* The drawing's paper was levelled to white, so multiply leaves only the ink, timber and
+     yellow on the page grid. */
+  mix-blend-mode: multiply;
+  user-select: none;
+}
+
+/* Pointers: a yellow marker, a horizontal leader out to the left and a short drop below. */
+.ph-tags {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+.ph-tag {
+  --x: 0%;
+  --y: 0%;
+  --lead: 0cqw;
+  --drop: 4.2cqw;
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  display: flex;
+  flex-direction: column;
+  padding-left: clamp(16px, 2cqw, 22px);
+  font-family: var(--font-body);
+  font-size: clamp(10.5px, 1.2cqw, 13px);
+  line-height: 1.32;
+  white-space: nowrap;
+  color: var(--body);
+}
+.ph-tag b {
+  margin: -1px 0 3px;
+  font-size: clamp(12px, 1.32cqw, 14.5px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+}
+.ph-tag-mk {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 11px;
+  height: 11px;
+}
+/* Leader to the left, with a node where it meets the drawing. */
+.ph-tag::before {
+  content: "";
+  position: absolute;
+  top: 3.5px;
+  left: calc(-1 * var(--lead));
+  width: var(--lead);
+  height: 4px;
+  background:
+    linear-gradient(var(--ln), var(--ln)) 0 50% / 100% 1px no-repeat,
+    radial-gradient(circle at 2px 50%, var(--ln) 1.6px, transparent 2.1px);
+}
+/* Drop from the marker. */
+.ph-tag::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 11px;
+  width: 1px;
+  height: var(--drop);
+  background: var(--ln);
+}
+.ph-tag {
+  --ln: color-mix(in srgb, var(--gd-ink) 78%, transparent);
+}
+.ph-tag:nth-child(1) {
+  --x: 46.8%;
+  --y: -2.1%;
+  --lead: 1.1cqw;
+  --drop: 14.3cqw;
+}
+.ph-tag:nth-child(1)::before {
+  top: 9px;
+  background: var(--ln);
+  height: 1px;
+}
+.ph-tag:nth-child(2) {
+  --x: 79.2%;
+  --y: 4.7%;
+  --lead: 7.8cqw;
+  --drop: 5.6cqw;
+}
+.ph-tag:nth-child(3) {
+  --x: 82.3%;
+  --y: 22.3%;
+  --lead: 11.2cqw;
+  --drop: 4.2cqw;
+}
+.ph-tag:nth-child(4) {
+  --x: 84%;
+  --y: 39.6%;
+  --lead: 6.7cqw;
+  --drop: 4.2cqw;
+}
+
+/* ---------- Rail ---------- */
+.ph-rail {
+  position: relative;
+  z-index: 2;
+  padding: 27px var(--edge) 50px;
+  border-top: 2px solid var(--gd-ink);
+}
+.ph-steps {
+  display: grid;
+  grid-template-columns: 17fr 18.3fr 17.6fr 19.9fr 18.3fr 20fr;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ph-bar {
+  display: block;
+  height: 9px;
+  border-radius: 1px;
+  background: var(--gd-brass);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gd-ink) 72%, var(--gd-brass));
+  transform-origin: 0 50%;
+}
+.ph-step-t {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 17px 0 0;
+  font-size: 13px;
+  line-height: 1.2;
+}
+.ph-step-t span {
+  letter-spacing: 0.04em;
+  color: var(--mut);
+}
+.ph-step-t b {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.ph-step-d {
+  margin: 10px 0 0 23px;
+  max-width: 19em;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--body);
+}
+/* ---------- Entrance ----------
+   Everything rises in once nothing holds the page (the loader and the page-transition cover set
+   a `gd-hold-*` class on <html>). Without the loader script nothing is held, so it plays at once. */
+.ph-lni,
+.ph-in,
+.ph-pic img,
+.ph-tag,
+.ph-steps li {
+  animation: ph-rise 0.9s var(--ease) both paused;
+}
+.ph-eb {
+  animation-delay: 60ms;
+}
+.ph-sub {
+  animation-delay: 480ms;
+}
+.ph-btns {
+  animation-delay: 560ms;
+}
+
+.ph-pic img {
+  animation-name: ph-fade;
+  animation-duration: 1.4s;
+  animation-delay: 200ms;
+}
+.ph-tag {
+  animation-name: ph-fade;
+  animation-duration: 0.7s;
+}
+.ph-tag:nth-child(1) {
+  animation-delay: 900ms;
+}
+.ph-tag:nth-child(2) {
+  animation-delay: 1000ms;
+}
+.ph-tag:nth-child(3) {
+  animation-delay: 1100ms;
+}
+.ph-tag:nth-child(4) {
+  animation-delay: 1200ms;
+}
+.ph-steps li .ph-bar {
+  animation: ph-bar 0.8s var(--ease) both paused;
+  animation-delay: inherit;
+}
+html:not([class*="gd-hold"]) .ph :is(.ph-lni, .ph-in, .ph-pic img, .ph-tag, .ph-steps li, .ph-bar) {
+  animation-play-state: running;
+}
+
+@keyframes ph-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ph-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes ph-bar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ph *,
+  .ph *::before,
+  .ph *::after {
+    animation: none !important;
+  }
+}
+
+/* ---------- Narrower desktops: tighten the copy so the drawing keeps its room ---------- */
+@container site (max-width: 1279.98px) {
+  /* The copy can't give up any more width here, so the drawing keeps its original size. */
+  .ph-art {
+    width: min(70cqw, (max(100svh, 860px) - var(--gd-hdh) - 225px) * 1.5);
+  }
+
+  .ph-sub {
+    font-size: 17px;
+    max-width: 380px;
+  }
+  .ph-step-d {
+    margin-left: 0;
+    font-size: 13px;
+  }
+}
+
+/* ---------- Tablet: copy, then the drawing, then the rail ---------- */
+@container site (max-width: 1099.98px) {
+  .ph {
+    --pad: 32px;
+    min-height: 0;
+  }
+  .ph-main {
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+  .ph-copy {
+    width: 100%;
+    padding-block: 0;
+  }
+  .ph-h1 {
+    font-size: clamp(64px, 14cqw, 132px);
+  }
+  .ph-art {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: calc(100% + var(--edge));
+    margin-top: 28px;
+    align-self: flex-end;
+    margin-right: calc(-1 * var(--edge));
+  }
+  .ph-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 28px;
+  }
+}
+
+/* ---------- Phone ---------- */
+@container site (max-width: 809.98px) {
+  .ph {
+    --pad: 18px;
+    background-size: 48px 48px;
+  }
+  .ph-main {
+    padding-top: 28px;
+  }
+  .ph-eb {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+  }
+  .ph-h1 {
+    font-size: clamp(50px, 17cqw, 96px);
+    margin-top: 14px;
+  }
+  .ph-sub {
+    font-size: 16px;
+  }
+  .ph-btns {
+    gap: 12px;
+  }
+  .ph-btns .gd-btn {
+    flex: 1 1 100%;
+  }
+
+  .ph-art {
+    width: calc(100% + var(--edge) * 2);
+    margin-left: calc(-1 * var(--edge));
+  }
+  /* The pointers are too small to read on a phone; the rail below carries the same steps. */
+  .ph-tags {
+    display: none;
+  }
+  .ph-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 14px;
+  }
+}
