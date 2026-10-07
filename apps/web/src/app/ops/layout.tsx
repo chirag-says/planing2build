@@ -27,7 +27,7 @@ export default async function OpsLayout({ children }: { children: React.ReactNod
   ];
   return (
     <>
-      <HeaderNav brand={t("title")} signedIn={Boolean(staff)} links={links} />
+      <HeaderNav brand={t("title")} tag={t("tag")} signedIn={Boolean(staff)} links={links} />
       {children}
     </>
   );

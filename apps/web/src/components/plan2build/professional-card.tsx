@@ -1,7 +1,7 @@
 // A listed professional in the public directory (D-01: public fields only). The "Champions Club"
 // label is the name for every approved, listed professional (PD-18), never a tier.
 import type { components } from "@p2b/contracts";
-import { ArrowRightIcon, SendIcon, ShieldCheckIcon, UserRoundIcon } from "lucide-react";
+import { ArrowRightIcon, SendIcon, ShieldCheckIcon } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,12 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { getTranslator } from "@/lib/i18n";
 
 type Card = components["schemas"]["DirectoryCardOut"];
+
+/** Two letters from the name for the empty drawing sheet ("BuildRight Constructions" -> "BC"). */
+function monogram(name: string): string {
+  const words = name.split(/\s+/).filter((word) => /^[\p{L}\p{N}]/u.test(word));
+  return words.slice(0, 2).map((word) => word[0]).join("").toUpperCase() || "P2B";
+}
 
 export function ChampionsBadge() {
   return (
@@ -53,8 +59,10 @@ export function ProfessionalCard({
         // eslint-disable-next-line @next/next/no-img-element
         <img src={card.cover_image_url} alt="" className="aspect-[4/3] w-full object-cover" loading="lazy" />
       ) : (
-        <div className="-mt-(--card-spacing) flex aspect-[4/3] w-full items-center justify-center bg-muted text-muted-foreground">
-          <UserRoundIcon aria-hidden="true" className="size-10" />
+        // No portfolio photo yet: a blank drawing sheet with the firm's monogram, not a stock avatar.
+        <div aria-hidden="true" className="p2b-blueprint -mt-(--card-spacing) flex aspect-[4/3] w-full items-end justify-between rounded-none border-0 border-b p-4">
+          <span className="font-heading text-6xl leading-none">{monogram(name)}</span>
+          <span className="size-3 bg-brand ring-1 ring-foreground" />
         </div>
       )}
       <CardHeader>

@@ -541,7 +541,8 @@
       "error": "That did not work. Check the reason and try again.",
       "by": "{role}",
       "file": "File {index}"
-    }
+    },
+    "tag": "Operations"
   },
   "NotFound": {
     "title": "Page not found"
