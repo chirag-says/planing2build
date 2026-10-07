@@ -89,3 +89,23 @@ export function CardStep({
     </div>
   );
 }
+
+/**
+ * The same card for long forms (the requirement wizard): hazard edge and header row, without the
+ * slings and the drop, which suit a short card only.
+ */
+export function CardSheet({ label, note, children }: { label: ReactNode; note?: ReactNode; children: ReactNode }) {
+  return (
+    <div className="bid-card hc-sheet gd-lt">
+      <span className="bid-haz" aria-hidden="true" />
+      <p className="bid-top font-mono">
+        <span>
+          <i aria-hidden="true" />
+          {label}
+        </span>
+        {note && <span>{note}</span>}
+      </p>
+      <div className="pt-4">{children}</div>
+    </div>
+  );
+}

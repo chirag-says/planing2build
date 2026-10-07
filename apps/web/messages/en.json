@@ -675,6 +675,11 @@
       "VALIDATION_ERROR": "Check the email address and the type of work.",
       "RATE_LIMITED": "Too many requests. Wait a few minutes and try again.",
       "default": "Something went wrong. Try again shortly."
+    },
+    "card": {
+      "eyebrow": "Plan a project",
+      "label": "Enquiry",
+      "note": "Takes one minute"
     }
   },
   "Projects": {
@@ -784,7 +789,11 @@
       "allSides": "Enter every side, or tick Not sure.",
       "rankAll": "Rank all {count}."
     },
-    "needsInfoTitle": "Plan2Build needs more information"
+    "needsInfoTitle": "Plan2Build needs more information",
+    "card": {
+      "label": "Your requirement",
+      "note": "Saved as you go"
+    }
   },
   "Uploads": {
     "choose": "Add files",

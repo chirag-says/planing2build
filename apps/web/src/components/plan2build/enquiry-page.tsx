@@ -1,8 +1,8 @@
 import type { EnquiryKind } from "@p2b/contracts";
 
 import { EnquiryForm } from "@/components/plan2build/enquiry-form";
-import { PageContainer, PageHeader } from "@/components/plan2build/page-header";
-import { Card, CardContent } from "@/components/ui/card";
+import { HangingCard } from "@/components/plan2build/hanging-card";
+import { getTranslator } from "@/lib/i18n";
 
 /** Shared layout of the two capture pages (need help, other city). */
 export function EnquiryPage({
@@ -14,14 +14,16 @@ export function EnquiryPage({
   title: string;
   intro: string;
 }) {
+  const t = getTranslator("Enquiry");
   return (
-    <PageContainer width="narrow">
-      <PageHeader title={title} description={intro} />
-      <Card>
-        <CardContent>
-          <EnquiryForm kind={kind} />
-        </CardContent>
-      </Card>
-    </PageContainer>
+    <HangingCard
+      eyebrow={t("card.eyebrow")}
+      title={title}
+      description={intro}
+      label={t("card.label")}
+      note={t("card.note")}
+    >
+      <EnquiryForm kind={kind} />
+    </HangingCard>
   );
 }

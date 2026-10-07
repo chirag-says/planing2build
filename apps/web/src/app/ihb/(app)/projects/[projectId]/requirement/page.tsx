@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
+import { CardSheet } from "@/components/plan2build/hanging-card";
 import { PageContainer, PageHeader } from "@/components/plan2build/page-header";
 import { ProjectBreadcrumb } from "@/components/plan2build/project-breadcrumb";
 import { Notice } from "@/components/plan2build/states";
@@ -56,14 +57,16 @@ export default async function RequirementPage({
           <p className="whitespace-pre-line">{message.message}</p>
         </Notice>
       )}
-      <RequirementWizard
-        projectId={projectId}
-        set={questions.data}
-        initialAnswers={detail.data.requirement.answers}
-        initialVersion={detail.data.requirement.version}
-        files={files.data}
-        tiles={mapTiles()}
-      />
+      <CardSheet label={t("card.label")} note={t("card.note")}>
+        <RequirementWizard
+          projectId={projectId}
+          set={questions.data}
+          initialAnswers={detail.data.requirement.answers}
+          initialVersion={detail.data.requirement.version}
+          files={files.data}
+          tiles={mapTiles()}
+        />
+      </CardSheet>
     </PageContainer>
   );
 }
