@@ -39,9 +39,11 @@ type Step = { kind: "email" } | { kind: "code"; challengeId: string; maskedConta
 /**
  * `next` is where to go after signing in; anything but a same-site path falls back to home.
  * `framed` lays the two steps out as the numbered steps of a HangingCard (homeowner and
- * professional sign-in); labels, buttons and messages are the same either way.
+ * professional sign-in); labels, buttons and messages are the same either way. `home` is where a
+ * sign-in without `next` lands: the homeowner host sends families to their projects, because its
+ * `/` is the public website.
  */
-export function SignInForm({ next, framed = false }: { next?: string; framed?: boolean }) {
+export function SignInForm({ next, framed = false, home = "/" }: { next?: string; framed?: boolean; home?: string }) {
   const router = useRouter();
   const [step, setStep] = useState<Step>({ kind: "email" });
   const [email, setEmail] = useState("");
@@ -80,7 +82,7 @@ export function SignInForm({ next, framed = false }: { next?: string; framed?: b
         body: { challenge_id: step.challengeId, code },
       });
       if (data) {
-        router.replace(safeNextPath(next, "/"));
+        router.replace(safeNextPath(next, home));
         router.refresh();
         return;
       }

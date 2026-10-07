@@ -24,7 +24,8 @@ test("a homeowner signs up with an emailed code and signs out", async ({ page, r
   await page.getByLabel("6-digit code").fill(await codeFor(request, email));
   await page.getByRole("button", { name: "Sign in" }).click();
 
-  await expect(page).toHaveURL(`${IHB}/`);
+  // The homeowner host's `/` is the public website; signing in lands on the family's projects.
+  await expect(page).toHaveURL(`${IHB}/projects`);
   const signOut = await openSignOut(page);
   const cookies = await page.context().cookies();
   const session = cookies.find((cookie) => cookie.name.includes("p2b_ihb_session"));
