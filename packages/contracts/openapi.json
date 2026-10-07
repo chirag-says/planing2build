@@ -720,6 +720,344 @@
         "title": "AssembleIn",
         "type": "object"
       },
+      "AssistantCallOut": {
+        "additionalProperties": false,
+        "properties": {
+          "duration_ms": {
+            "title": "Duration Ms",
+            "type": "integer"
+          },
+          "input_tokens": {
+            "title": "Input Tokens",
+            "type": "integer"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "model_calls": {
+            "title": "Model Calls",
+            "type": "integer"
+          },
+          "output_tokens": {
+            "title": "Output Tokens",
+            "type": "integer"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider",
+          "model",
+          "request_id",
+          "duration_ms",
+          "model_calls",
+          "input_tokens",
+          "output_tokens"
+        ],
+        "title": "AssistantCallOut",
+        "type": "object"
+      },
+      "AssistantEditOut": {
+        "additionalProperties": false,
+        "description": "A proposal, never a change: PROPOSED carries typed operations already validated against\nthe plan at `expected_revision`, to be sent through the operations route if the owner\napplies them; UNSUPPORTED and CLARIFY say why there is none; FAILED means no reading of the\nrequest passed the plan's rules within the bounded attempts. The disclaimer applies.",
+        "properties": {
+          "call": {
+            "$ref": "#/components/schemas/AssistantCallOut"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          },
+          "expected_revision": {
+            "title": "Expected Revision",
+            "type": "integer"
+          },
+          "intent": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intent"
+          },
+          "openings": {
+            "items": {
+              "$ref": "#/components/schemas/OpeningChangeOut"
+            },
+            "title": "Openings",
+            "type": "array"
+          },
+          "ops": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "ADD_FIXTURE": "#/components/schemas/AddFixture",
+                  "ADD_OPENING": "#/components/schemas/AddOpening",
+                  "ADD_ROOM": "#/components/schemas/AddRoom",
+                  "ADD_ROOM_OUTSIDE": "#/components/schemas/AddRoomOutside",
+                  "DELETE_FIXTURE": "#/components/schemas/DeleteFixture",
+                  "DELETE_OPENING": "#/components/schemas/DeleteOpening",
+                  "DELETE_ROOM": "#/components/schemas/DeleteRoom",
+                  "MOVE_EDGE": "#/components/schemas/MoveEdge",
+                  "MOVE_FIXTURE": "#/components/schemas/MoveFixture",
+                  "MOVE_OPENING": "#/components/schemas/MoveOpening",
+                  "MOVE_WALL": "#/components/schemas/MoveWall",
+                  "RENAME_ROOM": "#/components/schemas/RenameRoom",
+                  "REVERT_TO_REVISION": "#/components/schemas/RevertToRevision",
+                  "REVERT_TO_VERSION": "#/components/schemas/RevertToVersion",
+                  "SET_OPENING": "#/components/schemas/SetOpening",
+                  "SET_ROOM_TYPE": "#/components/schemas/SetRoomType"
+                },
+                "propertyName": "op"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/MoveOpening"
+                },
+                {
+                  "$ref": "#/components/schemas/SetOpening"
+                },
+                {
+                  "$ref": "#/components/schemas/AddOpening"
+                },
+                {
+                  "$ref": "#/components/schemas/DeleteOpening"
+                },
+                {
+                  "$ref": "#/components/schemas/MoveFixture"
+                },
+                {
+                  "$ref": "#/components/schemas/AddFixture"
+                },
+                {
+                  "$ref": "#/components/schemas/DeleteFixture"
+                },
+                {
+                  "$ref": "#/components/schemas/RenameRoom"
+                },
+                {
+                  "$ref": "#/components/schemas/SetRoomType"
+                },
+                {
+                  "$ref": "#/components/schemas/MoveWall"
+                },
+                {
+                  "$ref": "#/components/schemas/MoveEdge"
+                },
+                {
+                  "$ref": "#/components/schemas/AddRoom"
+                },
+                {
+                  "$ref": "#/components/schemas/AddRoomOutside"
+                },
+                {
+                  "$ref": "#/components/schemas/DeleteRoom"
+                },
+                {
+                  "$ref": "#/components/schemas/RevertToRevision"
+                },
+                {
+                  "$ref": "#/components/schemas/RevertToVersion"
+                }
+              ]
+            },
+            "title": "Ops",
+            "type": "array"
+          },
+          "preview": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanGeometry"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rooms": {
+            "items": {
+              "$ref": "#/components/schemas/RoomChangeOut"
+            },
+            "title": "Rooms",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "PROPOSED",
+              "UNSUPPORTED",
+              "CLARIFY",
+              "FAILED"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "intent",
+          "ops",
+          "expected_revision",
+          "preview",
+          "rooms",
+          "openings",
+          "detail",
+          "call"
+        ],
+        "title": "AssistantEditOut",
+        "type": "object"
+      },
+      "AssistantEditRequest": {
+        "additionalProperties": false,
+        "description": "One sentence from the owner about the plan the editor shows (`expected_revision`).",
+        "properties": {
+          "expected_revision": {
+            "minimum": 0.0,
+            "title": "Expected Revision",
+            "type": "integer"
+          },
+          "text": {
+            "maxLength": 400,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "expected_revision"
+        ],
+        "title": "AssistantEditRequest",
+        "type": "object"
+      },
+      "AssistantRequirementOut": {
+        "additionalProperties": false,
+        "description": "The owner's description as requirement facts and provisional design inputs. The\nsubmitted requirement stays the authority: `conflicts` lists where the words differ, and\ngeneration uses the existing route with `design_inputs` once the owner confirms.",
+        "properties": {
+          "assumed": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Assumed",
+            "type": "array"
+          },
+          "call": {
+            "$ref": "#/components/schemas/AssistantCallOut"
+          },
+          "clarifications": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Clarifications",
+            "type": "array"
+          },
+          "conflicts": {
+            "items": {
+              "$ref": "#/components/schemas/RequirementConflictOut"
+            },
+            "title": "Conflicts",
+            "type": "array"
+          },
+          "design_inputs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DesignInputs-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "intent": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intent"
+          },
+          "missing": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing",
+            "type": "array"
+          },
+          "preferences": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Preferences",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "INTERPRETED",
+              "FAILED"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "unsupported": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unsupported",
+            "type": "array"
+          }
+        },
+        "required": [
+          "status",
+          "intent",
+          "design_inputs",
+          "missing",
+          "assumed",
+          "unsupported",
+          "preferences",
+          "clarifications",
+          "conflicts",
+          "call"
+        ],
+        "title": "AssistantRequirementOut",
+        "type": "object"
+      },
+      "AssistantRequirementRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "maxLength": 400,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "AssistantRequirementRequest",
+        "type": "object"
+      },
       "AssuranceOut": {
         "properties": {
           "findings": {
@@ -5211,6 +5549,11 @@
         "additionalProperties": false,
         "description": "What the editor needs besides the document (Checkpoint 3). `can_edit` is the API's answer\nfor this caller (owner of the project, plan with a document); the server checks it again on\nevery edit. `grid_mm` is the ruleset's planning grid, the editor's snap step. Checkpoint 3.1\nadds the room types and opening sizes the editor offers, and the wall thicknesses it needs to\nshow clear sizes; the server checks every value again.",
         "properties": {
+          "assistant": {
+            "default": false,
+            "title": "Assistant",
+            "type": "boolean"
+          },
           "can_edit": {
             "title": "Can Edit",
             "type": "boolean"
@@ -9964,6 +10307,39 @@
           "sill_mm"
         ],
         "title": "Opening",
+        "type": "object"
+      },
+      "OpeningChangeOut": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "MOVED",
+              "RESIZED"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "opening": {
+            "title": "Opening",
+            "type": "string"
+          },
+          "width_after_mm": {
+            "title": "Width After Mm",
+            "type": "integer"
+          },
+          "width_before_mm": {
+            "title": "Width Before Mm",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "opening",
+          "kind",
+          "width_before_mm",
+          "width_after_mm"
+        ],
+        "title": "OpeningChangeOut",
         "type": "object"
       },
       "OpeningGeom": {
@@ -17686,6 +18062,28 @@
         "title": "ReportOut",
         "type": "object"
       },
+      "RequirementConflictOut": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "requirement": {
+            "title": "Requirement"
+          },
+          "said": {
+            "title": "Said"
+          }
+        },
+        "required": [
+          "key",
+          "requirement",
+          "said"
+        ],
+        "title": "RequirementConflictOut",
+        "type": "object"
+      },
       "RequirementLevel": {
         "enum": [
           "REQUIRED",
@@ -18785,6 +19183,85 @@
           "origin"
         ],
         "title": "Room",
+        "type": "object"
+      },
+      "RoomChangeOut": {
+        "additionalProperties": false,
+        "properties": {
+          "area_after_mm2": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area After Mm2"
+          },
+          "area_before_mm2": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Before Mm2"
+          },
+          "kind": {
+            "enum": [
+              "CHANGED",
+              "ADDED",
+              "REMOVED",
+              "RETYPED",
+              "RENAMED"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "room": {
+            "title": "Room",
+            "type": "string"
+          },
+          "type_after": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type After"
+          },
+          "type_before": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type Before"
+          }
+        },
+        "required": [
+          "room",
+          "name",
+          "kind",
+          "area_before_mm2",
+          "area_after_mm2",
+          "type_before",
+          "type_after"
+        ],
+        "title": "RoomChangeOut",
         "type": "object"
       },
       "RoomGeom": {
@@ -43217,6 +43694,70 @@
         ]
       }
     },
+    "/api/v1/projects/{project_id}/house-plans/assistant/requirement": {
+      "post": {
+        "description": "Interpret the owner's description of the home into requirement facts and provisional\ndesign inputs, with the differences from the submitted requirement. Nothing is stored;\ngeneration uses `POST /projects/{id}/house-plans` with `design_inputs` and the existing\ndeterministic solver. 404 when off, 403 for a member, 503 PROVIDER_UNAVAILABLE.",
+        "operationId": "post_house_plan_assistant_requirement_api_v1_projects__project_id__house_plans_assistant_requirement_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssistantRequirementRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantRequirementOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post House Plan Assistant Requirement",
+        "tags": [
+          "houseplans"
+        ]
+      }
+    },
     "/api/v1/projects/{project_id}/house-plans/{plan_id}": {
       "get": {
         "operationId": "get_house_plan_api_v1_projects__project_id__house_plans__plan_id__get",
@@ -43275,6 +43816,80 @@
           }
         },
         "summary": "Get House Plan",
+        "tags": [
+          "houseplans"
+        ]
+      }
+    },
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}/assistant/edit": {
+      "post": {
+        "description": "Interpret one sentence into a proposed edit (owner only; off unless enabled). Nothing is\nstored: a PROPOSED answer's `ops` go through the operations route when the owner applies\nthem, where the server applies and validates them again. 404 when off, 403 for a member,\n409 STATE_CONFLICT or REVISION_CONFLICT, 503 PROVIDER_UNAVAILABLE.",
+        "operationId": "post_house_plan_assistant_edit_api_v1_projects__project_id__house_plans__plan_id__assistant_edit_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Plan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssistantEditRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantEditOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post House Plan Assistant Edit",
         "tags": [
           "houseplans"
         ]

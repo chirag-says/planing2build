@@ -102,6 +102,20 @@ class Settings(BaseSettings):
     # The layout solver (Checkpoint 2): the zoned local search; the Checkpoint 1 solver stays as the
     # fallback and reference, and is used for a ruleset without an objective section (1.0.0).
     houseplans_solver: Literal["ZONED_LOCAL_SEARCH", "DETERMINISTIC_MVP"] = "ZONED_LOCAL_SEARCH"
+    # AI-assisted design interpretation (Checkpoint 4): a language model turns a homeowner's
+    # words into a structured intent; the deterministic engine compiles it and the validator
+    # decides. Off unless set. `mock` is a deterministic interpreter for local work and tests
+    # (never in production); `gemini` needs a server-side key and a model name, both from
+    # configuration (models are retired often: no default model is assumed); `none` keeps the
+    # assistant unavailable. Repairs (asking the model again after a refusal) are bounded.
+    houseplans_ai_enabled: bool = False
+    ai_text_provider: Literal["gemini", "mock", "none"] = "none"
+    ai_text_model: str | None = None
+    gemini_api_key: SecretStr | None = None
+    gemini_api_base: str = "https://generativelanguage.googleapis.com/v1beta"
+    ai_text_timeout_seconds: float = Field(default=30, gt=0, le=120)
+    ai_text_attempts: int = Field(default=2, ge=1, le=4)
+    ai_text_max_repairs: int = Field(default=2, ge=0, le=2)
 
     # Billing (Slice 3.3; SLICE3_3_READINESS). `razorpay` is the only provider that takes money;
     # `fake` is the development and test gateway (local and test only); `none` keeps buying off.
@@ -180,6 +194,8 @@ class Settings(BaseSettings):
                 raise ValueError("production generates concept plans from a PUBLISHED ruleset only")
             if self.ai_image_provider == "demo":
                 raise ValueError("demo AI images never reach production homeowners")
+            if self.ai_text_provider == "mock":
+                raise ValueError("the mock text model never reaches production homeowners")
             if self.payment_provider == "fake":
                 raise ValueError("the fake payment gateway never takes production payments")
             if self.payment_provider == "razorpay" and not (self.payment_key_id or "").startswith(
@@ -192,6 +208,10 @@ class Settings(BaseSettings):
             raise ValueError("live Razorpay keys are for production only")
         if self.houseplans_allow_synthetic_ruleset and self.env not in ("local", "test"):
             raise ValueError("the synthetic layout ruleset runs locally and in tests only")
+        if self.ai_text_provider == "gemini" and not (self.gemini_api_key and self.ai_text_model):
+            raise ValueError("the Gemini text model needs P2B_GEMINI_API_KEY and P2B_AI_TEXT_MODEL")
+        if self.ai_text_provider == "mock" and self.env not in ("local", "test"):
+            raise ValueError("the mock text model runs locally and in tests only")
         if self.payment_provider == "fake" and self.env not in ("local", "test"):
             raise ValueError("the fake payment gateway runs locally and in tests only")
         if self.payment_provider != "none" and not (

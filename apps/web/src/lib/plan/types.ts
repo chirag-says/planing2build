@@ -29,6 +29,7 @@ export type RoomSideName = Schemas["RoomSide"];
 export type PlanVersion = Schemas["HousePlanVersionOut"];
 export type PlanRevision = Schemas["HousePlanRevisionOut"];
 export type InsertionSlot = Schemas["InsertionSlotOut"];
+export type AssistantEdit = Schemas["AssistantEditOut"];
 
 /** The part of a plan detail the drawing and the editor read. */
 export interface PlanState {

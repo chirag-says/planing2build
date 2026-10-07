@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useCallback, useMemo, useReducer, useRef, useSyncExternalStore, type KeyboardEvent } from "react";
 
+import { AssistantPanel } from "@/components/plan2build/plan/plan-assistant";
 import { PlanCanvas, type PlanCanvasHandle } from "@/components/plan2build/plan/plan-canvas";
 import { PlanHistory } from "@/components/plan2build/plan/plan-history";
 import {
@@ -224,6 +225,15 @@ export function PlanWorkspace({
           <p className="text-sm text-muted-foreground">
             {!state.plan.editing.can_edit ? t("readOnly") : editable ? t("editHint") : t("editOnLargerScreen")}
           </p>
+          {editable && state.plan.editing.assistant && (
+            <AssistantPanel
+              projectId={projectId}
+              planId={planId}
+              state={state}
+              dispatch={dispatch}
+              onApply={(ops, expected) => void commit(ops, "do", expected)}
+            />
+          )}
           <Inspector
             state={state}
             editable={editable}

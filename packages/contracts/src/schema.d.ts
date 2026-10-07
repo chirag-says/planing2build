@@ -5316,6 +5316,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{project_id}/house-plans/assistant/requirement": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post House Plan Assistant Requirement
+         * @description Interpret the owner's description of the home into requirement facts and provisional
+         *     design inputs, with the differences from the submitted requirement. Nothing is stored;
+         *     generation uses `POST /projects/{id}/house-plans` with `design_inputs` and the existing
+         *     deterministic solver. 404 when off, 403 for a member, 503 PROVIDER_UNAVAILABLE.
+         */
+        post: operations["post_house_plan_assistant_requirement_api_v1_projects__project_id__house_plans_assistant_requirement_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{project_id}/house-plans/{plan_id}": {
         parameters: {
             query?: never;
@@ -5327,6 +5350,29 @@ export interface paths {
         get: operations["get_house_plan_api_v1_projects__project_id__house_plans__plan_id__get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}/assistant/edit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post House Plan Assistant Edit
+         * @description Interpret one sentence into a proposed edit (owner only; off unless enabled). Nothing is
+         *     stored: a PROPOSED answer's `ops` go through the operations route when the owner applies
+         *     them, where the server applies and validates them again. 404 when off, 403 for a member,
+         *     409 STATE_CONFLICT or REVISION_CONFLICT, 503 PROVIDER_UNAVAILABLE.
+         */
+        post: operations["post_house_plan_assistant_edit_api_v1_projects__project_id__house_plans__plan_id__assistant_edit_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6363,6 +6409,99 @@ export interface components {
              * @description Required for a new version after an issued one
              */
             reason?: string | null;
+        };
+        /** AssistantCallOut */
+        AssistantCallOut: {
+            /** Duration Ms */
+            duration_ms: number;
+            /** Input Tokens */
+            input_tokens: number;
+            /** Model */
+            model: string;
+            /** Model Calls */
+            model_calls: number;
+            /** Output Tokens */
+            output_tokens: number;
+            /** Provider */
+            provider: string;
+            /** Request Id */
+            request_id: string;
+        };
+        /**
+         * AssistantEditOut
+         * @description A proposal, never a change: PROPOSED carries typed operations already validated against
+         *     the plan at `expected_revision`, to be sent through the operations route if the owner
+         *     applies them; UNSUPPORTED and CLARIFY say why there is none; FAILED means no reading of the
+         *     request passed the plan's rules within the bounded attempts. The disclaimer applies.
+         */
+        AssistantEditOut: {
+            call: components["schemas"]["AssistantCallOut"];
+            /** Detail */
+            detail: string | null;
+            /** Expected Revision */
+            expected_revision: number;
+            /** Intent */
+            intent: {
+                [key: string]: unknown;
+            } | null;
+            /** Openings */
+            openings: components["schemas"]["OpeningChangeOut"][];
+            /** Ops */
+            ops: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["MoveEdge"] | components["schemas"]["AddRoom"] | components["schemas"]["AddRoomOutside"] | components["schemas"]["DeleteRoom"] | components["schemas"]["RevertToRevision"] | components["schemas"]["RevertToVersion"])[];
+            preview: components["schemas"]["PlanGeometry"] | null;
+            /** Rooms */
+            rooms: components["schemas"]["RoomChangeOut"][];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "PROPOSED" | "UNSUPPORTED" | "CLARIFY" | "FAILED";
+        };
+        /**
+         * AssistantEditRequest
+         * @description One sentence from the owner about the plan the editor shows (`expected_revision`).
+         */
+        AssistantEditRequest: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Text */
+            text: string;
+        };
+        /**
+         * AssistantRequirementOut
+         * @description The owner's description as requirement facts and provisional design inputs. The
+         *     submitted requirement stays the authority: `conflicts` lists where the words differ, and
+         *     generation uses the existing route with `design_inputs` once the owner confirms.
+         */
+        AssistantRequirementOut: {
+            /** Assumed */
+            assumed: string[];
+            call: components["schemas"]["AssistantCallOut"];
+            /** Clarifications */
+            clarifications: string[];
+            /** Conflicts */
+            conflicts: components["schemas"]["RequirementConflictOut"][];
+            design_inputs: components["schemas"]["DesignInputs-Output"] | null;
+            /** Intent */
+            intent: {
+                [key: string]: unknown;
+            } | null;
+            /** Missing */
+            missing: string[];
+            /** Preferences */
+            preferences: string[];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "INTERPRETED" | "FAILED";
+            /** Unsupported */
+            unsupported: string[];
+        };
+        /** AssistantRequirementRequest */
+        AssistantRequirementRequest: {
+            /** Text */
+            text: string;
         };
         /** AssuranceOut */
         AssuranceOut: {
@@ -7904,6 +8043,11 @@ export interface components {
          *     show clear sizes; the server checks every value again.
          */
         EditingOut: {
+            /**
+             * Assistant
+             * @default false
+             */
+            assistant: boolean;
             /** Can Edit */
             can_edit: boolean;
             /** Exterior Wall Mm */
@@ -9609,6 +9753,20 @@ export interface components {
             wall: string;
             /** Width Mm */
             width_mm: number;
+        };
+        /** OpeningChangeOut */
+        OpeningChangeOut: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "MOVED" | "RESIZED";
+            /** Opening */
+            opening: string;
+            /** Width After Mm */
+            width_after_mm: number;
+            /** Width Before Mm */
+            width_before_mm: number;
         };
         /** OpeningGeom */
         OpeningGeom: {
@@ -12165,6 +12323,15 @@ export interface components {
             /** Version */
             version: number;
         };
+        /** RequirementConflictOut */
+        RequirementConflictOut: {
+            /** Key */
+            key: string;
+            /** Requirement */
+            requirement: unknown;
+            /** Said */
+            said: unknown;
+        };
         /**
          * RequirementLevel
          * @enum {string}
@@ -12529,6 +12696,26 @@ export interface components {
             size_spec: components["schemas"]["SizeSpec"];
             type: components["schemas"]["RoomType"];
             zone: components["schemas"]["Zone"];
+        };
+        /** RoomChangeOut */
+        RoomChangeOut: {
+            /** Area After Mm2 */
+            area_after_mm2: number | null;
+            /** Area Before Mm2 */
+            area_before_mm2: number | null;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "CHANGED" | "ADDED" | "REMOVED" | "RETYPED" | "RENAMED";
+            /** Name */
+            name: string;
+            /** Room */
+            room: string;
+            /** Type After */
+            type_after: string | null;
+            /** Type Before */
+            type_before: string | null;
         };
         /** RoomGeom */
         RoomGeom: {
@@ -27147,6 +27334,50 @@ export interface operations {
             };
         };
     };
+    post_house_plan_assistant_requirement_api_v1_projects__project_id__house_plans_assistant_requirement_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssistantRequirementRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssistantRequirementOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_house_plan_api_v1_projects__project_id__house_plans__plan_id__get: {
         parameters: {
             query?: never;
@@ -27166,6 +27397,51 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HousePlanDetailOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_house_plan_assistant_edit_api_v1_projects__project_id__house_plans__plan_id__assistant_edit_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssistantEditRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssistantEditOut"];
                 };
             };
             /** @description Client error */

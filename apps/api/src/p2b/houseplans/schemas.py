@@ -2,7 +2,7 @@
 models, so the contract the web app receives is the canonical schema, not a copy of it."""
 
 from datetime import datetime
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -169,6 +169,8 @@ class EditingOut(_Out):
     interior_wall_mm: int | None = None
     exterior_wall_mm: int | None = None
     insertion_slots: list[InsertionSlotOut] = []
+    # Checkpoint 4: the AI assistant is on for this owner (feature flag and a configured model)
+    assistant: bool = False
 
 
 class HousePlanDetailOut(HousePlanSummaryOut):
@@ -234,6 +236,84 @@ class HousePlanRevisionListOut(_Out):
     head_revision_no: int
     items: list[HousePlanRevisionOut]
     next_before: int | None  # pass as `before` for older revisions; None when there are none
+
+
+class AssistantEditRequest(_Out):
+    """One sentence from the owner about the plan the editor shows (`expected_revision`)."""
+
+    text: Annotated[str, Field(min_length=1, max_length=400)]
+    expected_revision: Annotated[int, Field(ge=0)]
+
+
+class AssistantCallOut(_Out):
+    provider: str
+    model: str
+    request_id: str
+    duration_ms: int
+    model_calls: int
+    input_tokens: int
+    output_tokens: int
+
+
+class RoomChangeOut(_Out):
+    room: str
+    name: str
+    kind: Literal["CHANGED", "ADDED", "REMOVED", "RETYPED", "RENAMED"]
+    area_before_mm2: int | None
+    area_after_mm2: int | None
+    type_before: str | None
+    type_after: str | None
+
+
+class OpeningChangeOut(_Out):
+    opening: str
+    kind: Literal["MOVED", "RESIZED"]
+    width_before_mm: int
+    width_after_mm: int
+
+
+class AssistantEditOut(_Out):
+    """A proposal, never a change: PROPOSED carries typed operations already validated against
+    the plan at `expected_revision`, to be sent through the operations route if the owner
+    applies them; UNSUPPORTED and CLARIFY say why there is none; FAILED means no reading of the
+    request passed the plan's rules within the bounded attempts. The disclaimer applies."""
+
+    status: Literal["PROPOSED", "UNSUPPORTED", "CLARIFY", "FAILED"]
+    intent: dict[str, Any] | None
+    ops: list[PlanOp]
+    expected_revision: int
+    preview: PlanGeometry | None  # the proposed plan's geometry, for the preview only
+    rooms: list[RoomChangeOut]
+    openings: list[OpeningChangeOut]
+    detail: str | None
+    call: AssistantCallOut
+
+
+class AssistantRequirementRequest(_Out):
+    text: Annotated[str, Field(min_length=1, max_length=400)]
+
+
+class RequirementConflictOut(_Out):
+    key: str
+    requirement: Any
+    said: Any
+
+
+class AssistantRequirementOut(_Out):
+    """The owner's description as requirement facts and provisional design inputs. The
+    submitted requirement stays the authority: `conflicts` lists where the words differ, and
+    generation uses the existing route with `design_inputs` once the owner confirms."""
+
+    status: Literal["INTERPRETED", "FAILED"]
+    intent: dict[str, Any] | None
+    design_inputs: DesignInputs | None
+    missing: list[str]
+    assumed: list[str]
+    unsupported: list[str]
+    preferences: list[str]
+    clarifications: list[str]
+    conflicts: list[RequirementConflictOut]
+    call: AssistantCallOut
 
 
 class OpsHousePlanDetailOut(HousePlanDetailOut):

@@ -2,12 +2,18 @@
 #   pnpm local:up:houseplans          -> the local stack with these settings on
 #   pnpm local:houseplans:ruleset     -> load the synthetic test ruleset (DRAFT, synthetic)
 #   pnpm local:reset-rate-limits      -> clear the counters a repeated e2e run trips
+# The AI assistant runs here with the mock interpreter, never a paid model by default.
 # Draft and synthetic rulesets are allowed here only because P2B_ENV is local: the configuration
 # refuses them in production, and these values are test values, never rules (AD-05).
 x-houseplans: &houseplans
   P2B_HOUSEPLANS_ENABLED: "true"
   P2B_HOUSEPLANS_ALLOW_DRAFT_RULESET: "true"
   P2B_HOUSEPLANS_ALLOW_SYNTHETIC_RULESET: "true"
+  # Checkpoint 4: the AI assistant with the deterministic mock interpreter (local only; the
+  # configuration refuses the mock outside local and test). For Gemini set
+  # P2B_AI_TEXT_PROVIDER=gemini, P2B_AI_TEXT_MODEL and P2B_GEMINI_API_KEY in your shell instead.
+  P2B_HOUSEPLANS_AI_ENABLED: "true"
+  P2B_AI_TEXT_PROVIDER: mock
 
 services:
   api:

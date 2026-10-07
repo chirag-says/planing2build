@@ -55,3 +55,5 @@ The floor plan feature is off by default and the test ruleset is synthetic, so i
 | Before a repeated e2e run: clear the sign-in and floor plan rate counters of the local database only | `pnpm local:reset-rate-limits` |
 
 `scripts/local_houseplans.py` refuses any database other than the local Compose one (127.0.0.1:55432, `p2b` or `p2b_test`). Production refuses draft and synthetic rulesets in its configuration.
+
+The AI assistant in the plan editor (Checkpoint 4) runs locally with a deterministic mock interpreter (`P2B_AI_TEXT_PROVIDER=mock` in `compose.houseplans.yml`). To try Gemini, set `P2B_AI_TEXT_PROVIDER=gemini`, `P2B_AI_TEXT_MODEL` and `P2B_GEMINI_API_KEY` for the API container; the key stays on the server. `cd apps/api && uv run python scripts/benchmark_houseplan_assistant.py out.json --provider gemini` runs the AI benchmark against it.

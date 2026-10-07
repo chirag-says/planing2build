@@ -2112,6 +2112,59 @@
       "noSlot": "No wall of the house faces this {area} with enough free space for a room.",
       "canAdd": "A room can be added here",
       "cannotAdd": "No room can be added here"
+    },
+    "assistant": {
+      "title": "Ask about your plan",
+      "note": "AI-assisted design interpretation: a suggested change based on your words. The plan's own rules decide whether it can be made, and nothing changes until you apply it.",
+      "label": "What would you like to change?",
+      "placeholder": "For example: make the kitchen a little bigger",
+      "ask": "Suggest a change",
+      "asking": "Working it out…",
+      "proposal": "Suggested change",
+      "apply": "Apply",
+      "cancel": "Cancel",
+      "dismiss": "Dismiss",
+      "stale": "The plan changed since this suggestion. Ask again.",
+      "clarify": "Could you say a little more? {question}",
+      "failed": "I could not make that change without breaking the plan's current rules.",
+      "failedUnclear": "I could not turn that into a change to the plan. Try saying it another way.",
+      "errorConflict": "The plan changed meanwhile. Reload the page and ask again.",
+      "errorUnavailable": "The assistant is not available right now.",
+      "errorBusy": "Too many requests just now. Try again in a few minutes.",
+      "errorFailed": "The suggestion could not be made. Check your connection and try again.",
+      "intent": {
+        "larger": "Make {room} larger.",
+        "smaller": "Make {room} smaller.",
+        "toward": "Bring {room} closer to {target}.",
+        "add": "Add a room: {type}.",
+        "retype": "Change {room} to {type}.",
+        "remove": "Remove {room}.",
+        "rename": "Rename {room} to {name}.",
+        "moveDoor": "Move the door of {room}.",
+        "moveWindow": "Move the window of {room}.",
+        "wider": "Make the {opening} of {room} wider.",
+        "narrower": "Make the {opening} of {room} narrower."
+      },
+      "change": {
+        "area": "{room}: {before} to {after}",
+        "added": "New room {room}: {area}",
+        "removed": "{room} is removed; its space joins its neighbour",
+        "retyped": "{room} becomes a {type}",
+        "renamed": "{room} gets its new name",
+        "resized": "{opening}: {before} to {after} wide",
+        "moved": "{opening} moves along its wall"
+      },
+      "unsupported": {
+        "ADD_FLOOR": "This concept plan is a single storey for now, so another floor cannot be added.",
+        "FREE_SHAPE": "Rooms here are rectangles with straight walls; curved or angled shapes are not supported.",
+        "STRUCTURAL_ENGINEERING": "Structural questions need a qualified structural engineer; the assistant does not answer them.",
+        "PERMIT_COMPLIANCE": "Approvals and permits need the authority and a qualified professional; the assistant cannot confirm them.",
+        "VASTU_CERTIFICATION": "The assistant cannot certify Vastu compliance.",
+        "PRIVACY_REDESIGN": "Rearranging the plan for privacy is not supported yet. You can move a room, a door or a window yourself.",
+        "UNSUPPORTED_ROOM_TYPE": "That kind of room is not one this plan's rules offer.",
+        "IMAGES_OR_3D": "Pictures and 3D views are not part of this editor.",
+        "OTHER": "That is outside what the assistant can do with this plan."
+      }
     }
   }
 }
