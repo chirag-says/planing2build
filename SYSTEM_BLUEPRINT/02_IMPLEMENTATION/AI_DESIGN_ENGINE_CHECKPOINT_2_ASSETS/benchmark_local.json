@@ -1,0 +1,1984 @@
+{
+ "label": "local-laptop",
+ "machine": {
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.13.9",
+  "cpus": 12
+ },
+ "repeats": 5,
+ "fixture_fit_ms": 32.4,
+ "cold_ms": {
+  "2bhk_30x50_north_twowheeler_open": 114.9,
+  "3bhk_40x65_east_puja": 271.3,
+  "2bhk_40x80_west_two_cars": 331.7,
+  "1bhk_25x40_south_small": 65.6,
+  "2bhk_22x60_narrow_deep": 116.8,
+  "4bhk_50x80_large_two_cars": 561.2,
+  "3bhk_30x60_single_car_vastu": 216.7,
+  "2bhk_35x55_utility_no_vastu": 228.5,
+  "3bhk_45x70_two_cars_puja": 366.7,
+  "3bhk_40x60_asymmetric_setbacks": 301.3,
+  "2bhk_30x45_common_bath_only": 130.0,
+  "3bhk_20x30_too_small": 0.5,
+  "2bhk_30x60_two_cars_too_wide": 180.7,
+  "4bhk_30x40_overfull": 0.5,
+  "3bhk_40x60_north_one_car": 315.1,
+  "2bhk_35x50_south_car": 166.9,
+  "2bhk_30x55_west_twowheeler": 116.9,
+  "3bhk_35x70_east_car": 275.8,
+  "1bhk_30x40_no_parking": 20.7,
+  "4bhk_45x75_two_cars_puja": 460.2,
+  "3bhk_50x60_wide_two_cars": 277.5,
+  "4bhk_40x90_deep_car_utility": 496.6,
+  "2bhk_25x50_narrow_open_plan": 87.8,
+  "4bhk_25x40_overfull": 0.5,
+  "2bhk_12x40_too_narrow": 0.4,
+  "3bhk_25x30_setbacks_eat_plot": 0.7,
+  "prop_square_45x45": 198.3,
+  "prop_mid_40x55": 179.1,
+  "prop_wide_60x35": 165.8,
+  "prop_wide_70x30": 173.1,
+  "prop_very_wide_80x28": 136.5,
+  "prop_deep_30x70": 218.1,
+  "prop_deep_25x90": 231.1,
+  "prop_very_deep_22x100": 297.3
+ },
+ "rows": [
+  {
+   "case": "2bhk_30x50_north_twowheeler_open",
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "input": "30x50 ft N, setbacks F5 B3 L2 R2; 2 bed, 1 bath (0 attached); pooja False; parking 1 two_wheeler",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pL_s3",
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 22,
+   "attempts": [
+    "SPINE_stepped_pL_s3:VALID"
+   ],
+   "latency_ms_p50": 115.8,
+   "latency_ms_max": 118.0,
+   "latency_ms_runs": [
+    115.8,
+    118.0,
+    115.2,
+    116.5,
+    113.9
+   ],
+   "body_sha256": "3f8a4baed51e74f2c6a4b628e97d45095bc942f583aecf732164c2043c76635c",
+   "deterministic": true,
+   "ranking_sha": "96587d7729ec8251",
+   "quality": 918,
+   "aspect_violations": 1,
+   "circulation_share_milli": 158,
+   "terms": {
+    "AREA_DEVIATION": 258,
+    "DIMENSION_DEVIATION": 262,
+    "ASPECT_EXCESS": 8,
+    "OVERSIZE": 0,
+    "CIRCULATION_SHARE": 58,
+    "ADJACENCY": null,
+    "WET_CLUSTER": 0,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.2948000003234483,
+    0.8943000029830728,
+    1.1712999985320494,
+    0.8938999999372754,
+    1.2239999996381812
+   ],
+   "repair_ms": [
+    2.5757000003068242,
+    2.3421000005328096,
+    2.409500000794651,
+    2.394700000877492,
+    2.4152000005415175
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "VALID",
+    "quality": 9812,
+    "aspect_violations": 5,
+    "circulation_share_milli": 117,
+    "body_sha256": "97f446ba0395aba89966d2ab58d9f66e1e5be1af7e9decca1d9d58a56b31fd6b"
+   }
+  },
+  {
+   "case": "3bhk_40x65_east_puja",
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "input": "40x65 ft E, setbacks F6 B4 L3 R3; 3 bed, 2 bath (1 attached); pooja True; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pL_s2",
+   "candidates_enumerated": 54,
+   "candidates_sized": 32,
+   "feasible_layouts": 32,
+   "attempts": [
+    "SPINE_stepped_pL_s2:VALID"
+   ],
+   "latency_ms_p50": 278.3,
+   "latency_ms_max": 278.9,
+   "latency_ms_runs": [
+    278.9,
+    278.9,
+    275.3,
+    272.4,
+    278.3
+   ],
+   "body_sha256": "a96bd3ab877ea329f1ac19d8b4f753382c348e16b7042f95cfecb203b77505ef",
+   "deterministic": true,
+   "ranking_sha": "1c57af9641b066cb",
+   "quality": 7866,
+   "aspect_violations": 5,
+   "circulation_share_milli": 100,
+   "terms": {
+    "AREA_DEVIATION": 913,
+    "DIMENSION_DEVIATION": 766,
+    "ASPECT_EXCESS": 481,
+    "OVERSIZE": 1749,
+    "CIRCULATION_SHARE": 0,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 333,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.5041000006021932,
+    1.4637999993283302,
+    1.7673000002105255,
+    1.4381000000867061,
+    1.4411000011023134
+   ],
+   "repair_ms": [
+    4.16169999880367,
+    3.77200000002631,
+    3.873499998007901,
+    4.208199999993667,
+    4.422000001795823
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "VALID",
+    "quality": 15170,
+    "aspect_violations": 7,
+    "circulation_share_milli": 85,
+    "body_sha256": "bc430b40346fd7ad8eadb0f9301a919ed8a0c975668e7c19063dfbb21863b5b5"
+   }
+  },
+  {
+   "case": "2bhk_40x80_west_two_cars",
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "difficult",
+   "input": "40x80 ft W, setbacks F5 B3 L3 R3; 2 bed, 2 bath (1 attached); pooja False; parking 2 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pR_s3",
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 32,
+   "attempts": [
+    "SPINE_stepped_pR_s3:VALID"
+   ],
+   "latency_ms_p50": 307.1,
+   "latency_ms_max": 317.7,
+   "latency_ms_runs": [
+    310.5,
+    307.1,
+    306.3,
+    317.7,
+    306.5
+   ],
+   "body_sha256": "0744363bd303e5da5539aa6bb8ba1b919886aa10be3c7e9f090743702c3811f5",
+   "deterministic": true,
+   "ranking_sha": "98e059ece14b1f13",
+   "quality": 6564,
+   "aspect_violations": 2,
+   "circulation_share_milli": 118,
+   "terms": {
+    "AREA_DEVIATION": 1068,
+    "DIMENSION_DEVIATION": 852,
+    "ASPECT_EXCESS": 115,
+    "OVERSIZE": 1431,
+    "CIRCULATION_SHARE": 18,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 333,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.2390999982017092,
+    1.20489999972051,
+    1.464499997382518,
+    1.1859000005642883,
+    1.1077999988629017
+   ],
+   "repair_ms": [
+    3.5846000027959235,
+    3.138500000204658,
+    3.402700000151526,
+    3.258300002926262,
+    2.8726000018650666
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "VALID",
+    "quality": 53540,
+    "aspect_violations": 6,
+    "circulation_share_milli": 94,
+    "body_sha256": "1ba2ffbc6c981041a78d139626be33dad9ad0f30312bf0999504e968e3315973"
+   }
+  },
+  {
+   "case": "1bhk_25x40_south_small",
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "input": "25x40 ft S, setbacks F4 B3 L2 R2; 1 bed, 1 bath (0 attached); pooja False; parking 1 two_wheeler",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "INFEASIBLE",
+   "classification": "NO_SUPPORTED_LAYOUT",
+   "code": "DEPTH_EXCEEDED",
+   "explanation": "None of the 26 layouts this version of the engine can produce fits this programme on the plot. In the closest one, bedroom 1 would be 2.40 m across; the rules need 2.80 m; dining would be 2.30 m across; the rules need 2.50 m. This does not mean the home is impossible to design.",
+   "topology": null,
+   "candidates_enumerated": 26,
+   "candidates_sized": 26,
+   "feasible_layouts": 0,
+   "attempts": [],
+   "latency_ms_p50": 66.2,
+   "latency_ms_max": 67.6,
+   "latency_ms_runs": [
+    67.6,
+    65.4,
+    66.9,
+    66.2,
+    65.8
+   ],
+   "body_sha256": "INFEASIBLE",
+   "deterministic": true,
+   "ranking_sha": "4f53cda18c2baa0c",
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "2bhk_22x60_narrow_deep",
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "input": "22x60 ft E, setbacks F5 B3 L2 R2; 2 bed, 1 bath (0 attached); pooja False; parking 1 two_wheeler",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_one_pL",
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 4,
+   "attempts": [
+    "SPINE_one_pL:VALID"
+   ],
+   "latency_ms_p50": 118.1,
+   "latency_ms_max": 120.9,
+   "latency_ms_runs": [
+    116.7,
+    120.0,
+    120.9,
+    118.1,
+    117.5
+   ],
+   "body_sha256": "f9708e4e4388f4e9654c9817cdf8563ec0d214d342747f6330652ba6933031fc",
+   "deterministic": true,
+   "ranking_sha": "62e4831c61479200",
+   "quality": 3133,
+   "aspect_violations": 5,
+   "circulation_share_milli": 179,
+   "terms": {
+    "AREA_DEVIATION": 221,
+    "DIMENSION_DEVIATION": 365,
+    "ASPECT_EXCESS": 668,
+    "OVERSIZE": 82,
+    "CIRCULATION_SHARE": 79,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 0,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    0.9850000024016481,
+    0.8936000012909062,
+    0.9045000006153714,
+    0.8788999984972179,
+    0.9062999997695442
+   ],
+   "repair_ms": [
+    2.5397999997949228,
+    2.812499998981366,
+    2.344100001209881,
+    2.5901000008161645,
+    2.3416999974870123
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "4bhk_50x80_large_two_cars",
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "difficult",
+   "input": "50x80 ft N, setbacks F8 B5 L4 R4; 4 bed, 3 bath (2 attached); pooja True; parking 2 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pL_s2",
+   "candidates_enumerated": 54,
+   "candidates_sized": 32,
+   "feasible_layouts": 32,
+   "attempts": [
+    "SPINE_stepped_pL_s2:VALID"
+   ],
+   "latency_ms_p50": 560.1,
+   "latency_ms_max": 566.1,
+   "latency_ms_runs": [
+    566.1,
+    553.8,
+    560.1,
+    563.5,
+    550.0
+   ],
+   "body_sha256": "474cbab7bf2ef81789c06e4745e01dc4180643c17f1428a1be65c93029e8eda8",
+   "deterministic": true,
+   "ranking_sha": "6968da85529de1be",
+   "quality": 28656,
+   "aspect_violations": 8,
+   "circulation_share_milli": 86,
+   "terms": {
+    "AREA_DEVIATION": 1561,
+    "DIMENSION_DEVIATION": 1217,
+    "ASPECT_EXCESS": 4517,
+    "OVERSIZE": 5083,
+    "CIRCULATION_SHARE": 0,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 600,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    2.333699998416705,
+    2.1779999988211785,
+    2.1160000032978132,
+    2.128400003130082,
+    2.490300001227297
+   ],
+   "repair_ms": [
+    6.0398999994504265,
+    6.516400000691647,
+    5.975000000034925,
+    6.149900000309572,
+    5.678100002114661
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "VALID",
+    "quality": 44168,
+    "aspect_violations": 10,
+    "circulation_share_milli": 76,
+    "body_sha256": "7bb4f896c637227f606c46fb0b9cd2b32fa602c3a9924baf68b1c06006f3192e"
+   }
+  },
+  {
+   "case": "3bhk_30x60_single_car_vastu",
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "input": "30x60 ft S, setbacks F5 B3 L2 R2; 3 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pL_s2",
+   "candidates_enumerated": 54,
+   "candidates_sized": 32,
+   "feasible_layouts": 23,
+   "attempts": [
+    "SPINE_stepped_pL_s2:VALID"
+   ],
+   "latency_ms_p50": 222.8,
+   "latency_ms_max": 271.2,
+   "latency_ms_runs": [
+    222.8,
+    222.8,
+    220.6,
+    242.1,
+    271.2
+   ],
+   "body_sha256": "16590b4c527931347dcf7645c8da8cef30c645bacb3f2a67e510d11a5a92b6b5",
+   "deterministic": true,
+   "ranking_sha": "302474616261c03a",
+   "quality": 909,
+   "aspect_violations": 0,
+   "circulation_share_milli": 133,
+   "terms": {
+    "AREA_DEVIATION": 167,
+    "DIMENSION_DEVIATION": 176,
+    "ASPECT_EXCESS": 0,
+    "OVERSIZE": 0,
+    "CIRCULATION_SHARE": 33,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 333,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.406800001859665,
+    1.6790999980003107,
+    1.7206000011356082,
+    1.2911000012536533,
+    1.3581999992311466
+   ],
+   "repair_ms": [
+    3.8377999990188982,
+    3.405900002690032,
+    3.8378999997803476,
+    4.841599999053869,
+    4.252399998222245
+   ],
+   "repair_restored_valid": false,
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "2bhk_35x55_utility_no_vastu",
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "input": "35x55 ft W, setbacks F5 B3 L3 R3; 2 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pL_s1",
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 19,
+   "attempts": [
+    "SPINE_stepped_pL_s1:VALID"
+   ],
+   "latency_ms_p50": 228.8,
+   "latency_ms_max": 240.9,
+   "latency_ms_runs": [
+    228.7,
+    228.7,
+    240.9,
+    237.4,
+    228.8
+   ],
+   "body_sha256": "27bb49d57fb453d4d2cdb5fe1f2934086fc7151e19d225548058664b7a9d97e6",
+   "deterministic": true,
+   "ranking_sha": "931d544c6b426184",
+   "quality": 2669,
+   "aspect_violations": 2,
+   "circulation_share_milli": 118,
+   "terms": {
+    "AREA_DEVIATION": 532,
+    "DIMENSION_DEVIATION": 511,
+    "ASPECT_EXCESS": 28,
+    "OVERSIZE": 237,
+    "CIRCULATION_SHARE": 18,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 500,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.399400000082096,
+    1.3042999999015592,
+    1.2741999998979736,
+    1.3017000019317493,
+    1.4014999978826381
+   ],
+   "repair_ms": [
+    3.3265000020037405,
+    3.5403000001679175,
+    3.857100000459468,
+    3.3465999986219686,
+    3.469700001005549
+   ],
+   "repair_restored_valid": false,
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "3bhk_45x70_two_cars_puja",
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "difficult",
+   "input": "45x70 ft E, setbacks F6 B4 L3 R3; 3 bed, 3 bath (2 attached); pooja True; parking 2 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pL_s3",
+   "candidates_enumerated": 54,
+   "candidates_sized": 32,
+   "feasible_layouts": 20,
+   "attempts": [
+    "SPINE_stepped_pL_s3:VALID"
+   ],
+   "latency_ms_p50": 369.0,
+   "latency_ms_max": 376.9,
+   "latency_ms_runs": [
+    364.1,
+    375.5,
+    366.3,
+    369.0,
+    376.9
+   ],
+   "body_sha256": "cb28f01c195d7c1bca34f8de5fc91384fe8cfef731e9015bab3b556e66cf579e",
+   "deterministic": true,
+   "ranking_sha": "cf08945882b5666b",
+   "quality": 18312,
+   "aspect_violations": 7,
+   "circulation_share_milli": 90,
+   "terms": {
+    "AREA_DEVIATION": 1412,
+    "DIMENSION_DEVIATION": 1089,
+    "ASPECT_EXCESS": 1783,
+    "OVERSIZE": 4025,
+    "CIRCULATION_SHARE": 0,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 1000,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    2.326799996808404,
+    2.10739999965881,
+    2.170699997805059,
+    2.150100001017563,
+    2.0006999984616414
+   ],
+   "repair_ms": [
+    4.4875999992655125,
+    4.780600000231061,
+    4.4879000015498605,
+    4.723999998532236,
+    4.50020000062068
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "VALID",
+    "quality": 29140,
+    "aspect_violations": 7,
+    "circulation_share_milli": 81,
+    "body_sha256": "0362a23c878667ff67c38ef820a087925d1181dfd6243a3cc2b2e0d7f8bd5d38"
+   }
+  },
+  {
+   "case": "3bhk_40x60_asymmetric_setbacks",
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "input": "40x60 ft N, setbacks F10 B5 L5 R2; 3 bed, 2 bath (1 attached); pooja True; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "FRONT_EXTENSION_stepped_pL_x_bedroom_3_s1",
+   "candidates_enumerated": 54,
+   "candidates_sized": 32,
+   "feasible_layouts": 4,
+   "attempts": [
+    "FRONT_EXTENSION_stepped_pL_x_bedroom_3_s1:VALID"
+   ],
+   "latency_ms_p50": 297.3,
+   "latency_ms_max": 300.6,
+   "latency_ms_runs": [
+    296.8,
+    297.3,
+    300.6,
+    300.3,
+    293.8
+   ],
+   "body_sha256": "dd75a8d110f41a5cd4a992b5defec0549b39cd100571b4ae6ede252331c64383",
+   "deterministic": true,
+   "ranking_sha": "754497994bf59fd5",
+   "quality": 11218,
+   "aspect_violations": 4,
+   "circulation_share_milli": 89,
+   "terms": {
+    "AREA_DEVIATION": 582,
+    "DIMENSION_DEVIATION": 526,
+    "ASPECT_EXCESS": 1829,
+    "OVERSIZE": 854,
+    "CIRCULATION_SHARE": 0,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 1000,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 333,
+    "PARKING_CONVENIENCE": 1000,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.56789999891771,
+    1.5634999981557485,
+    1.4784999984840397,
+    1.4468999979726505,
+    1.496100001531886
+   ],
+   "repair_ms": [
+    3.843799997412134,
+    4.287900002964307,
+    4.384899999422487,
+    4.779799997777445,
+    4.247600001690444
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "2bhk_30x45_common_bath_only",
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "input": "30x45 ft E, setbacks F4 B3 L2 R2; 2 bed, 1 bath (0 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pL_s0",
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 4,
+   "attempts": [
+    "SPINE_stepped_pL_s0:VALID"
+   ],
+   "latency_ms_p50": 127.4,
+   "latency_ms_max": 132.2,
+   "latency_ms_runs": [
+    126.4,
+    127.4,
+    132.2,
+    126.6,
+    129.1
+   ],
+   "body_sha256": "f3d4411ba8c5984a5c5314fb3cc70c6fe59554143313b7b650720da881a19216",
+   "deterministic": true,
+   "ranking_sha": "c54e225c72fbb42c",
+   "quality": 334,
+   "aspect_violations": 0,
+   "circulation_share_milli": 119,
+   "terms": {
+    "AREA_DEVIATION": 97,
+    "DIMENSION_DEVIATION": 102,
+    "ASPECT_EXCESS": 0,
+    "OVERSIZE": 0,
+    "CIRCULATION_SHARE": 19,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 0,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.0140999984287191,
+    0.8837999994284473,
+    0.91229999816278,
+    0.8674000018800143,
+    0.9213999983330723
+   ],
+   "repair_ms": [
+    2.3751999979140237,
+    2.400699999270728,
+    2.35890000112704,
+    2.9085999995004386,
+    2.360699996643234
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "3bhk_20x30_too_small",
+   "group": "original",
+   "expect": "INFEASIBLE",
+   "latency_class": "infeasible",
+   "input": "20x30 ft S, setbacks F5 B3 L2 R2; 3 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "INFEASIBLE",
+   "classification": "PROVEN",
+   "code": "AREA_BUDGET",
+   "explanation": "The buildable area after setbacks is 4.88 m by 6.71 m (32.70 m\u00b2). The requested rooms need at least 75.30 m\u00b2 at their minimum sizes with walls, before any passage, so they cannot fit in any arrangement.",
+   "topology": null,
+   "candidates_enumerated": 0,
+   "candidates_sized": 0,
+   "feasible_layouts": 0,
+   "attempts": [],
+   "latency_ms_p50": 0.5,
+   "latency_ms_max": 0.5,
+   "latency_ms_runs": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "body_sha256": "INFEASIBLE",
+   "deterministic": true,
+   "ranking_sha": "4f53cda18c2baa0c",
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "2bhk_30x60_two_cars_too_wide",
+   "group": "original",
+   "expect": "INFEASIBLE",
+   "latency_class": "infeasible",
+   "input": "30x60 ft E, setbacks F5 B3 L2 R2; 2 bed, 2 bath (1 attached); pooja False; parking 2 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "INFEASIBLE",
+   "classification": "NO_SUPPORTED_LAYOUT",
+   "code": "PARKING_TOO_WIDE",
+   "explanation": "None of the 32 layouts this version of the engine can produce fits this programme on the plot. In the closest one, the parking would be 3.95 m where 5.00 m is needed; passage would share only 1.10 m of wall with the room it opens from; a door needs 1.20 m; dining would be 2.47 m across; the rules need 2.50 m. This does not mean the home is impossible to design.",
+   "topology": null,
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 0,
+   "attempts": [],
+   "latency_ms_p50": 186.0,
+   "latency_ms_max": 202.8,
+   "latency_ms_runs": [
+    185.7,
+    197.4,
+    186.0,
+    202.8,
+    185.3
+   ],
+   "body_sha256": "INFEASIBLE",
+   "deterministic": true,
+   "ranking_sha": "4f53cda18c2baa0c",
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "4bhk_30x40_overfull",
+   "group": "original",
+   "expect": "INFEASIBLE",
+   "latency_class": "infeasible",
+   "input": "30x40 ft N, setbacks F5 B3 L2 R2; 4 bed, 3 bath (2 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "INFEASIBLE",
+   "classification": "PROVEN",
+   "code": "AREA_BUDGET",
+   "explanation": "The buildable area after setbacks is 7.92 m by 9.75 m (77.29 m\u00b2). The requested rooms need at least 88.27 m\u00b2 at their minimum sizes with walls, before any passage, so they cannot fit in any arrangement.",
+   "topology": null,
+   "candidates_enumerated": 0,
+   "candidates_sized": 0,
+   "feasible_layouts": 0,
+   "attempts": [],
+   "latency_ms_p50": 0.5,
+   "latency_ms_max": 0.5,
+   "latency_ms_runs": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "body_sha256": "INFEASIBLE",
+   "deterministic": true,
+   "ranking_sha": "4f53cda18c2baa0c",
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "3bhk_40x60_north_one_car",
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "input": "40x60 ft N, setbacks F6 B4 L3 R3; 3 bed, 2 bath (1 attached); pooja True; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pL_s2",
+   "candidates_enumerated": 54,
+   "candidates_sized": 32,
+   "feasible_layouts": 28,
+   "attempts": [
+    "SPINE_stepped_pL_s2:VALID"
+   ],
+   "latency_ms_p50": 303.8,
+   "latency_ms_max": 306.6,
+   "latency_ms_runs": [
+    306.6,
+    304.8,
+    300.5,
+    303.8,
+    300.7
+   ],
+   "body_sha256": "a4e7f36e53ec9f459d6625cd7ce6c14be14da7918add98a63315521857dfe367",
+   "deterministic": true,
+   "ranking_sha": "c6602b77126919a4",
+   "quality": 9482,
+   "aspect_violations": 8,
+   "circulation_share_milli": 100,
+   "terms": {
+    "AREA_DEVIATION": 734,
+    "DIMENSION_DEVIATION": 664,
+    "ASPECT_EXCESS": 1529,
+    "OVERSIZE": 1215,
+    "CIRCULATION_SHARE": 0,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 333,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.5155000000959262,
+    1.441000000340864,
+    1.60419999883743,
+    1.6467999994347338,
+    1.4207999993232079
+   ],
+   "repair_ms": [
+    4.232800001773285,
+    3.839400000288151,
+    3.782299998420058,
+    3.8914000033400953,
+    4.204099997878075
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "2bhk_35x50_south_car",
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "input": "35x50 ft S, setbacks F5 B3 L3 R3; 2 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pL_s1",
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 10,
+   "attempts": [
+    "SPINE_stepped_pL_s1:VALID"
+   ],
+   "latency_ms_p50": 165.9,
+   "latency_ms_max": 169.7,
+   "latency_ms_runs": [
+    164.5,
+    169.7,
+    169.5,
+    165.9,
+    165.4
+   ],
+   "body_sha256": "128edf5b7c4a82454de2613ab640e4b56fb662ee7df53b0dace13c3bd25ea122",
+   "deterministic": true,
+   "ranking_sha": "c336a98d3071032f",
+   "quality": 1925,
+   "aspect_violations": 0,
+   "circulation_share_milli": 111,
+   "terms": {
+    "AREA_DEVIATION": 297,
+    "DIMENSION_DEVIATION": 309,
+    "ASPECT_EXCESS": 0,
+    "OVERSIZE": 0,
+    "CIRCULATION_SHARE": 11,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 1000,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.3381000026129186,
+    1.0755000002973247,
+    1.08879999970668,
+    1.355700002022786,
+    1.0724999992817175
+   ],
+   "repair_ms": [
+    3.316300000733463,
+    3.6040999984834343,
+    3.293800000392366,
+    3.238400000554975,
+    3.6683000034827273
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "2bhk_30x55_west_twowheeler",
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "input": "30x55 ft W, setbacks F5 B3 L2 R2; 2 bed, 1 bath (0 attached); pooja False; parking 1 two_wheeler",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pL_s3",
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 22,
+   "attempts": [
+    "SPINE_stepped_pL_s3:VALID"
+   ],
+   "latency_ms_p50": 116.5,
+   "latency_ms_max": 119.6,
+   "latency_ms_runs": [
+    115.9,
+    119.6,
+    115.3,
+    116.5,
+    116.5
+   ],
+   "body_sha256": "0efd8b7edaad53f3b395f5bc68933ffe16f0b3c299df4f0cf7d5aa66c238fd0c",
+   "deterministic": true,
+   "ranking_sha": "60d43799ed70d98d",
+   "quality": 483,
+   "aspect_violations": 0,
+   "circulation_share_milli": 167,
+   "terms": {
+    "AREA_DEVIATION": 108,
+    "DIMENSION_DEVIATION": 133,
+    "ASPECT_EXCESS": 0,
+    "OVERSIZE": 0,
+    "CIRCULATION_SHARE": 67,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 0,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    0.9697000023152214,
+    1.207000001159031,
+    0.8846000018820632,
+    1.0526000005484093,
+    0.894600001629442
+   ],
+   "repair_ms": [
+    2.368399997067172,
+    2.346400000533322,
+    2.2896000009495765,
+    2.411099998425925,
+    2.2992000012891367
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "VALID",
+    "quality": 10965,
+    "aspect_violations": 4,
+    "circulation_share_milli": 121,
+    "body_sha256": "65fff2d9705c14b5568542d37e878b449fe3977b0d62eb7fd482ece7a91a1ad5"
+   }
+  },
+  {
+   "case": "3bhk_35x70_east_car",
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "input": "35x70 ft E, setbacks F6 B4 L3 R3; 3 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pL_s2",
+   "candidates_enumerated": 54,
+   "candidates_sized": 32,
+   "feasible_layouts": 29,
+   "attempts": [
+    "SPINE_stepped_pL_s2:VALID"
+   ],
+   "latency_ms_p50": 269.7,
+   "latency_ms_max": 272.2,
+   "latency_ms_runs": [
+    269.7,
+    264.4,
+    272.2,
+    264.9,
+    271.6
+   ],
+   "body_sha256": "17235ba0c797d1ec0e2fa85b98dd84bce0f2b7c64fb450fbd5225058046722e5",
+   "deterministic": true,
+   "ranking_sha": "1675bd1adadd5fbe",
+   "quality": 2378,
+   "aspect_violations": 1,
+   "circulation_share_milli": 105,
+   "terms": {
+    "AREA_DEVIATION": 445,
+    "DIMENSION_DEVIATION": 387,
+    "ASPECT_EXCESS": 20,
+    "OVERSIZE": 349,
+    "CIRCULATION_SHARE": 5,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 333,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.7385000028298236,
+    2.1144000020285603,
+    1.3655000002472661,
+    1.2667999981204048,
+    1.288600000407314
+   ],
+   "repair_ms": [
+    6.605500002478948,
+    3.5997000013594516,
+    3.4606000008352567,
+    3.4331999995629303,
+    3.297200000815792
+   ],
+   "repair_restored_valid": false,
+   "cp1": {
+    "outcome": "VALID",
+    "quality": 8749,
+    "aspect_violations": 4,
+    "circulation_share_milli": 105,
+    "body_sha256": "8eb3ca6282ce274ca93421cbeac5375b7bd0217b49db9965244ab0cd0bebed24"
+   }
+  },
+  {
+   "case": "1bhk_30x40_no_parking",
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "input": "30x40 ft N, setbacks F4 B3 L2 R2; 1 bed, 1 bath (0 attached); pooja False; parking none",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_two_pL_s0",
+   "candidates_enumerated": 13,
+   "candidates_sized": 9,
+   "feasible_layouts": 4,
+   "attempts": [
+    "SPINE_two_pL_s0:VALID"
+   ],
+   "latency_ms_p50": 21.9,
+   "latency_ms_max": 22.5,
+   "latency_ms_runs": [
+    20.8,
+    22.5,
+    21.7,
+    22.1,
+    21.9
+   ],
+   "body_sha256": "c626c00302e60a4a605f728e6c1ba39c2427e482c097c15cad2b0840da3f3028",
+   "deterministic": true,
+   "ranking_sha": "9dec8c60e585728d",
+   "quality": 2493,
+   "aspect_violations": 1,
+   "circulation_share_milli": 75,
+   "terms": {
+    "AREA_DEVIATION": 418,
+    "DIMENSION_DEVIATION": 405,
+    "ASPECT_EXCESS": 84,
+    "OVERSIZE": 0,
+    "CIRCULATION_SHARE": 0,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 1000,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": null,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    0.736899997718865,
+    0.6609999982174486,
+    1.1629000000539236,
+    0.6622999972023536,
+    0.6495999987237155
+   ],
+   "repair_ms": [
+    1.7582000000402331,
+    1.8658000008144882,
+    1.786799999536015,
+    1.7256999999517575,
+    2.2366000011970755
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "VALID",
+    "quality": 6035,
+    "aspect_violations": 3,
+    "circulation_share_milli": 102,
+    "body_sha256": "be7bf6e9ba2e271c468d7e6dd3b79bbf18df0448a2c42d72a2fc87f50c211177"
+   }
+  },
+  {
+   "case": "4bhk_45x75_two_cars_puja",
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "difficult",
+   "input": "45x75 ft E, setbacks F8 B5 L4 R4; 4 bed, 3 bath (2 attached); pooja True; parking 2 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pR_s3",
+   "candidates_enumerated": 54,
+   "candidates_sized": 32,
+   "feasible_layouts": 30,
+   "attempts": [
+    "SPINE_stepped_pR_s3:VALID"
+   ],
+   "latency_ms_p50": 462.8,
+   "latency_ms_max": 479.2,
+   "latency_ms_runs": [
+    479.2,
+    471.0,
+    454.7,
+    451.4,
+    462.8
+   ],
+   "body_sha256": "ed16d6790c8d5967124cdabce42dcaaa8f7c06fe3792d51faa04102b75fb2d2a",
+   "deterministic": true,
+   "ranking_sha": "121642300cc4e314",
+   "quality": 16782,
+   "aspect_violations": 10,
+   "circulation_share_milli": 96,
+   "terms": {
+    "AREA_DEVIATION": 1073,
+    "DIMENSION_DEVIATION": 882,
+    "ASPECT_EXCESS": 2458,
+    "OVERSIZE": 2940,
+    "CIRCULATION_SHARE": 0,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 500,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    2.725900001678383,
+    2.164100002119085,
+    1.937799999723211,
+    1.979200002097059,
+    1.9342000014148653
+   ],
+   "repair_ms": [
+    5.3340000013122335,
+    5.31300000147894,
+    5.54050000209827,
+    5.57209999897168,
+    5.56950000100187
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "3bhk_50x60_wide_two_cars",
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "difficult",
+   "input": "50x60 ft N, setbacks F6 B4 L4 R4; 3 bed, 3 bath (2 attached); pooja False; parking 2 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "FRONT_EXTENSION_stepped_pL_x_bedroom_3_s3",
+   "candidates_enumerated": 54,
+   "candidates_sized": 32,
+   "feasible_layouts": 20,
+   "attempts": [
+    "FRONT_EXTENSION_stepped_pL_x_bedroom_3_s3:VALID"
+   ],
+   "latency_ms_p50": 279.6,
+   "latency_ms_max": 283.0,
+   "latency_ms_runs": [
+    280.8,
+    283.0,
+    279.6,
+    279.1,
+    277.3
+   ],
+   "body_sha256": "51f7e4eb4e6fcd8a2e3d37e948eb5281c2e37d21ff71eb95f1ed403361ac9a43",
+   "deterministic": true,
+   "ranking_sha": "1604a0f14feb07bf",
+   "quality": 14796,
+   "aspect_violations": 3,
+   "circulation_share_milli": 82,
+   "terms": {
+    "AREA_DEVIATION": 1249,
+    "DIMENSION_DEVIATION": 842,
+    "ASPECT_EXCESS": 1379,
+    "OVERSIZE": 2743,
+    "CIRCULATION_SHARE": 0,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 500,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 333,
+    "PARKING_CONVENIENCE": 1000,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.6510000023117755,
+    1.9174999979441054,
+    1.8511000016587786,
+    1.5539999985776376,
+    1.5148000020417385
+   ],
+   "repair_ms": [
+    4.310299998905975,
+    4.295399998227367,
+    4.4500000003608875,
+    4.939899998134933,
+    4.738899999210844
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "VALID",
+    "quality": 30084,
+    "aspect_violations": 8,
+    "circulation_share_milli": 70,
+    "body_sha256": "acec00f86a1a19dc2a3f327323316399be68dab99f03a1810b8a68f70f92281c"
+   }
+  },
+  {
+   "case": "4bhk_40x90_deep_car_utility",
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "difficult",
+   "input": "40x90 ft S, setbacks F8 B5 L3 R3; 4 bed, 3 bath (2 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_two_pL_s3",
+   "candidates_enumerated": 54,
+   "candidates_sized": 32,
+   "feasible_layouts": 32,
+   "attempts": [
+    "SPINE_two_pL_s3:VALID"
+   ],
+   "latency_ms_p50": 499.3,
+   "latency_ms_max": 510.4,
+   "latency_ms_runs": [
+    500.9,
+    495.8,
+    510.4,
+    494.5,
+    499.3
+   ],
+   "body_sha256": "7a180b3a51b2403384a1dcfb0564195339156bd70b3f401ad0c571867ebe366a",
+   "deterministic": true,
+   "ranking_sha": "de9db7af6035a84f",
+   "quality": 6901,
+   "aspect_violations": 2,
+   "circulation_share_milli": 93,
+   "terms": {
+    "AREA_DEVIATION": 1013,
+    "DIMENSION_DEVIATION": 801,
+    "ASPECT_EXCESS": 94,
+    "OVERSIZE": 1571,
+    "CIRCULATION_SHARE": 0,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 400,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 250,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.9906999987142626,
+    1.9463999997242354,
+    2.17279999924358,
+    2.241700000013225,
+    3.780800001550233
+   ],
+   "repair_ms": [
+    5.573700000240933,
+    5.406399999628775,
+    5.239100002654595,
+    6.6833000018959865,
+    7.230399998661596
+   ],
+   "repair_restored_valid": false,
+   "cp1": {
+    "outcome": "VALID",
+    "quality": 23395,
+    "aspect_violations": 10,
+    "circulation_share_milli": 94,
+    "body_sha256": "7dd30eca7db5c303fa57159d3c44efbe6f45d0470b13d39d1f77f5b1cca37300"
+   }
+  },
+  {
+   "case": "2bhk_25x50_narrow_open_plan",
+   "group": "cp2_new",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "input": "25x50 ft W, setbacks F4 B3 L2 R2; 2 bed, 1 bath (0 attached); pooja False; parking 1 two_wheeler",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pL_rear_bedroom_2_s2",
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 8,
+   "attempts": [
+    "SPINE_stepped_pL_rear_bedroom_2_s2:VALID"
+   ],
+   "latency_ms_p50": 84.4,
+   "latency_ms_max": 85.4,
+   "latency_ms_runs": [
+    82.0,
+    84.4,
+    83.6,
+    85.4,
+    85.0
+   ],
+   "body_sha256": "87213a9da70929373fd6b883bacb8e4d130f53683a2748cbbb2dc01d62614c79",
+   "deterministic": true,
+   "ranking_sha": "65009dfa12d6f67c",
+   "quality": 3610,
+   "aspect_violations": 1,
+   "circulation_share_milli": 109,
+   "terms": {
+    "AREA_DEVIATION": 140,
+    "DIMENSION_DEVIATION": 197,
+    "ASPECT_EXCESS": 705,
+    "OVERSIZE": 0,
+    "CIRCULATION_SHARE": 9,
+    "ADJACENCY": null,
+    "WET_CLUSTER": 1000,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    0.8409000001847744,
+    0.7540000005974434,
+    0.9837000034167431,
+    0.7944999997562263,
+    0.7667999998375308
+   ],
+   "repair_ms": [
+    2.0556000017677434,
+    1.9925999986298848,
+    2.113300000928575,
+    2.0861000011791475,
+    2.0174999990558717
+   ],
+   "repair_restored_valid": false,
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "4bhk_25x40_overfull",
+   "group": "cp2_new",
+   "expect": "INFEASIBLE",
+   "latency_class": "infeasible",
+   "input": "25x40 ft N, setbacks F4 B3 L2 R2; 4 bed, 3 bath (2 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "INFEASIBLE",
+   "classification": "PROVEN",
+   "code": "AREA_BUDGET",
+   "explanation": "The buildable area after setbacks is 6.40 m by 10.06 m (64.38 m\u00b2). The requested rooms need at least 88.27 m\u00b2 at their minimum sizes with walls, before any passage, so they cannot fit in any arrangement.",
+   "topology": null,
+   "candidates_enumerated": 0,
+   "candidates_sized": 0,
+   "feasible_layouts": 0,
+   "attempts": [],
+   "latency_ms_p50": 0.5,
+   "latency_ms_max": 0.5,
+   "latency_ms_runs": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "body_sha256": "INFEASIBLE",
+   "deterministic": true,
+   "ranking_sha": "4f53cda18c2baa0c",
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "2bhk_12x40_too_narrow",
+   "group": "cp2_new",
+   "expect": "INFEASIBLE",
+   "latency_class": "infeasible",
+   "input": "12x40 ft E, setbacks F4 B3 L2 R2; 2 bed, 1 bath (0 attached); pooja False; parking none",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "INFEASIBLE",
+   "classification": "PROVEN",
+   "code": "WIDTH_TOO_NARROW",
+   "explanation": "The buildable area is 2.44 m wide and 10.06 m deep after setbacks. The living needs at least 3.10 m in both directions including its walls.",
+   "topology": null,
+   "candidates_enumerated": 0,
+   "candidates_sized": 0,
+   "feasible_layouts": 0,
+   "attempts": [],
+   "latency_ms_p50": 0.4,
+   "latency_ms_max": 0.4,
+   "latency_ms_runs": [
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.4
+   ],
+   "body_sha256": "INFEASIBLE",
+   "deterministic": true,
+   "ranking_sha": "4f53cda18c2baa0c",
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "3bhk_25x30_setbacks_eat_plot",
+   "group": "cp2_new",
+   "expect": "INFEASIBLE",
+   "latency_class": "infeasible",
+   "input": "25x30 ft S, setbacks F10 B6 L5 R5; 3 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "INFEASIBLE",
+   "classification": "PROVEN",
+   "code": "PARKING_TOO_WIDE",
+   "explanation": "Parking for 1 needs 2.50 m by 5.00 m. The buildable area after setbacks is 4.57 m by 4.27 m.",
+   "topology": null,
+   "candidates_enumerated": 0,
+   "candidates_sized": 0,
+   "feasible_layouts": 0,
+   "attempts": [],
+   "latency_ms_p50": 0.5,
+   "latency_ms_max": 0.5,
+   "latency_ms_runs": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.4
+   ],
+   "body_sha256": "INFEASIBLE",
+   "deterministic": true,
+   "ranking_sha": "4f53cda18c2baa0c",
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "prop_square_45x45",
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "input": "45x45 ft N, setbacks F5 B3 L3 R3; 2 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "FRONT_EXTENSION_stepped_pL_x_bedroom_2_s1",
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 2,
+   "attempts": [
+    "FRONT_EXTENSION_stepped_pL_x_bedroom_2_s1:VALID"
+   ],
+   "latency_ms_p50": 199.8,
+   "latency_ms_max": 207.3,
+   "latency_ms_runs": [
+    203.6,
+    194.3,
+    207.3,
+    199.8,
+    199.4
+   ],
+   "body_sha256": "4525e6a36d996a583106f863f7ea024f9ef4821216098812a1bcfe76fb52655e",
+   "deterministic": true,
+   "ranking_sha": "994e62c4026b9d70",
+   "quality": 12337,
+   "aspect_violations": 4,
+   "circulation_share_milli": 71,
+   "terms": {
+    "AREA_DEVIATION": 899,
+    "DIMENSION_DEVIATION": 818,
+    "ASPECT_EXCESS": 1540,
+    "OVERSIZE": 1634,
+    "CIRCULATION_SHARE": 0,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 333,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 500,
+    "PARKING_CONVENIENCE": 1000,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.1429999976826366,
+    1.2231000000610948,
+    1.614000000699889,
+    1.155799996922724,
+    1.1902000005648006
+   ],
+   "repair_ms": [
+    3.4288000024389476,
+    3.086799999437062,
+    3.045699999347562,
+    3.7029999984952156,
+    2.9549999999289867
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "prop_mid_40x55",
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "input": "40x55 ft N, setbacks F5 B3 L3 R3; 2 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pL_s1",
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 24,
+   "attempts": [
+    "SPINE_stepped_pL_s1:VALID"
+   ],
+   "latency_ms_p50": 180.0,
+   "latency_ms_max": 186.0,
+   "latency_ms_runs": [
+    180.0,
+    177.5,
+    177.4,
+    186.0,
+    182.0
+   ],
+   "body_sha256": "615355619cf3e86542080841fa1e420e4cc1d17850baa521c3369859dda461e5",
+   "deterministic": true,
+   "ranking_sha": "c6453ac77c29cfaa",
+   "quality": 4369,
+   "aspect_violations": 6,
+   "circulation_share_milli": 98,
+   "terms": {
+    "AREA_DEVIATION": 742,
+    "DIMENSION_DEVIATION": 658,
+    "ASPECT_EXCESS": 67,
+    "OVERSIZE": 513,
+    "CIRCULATION_SHARE": 0,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 1000,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.4598999987356365,
+    1.145499998528976,
+    1.474599997891346,
+    1.41789999906905,
+    1.0825999997905456
+   ],
+   "repair_ms": [
+    2.97859999773209,
+    3.627299996878719,
+    2.884600002289517,
+    3.0745000003662426,
+    3.633699998317752
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "VALID",
+    "quality": 10832,
+    "aspect_violations": 4,
+    "circulation_share_milli": 79,
+    "body_sha256": "27f44ce1e048a6c8a366f1e5633b75ef79222b2b31ff29844b6b4e607f720047"
+   }
+  },
+  {
+   "case": "prop_wide_60x35",
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "input": "60x35 ft N, setbacks F5 B3 L3 R3; 2 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "INFEASIBLE",
+   "classification": "NO_SUPPORTED_LAYOUT",
+   "code": "PARKING_TOO_WIDE",
+   "explanation": "None of the 32 layouts this version of the engine can produce fits this programme on the plot. In the closest one, the parking would be 3.60 m where 5.00 m is needed; living would be 2.20 m across; the rules need 3.00 m; dining would be 1.85 m across; the rules need 2.50 m. This does not mean the home is impossible to design.",
+   "topology": null,
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 0,
+   "attempts": [],
+   "latency_ms_p50": 167.4,
+   "latency_ms_max": 171.6,
+   "latency_ms_runs": [
+    166.9,
+    171.6,
+    166.8,
+    167.4,
+    168.3
+   ],
+   "body_sha256": "INFEASIBLE",
+   "deterministic": true,
+   "ranking_sha": "4f53cda18c2baa0c",
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "prop_wide_70x30",
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "input": "70x30 ft N, setbacks F5 B3 L3 R3; 2 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "INFEASIBLE",
+   "classification": "NO_SUPPORTED_LAYOUT",
+   "code": "DEPTH_EXCEEDED",
+   "explanation": "None of the 32 layouts this version of the engine can produce fits this programme on the plot. In the closest one, living would be 1.15 m across; the rules need 3.00 m; bedroom 1 would be 1.00 m across; the rules need 2.80 m; dining would be 0.80 m across; the rules need 2.50 m. This does not mean the home is impossible to design.",
+   "topology": null,
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 0,
+   "attempts": [],
+   "latency_ms_p50": 173.0,
+   "latency_ms_max": 175.6,
+   "latency_ms_runs": [
+    173.0,
+    171.0,
+    175.6,
+    171.8,
+    173.5
+   ],
+   "body_sha256": "INFEASIBLE",
+   "deterministic": true,
+   "ranking_sha": "4f53cda18c2baa0c",
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "prop_very_wide_80x28",
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "input": "80x28 ft N, setbacks F5 B3 L3 R3; 2 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "INFEASIBLE",
+   "classification": "NO_SUPPORTED_LAYOUT",
+   "code": "DEPTH_EXCEEDED",
+   "explanation": "None of the 25 layouts this version of the engine can produce fits this programme on the plot. In the closest one, living would be 0.95 m across; the rules need 3.00 m; bedroom 1 would be 1.00 m across; the rules need 2.80 m; dining would be 0.70 m across; the rules need 2.50 m. This does not mean the home is impossible to design.",
+   "topology": null,
+   "candidates_enumerated": 46,
+   "candidates_sized": 25,
+   "feasible_layouts": 0,
+   "attempts": [],
+   "latency_ms_p50": 135.2,
+   "latency_ms_max": 137.2,
+   "latency_ms_runs": [
+    136.2,
+    134.1,
+    135.2,
+    137.2,
+    135.0
+   ],
+   "body_sha256": "INFEASIBLE",
+   "deterministic": true,
+   "ranking_sha": "4f53cda18c2baa0c",
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "prop_deep_30x70",
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "input": "30x70 ft N, setbacks F5 B3 L3 R3; 2 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "VALID",
+   "classification": null,
+   "code": null,
+   "explanation": null,
+   "topology": "SPINE_stepped_pR_s3",
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 24,
+   "attempts": [
+    "SPINE_stepped_pR_s3:VALID"
+   ],
+   "latency_ms_p50": 219.5,
+   "latency_ms_max": 223.4,
+   "latency_ms_runs": [
+    217.4,
+    219.5,
+    218.0,
+    222.3,
+    223.4
+   ],
+   "body_sha256": "671af16dcc07ddea432963e80edbf35b001ab4fae1cb8bae397e25a913d73bcf",
+   "deterministic": true,
+   "ranking_sha": "04afc2381d45c645",
+   "quality": 1112,
+   "aspect_violations": 0,
+   "circulation_share_milli": 156,
+   "terms": {
+    "AREA_DEVIATION": 205,
+    "DIMENSION_DEVIATION": 257,
+    "ASPECT_EXCESS": 0,
+    "OVERSIZE": 0,
+    "CIRCULATION_SHARE": 56,
+    "ADJACENCY": 0,
+    "WET_CLUSTER": 333,
+    "EXTERIOR_EXPOSURE": 0,
+    "PRIVACY": 0,
+    "PARKING_CONVENIENCE": 0,
+    "ORIENTATION": null
+   },
+   "validation_ms": [
+    1.174899996840395,
+    1.0990000009769574,
+    1.3780999979644548,
+    1.0746000007202383,
+    1.126700000895653
+   ],
+   "repair_ms": [
+    3.71140000061132,
+    3.1675000027462374,
+    3.244700001232559,
+    3.7870000014663674,
+    3.192500000295695
+   ],
+   "repair_restored_valid": true,
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "prop_deep_25x90",
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "input": "25x90 ft N, setbacks F5 B3 L3 R3; 2 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "INFEASIBLE",
+   "classification": "NO_SUPPORTED_LAYOUT",
+   "code": "PARKING_TOO_WIDE",
+   "explanation": "None of the 32 layouts this version of the engine can produce fits this programme on the plot. In the closest one, the parking would be 2.40 m where 2.50 m is needed; living would be 2.99 m across; the rules need 3.00 m. This does not mean the home is impossible to design.",
+   "topology": null,
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 0,
+   "attempts": [],
+   "latency_ms_p50": 205.1,
+   "latency_ms_max": 210.2,
+   "latency_ms_runs": [
+    205.1,
+    205.1,
+    210.2,
+    203.3,
+    209.3
+   ],
+   "body_sha256": "INFEASIBLE",
+   "deterministic": true,
+   "ranking_sha": "4f53cda18c2baa0c",
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  },
+  {
+   "case": "prop_very_deep_22x100",
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "input": "22x100 ft N, setbacks F5 B3 L3 R3; 2 bed, 2 bath (1 attached); pooja False; parking 1 car",
+   "solver": "ZONED_LOCAL_SEARCH",
+   "outcome": "INFEASIBLE",
+   "classification": "NO_SUPPORTED_LAYOUT",
+   "code": "PARKING_TOO_WIDE",
+   "explanation": "None of the 32 layouts this version of the engine can produce fits this programme on the plot. In the closest one, the parking would be 1.50 m where 2.50 m is needed; living would be 2.98 m across; the rules need 3.00 m. This does not mean the home is impossible to design.",
+   "topology": null,
+   "candidates_enumerated": 46,
+   "candidates_sized": 32,
+   "feasible_layouts": 0,
+   "attempts": [],
+   "latency_ms_p50": 284.1,
+   "latency_ms_max": 288.8,
+   "latency_ms_runs": [
+    288.8,
+    284.5,
+    283.8,
+    284.1,
+    283.5
+   ],
+   "body_sha256": "INFEASIBLE",
+   "deterministic": true,
+   "ranking_sha": "4f53cda18c2baa0c",
+   "cp1": {
+    "outcome": "INFEASIBLE"
+   }
+  }
+ ],
+ "memory_mb": {
+  "rss_start": 36.2,
+  "rss_end": 38.0,
+  "rss_peak": 38.0,
+  "increase_peak_over_start": 1.9,
+  "traced_peak_one_generation": 0.4
+ },
+ "wall_seconds": 58.7,
+ "summary": {
+  "latency_ms": {
+   "normal": {
+    "50": 186.0,
+    "95": 300.6,
+    "99": 306.6
+   },
+   "difficult": {
+    "50": 376.9,
+    "95": 563.5,
+    "99": 566.1
+   },
+   "infeasible_precheck": {
+    "50": 0.5,
+    "95": 0.5,
+    "99": 0.5
+   },
+   "infeasible_search": {
+    "50": 173.0,
+    "95": 284.5,
+    "99": 288.8
+   },
+   "validation": {
+    "50": 1.36,
+    "95": 2.24,
+    "99": 2.73
+   },
+   "repair": {
+    "50": 3.54,
+    "95": 6.04,
+    "99": 6.68
+   }
+  },
+  "samples": {
+   "normal": 80,
+   "difficult": 30,
+   "infeasible_precheck": 25,
+   "infeasible_search": 35,
+   "validation": 110,
+   "repair": 110
+  },
+  "gates": {
+   "normal_p95": true,
+   "difficult_p99": true,
+   "infeasible_precheck_p95": true,
+   "infeasible_search_p95": true,
+   "validation_p95": true,
+   "repair_p95": true,
+   "memory": true,
+   "determinism": true,
+   "fresh_process_hashes_equal": true
+  },
+  "acceptance": {
+   "original_expected_feasible": 11,
+   "original_valid": 10,
+   "cp1_valid_cases_still_valid": true,
+   "compared_cases": 11,
+   "mean_quality_cp1": 21990.0,
+   "mean_quality_cp2": 8521.5,
+   "quality_ratio": 0.388,
+   "aspect_violations_cp1": 68,
+   "aspect_violations_cp2": 36,
+   "aspect_ratio": 0.529,
+   "cases_worse_than_cp1": [
+    "prop_mid_40x55"
+   ],
+   "invalid_attempts": 0,
+   "expected_infeasible_but_valid": []
+  }
+ }
+}

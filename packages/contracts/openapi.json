@@ -2871,73 +2871,7 @@
         "type": "object"
       },
       "Constraint": {
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "pattern": "^[a-z][a-z0-9_]{0,47}$",
-            "title": "Id",
-            "type": "string"
-          },
-          "kind": {
-            "$ref": "#/components/schemas/ConstraintKind"
-          },
-          "origin": {
-            "$ref": "#/components/schemas/Origin"
-          },
-          "outcome": {
-            "$ref": "#/components/schemas/ConstraintOutcome"
-          },
-          "params": {
-            "additionalProperties": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "boolean"
-                },
-                {
-                  "items": {
-                    "type": "string"
-                  },
-                  "type": "array"
-                }
-              ]
-            },
-            "title": "Params",
-            "type": "object"
-          },
-          "strength": {
-            "$ref": "#/components/schemas/ConstraintStrength"
-          },
-          "subjects": {
-            "items": {
-              "type": "string"
-            },
-            "title": "Subjects",
-            "type": "array"
-          },
-          "weight": {
-            "maximum": 1000.0,
-            "minimum": 0.0,
-            "title": "Weight",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "id",
-          "kind",
-          "strength",
-          "weight",
-          "subjects",
-          "params",
-          "origin",
-          "outcome"
-        ],
-        "title": "Constraint",
+        "additionalProperties": true,
         "type": "object"
       },
       "ConstraintKind": {
@@ -2947,7 +2881,21 @@
           "RELATION",
           "INSIDE_ENVELOPE",
           "ENTRANCE_ON_EDGE",
-          "PARKING_PROVIDED"
+          "PARKING_PROVIDED",
+          "AREA_DEVIATION",
+          "DIMENSION_DEVIATION",
+          "ASPECT_EXCESS",
+          "CIRCULATION_SHARE",
+          "OVERSIZE",
+          "ADJACENCY",
+          "WET_CLUSTER",
+          "EXTERIOR_EXPOSURE",
+          "PRIVACY",
+          "PARKING_CONVENIENCE",
+          "ZONE_ORDER",
+          "ROOM_SIZE_OUTLIER",
+          "BEDROOM_GROUPING",
+          "ORIENTATION"
         ],
         "title": "ConstraintKind",
         "type": "string"
@@ -2955,6 +2903,7 @@
       "ConstraintOutcome": {
         "enum": [
           "MET",
+          "PARTIAL",
           "RELAXED",
           "UNMET",
           "NOT_EVALUATED"
@@ -6366,6 +6315,15 @@
         "title": "FamilyRfqsOut",
         "type": "object"
       },
+      "FeasibilityClass": {
+        "description": "PROVEN: no rectangle arrangement can satisfy the hard rules. NO_SUPPORTED_LAYOUT: none of\nthe layouts this engine version can produce fits (CP2-U4); never presented as impossible.",
+        "enum": [
+          "PROVEN",
+          "NO_SUPPORTED_LAYOUT"
+        ],
+        "title": "FeasibilityClass",
+        "type": "string"
+      },
       "FileOut": {
         "properties": {
           "content_type": {
@@ -7317,6 +7275,16 @@
             "title": "Plan Id",
             "type": "string"
           },
+          "quality": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QualityOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "ruleset_is_synthetic": {
             "title": "Ruleset Is Synthetic",
             "type": "boolean"
@@ -7480,7 +7448,59 @@
       },
       "InfeasibilityOut": {
         "additionalProperties": false,
+        "description": "Why no plan was produced. `classification` PROVEN: no arrangement can meet the hard rules;\nNO_SUPPORTED_LAYOUT: none of the layouts this engine version produces fits, which never means\nimpossible (CP2-U4). Plans from Checkpoint 1 carry `reasons` only.",
         "properties": {
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FeasibilityClass"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "constraints": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/InvolvedConstraintOut"
+            },
+            "title": "Constraints",
+            "type": "array"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Explanation"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "message_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message Key"
+          },
           "reasons": {
             "items": {
               "$ref": "#/components/schemas/InfeasibleReasonOut"
@@ -7878,6 +7898,30 @@
           "document_ready"
         ],
         "title": "InvoiceOut",
+        "type": "object"
+      },
+      "InvolvedConstraintOut": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "origin": {
+            "title": "Origin",
+            "type": "string"
+          },
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "subject",
+          "origin"
+        ],
+        "title": "InvolvedConstraintOut",
         "type": "object"
       },
       "KitchenArrangement": {
@@ -9776,6 +9820,16 @@
           "plan_id": {
             "title": "Plan Id",
             "type": "string"
+          },
+          "quality": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QualityOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "ruleset_is_synthetic": {
             "title": "Ruleset Is Synthetic",
@@ -14404,6 +14458,89 @@
         "title": "PublicProfileOut",
         "type": "object"
       },
+      "QualityOut": {
+        "additionalProperties": false,
+        "description": "The Scorer's measure of a plan (derived on read; never stored apart from the document's\nsoft constraints). Lower is better; it never decides validity.",
+        "properties": {
+          "aspect_violations": {
+            "title": "Aspect Violations",
+            "type": "integer"
+          },
+          "circulation_share_milli": {
+            "title": "Circulation Share Milli",
+            "type": "integer"
+          },
+          "rooms": {
+            "items": {
+              "$ref": "#/components/schemas/RoomQualityOut"
+            },
+            "title": "Rooms",
+            "type": "array"
+          },
+          "terms": {
+            "items": {
+              "$ref": "#/components/schemas/QualityTermOut"
+            },
+            "title": "Terms",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "circulation_share_milli",
+          "aspect_violations",
+          "terms",
+          "rooms"
+        ],
+        "title": "QualityOut",
+        "type": "object"
+      },
+      "QualityTermOut": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/ConstraintKind"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/ConstraintOutcome"
+          },
+          "score_milli": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score Milli"
+          },
+          "subjects": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Subjects",
+            "type": "array"
+          },
+          "weight": {
+            "title": "Weight",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "weight",
+          "score_milli",
+          "outcome",
+          "subjects"
+        ],
+        "title": "QualityTermOut",
+        "type": "object"
+      },
       "QuantityBasis": {
         "description": "Never AI (PD-05).",
         "enum": [
@@ -17566,6 +17703,44 @@
         "title": "RoomGeom",
         "type": "object"
       },
+      "RoomQualityOut": {
+        "additionalProperties": false,
+        "properties": {
+          "aspect_x100": {
+            "title": "Aspect X100",
+            "type": "integer"
+          },
+          "clear_d_mm": {
+            "title": "Clear D Mm",
+            "type": "integer"
+          },
+          "clear_w_mm": {
+            "title": "Clear W Mm",
+            "type": "integer"
+          },
+          "over_aspect": {
+            "title": "Over Aspect",
+            "type": "boolean"
+          },
+          "room": {
+            "title": "Room",
+            "type": "string"
+          },
+          "room_type": {
+            "$ref": "#/components/schemas/RoomType"
+          }
+        },
+        "required": [
+          "room",
+          "room_type",
+          "clear_w_mm",
+          "clear_d_mm",
+          "aspect_x100",
+          "over_aspect"
+        ],
+        "title": "RoomQualityOut",
+        "type": "object"
+      },
       "RoomType": {
         "enum": [
           "LIVING",
@@ -19350,6 +19525,7 @@
       "SolverKind": {
         "enum": [
           "DETERMINISTIC_MVP",
+          "ZONED_LOCAL_SEARCH",
           "CP_SAT"
         ],
         "title": "SolverKind",

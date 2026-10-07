@@ -358,13 +358,13 @@ export type WallSide = (typeof WallSideValues)[number];
 export const FixtureTypeValues = ["WC_WESTERN", "WC_INDIAN", "WASH_BASIN", "SHOWER_AREA", "KITCHEN_COUNTER", "KITCHEN_SINK"] as const;
 export type FixtureType = (typeof FixtureTypeValues)[number];
 
-export const ConstraintKindValues = ["ROOM_PRESENT", "ROOM_MIN_SIZE", "RELATION", "INSIDE_ENVELOPE", "ENTRANCE_ON_EDGE", "PARKING_PROVIDED"] as const;
+export const ConstraintKindValues = ["ROOM_PRESENT", "ROOM_MIN_SIZE", "RELATION", "INSIDE_ENVELOPE", "ENTRANCE_ON_EDGE", "PARKING_PROVIDED", "AREA_DEVIATION", "DIMENSION_DEVIATION", "ASPECT_EXCESS", "CIRCULATION_SHARE", "OVERSIZE", "ADJACENCY", "WET_CLUSTER", "EXTERIOR_EXPOSURE", "PRIVACY", "PARKING_CONVENIENCE", "ZONE_ORDER", "ROOM_SIZE_OUTLIER", "BEDROOM_GROUPING", "ORIENTATION"] as const;
 export type ConstraintKind = (typeof ConstraintKindValues)[number];
 
 export const ConstraintStrengthValues = ["HARD", "SOFT"] as const;
 export type ConstraintStrength = (typeof ConstraintStrengthValues)[number];
 
-export const ConstraintOutcomeValues = ["MET", "RELAXED", "UNMET", "NOT_EVALUATED"] as const;
+export const ConstraintOutcomeValues = ["MET", "PARTIAL", "RELAXED", "UNMET", "NOT_EVALUATED"] as const;
 export type ConstraintOutcome = (typeof ConstraintOutcomeValues)[number];
 
 export const RelationKindValues = ["ADJACENT_WITH_DOOR", "ADJACENT_OPEN"] as const;
@@ -397,7 +397,7 @@ export type InfeasibleReason = (typeof InfeasibleReasonValues)[number];
 export const PlanSourceValues = ["GENERATED", "EDITED", "REGENERATED"] as const;
 export type PlanSource = (typeof PlanSourceValues)[number];
 
-export const SolverKindValues = ["DETERMINISTIC_MVP", "CP_SAT"] as const;
+export const SolverKindValues = ["DETERMINISTIC_MVP", "ZONED_LOCAL_SEARCH", "CP_SAT"] as const;
 export type SolverKind = (typeof SolverKindValues)[number];
 
 export const RulesetStatusValues = ["DRAFT", "APPROVED", "PUBLISHED", "RETIRED"] as const;
@@ -429,3 +429,12 @@ export type ValidationCode = (typeof ValidationCodeValues)[number];
 
 export const PlanOpKindValues = ["MOVE_OPENING", "SET_OPENING", "ADD_OPENING", "DELETE_OPENING", "MOVE_FIXTURE", "ADD_FIXTURE", "DELETE_FIXTURE", "RENAME_ROOM", "SET_ROOM_TYPE", "MOVE_WALL", "ADD_ROOM", "DELETE_ROOM"] as const;
 export type PlanOpKind = (typeof PlanOpKindValues)[number];
+
+export const TopologyFamilyValues = ["SPINE", "FRONT_EXTENSION", "SIDE_WING", "FRONT_LIVING_REAR_BEDROOM", "FRONT_PUBLIC_REAR_PRIVATE", "L_CIRCULATION", "CENTRAL_LIVING_BEDROOM_WINGS", "LINEAR_REAR_CORRIDOR"] as const;
+export type TopologyFamily = (typeof TopologyFamilyValues)[number];
+
+export const FeasibilityClassValues = ["PROVEN", "NO_SUPPORTED_LAYOUT"] as const;
+export type FeasibilityClass = (typeof FeasibilityClassValues)[number];
+
+export const RepairReasonValues = ["VALIDATION_ERROR", "OBJECTIVE"] as const;
+export type RepairReason = (typeof RepairReasonValues)[number];

@@ -1,0 +1,1191 @@
+{
+ "_note": "Checkpoint 2 benchmark corpus. Homeowner-style inputs (RQ v1 answers plus provisional design inputs); plot sizes and setbacks are example inputs, not rules. Labels and latency classes were fixed on 2026-10-06 before the first benchmark run and are not edited to fit results. expect: FEASIBLE / INFEASIBLE / MEASURE (no expectation). latency_class: normal, difficult (4+ bedrooms or 2+ parking spaces, a rule fixed in advance) or infeasible. The acceptance rate is computed on group 'original', expect FEASIBLE (11 cases).",
+ "cases": {
+  "2bhk_30x50_north_twowheeler_open": {
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 spike corpus, expected feasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 30,
+    "plot_depth_ft": 50,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 2,
+     "RIGHT": 2
+    },
+    "bedrooms": "2",
+    "bathrooms": "1",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 0,
+    "dining": "IN_LIVING",
+    "kitchen": "OPEN",
+    "utility": true,
+    "parking_spaces": 1,
+    "parking_kind": "TWO_WHEELER"
+   }
+  },
+  "3bhk_40x65_east_puja": {
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 spike corpus, expected feasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 40,
+    "plot_depth_ft": 65,
+    "facing": "E",
+    "setbacks": {
+     "FRONT": 6,
+     "BACK": 4,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "3",
+    "bathrooms": "2",
+    "pooja_room": true,
+    "car_parking": true,
+    "vastu": "WHERE_POSSIBLE"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "2bhk_40x80_west_two_cars": {
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "difficult",
+   "purpose": "Checkpoint 2 spike corpus, expected feasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 40,
+    "plot_depth_ft": 80,
+    "facing": "W",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "2",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "MUST_FOLLOW"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 2,
+    "parking_kind": "CAR"
+   }
+  },
+  "1bhk_25x40_south_small": {
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 spike corpus, expected feasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 25,
+    "plot_depth_ft": 40,
+    "facing": "S",
+    "setbacks": {
+     "FRONT": 4,
+     "BACK": 3,
+     "LEFT": 2,
+     "RIGHT": 2
+    },
+    "bedrooms": "1",
+    "bathrooms": "1",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 0,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "TWO_WHEELER"
+   }
+  },
+  "2bhk_22x60_narrow_deep": {
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 spike corpus, expected feasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 22,
+    "plot_depth_ft": 60,
+    "facing": "E",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 2,
+     "RIGHT": 2
+    },
+    "bedrooms": "2",
+    "bathrooms": "1",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 0,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "TWO_WHEELER"
+   }
+  },
+  "4bhk_50x80_large_two_cars": {
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "difficult",
+   "purpose": "Checkpoint 2 spike corpus, expected feasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 50,
+    "plot_depth_ft": 80,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 8,
+     "BACK": 5,
+     "LEFT": 4,
+     "RIGHT": 4
+    },
+    "bedrooms": "4",
+    "bathrooms": "3",
+    "pooja_room": true,
+    "car_parking": true,
+    "vastu": "WHERE_POSSIBLE"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 2,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": true,
+    "parking_spaces": 2,
+    "parking_kind": "CAR"
+   }
+  },
+  "3bhk_30x60_single_car_vastu": {
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 spike corpus, expected feasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 30,
+    "plot_depth_ft": 60,
+    "facing": "S",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 2,
+     "RIGHT": 2
+    },
+    "bedrooms": "3",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "MUST_FOLLOW"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "2bhk_35x55_utility_no_vastu": {
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 spike corpus, expected feasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 35,
+    "plot_depth_ft": 55,
+    "facing": "W",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "2",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": true,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "3bhk_45x70_two_cars_puja": {
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "difficult",
+   "purpose": "Checkpoint 2 spike corpus, expected feasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 45,
+    "plot_depth_ft": 70,
+    "facing": "E",
+    "setbacks": {
+     "FRONT": 6,
+     "BACK": 4,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "3",
+    "bathrooms": "3",
+    "pooja_room": true,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 2,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 2,
+    "parking_kind": "CAR"
+   }
+  },
+  "3bhk_40x60_asymmetric_setbacks": {
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 spike corpus, expected feasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 40,
+    "plot_depth_ft": 60,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 10,
+     "BACK": 5,
+     "LEFT": 5,
+     "RIGHT": 2
+    },
+    "bedrooms": "3",
+    "bathrooms": "2",
+    "pooja_room": true,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "2bhk_30x45_common_bath_only": {
+   "group": "original",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 spike corpus, expected feasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 30,
+    "plot_depth_ft": 45,
+    "facing": "E",
+    "setbacks": {
+     "FRONT": 4,
+     "BACK": 3,
+     "LEFT": 2,
+     "RIGHT": 2
+    },
+    "bedrooms": "2",
+    "bathrooms": "1",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 0,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "3bhk_20x30_too_small": {
+   "group": "original",
+   "expect": "INFEASIBLE",
+   "latency_class": "infeasible",
+   "purpose": "Checkpoint 2 spike corpus, expected infeasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 20,
+    "plot_depth_ft": 30,
+    "facing": "S",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 2,
+     "RIGHT": 2
+    },
+    "bedrooms": "3",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "2bhk_30x60_two_cars_too_wide": {
+   "group": "original",
+   "expect": "INFEASIBLE",
+   "latency_class": "infeasible",
+   "purpose": "Checkpoint 2 spike corpus, expected infeasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 30,
+    "plot_depth_ft": 60,
+    "facing": "E",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 2,
+     "RIGHT": 2
+    },
+    "bedrooms": "2",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 2,
+    "parking_kind": "CAR"
+   }
+  },
+  "4bhk_30x40_overfull": {
+   "group": "original",
+   "expect": "INFEASIBLE",
+   "latency_class": "infeasible",
+   "purpose": "Checkpoint 2 spike corpus, expected infeasible (label unchanged)",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 30,
+    "plot_depth_ft": 40,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 2,
+     "RIGHT": 2
+    },
+    "bedrooms": "4",
+    "bathrooms": "3",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 2,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "3bhk_40x60_north_one_car": {
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 benchmark addition, labelled FEASIBLE before the first run",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 40,
+    "plot_depth_ft": 60,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 6,
+     "BACK": 4,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "3",
+    "bathrooms": "2",
+    "pooja_room": true,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "2bhk_35x50_south_car": {
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 benchmark addition, labelled FEASIBLE before the first run",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 35,
+    "plot_depth_ft": 50,
+    "facing": "S",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "2",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "2bhk_30x55_west_twowheeler": {
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 benchmark addition, labelled FEASIBLE before the first run",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 30,
+    "plot_depth_ft": 55,
+    "facing": "W",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 2,
+     "RIGHT": 2
+    },
+    "bedrooms": "2",
+    "bathrooms": "1",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 0,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "TWO_WHEELER"
+   }
+  },
+  "3bhk_35x70_east_car": {
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 benchmark addition, labelled FEASIBLE before the first run",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 35,
+    "plot_depth_ft": 70,
+    "facing": "E",
+    "setbacks": {
+     "FRONT": 6,
+     "BACK": 4,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "3",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "1bhk_30x40_no_parking": {
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 benchmark addition, labelled FEASIBLE before the first run",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 30,
+    "plot_depth_ft": 40,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 4,
+     "BACK": 3,
+     "LEFT": 2,
+     "RIGHT": 2
+    },
+    "bedrooms": "1",
+    "bathrooms": "1",
+    "pooja_room": false,
+    "car_parking": false,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 0,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false
+   }
+  },
+  "4bhk_45x75_two_cars_puja": {
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "difficult",
+   "purpose": "Checkpoint 2 benchmark addition, labelled FEASIBLE before the first run",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 45,
+    "plot_depth_ft": 75,
+    "facing": "E",
+    "setbacks": {
+     "FRONT": 8,
+     "BACK": 5,
+     "LEFT": 4,
+     "RIGHT": 4
+    },
+    "bedrooms": "4",
+    "bathrooms": "3",
+    "pooja_room": true,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 2,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 2,
+    "parking_kind": "CAR"
+   }
+  },
+  "3bhk_50x60_wide_two_cars": {
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "difficult",
+   "purpose": "Checkpoint 2 benchmark addition, labelled FEASIBLE before the first run",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 50,
+    "plot_depth_ft": 60,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 6,
+     "BACK": 4,
+     "LEFT": 4,
+     "RIGHT": 4
+    },
+    "bedrooms": "3",
+    "bathrooms": "3",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 2,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 2,
+    "parking_kind": "CAR"
+   }
+  },
+  "4bhk_40x90_deep_car_utility": {
+   "group": "cp2_new",
+   "expect": "FEASIBLE",
+   "latency_class": "difficult",
+   "purpose": "Checkpoint 2 benchmark addition, labelled FEASIBLE before the first run",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 40,
+    "plot_depth_ft": 90,
+    "facing": "S",
+    "setbacks": {
+     "FRONT": 8,
+     "BACK": 5,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "4",
+    "bathrooms": "3",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 2,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": true,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "2bhk_25x50_narrow_open_plan": {
+   "group": "cp2_new",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "purpose": "Checkpoint 2 benchmark addition, labelled MEASURE before the first run",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 25,
+    "plot_depth_ft": 50,
+    "facing": "W",
+    "setbacks": {
+     "FRONT": 4,
+     "BACK": 3,
+     "LEFT": 2,
+     "RIGHT": 2
+    },
+    "bedrooms": "2",
+    "bathrooms": "1",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 0,
+    "dining": "IN_LIVING",
+    "kitchen": "OPEN",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "TWO_WHEELER"
+   }
+  },
+  "4bhk_25x40_overfull": {
+   "group": "cp2_new",
+   "expect": "INFEASIBLE",
+   "latency_class": "infeasible",
+   "purpose": "Checkpoint 2 benchmark addition, labelled INFEASIBLE before the first run",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 25,
+    "plot_depth_ft": 40,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 4,
+     "BACK": 3,
+     "LEFT": 2,
+     "RIGHT": 2
+    },
+    "bedrooms": "4",
+    "bathrooms": "3",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 2,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "2bhk_12x40_too_narrow": {
+   "group": "cp2_new",
+   "expect": "INFEASIBLE",
+   "latency_class": "infeasible",
+   "purpose": "Checkpoint 2 benchmark addition, labelled INFEASIBLE before the first run",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 12,
+    "plot_depth_ft": 40,
+    "facing": "E",
+    "setbacks": {
+     "FRONT": 4,
+     "BACK": 3,
+     "LEFT": 2,
+     "RIGHT": 2
+    },
+    "bedrooms": "2",
+    "bathrooms": "1",
+    "pooja_room": false,
+    "car_parking": false,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 0,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false
+   }
+  },
+  "3bhk_25x30_setbacks_eat_plot": {
+   "group": "cp2_new",
+   "expect": "INFEASIBLE",
+   "latency_class": "infeasible",
+   "purpose": "Checkpoint 2 benchmark addition, labelled INFEASIBLE before the first run",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 25,
+    "plot_depth_ft": 30,
+    "facing": "S",
+    "setbacks": {
+     "FRONT": 10,
+     "BACK": 6,
+     "LEFT": 5,
+     "RIGHT": 5
+    },
+    "bedrooms": "3",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "prop_square_45x45": {
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "purpose": "Proportion corpus: one 2-bedroom programme with one car across plot shapes",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 45,
+    "plot_depth_ft": 45,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "2",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "prop_mid_40x55": {
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "purpose": "Proportion corpus: one 2-bedroom programme with one car across plot shapes",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 40,
+    "plot_depth_ft": 55,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "2",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "prop_wide_60x35": {
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "purpose": "Proportion corpus: one 2-bedroom programme with one car across plot shapes",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 60,
+    "plot_depth_ft": 35,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "2",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "prop_wide_70x30": {
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "purpose": "Proportion corpus: one 2-bedroom programme with one car across plot shapes",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 70,
+    "plot_depth_ft": 30,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "2",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "prop_very_wide_80x28": {
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "purpose": "Proportion corpus: one 2-bedroom programme with one car across plot shapes",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 80,
+    "plot_depth_ft": 28,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "2",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "prop_deep_30x70": {
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "purpose": "Proportion corpus: one 2-bedroom programme with one car across plot shapes",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 30,
+    "plot_depth_ft": 70,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "2",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "prop_deep_25x90": {
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "purpose": "Proportion corpus: one 2-bedroom programme with one car across plot shapes",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 25,
+    "plot_depth_ft": 90,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "2",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  },
+  "prop_very_deep_22x100": {
+   "group": "proportion",
+   "expect": "MEASURE",
+   "latency_class": "normal",
+   "purpose": "Proportion corpus: one 2-bedroom programme with one car across plot shapes",
+   "answers": {
+    "plot_is_rectangular": true,
+    "floors": "G",
+    "basement": false,
+    "built_up_area_sqft": "NOT_SURE",
+    "plot_width_ft": 22,
+    "plot_depth_ft": 100,
+    "facing": "N",
+    "setbacks": {
+     "FRONT": 5,
+     "BACK": 3,
+     "LEFT": 3,
+     "RIGHT": 3
+    },
+    "bedrooms": "2",
+    "bathrooms": "2",
+    "pooja_room": false,
+    "car_parking": true,
+    "vastu": "NOT_NEEDED"
+   },
+   "design_inputs": {
+    "stair": "NONE",
+    "attached_bathrooms": 1,
+    "dining": "SEPARATE",
+    "kitchen": "CLOSED",
+    "utility": false,
+    "parking_spaces": 1,
+    "parking_kind": "CAR"
+   }
+  }
+ }
+}

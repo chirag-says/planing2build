@@ -17,7 +17,15 @@ from datetime import datetime
 from typing import Annotated, Any, Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    SerializerFunctionWrapHandler,
+    StringConstraints,
+    model_serializer,
+    model_validator,
+)
 
 from p2b.core.vocabulary import (
     ConstraintKind,
@@ -43,7 +51,8 @@ from p2b.core.vocabulary import (
 )
 
 SCHEMA = "p2b.houseplan"
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"  # 1.1.0 adds Constraint.score_milli (soft quality terms)
+SCHEMA_VERSION_1_0 = "1.0.0"
 SCHEMA_MAJOR = 1
 
 Mm = Annotated[int, Field(ge=-10_000_000, le=10_000_000)]
@@ -219,6 +228,16 @@ class Constraint(Frozen):
     params: dict[str, ParamValue]
     origin: Origin
     outcome: ConstraintOutcome
+    # 1.1.0: a soft term's measured score (milli; 0 = fully met). Absent on hard constraints and
+    # in 1.0.0 documents, and then omitted from the JSON, so 1.0.0 hashes do not change.
+    score_milli: Annotated[int, Field(ge=0)] | None = None
+
+    @model_serializer(mode="wrap")
+    def _omit_absent_score(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        data: dict[str, Any] = handler(self)
+        if self.score_milli is None:
+            data.pop("score_milli", None)
+        return data
 
 
 class Compromise(Frozen):

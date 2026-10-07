@@ -2,7 +2,8 @@
 
 Not product code: not served, not used by the web app, not a drawing. It reads only PlanGeometry,
 the same derived geometry any future renderer must consume, so it also shows that a picture can be
-produced without touching the HousePlan's internals.
+produced without touching the HousePlan's internals. `render` is also used by the Checkpoint 2
+benchmark (`benchmark_houseplans.py --svg-dir`).
 
     cd apps/api && uv run python scripts/render_houseplan_debug.py OUTPUT_DIR
 """
@@ -13,8 +14,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / "src")]
-
-from tests.houseplans_support import golden_plan, ruleset, valid_cases  # noqa: E402
 
 from p2b.houseplans.engine import HousePlan, plan_geometry  # noqa: E402
 from p2b.houseplans.engine.derive import GPoint, PlanGeometry  # noqa: E402
@@ -28,15 +27,21 @@ def pts(points: list[GPoint], top: int) -> str:
     return " ".join(f"{p.x},{top - p.y}" for p in points)
 
 
-def render(geometry: PlanGeometry, title: str) -> str:
+def render(geometry: PlanGeometry, title: str, notes: tuple[str, ...] = ()) -> str:
     b = geometry.bounds
     top = b.max_y
-    width, height = b.max_x - b.min_x + 2 * MARGIN, b.max_y - b.min_y + 2 * MARGIN
+    width = b.max_x - b.min_x + 2 * MARGIN
+    height = b.max_y - b.min_y + 2 * MARGIN + 200 * len(notes)
     out = [
         '<svg xmlns="http://www.w3.org/2000/svg" '
         f'viewBox="{b.min_x - MARGIN} {-MARGIN} {width} {height}" '
         f'width="{width / 20:.0f}" height="{height / 20:.0f}" font-family="sans-serif">',
         f'<text x="{b.min_x}" y="{-MARGIN / 3:.0f}" font-size="220">{title}</text>',
+        *(
+            f'<text x="{b.min_x}" y="{top + MARGIN / 2 + 200 * (i + 1):.0f}" font-size="150" '
+            f'fill="#444">{note}</text>'
+            for i, note in enumerate(notes)
+        ),
         f'<polygon points="{pts(geometry.plot, top)}" fill="none" stroke="#999" '
         'stroke-width="20"/>',
     ]
@@ -95,12 +100,15 @@ def render(geometry: PlanGeometry, title: str) -> str:
 
 
 def main() -> None:
+    from tests.houseplans_support import golden_plan, ruleset_cp1, valid_cases
+
     target = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("houseplan-debug")
     target.mkdir(parents=True, exist_ok=True)
     for name in valid_cases():
         plan = HousePlan.model_validate(golden_plan(name)["plan"])
         title = f"{name}: Checkpoint 1 debug render, synthetic test ruleset, not a drawing"
-        (target / f"{name}.svg").write_text(render(plan_geometry(plan, ruleset()), title), "utf-8")
+        geometry = plan_geometry(plan, ruleset_cp1())
+        (target / f"{name}.svg").write_text(render(geometry, title), "utf-8")
         print(target / f"{name}.svg")
 
 

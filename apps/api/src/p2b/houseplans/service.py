@@ -48,6 +48,7 @@ from p2b.core.vocabulary import (
     PlanGenerationState,
     PlanValidity,
     ProjectStatus,
+    SolverKind,
 )
 from p2b.houseplans.engine import (
     ArchitecturalIntent,
@@ -55,9 +56,13 @@ from p2b.houseplans.engine import (
     DeterministicMVPLayoutSolver,
     HousePlan,
     InputConflict,
+    LayoutSolver,
     NeedsInput,
     Normalised,
+    RulesetContent,
     Unsupported,
+    ZonedLocalSearchSolver,
+    fixture_fit,
     generate,
     normalise,
     sha256_of,
@@ -228,7 +233,7 @@ async def request_generation(
         select(func.max(HousePlanRecord.sequence)).where(HousePlanRecord.project_id == project_id)
     )
     sequence = int(last or 0) + 1
-    solver = DeterministicMVPLayoutSolver()
+    solver = solver_for(settings.houseplans_solver, ruleset.content)
     plan = HousePlanRecord(
         id=new_id(),
         project_id=project_id,
@@ -292,16 +297,28 @@ class _Outcome:
     detail: str | None = None
 
 
-def _run_engine(intent: ArchitecturalIntent, ruleset: LoadedRuleset, seed: int) -> _Outcome:
+def solver_for(kind: str, content: RulesetContent) -> LayoutSolver:
+    """The configured solver, or the Checkpoint 1 solver when the ruleset cannot drive the zoned
+    one (no objective section). The choice is stored on the plan, and its job uses that one."""
+    if kind == SolverKind.ZONED_LOCAL_SEARCH.value and content.objective is not None:
+        return ZonedLocalSearchSolver(content, fixture_fit(content))
+    return DeterministicMVPLayoutSolver()
+
+
+def _run_engine(
+    intent: ArchitecturalIntent, ruleset: LoadedRuleset, seed: int, solver: str
+) -> _Outcome:
     result = generate(
         intent,
         ruleset.content,
         ruleset_version=ruleset.version,
         ruleset_sha256=ruleset.sha256,
-        solver=DeterministicMVPLayoutSolver(),
+        solver=solver_for(solver, ruleset.content),
         seed=seed,
     )
     if result.outcome == "INFEASIBLE":
+        if result.feasibility is not None:
+            return _Outcome(S.INFEASIBLE, infeasibility=result.feasibility.as_json())
         reasons = [
             {
                 "code": r.code.value,
@@ -347,12 +364,12 @@ async def run_generation(
         row.version += 1
         ruleset = await load_ruleset_by_id(session, row.ruleset_id)
         intent = ArchitecturalIntent.model_validate(row.intent)
-        seed = row.seed
+        seed, solver = row.seed, row.solver
 
     started = time.perf_counter()
     try:
         outcome = await asyncio.wait_for(
-            asyncio.to_thread(_run_engine, intent, ruleset, seed),
+            asyncio.to_thread(_run_engine, intent, ruleset, seed, solver),
             timeout=settings.houseplans_solve_timeout_seconds,
         )
     except TimeoutError:

@@ -7054,33 +7054,19 @@ export interface components {
             /** Response Hours */
             response_hours: number;
         };
-        /** Constraint */
         Constraint: {
-            /** Id */
-            id: string;
-            kind: components["schemas"]["ConstraintKind"];
-            origin: components["schemas"]["Origin"];
-            outcome: components["schemas"]["ConstraintOutcome"];
-            /** Params */
-            params: {
-                [key: string]: number | string | boolean | string[];
-            };
-            strength: components["schemas"]["ConstraintStrength"];
-            /** Subjects */
-            subjects: string[];
-            /** Weight */
-            weight: number;
+            [key: string]: unknown;
         };
         /**
          * ConstraintKind
          * @enum {string}
          */
-        ConstraintKind: "ROOM_PRESENT" | "ROOM_MIN_SIZE" | "RELATION" | "INSIDE_ENVELOPE" | "ENTRANCE_ON_EDGE" | "PARKING_PROVIDED";
+        ConstraintKind: "ROOM_PRESENT" | "ROOM_MIN_SIZE" | "RELATION" | "INSIDE_ENVELOPE" | "ENTRANCE_ON_EDGE" | "PARKING_PROVIDED" | "AREA_DEVIATION" | "DIMENSION_DEVIATION" | "ASPECT_EXCESS" | "CIRCULATION_SHARE" | "OVERSIZE" | "ADJACENCY" | "WET_CLUSTER" | "EXTERIOR_EXPOSURE" | "PRIVACY" | "PARKING_CONVENIENCE" | "ZONE_ORDER" | "ROOM_SIZE_OUTLIER" | "BEDROOM_GROUPING" | "ORIENTATION";
         /**
          * ConstraintOutcome
          * @enum {string}
          */
-        ConstraintOutcome: "MET" | "RELAXED" | "UNMET" | "NOT_EVALUATED";
+        ConstraintOutcome: "MET" | "PARTIAL" | "RELAXED" | "UNMET" | "NOT_EVALUATED";
         /**
          * ConstraintStrength
          * @enum {string}
@@ -8270,6 +8256,13 @@ export interface components {
             /** Rfqs */
             rfqs: components["schemas"]["FamilyRfqOut"][];
         };
+        /**
+         * FeasibilityClass
+         * @description PROVEN: no rectangle arrangement can satisfy the hard rules. NO_SUPPORTED_LAYOUT: none of
+         *     the layouts this engine version can produce fits (CP2-U4); never presented as impossible.
+         * @enum {string}
+         */
+        FeasibilityClass: "PROVEN" | "NO_SUPPORTED_LAYOUT";
         /** FileOut */
         FileOut: {
             /** Content Type */
@@ -8609,6 +8602,7 @@ export interface components {
             is_authoritative: false;
             /** Plan Id */
             plan_id: string;
+            quality?: components["schemas"]["QualityOut"] | null;
             /** Ruleset Is Synthetic */
             ruleset_is_synthetic: boolean;
             ruleset_status: components["schemas"]["RulesetStatus"];
@@ -8653,8 +8647,25 @@ export interface components {
             state: components["schemas"]["PlanGenerationState"];
             validity: components["schemas"]["PlanValidity"] | null;
         };
-        /** InfeasibilityOut */
+        /**
+         * InfeasibilityOut
+         * @description Why no plan was produced. `classification` PROVEN: no arrangement can meet the hard rules;
+         *     NO_SUPPORTED_LAYOUT: none of the layouts this engine version produces fits, which never means
+         *     impossible (CP2-U4). Plans from Checkpoint 1 carry `reasons` only.
+         */
         InfeasibilityOut: {
+            classification?: components["schemas"]["FeasibilityClass"] | null;
+            /**
+             * Constraints
+             * @default []
+             */
+            constraints: components["schemas"]["InvolvedConstraintOut"][];
+            /** Explanation */
+            explanation?: string | null;
+            /** Message */
+            message?: string | null;
+            /** Message Key */
+            message_key?: string | null;
             /** Reasons */
             reasons: components["schemas"]["InfeasibleReasonOut"][];
         };
@@ -8819,6 +8830,15 @@ export interface components {
             kind: components["schemas"]["InvoiceKind"];
             /** Total */
             total: string;
+        };
+        /** InvolvedConstraintOut */
+        InvolvedConstraintOut: {
+            /** Kind */
+            kind: string;
+            /** Origin */
+            origin: string;
+            /** Subject */
+            subject: string;
         };
         /**
          * KitchenArrangement
@@ -9460,6 +9480,7 @@ export interface components {
             is_authoritative: false;
             /** Plan Id */
             plan_id: string;
+            quality?: components["schemas"]["QualityOut"] | null;
             /** Ruleset Is Synthetic */
             ruleset_is_synthetic: boolean;
             ruleset_status: components["schemas"]["RulesetStatus"];
@@ -10949,6 +10970,34 @@ export interface components {
             years_experience: number | null;
         };
         /**
+         * QualityOut
+         * @description The Scorer's measure of a plan (derived on read; never stored apart from the document's
+         *     soft constraints). Lower is better; it never decides validity.
+         */
+        QualityOut: {
+            /** Aspect Violations */
+            aspect_violations: number;
+            /** Circulation Share Milli */
+            circulation_share_milli: number;
+            /** Rooms */
+            rooms: components["schemas"]["RoomQualityOut"][];
+            /** Terms */
+            terms: components["schemas"]["QualityTermOut"][];
+            /** Total */
+            total: number;
+        };
+        /** QualityTermOut */
+        QualityTermOut: {
+            kind: components["schemas"]["ConstraintKind"];
+            outcome: components["schemas"]["ConstraintOutcome"];
+            /** Score Milli */
+            score_milli: number | null;
+            /** Subjects */
+            subjects: string[];
+            /** Weight */
+            weight: number;
+        };
+        /**
          * QuantityBasis
          * @description Never AI (PD-05).
          * @enum {string}
@@ -12013,6 +12062,20 @@ export interface components {
             type: components["schemas"]["RoomType"];
             zone: components["schemas"]["Zone"];
         };
+        /** RoomQualityOut */
+        RoomQualityOut: {
+            /** Aspect X100 */
+            aspect_x100: number;
+            /** Clear D Mm */
+            clear_d_mm: number;
+            /** Clear W Mm */
+            clear_w_mm: number;
+            /** Over Aspect */
+            over_aspect: boolean;
+            /** Room */
+            room: string;
+            room_type: components["schemas"]["RoomType"];
+        };
         /**
          * RoomType
          * @enum {string}
@@ -12560,7 +12623,7 @@ export interface components {
          * SolverKind
          * @enum {string}
          */
-        SolverKind: "DETERMINISTIC_MVP" | "CP_SAT";
+        SolverKind: "DETERMINISTIC_MVP" | "ZONED_LOCAL_SEARCH" | "CP_SAT";
         /**
          * SpecLineState
          * @description STATE_MODEL section 7.

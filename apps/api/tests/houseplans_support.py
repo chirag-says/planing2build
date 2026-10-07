@@ -31,7 +31,9 @@ from p2b.houseplans.engine import (
     sha256_of,
 )
 from p2b.houseplans.engine.derive import analyse, fixture_info, with_clearances
+from p2b.houseplans.engine.fit import fixture_fit
 from p2b.houseplans.engine.model import Fixture, HousePlan, dump
+from p2b.houseplans.engine.solver.zoned_ls import ZonedLocalSearchSolver
 
 FIXTURES = Path(__file__).parent / "fixtures" / "houseplans"
 GOLDEN = FIXTURES / "golden"
@@ -56,6 +58,24 @@ def ruleset_sha() -> str:
 
 
 @cache
+def ruleset_cp1_json() -> dict[str, Any]:
+    """The Checkpoint 1 synthetic ruleset (content 1.0.0), frozen: the MVP solver's goldens are
+    generated with it, so their bodies and hashes stay exactly the Checkpoint 1 ones."""
+    data: dict[str, Any] = json.loads(
+        (FIXTURES / "ruleset_synthetic_cp1_test_only.json").read_text("utf-8")
+    )
+    return data
+
+
+def ruleset_cp1() -> RulesetContent:
+    return RulesetContent.model_validate(ruleset_cp1_json())
+
+
+def ruleset_cp1_sha() -> str:
+    return sha256_of(ruleset_cp1())
+
+
+@cache
 def cases() -> dict[str, dict[str, Any]]:
     data: dict[str, dict[str, Any]] = json.loads(
         (FIXTURES / "requirements.json").read_text("utf-8")
@@ -63,28 +83,86 @@ def cases() -> dict[str, dict[str, Any]]:
     return data
 
 
-def intent_for(name: str) -> ArchitecturalIntent:
-    case = cases()[name]
+def intent_for(name: str, rules: RulesetContent | None = None) -> ArchitecturalIntent:
+    """The case's intent under `rules` (default: the Checkpoint 1 ruleset the goldens use)."""
+    return intent_of(cases()[name], rules or ruleset_cp1())
+
+
+@cache
+def benchmark_cases() -> dict[str, dict[str, Any]]:
+    """The benchmark corpora of Checkpoints 2, 2.1 and 2.2 (labels fixed before each first run)."""
+    data: dict[str, dict[str, Any]] = {}
+    for corpus in ("benchmark_cp2", "benchmark_cp2_1_quality", "benchmark_cp2_2_quality"):
+        data |= json.loads((FIXTURES / f"{corpus}.json").read_text("utf-8"))["cases"]
+    return data
+
+
+# Zoned-solver goldens: plans from SPINE, FRONT_LIVING_REAR_BEDROOM, FRONT_PUBLIC_REAR_PRIVATE,
+# L_CIRCULATION, CENTRAL_LIVING_BEDROOM_WINGS and LINEAR_REAR_CORRIDOR.
+ZONED_GOLDEN = (
+    "2bhk_30x50_north_twowheeler_open",
+    "3bhk_40x65_east_puja",
+    "2bhk_40x80_west_two_cars",
+    "2bhk_22x60_narrow_deep",
+    "3bhk_40x60_asymmetric_setbacks",
+    "4bhk_50x80_large_two_cars",
+    "1bhk_25x40_south_small",
+    "prop_very_wide_80x28",
+)
+
+
+def zoned_golden(name: str) -> dict[str, Any]:
+    data: dict[str, Any] = json.loads((GOLDEN / "zoned" / f"{name}.json").read_text("utf-8"))
+    return data
+
+
+def generate_zoned_benchmark(name: str) -> GenerationResult:
+    rules = ruleset()
+    return generate(
+        intent_of(benchmark_cases()[name], rules),
+        rules,
+        ruleset_version=RULESET_VERSION,
+        ruleset_sha256=ruleset_sha(),
+        solver=ZonedLocalSearchSolver(rules, fixture_fit(rules)),
+        seed=SEED,
+    )
+
+
+def intent_of(case: dict[str, Any], rules: RulesetContent) -> ArchitecturalIntent:
     outcome = normalise(
         case["answers"],
         DesignInputs.model_validate(case["design_inputs"]),
-        ruleset(),
+        rules,
         question_set_version=1,
         requirement_version=1,
         ruleset_version=RULESET_VERSION,
-        ruleset_sha256=ruleset_sha(),
+        ruleset_sha256=sha256_of(rules),
     )
     assert isinstance(outcome, Normalised), outcome
     return outcome.intent
 
 
 def generate_case(name: str) -> GenerationResult:
+    """The Checkpoint 1 golden path: MVP solver, frozen Checkpoint 1 ruleset."""
     return generate(
         intent_for(name),
-        ruleset(),
+        ruleset_cp1(),
+        ruleset_version=RULESET_VERSION,
+        ruleset_sha256=ruleset_cp1_sha(),
+        solver=DeterministicMVPLayoutSolver(),
+        seed=SEED,
+    )
+
+
+def generate_zoned(name: str) -> GenerationResult:
+    """The Checkpoint 2 path: zoned local search, the current synthetic ruleset."""
+    rules = ruleset()
+    return generate(
+        intent_for(name, rules),
+        rules,
         ruleset_version=RULESET_VERSION,
         ruleset_sha256=ruleset_sha(),
-        solver=DeterministicMVPLayoutSolver(),
+        solver=ZonedLocalSearchSolver(rules, fixture_fit(rules)),
         seed=SEED,
     )
 

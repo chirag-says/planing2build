@@ -13,13 +13,21 @@ from p2b.core.idempotency import IdempotencyKeyHeader, run_once
 from p2b.core.ratelimit import Limit, enforce
 from p2b.core.vocabulary import (
     Audience,
+    FeasibilityClass,
     InfeasibleReason,
     PlanFailureReason,
     PlanGenerationState,
     PlanValidity,
     RulesetStatus,
 )
-from p2b.houseplans.engine import ArchitecturalIntent, DesignInputs, plan_geometry
+from p2b.houseplans.engine import (
+    ArchitecturalIntent,
+    DesignInputs,
+    HousePlan,
+    RulesetContent,
+    plan_geometry,
+    score_plan,
+)
 from p2b.houseplans.engine.validate import ValidationReport
 from p2b.houseplans.schemas import (
     GenerateHousePlanRequest,
@@ -28,6 +36,10 @@ from p2b.houseplans.schemas import (
     HousePlanSummaryOut,
     InfeasibilityOut,
     InfeasibleReasonOut,
+    InvolvedConstraintOut,
+    QualityOut,
+    QualityTermOut,
+    RoomQualityOut,
 )
 from p2b.houseplans.service import PlanView, document_of, get_plan, list_plans, request_generation
 from p2b.identity.interface import Actor, require_actor
@@ -60,6 +72,7 @@ def detail_fields(view: PlanView) -> dict[str, object]:
     document = document_of(view)
     infeasibility = None
     if row.infeasibility:
+        data = row.infeasibility
         infeasibility = InfeasibilityOut(
             reasons=[
                 InfeasibleReasonOut(
@@ -67,8 +80,15 @@ def detail_fields(view: PlanView) -> dict[str, object]:
                     params=r["params"],
                     message_key=r["message_key"],
                 )
-                for r in row.infeasibility["reasons"]
-            ]
+                for r in data["reasons"]
+            ],
+            classification=FeasibilityClass(data["classification"])
+            if "classification" in data
+            else None,
+            message_key=data.get("message_key"),
+            message=data.get("message"),
+            explanation=data.get("explanation"),
+            constraints=[InvolvedConstraintOut(**c) for c in data.get("constraints", [])],
         )
     return {
         **summary(view).model_dump(),
@@ -80,7 +100,44 @@ def detail_fields(view: PlanView) -> dict[str, object]:
         "geometry": plan_geometry(document, view.ruleset.content) if document else None,
         "validation": ValidationReport.model_validate(row.head_report) if row.head_report else None,
         "infeasibility": infeasibility,
+        "quality": quality_of(document, view.ruleset.content) if document else None,
     }
+
+
+def quality_of(document: HousePlan, content: RulesetContent) -> QualityOut | None:
+    """None for a ruleset without an objective (its weights would all be zero) or a plan the
+    Scorer cannot read."""
+    if content.objective is None:
+        return None
+    q = score_plan(document, content)
+    if q is None:
+        return None
+    return QualityOut(
+        total=q.total,
+        circulation_share_milli=q.circulation_share_milli,
+        aspect_violations=q.aspect_violations,
+        terms=[
+            QualityTermOut(
+                kind=t.kind,
+                weight=t.weight,
+                score_milli=t.score_milli,
+                outcome=t.outcome,
+                subjects=list(t.subjects),
+            )
+            for t in q.terms
+        ],
+        rooms=[
+            RoomQualityOut(
+                room=r.key,
+                room_type=r.room_type,
+                clear_w_mm=r.clear_w_mm,
+                clear_d_mm=r.clear_d_mm,
+                aspect_x100=r.aspect_x100,
+                over_aspect=r.over_aspect,
+            )
+            for r in q.rooms
+        ],
+    )
 
 
 @router.get("/projects/{project_id}/house-plans", response_model=HousePlanListOut)

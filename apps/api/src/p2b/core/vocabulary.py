@@ -972,6 +972,21 @@ class ConstraintKind(StrEnum):
     INSIDE_ENVELOPE = "INSIDE_ENVELOPE"
     ENTRANCE_ON_EDGE = "ENTRANCE_ON_EDGE"
     PARKING_PROVIDED = "PARKING_PROVIDED"
+    # Soft quality terms (Checkpoint 2): scored by the Scorer, never validation errors.
+    AREA_DEVIATION = "AREA_DEVIATION"
+    DIMENSION_DEVIATION = "DIMENSION_DEVIATION"
+    ASPECT_EXCESS = "ASPECT_EXCESS"
+    CIRCULATION_SHARE = "CIRCULATION_SHARE"
+    OVERSIZE = "OVERSIZE"
+    ADJACENCY = "ADJACENCY"
+    WET_CLUSTER = "WET_CLUSTER"
+    EXTERIOR_EXPOSURE = "EXTERIOR_EXPOSURE"
+    PRIVACY = "PRIVACY"
+    PARKING_CONVENIENCE = "PARKING_CONVENIENCE"
+    ZONE_ORDER = "ZONE_ORDER"
+    ROOM_SIZE_OUTLIER = "ROOM_SIZE_OUTLIER"
+    BEDROOM_GROUPING = "BEDROOM_GROUPING"
+    ORIENTATION = "ORIENTATION"
 
 
 class ConstraintStrength(StrEnum):
@@ -981,6 +996,7 @@ class ConstraintStrength(StrEnum):
 
 class ConstraintOutcome(StrEnum):
     MET = "MET"
+    PARTIAL = "PARTIAL"
     RELAXED = "RELAXED"
     UNMET = "UNMET"
     NOT_EVALUATED = "NOT_EVALUATED"
@@ -1070,6 +1086,7 @@ class PlanSource(StrEnum):
 
 class SolverKind(StrEnum):
     DETERMINISTIC_MVP = "DETERMINISTIC_MVP"
+    ZONED_LOCAL_SEARCH = "ZONED_LOCAL_SEARCH"
     CP_SAT = "CP_SAT"
 
 
@@ -1200,6 +1217,40 @@ class PlanOpKind(StrEnum):
     DELETE_ROOM = "DELETE_ROOM"
 
 
+class TopologyFamily(StrEnum):
+    """Layout families the zoning engine can produce. Checkpoint 2: SPINE (front band, passage
+    spine, columns, optional rear band) and FRONT_EXTENSION (one more room beside the entry room).
+    Checkpoint 2.1: SIDE_WING (a spine with a public and service column and a private column),
+    FRONT_LIVING_REAR_BEDROOM (compact: rooms entered from the living or dining room, no
+    corridor), FRONT_PUBLIC_REAR_PRIVATE (public band, a cross corridor, a private band at the
+    rear), L_CIRCULATION (a spine that turns into a rear cross corridor serving the private band)
+    CENTRAL_LIVING_BEDROOM_WINGS (living and dining in the middle, room wings on both sides) and
+    LINEAR_REAR_CORRIDOR (one row of rooms along the road, a corridor behind them, parking at an
+    end: wide, shallow plots)."""
+
+    SPINE = "SPINE"
+    FRONT_EXTENSION = "FRONT_EXTENSION"
+    SIDE_WING = "SIDE_WING"
+    FRONT_LIVING_REAR_BEDROOM = "FRONT_LIVING_REAR_BEDROOM"
+    FRONT_PUBLIC_REAR_PRIVATE = "FRONT_PUBLIC_REAR_PRIVATE"
+    L_CIRCULATION = "L_CIRCULATION"
+    CENTRAL_LIVING_BEDROOM_WINGS = "CENTRAL_LIVING_BEDROOM_WINGS"
+    LINEAR_REAR_CORRIDOR = "LINEAR_REAR_CORRIDOR"
+
+
+class FeasibilityClass(StrEnum):
+    """PROVEN: no rectangle arrangement can satisfy the hard rules. NO_SUPPORTED_LAYOUT: none of
+    the layouts this engine version can produce fits (CP2-U4); never presented as impossible."""
+
+    PROVEN = "PROVEN"
+    NO_SUPPORTED_LAYOUT = "NO_SUPPORTED_LAYOUT"
+
+
+class RepairReason(StrEnum):
+    VALIDATION_ERROR = "VALIDATION_ERROR"
+    OBJECTIVE = "OBJECTIVE"
+
+
 ALL_ENUMS: tuple[type[StrEnum], ...] = (
     Audience, UserStatus, ActorType, SecuritySeverity, ContactKind, OtpPurpose, OtpState,
     FinishLevel, ProjectStatus, ProjectType, MembershipRole, ReviewFlag, EnquiryKind,
@@ -1226,5 +1277,6 @@ ALL_ENUMS: tuple[type[StrEnum], ...] = (
     OrientationMode, DiningArrangement, KitchenArrangement, StairChoice, DesignInputKey,
     MissingInputReason, UnsupportedReason, InfeasibleReason, PlanSource, SolverKind, RulesetStatus,
     PlanGenerationState, PlanFailureReason, PlanValidity, ValidationCategory, ValidationSeverity,
-    RepairHint, EntityKind, ValidationCode, PlanOpKind,
+    RepairHint, EntityKind, ValidationCode, PlanOpKind, TopologyFamily, FeasibilityClass,
+    RepairReason,
 )  # fmt: skip

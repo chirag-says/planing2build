@@ -4,7 +4,7 @@
 |---|---|
 | Document | `SYSTEM_BLUEPRINT/02_IMPLEMENTATION/AI_DESIGN_ENGINE_CHECKPOINT_2.md` |
 | Version | 1.0 (2026-10-06) |
-| Status | APPROVED with changes (Chirag, 2026-10-06); section 0 governs where it differs. Evidence research code: `tools/spikes/cp2_layout/` (not imported by the application) |
+| Status | APPROVED with changes (Chirag, 2026-10-06); section 0 governs where it differs. Evidence research code: `tools/spikes/cp2_layout/` (not imported by the application). **Checkpoint 2.1 (2026-10-07) extends sections C, D and E: see section S and `AI_DESIGN_ENGINE_CHECKPOINT_2_1_REPORT.md`** |
 | Basis | `AI_DESIGN_ENGINE_HAIRLINE_READINESS.md` v1.1 (section 0), `AI_DESIGN_ENGINE_CHECKPOINT_1.md` and its report, ADR-025, ADR-026, PD-28, the Checkpoint 1 code and tests, the three golden renders |
 | Branch | `houseplans-checkpoint-1`. Checkpoint 1 committed as `22628ab`, tag `houseplans-cp1` (CP2-U6) |
 | Markers | **[MEASURED]** from a run recorded here. **[REC]** Sakha's recommendation. **[OPEN]** needs Chirag. **[SYNTHETIC]** test or benchmark value, never a rule |
@@ -501,3 +501,40 @@ No web source file changes.
 | CP2-U8 | Vastu orientation table | AD-13; the term stays NOT_EVALUATED until then |
 
 ~Sakha
+
+---
+
+## S. Checkpoint 2.1 update (2026-10-07)
+
+Checkpoint 2 was not accepted (aspect criterion missed, VPS gate not run, `1bhk_25x40` unsolved). Checkpoint 2.1 changed the following parts of this plan. The rest stands. Details and measurements: `AI_DESIGN_ENGINE_CHECKPOINT_2_1_REPORT.md`.
+
+| Section | Change |
+|---|---|
+| C.2 Topology families | Six more families: SIDE_WING, FRONT_LIVING_REAR_BEDROOM, FRONT_PUBLIC_REAR_PRIVATE, L_CIRCULATION, CENTRAL_LIVING_BEDROOM_WINGS, LINEAR_REAR_CORRIDOR. Optional open (unbuilt) areas: a rear yard, a central court. Every family is written as a slicing tree (`engine/layout_tree.py`) |
+| C.3 Enumeration | Topology selection (`zoning.select`) checks each family against sound lower bounds and records a verdict with a reason; identical trees from two families are kept once |
+| D.1 Data types | `Topology` (tree, access rules with alternative entry rooms, passages, open areas), `Verdict`, `Selection`; `ZonedProblem` compiles any tree |
+| D.2 Solvers | Two-phase search: a coarse pool per family, then the best `candidate_limit` finished with a reserved share per family; a bounded pair-move escape for layouts within 400 mm of feasible. Solver version 1.1.0 |
+| E.1 Hard (in the compiler) | Added as necessary conditions: a window wall for every room that needs a window (the entry room's front wall holds the centred entrance and a window), passage width and length, open-area width. Fixture fit depends on which wall holds the door |
+| E.2 Soft | Added ZONE_ORDER (the ruleset's front-to-back zone order) and BEDROOM_GROUPING (bedrooms entered from one shared space). EXTERIOR_EXPOSURE now measures the longest stretch of outside wall, including walls facing an open area. ASPECT_EXCESS is unchanged |
+| I. Ruleset | Content 1.1.0 gains `zoning.open_space_min_mm` and `objective.family_pool` (both synthetic in the test ruleset; AD-05) |
+| Ruleset hash | Fields new in 1.1.0 are omitted from serialisation at their default, so a 1.0.0 ruleset still hashes as in Checkpoint 1 |
+
+## T. Checkpoint 2.2 update (2026-10-07)
+
+The VPS gate is deferred (CP2.1 stays NOT ACCEPTED). Checkpoint 2.2 refined plan quality and changed the following. Details and measurements: `AI_DESIGN_ENGINE_CHECKPOINT_2_2_REPORT.md`.
+
+| Section | Change |
+|---|---|
+| C.2 Topology families | Stepped fronts with an open carport court (FRONT_PUBLIC_REAR_PRIVATE, L_CIRCULATION); a courtyard layout replaces the wings family's court variant; wet-aware row orders; a wet wing design; a yard behind the linear row. No new family |
+| D.2 Solvers | Same-axis splits flattened, sibling cuts across fixed corridors, slab moves; coarse steps 1200 and 600, finishing at 300, 150 and the grid; parking and passages start at their least size; a sizing memo per `size()` call. Results deterministic as before |
+| E.1 Hard (in the compiler) | Fixture fit tests every door position and hall side a plan can produce |
+| E.2 Soft | Added ROOM_SIZE_OUTLIER (the worst room's area deviation). Every other term unchanged |
+| I. Ruleset | Synthetic test ruleset: ROOM_SIZE_OUTLIER weight 2, `family_pool` 20 (AD-05) |
+
+## U. Checkpoint 2.2.1 update (2026-10-07)
+
+Parking and spare-space allocation. Details: `AI_DESIGN_ENGINE_CHECKPOINT_2_2_1_REPORT.md`.
+
+| Section | Change |
+|---|---|
+| D.1 Data types | `ZonedProblem.bay`: the parking room is a bay inside its layout cell. Along each axis it keeps its required clear size (plus at most an interior wall either side) when the rest of the cell is at least `zoning.open_space_min_mm`; that rest stays unbuilt. A smaller rest stays with the parking as apron. No schema, validator or ruleset change |

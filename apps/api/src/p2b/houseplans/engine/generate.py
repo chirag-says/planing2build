@@ -1,57 +1,50 @@
 """The generation pipeline:
 
-    intent + ruleset → LayoutProblem → LayoutSolver → rectangles + access topology
-      → planar wall graph → openings and fixtures → HousePlan
-      → validate → deterministic repair → VALID plan, or INFEASIBLE with reasons, or INVALID
+    intent + ruleset → compile → feasibility pre-check (PROVEN?) → LayoutSolver
+      → ranked layouts → for each, best first, up to `objective.build_attempts`:
+           build (walls, openings, fixtures) → validate → deterministic repair → VALID?
+      → VALID plan with hard and scored soft constraints, or INFEASIBLE with a classification
 
-INVALID means the engine produced a plan its own validator rejects: an engine defect. The caller
-records it as FAILED and never shows the plan. Every solver goes through this one path, so no
-solver can bypass the HousePlan or the validator."""
+INFEASIBLE is PROVEN only when the pre-check's arithmetic shows no arrangement can work; otherwise
+NO_SUPPORTED_LAYOUT (CP2-U4). A layout that builds but fails validation after repair is an engine
+defect: it is recorded in `attempts` and the next layout is tried; it is never returned as VALID.
+
+The Checkpoint 1 solver (DETERMINISTIC_MVP, the fallback) keeps its exact path: one layout, schema
+1.0.0, hard constraints only, so its documents stay byte-identical. INVALID is returned only by that
+path, as in Checkpoint 1."""
 
 from dataclasses import dataclass, field
 from typing import Literal
 
 from p2b.core.vocabulary import (
-    ConstraintKind,
     ConstraintOutcome,
     ConstraintStrength,
+    FeasibilityClass,
     InfeasibleReason,
     OpeningKind,
     OriginKind,
-    PlanSource,
-    PlotEdgeKind,
     RelationKind,
     RoomType,
     SetbackSide,
+    SolverKind,
+    TopologyFamily,
 )
+from p2b.houseplans.engine.build import BuildContext, build_plan, hard_constraints
 from p2b.houseplans.engine.canonical import sha256_of
-from p2b.houseplans.engine.derive import WallInfo, analyse, half
+from p2b.houseplans.engine.derive import half
+from p2b.houseplans.engine.feasibility import FeasibilityReport, no_supported_layout, precheck
+from p2b.houseplans.engine.fit import fixture_fit
 from p2b.houseplans.engine.geom import Rect, rect_or_none
-from p2b.houseplans.engine.graph import Graph, build_graph
 from p2b.houseplans.engine.intent import ArchitecturalIntent
 from p2b.houseplans.engine.model import (
     SCHEMA_VERSION,
+    SCHEMA_VERSION_1_0,
     Constraint,
-    Fixture,
-    Floor,
-    GeneratorInfo,
     HousePlan,
-    Meta,
-    Node,
-    Opening,
     Origin,
-    ParamValue,
-    Parking,
-    Plot,
-    PlotEdge,
-    Point,
-    Room,
-    Setback,
-    Site,
-    SizeSpec,
-    Wall,
 )
-from p2b.houseplans.engine.place import PlacementFailure, place_fixtures, place_openings
+from p2b.houseplans.engine.objective import QualityScore, score_plan
+from p2b.houseplans.engine.place import PlacementFailure
 from p2b.houseplans.engine.repair import AppliedRepair, repair
 from p2b.houseplans.engine.ruleset import RulesetContent
 from p2b.houseplans.engine.solver import (
@@ -64,25 +57,19 @@ from p2b.houseplans.engine.solver import (
     RelationDemand,
     RoomDemand,
 )
-from p2b.houseplans.engine.validate import ENGINE_VERSION, ValidationReport, validate
+from p2b.houseplans.engine.solver.zoned_ls import search
+from p2b.houseplans.engine.validate import ValidationReport, validate
+from p2b.houseplans.engine.zoning import Verdict
 
-ROOM_NAMES = {
-    RoomType.LIVING: "Living room",
-    RoomType.DINING: "Dining",
-    RoomType.KITCHEN: "Kitchen",
-    RoomType.BEDROOM: "Bedroom",
-    RoomType.BATH_ATTACHED: "Attached bathroom",
-    RoomType.BATH_COMMON: "Common bathroom",
-    RoomType.WC: "WC",
-    RoomType.PUJA: "Puja room",
-    RoomType.UTILITY: "Utility",
-    RoomType.STORE: "Store",
-    RoomType.PASSAGE: "Passage",
-    RoomType.FOYER: "Foyer",
-    RoomType.STAIR_HALL: "Stair hall",
-    RoomType.PARKING: "Parking",
-}
-SOLVER_ORIGIN = Origin(kind=OriginKind.SOLVER, ref="solver:circulation")
+
+@dataclass(frozen=True)
+class Attempt:
+    """One ranked layout the pipeline tried: VALID, PLACEMENT (an opening or fixture template did
+    not fit) or INVALID (validator errors after repair, listed)."""
+
+    topology: str
+    result: Literal["VALID", "PLACEMENT", "INVALID"]
+    codes: tuple[str, ...] = ()
 
 
 @dataclass
@@ -93,6 +80,15 @@ class GenerationResult:
     reasons: tuple[InfeasibleDetail, ...] = ()
     repairs: list[AppliedRepair] = field(default_factory=list)
     topology: str | None = None
+    feasibility: FeasibilityReport | None = None
+    quality: QualityScore | None = None
+    attempts: list[Attempt] = field(default_factory=list)
+    candidates_enumerated: int = 0
+    candidates_sized: int = 0
+    feasible_layouts: int = 0
+    evaluations: int = 0
+    family: TopologyFamily | None = None  # the chosen layout's topology family (zoned solver)
+    verdicts: tuple[Verdict, ...] = ()  # which families applied, and why not where they did not
 
 
 def _plot_rect(intent: ArchitecturalIntent) -> Rect:
@@ -179,108 +175,65 @@ def compile_problem(
     )
 
 
-def _room_name(key: str, room_type: RoomType) -> str:
-    base = ROOM_NAMES[room_type]
-    suffix = key.rsplit("_", 1)[-1]
-    return f"{base} {suffix}" if suffix.isdigit() else base
-
-
-def _site(intent: ArchitecturalIntent) -> Site:
-    w, d = intent.site.frontage_mm, intent.site.depth_mm
-    vertices = [Point(x=0, y=0), Point(x=w, y=0), Point(x=w, y=d), Point(x=0, y=d)]
-    edges = [
-        PlotEdge(id="edge_front", start=0, end=1, kind=PlotEdgeKind.ROAD, side=SetbackSide.FRONT),
-        PlotEdge(
-            id="edge_right", start=1, end=2, kind=PlotEdgeKind.NEIGHBOUR, side=SetbackSide.RIGHT
-        ),
-        PlotEdge(
-            id="edge_back", start=2, end=3, kind=PlotEdgeKind.NEIGHBOUR, side=SetbackSide.BACK
-        ),
-        PlotEdge(
-            id="edge_left", start=3, end=0, kind=PlotEdgeKind.NEIGHBOUR, side=SetbackSide.LEFT
-        ),
-    ]
-    edge_of = {e.side: e.id for e in edges}
-    setbacks = [
-        Setback(
-            edge=edge_of[side],
-            distance_mm=intent.site.setbacks_mm[side],
-            source=intent.site.setback_sources[side],
-        )
-        for side in SetbackSide
-    ]
-    parking = None
-    return Site(
-        plot=Plot(vertices=vertices, edges=edges),
-        north_angle_deg=intent.site.north_angle_deg,
-        facing=intent.site.facing,
-        entry_edge="edge_front",
-        setbacks=setbacks,
-        parking=parking,
-    )
-
-
-def _constraints(intent: ArchitecturalIntent, outcome: ConstraintOutcome) -> list[Constraint]:
-    out: list[Constraint] = []
-
-    def add(
-        kind: ConstraintKind, subjects: list[str], params: dict[str, ParamValue], origin: Origin
-    ) -> None:
+def soft_constraints(quality: QualityScore, first_id: int) -> list[Constraint]:
+    """The Scorer's terms as SOFT constraints: weight and origin from the ruleset's objective,
+    the measured score, and MET / PARTIAL / UNMET / NOT_EVALUATED."""
+    out = []
+    for i, term in enumerate(quality.terms):
         out.append(
             Constraint(
-                id=f"c{len(out) + 1}",
-                kind=kind,
-                strength=ConstraintStrength.HARD,
-                weight=0,
-                subjects=subjects,
-                params=params,
-                origin=origin,
-                outcome=outcome,
+                id=f"c{first_id + i}",
+                kind=term.kind,
+                strength=ConstraintStrength.SOFT,
+                weight=term.weight,
+                subjects=list(term.subjects),
+                params={},
+                origin=Origin(
+                    kind=OriginKind.RULESET, ref=f"ruleset:objective.weights.{term.kind.value}"
+                ),
+                outcome=term.outcome,
+                score_milli=term.score_milli,
             )
         )
+    return out
 
-    counts: dict[RoomType, list[Origin]] = {}
-    for item in intent.programme:
-        counts.setdefault(item.room_type, []).append(item.origin)
-    for room_type, origins in counts.items():
-        add(ConstraintKind.ROOM_PRESENT, [room_type.value], {"count": len(origins)}, origins[0])
-    for rel in intent.relations:
-        add(ConstraintKind.RELATION, [rel.room, rel.host], {"kind": rel.kind.value}, rel.origin)
-    add(
-        ConstraintKind.INSIDE_ENVELOPE,
-        ["envelope"],
-        {},
-        Origin(kind=OriginKind.REQUIREMENT, ref="requirement:setbacks"),
+
+def _finish(plan: HousePlan, ctx: BuildContext, *, scored: bool) -> GenerationResult:
+    """Repair, then the final document: hard constraints MET (plus the scored soft terms),
+    validated again, body hash stamped."""
+    intent, ruleset = ctx.intent, ctx.ruleset
+    fixed = repair(
+        plan,
+        ruleset,
+        intent=intent,
+        ruleset_version=ctx.ruleset_version,
+        ruleset_sha256=ctx.ruleset_sha256,
     )
-    add(ConstraintKind.ENTRANCE_ON_EDGE, ["edge_front"], {}, intent.site.facing_origin)
-    if intent.parking is not None:
-        add(
-            ConstraintKind.PARKING_PROVIDED,
-            ["parking"],
-            {"spaces": intent.parking.spaces, "kind": intent.parking.kind.value},
-            intent.parking.origin,
+    if not fixed.report.valid:
+        return GenerationResult(
+            "INVALID", plan=fixed.plan, report=fixed.report, repairs=fixed.applied
         )
-    return out
-
-
-def _walls_from_graph(graph: Graph) -> dict[str, WallInfo]:
-    """WallInfo for placement, straight from the graph (rooms known by construction)."""
-    out = {}
-    for w in graph.walls:
-        a, b = graph.nodes[w.a], graph.nodes[w.b]
-        direction = (1, 0) if a[1] == b[1] else (0, 1)
-        out[w.id] = WallInfo(
-            id=w.id,
-            a=a,
-            b=b,
-            kind=w.kind,
-            thickness=w.thickness_mm,
-            length=abs(b[0] - a[0]) + abs(b[1] - a[1]),
-            direction=direction,
-            left_rooms=(w.left_room,) if w.left_room else (),
-            right_rooms=(w.right_room,) if w.right_room else (),
-        )
-    return out
+    constraints = hard_constraints(intent, ConstraintOutcome.MET)
+    quality = score_plan(fixed.plan, ruleset) if scored else None
+    if quality is not None:
+        constraints += soft_constraints(quality, len(constraints) + 1)
+    final = fixed.plan.model_copy(update={"constraints": constraints})
+    report = validate(
+        final,
+        ruleset,
+        intent=intent,
+        ruleset_version=ctx.ruleset_version,
+        ruleset_sha256=ctx.ruleset_sha256,
+    )
+    meta = final.meta.model_copy(update={"body_sha256": sha256_of(final.body())})
+    final = final.model_copy(update={"meta": meta})
+    return GenerationResult(
+        "VALID" if report.valid else "INVALID",
+        plan=final,
+        report=report,
+        repairs=fixed.applied,
+        quality=quality,
+    )
 
 
 def generate(
@@ -293,189 +246,128 @@ def generate(
     seed: int,
 ) -> GenerationResult:
     problem = compile_problem(intent, ruleset)
-    if isinstance(problem, Infeasible):
+    if (
+        isinstance(problem, Infeasible)
+        and problem.reasons[0].code == InfeasibleReason.RULESET_INCOMPLETE
+    ):
+        return GenerationResult("INFEASIBLE", reasons=problem.reasons)  # a configuration fault
+    proven = precheck(intent, ruleset)
+    if proven is not None:
+        detail = InfeasibleDetail(proven.code, dict(proven.params))
+        return GenerationResult("INFEASIBLE", reasons=(detail,), feasibility=proven)
+    if isinstance(problem, Infeasible):  # unreachable: the pre-check decides an empty envelope
         return GenerationResult("INFEASIBLE", reasons=problem.reasons)
-    solved = solver.solve(problem, seed=seed)
-    if isinstance(solved, Infeasible):
-        return GenerationResult("INFEASIBLE", reasons=solved.reasons)
-    if not isinstance(solved, Placed):
-        raise TypeError(f"solver returned {type(solved).__name__}")
-
-    types = {p.key: p.room_type for p in intent.programme} | solved.added_rooms
-    origins = {p.key: p.origin for p in intent.programme}
-    keys = [p.key for p in intent.programme] + sorted(solved.added_rooms)
-    enclosed = {k: ruleset.rooms[types[k]].enclosed for k in keys}
-    graph = build_graph(
-        {k: solved.rects[k] for k in keys},
-        enclosed,
-        exterior_mm=ruleset.walls.exterior_mm,
-        interior_mm=ruleset.walls.interior_mm,
-    )
-    walls = _walls_from_graph(graph)
-    room_types = {k: types[k] for k in keys}
-    try:
-        openings = place_openings(solved.access, solved.entry_room, walls, room_types, ruleset)
-        # Clear rectangles for fixtures come from the same derivation the validator uses.
-        draft = _assemble(
-            intent,
-            ruleset,
-            graph,
-            keys,
-            types,
-            origins,
-            openings,
-            [],
-            ruleset_version,
-            ruleset_sha256,
-            solver,
-            seed,
-            ConstraintOutcome.NOT_EVALUATED,
-        )
-        clear = analyse(draft).clear_rects
-        fixtures = place_fixtures(room_types, walls, clear, openings, ruleset)
-    except PlacementFailure as failure:
-        return GenerationResult("INFEASIBLE", reasons=(failure.detail,), topology=solved.topology)
-
-    plan = _assemble(
+    zoned = solver.kind == SolverKind.ZONED_LOCAL_SEARCH
+    ctx = BuildContext(
         intent,
         ruleset,
-        graph,
-        keys,
-        types,
-        origins,
-        openings,
-        fixtures,
         ruleset_version,
         ruleset_sha256,
         solver,
         seed,
-        ConstraintOutcome.NOT_EVALUATED,
+        SCHEMA_VERSION if zoned else SCHEMA_VERSION_1_0,
     )
-    fixed = repair(
-        plan, ruleset, intent=intent, ruleset_version=ruleset_version, ruleset_sha256=ruleset_sha256
-    )
-    if not fixed.report.valid:
+    return _generate_zoned(problem, ctx) if zoned else _generate_single(problem, ctx)
+
+
+def _generate_single(problem: LayoutProblem, ctx: BuildContext) -> GenerationResult:
+    """The Checkpoint 1 path, unchanged in behaviour; INFEASIBLE now carries a classification."""
+    solved = ctx.solver.solve(problem, seed=ctx.seed)
+    if isinstance(solved, Infeasible):
+        report = no_supported_layout(ctx.intent, [], 1, None)
+        return GenerationResult("INFEASIBLE", reasons=solved.reasons, feasibility=report)
+    if not isinstance(solved, Placed):
+        raise TypeError(f"solver returned {type(solved).__name__}")
+    try:
+        plan = build_plan(solved, ctx)
+    except PlacementFailure as failure:
+        report = no_supported_layout(ctx.intent, [], 1, solved.topology)
         return GenerationResult(
-            "INVALID",
-            plan=fixed.plan,
-            report=fixed.report,
-            repairs=fixed.applied,
-            topology=solved.topology,
+            "INFEASIBLE", reasons=(failure.detail,), topology=solved.topology, feasibility=report
         )
-    final = fixed.plan.model_copy(
-        update={"constraints": _constraints(intent, ConstraintOutcome.MET)}
-    )
-    report = validate(
-        final,
-        ruleset,
-        intent=intent,
-        ruleset_version=ruleset_version,
-        ruleset_sha256=ruleset_sha256,
-    )
-    final = final.model_copy(
-        update={"meta": final.meta.model_copy(update={"body_sha256": sha256_of(final.body())})}
-    )
-    return GenerationResult(
-        "VALID" if report.valid else "INVALID",
-        plan=final,
-        report=report,
-        repairs=fixed.applied,
-        topology=solved.topology,
-    )
+    result = _finish(plan, ctx, scored=False)
+    result.topology = solved.topology
+    return result
 
 
-def _assemble(
-    intent: ArchitecturalIntent,
-    ruleset: RulesetContent,
-    graph: Graph,
-    keys: list[str],
-    types: dict[str, RoomType],
-    origins: dict[str, Origin],
-    openings: list[Opening],
-    fixtures: list[Fixture],
-    ruleset_version: int,
-    ruleset_sha256: str,
-    solver: LayoutSolver,
-    seed: int,
-    outcome: ConstraintOutcome,
-) -> HousePlan:
-    site = _site(intent)
-    if intent.parking is not None:
-        space = ruleset.parking[intent.parking.kind]
-        site = site.model_copy(
-            update={
-                "parking": Parking(
-                    spaces=intent.parking.spaces,
-                    kind=intent.parking.kind,
-                    space_w_mm=space.space_w_mm,
-                    space_d_mm=space.space_d_mm,
-                    placement=intent.parking.placement,
-                    origin=intent.parking.origin,
-                )
-            }
-        )
-    rooms = []
-    for k in keys:
-        rule = ruleset.rooms[types[k]]
-        rooms.append(
-            Room(
-                id=k,
-                type=types[k],
-                name=_room_name(k, types[k]),
-                boundary=graph.boundaries[k],
-                zone=rule.zone,
-                enclosed=rule.enclosed,
-                required=True,
-                size_spec=SizeSpec(
-                    min_short_mm=rule.min_short_mm,
-                    min_area_mm2=rule.min_area_mm2,
-                    pref_area_mm2=rule.pref_area_mm2,
-                    max_area_mm2=rule.max_area_mm2,
-                ),
-                origin=origins.get(k, SOLVER_ORIGIN),
+def _generate_zoned(problem: LayoutProblem, ctx: BuildContext) -> GenerationResult:
+    obj = ctx.ruleset.objective
+    if obj is None:
+        missing = InfeasibleDetail(InfeasibleReason.RULESET_INCOMPLETE, {"missing": "objective"})
+        return GenerationResult("INFEASIBLE", reasons=(missing,))
+    found = search(problem, ctx.ruleset, fixture_fit(ctx.ruleset))
+    attempts: list[Attempt] = []
+    placement: list[InfeasibleDetail] = []
+    result: GenerationResult | None = None
+    for layout in found.feasible[: obj.build_attempts]:
+        try:
+            plan = build_plan(layout.zp.placed(layout.values), ctx)
+        except PlacementFailure as failure:
+            attempts.append(Attempt(layout.name, "PLACEMENT", (failure.detail.code.value,)))
+            placement.append(failure.detail)
+            continue
+        finished = _finish(plan, ctx, scored=True)
+        if finished.outcome == "VALID":
+            attempts.append(Attempt(layout.name, "VALID"))
+            finished.topology = layout.name
+            finished.family = layout.family
+            result = finished
+            break
+        codes = sorted({i.code.value for i in finished.report.errors} if finished.report else set())
+        attempts.append(Attempt(layout.name, "INVALID", tuple(codes)))
+    if result is None:
+        if found.feasible:
+            report = _placement_report(ctx.intent, found.sized, attempts, placement)
+        else:
+            closest = found.closest
+            gaps = (
+                [(s.code, s.room, s.amount, s.needed, s.actual) for s in closest.shortfalls]
+                if closest
+                else []
             )
-        )
-    lv = ruleset.levels
-    floor = Floor(
-        id="floor_0",
-        level=0,
-        name="Ground floor",
-        ffl_mm=0,
-        floor_to_floor_mm=lv.floor_to_floor_mm,
-        clear_height_mm=lv.clear_height_mm,
-        slab_mm=lv.slab_mm,
-        plinth_mm=lv.plinth_mm,
-        nodes=[Node(id=i, x=p[0], y=p[1]) for i, p in graph.nodes.items()],
-        walls=[
-            Wall(id=w.id, a=w.a, b=w.b, thickness_mm=w.thickness_mm, kind=w.kind)
-            for w in graph.walls
-        ],
-        rooms=rooms,
-        openings=openings,
-        stairs=[],
-        fixtures=fixtures,
+            report = no_supported_layout(
+                ctx.intent, gaps, found.sized, closest.name if closest else None
+            )
+        detail = InfeasibleDetail(report.code, dict(report.params))
+        result = GenerationResult("INFEASIBLE", reasons=(detail,), feasibility=report)
+    result.attempts = attempts
+    result.candidates_enumerated, result.candidates_sized = found.enumerated, found.sized
+    result.feasible_layouts, result.evaluations = len(found.feasible), found.evaluations
+    result.verdicts = found.verdicts
+    return result
+
+
+def _placement_report(
+    intent: ArchitecturalIntent,
+    tried: int,
+    attempts: list[Attempt],
+    placement: list[InfeasibleDetail],
+) -> FeasibilityReport:
+    """Sized layouts existed but none built into a valid plan: name what failed first."""
+    base = no_supported_layout(intent, [], tried, attempts[0].topology if attempts else None)
+    if placement:
+        first = placement[0]
+        room = str(first.params.get("room", "one room")).replace("_", " ")
+        what = "the fittings" if first.code == InfeasibleReason.FIXTURE_FIT else "a door or window"
+        code = first.code
+    else:
+        room, what, code = "one room", "a valid arrangement", InfeasibleReason.OPENING_FIT
+    explanation = (
+        f"None of the {tried} layouts this version of the engine can produce fits this "
+        f"programme on the plot. In the closest one, {what} for {room} could not be placed. "
+        "This does not mean the home is impossible to design."
     )
-    meta = Meta(
-        schema_version=SCHEMA_VERSION,
-        source=PlanSource.GENERATED,
-        generator=GeneratorInfo(
-            engine="p2b-houseplans",
-            engine_version=ENGINE_VERSION,
-            solver=solver.kind,
-            solver_version=solver.version,
-            seed=seed,
-            ruleset_version=ruleset_version,
-            ruleset_sha256=ruleset_sha256,
-            intent_sha256=sha256_of(intent),
-        ),
-    )
-    return HousePlan(
-        meta=meta,
-        site=site,
-        floors=[floor],
-        constraints=_constraints(intent, outcome),
-        compromises=[],
+    params = {**base.params, "attempts": len(attempts)}
+    return FeasibilityReport(
+        FeasibilityClass.NO_SUPPORTED_LAYOUT, code, explanation, params, base.constraints
     )
 
 
-__all__ = ["GenerationResult", "compile_problem", "generate", "rect_or_none"]
+__all__ = [
+    "Attempt",
+    "GenerationResult",
+    "compile_problem",
+    "generate",
+    "rect_or_none",
+    "soft_constraints",
+]

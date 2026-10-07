@@ -1,0 +1,1491 @@
+{
+ "body_sha256": "d4d3d0f2e06cb620061455e4a079560c3d1a60d75372eb10981a92946443765f",
+ "case": "3bhk_40x60_asymmetric_setbacks",
+ "plan": {
+  "compromises": [],
+  "constraints": [
+   {
+    "id": "c1",
+    "kind": "ROOM_PRESENT",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:base_programme"
+    },
+    "outcome": "MET",
+    "params": {
+     "count": 1
+    },
+    "strength": "HARD",
+    "subjects": [
+     "LIVING"
+    ],
+    "weight": 0
+   },
+   {
+    "id": "c2",
+    "kind": "ROOM_PRESENT",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:base_programme"
+    },
+    "outcome": "MET",
+    "params": {
+     "count": 1
+    },
+    "strength": "HARD",
+    "subjects": [
+     "KITCHEN"
+    ],
+    "weight": 0
+   },
+   {
+    "id": "c3",
+    "kind": "ROOM_PRESENT",
+    "origin": {
+     "kind": "DESIGN_INPUT",
+     "ref": "inputs:dining"
+    },
+    "outcome": "MET",
+    "params": {
+     "count": 1
+    },
+    "strength": "HARD",
+    "subjects": [
+     "DINING"
+    ],
+    "weight": 0
+   },
+   {
+    "id": "c4",
+    "kind": "ROOM_PRESENT",
+    "origin": {
+     "kind": "REQUIREMENT",
+     "ref": "requirement:pooja_room"
+    },
+    "outcome": "MET",
+    "params": {
+     "count": 1
+    },
+    "strength": "HARD",
+    "subjects": [
+     "PUJA"
+    ],
+    "weight": 0
+   },
+   {
+    "id": "c5",
+    "kind": "ROOM_PRESENT",
+    "origin": {
+     "kind": "REQUIREMENT",
+     "ref": "requirement:car_parking"
+    },
+    "outcome": "MET",
+    "params": {
+     "count": 1
+    },
+    "strength": "HARD",
+    "subjects": [
+     "PARKING"
+    ],
+    "weight": 0
+   },
+   {
+    "id": "c6",
+    "kind": "ROOM_PRESENT",
+    "origin": {
+     "kind": "REQUIREMENT",
+     "ref": "requirement:bedrooms"
+    },
+    "outcome": "MET",
+    "params": {
+     "count": 3
+    },
+    "strength": "HARD",
+    "subjects": [
+     "BEDROOM"
+    ],
+    "weight": 0
+   },
+   {
+    "id": "c7",
+    "kind": "ROOM_PRESENT",
+    "origin": {
+     "kind": "DESIGN_INPUT",
+     "ref": "inputs:attached_bathrooms"
+    },
+    "outcome": "MET",
+    "params": {
+     "count": 1
+    },
+    "strength": "HARD",
+    "subjects": [
+     "BATH_ATTACHED"
+    ],
+    "weight": 0
+   },
+   {
+    "id": "c8",
+    "kind": "ROOM_PRESENT",
+    "origin": {
+     "kind": "REQUIREMENT",
+     "ref": "requirement:bathrooms"
+    },
+    "outcome": "MET",
+    "params": {
+     "count": 1
+    },
+    "strength": "HARD",
+    "subjects": [
+     "BATH_COMMON"
+    ],
+    "weight": 0
+   },
+   {
+    "id": "c9",
+    "kind": "RELATION",
+    "origin": {
+     "kind": "DESIGN_INPUT",
+     "ref": "inputs:kitchen"
+    },
+    "outcome": "MET",
+    "params": {
+     "kind": "ADJACENT_WITH_DOOR"
+    },
+    "strength": "HARD",
+    "subjects": [
+     "kitchen",
+     "dining"
+    ],
+    "weight": 0
+   },
+   {
+    "id": "c10",
+    "kind": "RELATION",
+    "origin": {
+     "kind": "DESIGN_INPUT",
+     "ref": "inputs:attached_bathrooms"
+    },
+    "outcome": "MET",
+    "params": {
+     "kind": "ADJACENT_WITH_DOOR"
+    },
+    "strength": "HARD",
+    "subjects": [
+     "bath_attached_1",
+     "bedroom_1"
+    ],
+    "weight": 0
+   },
+   {
+    "id": "c11",
+    "kind": "INSIDE_ENVELOPE",
+    "origin": {
+     "kind": "REQUIREMENT",
+     "ref": "requirement:setbacks"
+    },
+    "outcome": "MET",
+    "params": {},
+    "strength": "HARD",
+    "subjects": [
+     "envelope"
+    ],
+    "weight": 0
+   },
+   {
+    "id": "c12",
+    "kind": "ENTRANCE_ON_EDGE",
+    "origin": {
+     "kind": "REQUIREMENT",
+     "ref": "requirement:facing"
+    },
+    "outcome": "MET",
+    "params": {},
+    "strength": "HARD",
+    "subjects": [
+     "edge_front"
+    ],
+    "weight": 0
+   },
+   {
+    "id": "c13",
+    "kind": "PARKING_PROVIDED",
+    "origin": {
+     "kind": "REQUIREMENT",
+     "ref": "requirement:car_parking"
+    },
+    "outcome": "MET",
+    "params": {
+     "kind": "CAR",
+     "spaces": 1
+    },
+    "strength": "HARD",
+    "subjects": [
+     "parking"
+    ],
+    "weight": 0
+   },
+   {
+    "id": "c14",
+    "kind": "AREA_DEVIATION",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.AREA_DEVIATION"
+    },
+    "outcome": "PARTIAL",
+    "params": {},
+    "score_milli": 366,
+    "strength": "SOFT",
+    "subjects": [
+     "living",
+     "kitchen",
+     "dining",
+     "puja",
+     "bedroom_1",
+     "bedroom_2",
+     "bedroom_3",
+     "bath_attached_1",
+     "bath_common_1"
+    ],
+    "weight": 2
+   },
+   {
+    "id": "c15",
+    "kind": "DIMENSION_DEVIATION",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.DIMENSION_DEVIATION"
+    },
+    "outcome": "PARTIAL",
+    "params": {},
+    "score_milli": 330,
+    "strength": "SOFT",
+    "subjects": [
+     "living",
+     "kitchen",
+     "dining",
+     "puja",
+     "bedroom_1",
+     "bedroom_2",
+     "bedroom_3",
+     "bath_attached_1",
+     "bath_common_1"
+    ],
+    "weight": 1
+   },
+   {
+    "id": "c16",
+    "kind": "ASPECT_EXCESS",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.ASPECT_EXCESS"
+    },
+    "outcome": "PARTIAL",
+    "params": {},
+    "score_milli": 355,
+    "strength": "SOFT",
+    "subjects": [
+     "living"
+    ],
+    "weight": 3
+   },
+   {
+    "id": "c17",
+    "kind": "OVERSIZE",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.OVERSIZE"
+    },
+    "outcome": "MET",
+    "params": {},
+    "score_milli": 0,
+    "strength": "SOFT",
+    "subjects": [],
+    "weight": 2
+   },
+   {
+    "id": "c18",
+    "kind": "CIRCULATION_SHARE",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.CIRCULATION_SHARE"
+    },
+    "outcome": "MET",
+    "params": {},
+    "score_milli": 0,
+    "strength": "SOFT",
+    "subjects": [],
+    "weight": 2
+   },
+   {
+    "id": "c19",
+    "kind": "ROOM_SIZE_OUTLIER",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.ROOM_SIZE_OUTLIER"
+    },
+    "outcome": "PARTIAL",
+    "params": {},
+    "score_milli": 794,
+    "strength": "SOFT",
+    "subjects": [
+     "dining"
+    ],
+    "weight": 2
+   },
+   {
+    "id": "c20",
+    "kind": "ADJACENCY",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.ADJACENCY"
+    },
+    "outcome": "MET",
+    "params": {},
+    "score_milli": 0,
+    "strength": "SOFT",
+    "subjects": [],
+    "weight": 1
+   },
+   {
+    "id": "c21",
+    "kind": "WET_CLUSTER",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.WET_CLUSTER"
+    },
+    "outcome": "PARTIAL",
+    "params": {},
+    "score_milli": 333,
+    "strength": "SOFT",
+    "subjects": [
+     "bath_common_1"
+    ],
+    "weight": 1
+   },
+   {
+    "id": "c22",
+    "kind": "EXTERIOR_EXPOSURE",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.EXTERIOR_EXPOSURE"
+    },
+    "outcome": "MET",
+    "params": {},
+    "score_milli": 0,
+    "strength": "SOFT",
+    "subjects": [],
+    "weight": 1
+   },
+   {
+    "id": "c23",
+    "kind": "PRIVACY",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.PRIVACY"
+    },
+    "outcome": "PARTIAL",
+    "params": {},
+    "score_milli": 666,
+    "strength": "SOFT",
+    "subjects": [
+     "bedroom_1",
+     "bedroom_2"
+    ],
+    "weight": 1
+   },
+   {
+    "id": "c24",
+    "kind": "PARKING_CONVENIENCE",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.PARKING_CONVENIENCE"
+    },
+    "outcome": "MET",
+    "params": {},
+    "score_milli": 0,
+    "strength": "SOFT",
+    "subjects": [],
+    "weight": 1
+   },
+   {
+    "id": "c25",
+    "kind": "ZONE_ORDER",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.ZONE_ORDER"
+    },
+    "outcome": "PARTIAL",
+    "params": {},
+    "score_milli": 212,
+    "strength": "SOFT",
+    "subjects": [
+     "bath_common_1",
+     "bedroom_1",
+     "bedroom_2",
+     "puja"
+    ],
+    "weight": 1
+   },
+   {
+    "id": "c26",
+    "kind": "BEDROOM_GROUPING",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.BEDROOM_GROUPING"
+    },
+    "outcome": "PARTIAL",
+    "params": {},
+    "score_milli": 500,
+    "strength": "SOFT",
+    "subjects": [
+     "bedroom_1",
+     "bedroom_2",
+     "bedroom_3"
+    ],
+    "weight": 1
+   },
+   {
+    "id": "c27",
+    "kind": "ORIENTATION",
+    "origin": {
+     "kind": "RULESET",
+     "ref": "ruleset:objective.weights.ORIENTATION"
+    },
+    "outcome": "NOT_EVALUATED",
+    "params": {},
+    "strength": "SOFT",
+    "subjects": [],
+    "weight": 1
+   }
+  ],
+  "floors": [
+   {
+    "clear_height_mm": 2700,
+    "ffl_mm": 0,
+    "fixtures": [
+     {
+      "d_mm": 600,
+      "id": "kitchen_counter_kitchen",
+      "offset_mm": 100,
+      "origin": {
+       "kind": "RULESET",
+       "ref": "ruleset:templates.KITCHEN_COUNTER"
+      },
+      "room": "kitchen",
+      "side": "LEFT",
+      "type": "KITCHEN_COUNTER",
+      "w_mm": 1800,
+      "wall": "w10"
+     },
+     {
+      "d_mm": 700,
+      "id": "wc_western_bath_attached_1",
+      "offset_mm": 100,
+      "origin": {
+       "kind": "RULESET",
+       "ref": "ruleset:templates.WC_WESTERN"
+      },
+      "room": "bath_attached_1",
+      "side": "RIGHT",
+      "type": "WC_WESTERN",
+      "w_mm": 450,
+      "wall": "w10"
+     },
+     {
+      "d_mm": 450,
+      "id": "wash_basin_bath_attached_1",
+      "offset_mm": 550,
+      "origin": {
+       "kind": "RULESET",
+       "ref": "ruleset:templates.WASH_BASIN"
+      },
+      "room": "bath_attached_1",
+      "side": "RIGHT",
+      "type": "WASH_BASIN",
+      "w_mm": 500,
+      "wall": "w10"
+     },
+     {
+      "d_mm": 900,
+      "id": "shower_area_bath_attached_1",
+      "offset_mm": 1050,
+      "origin": {
+       "kind": "RULESET",
+       "ref": "ruleset:templates.SHOWER_AREA"
+      },
+      "room": "bath_attached_1",
+      "side": "RIGHT",
+      "type": "SHOWER_AREA",
+      "w_mm": 900,
+      "wall": "w10"
+     },
+     {
+      "d_mm": 700,
+      "id": "wc_western_bath_common_1",
+      "offset_mm": 100,
+      "origin": {
+       "kind": "RULESET",
+       "ref": "ruleset:templates.WC_WESTERN"
+      },
+      "room": "bath_common_1",
+      "side": "LEFT",
+      "type": "WC_WESTERN",
+      "w_mm": 450,
+      "wall": "w4"
+     },
+     {
+      "d_mm": 450,
+      "id": "wash_basin_bath_common_1",
+      "offset_mm": 550,
+      "origin": {
+       "kind": "RULESET",
+       "ref": "ruleset:templates.WASH_BASIN"
+      },
+      "room": "bath_common_1",
+      "side": "LEFT",
+      "type": "WASH_BASIN",
+      "w_mm": 500,
+      "wall": "w4"
+     },
+     {
+      "d_mm": 900,
+      "id": "shower_area_bath_common_1",
+      "offset_mm": 1050,
+      "origin": {
+       "kind": "RULESET",
+       "ref": "ruleset:templates.SHOWER_AREA"
+      },
+      "room": "bath_common_1",
+      "side": "LEFT",
+      "type": "SHOWER_AREA",
+      "w_mm": 900,
+      "wall": "w4"
+     }
+    ],
+    "floor_to_floor_mm": 3000,
+    "id": "floor_0",
+    "level": 0,
+    "name": "Ground floor",
+    "nodes": [
+     {
+      "id": "n1",
+      "x": 1624,
+      "y": 3148
+     },
+     {
+      "id": "n2",
+      "x": 1624,
+      "y": 5198
+     },
+     {
+      "id": "n3",
+      "x": 1624,
+      "y": 6898
+     },
+     {
+      "id": "n4",
+      "x": 1624,
+      "y": 10498
+     },
+     {
+      "id": "n5",
+      "x": 1624,
+      "y": 12198
+     },
+     {
+      "id": "n6",
+      "x": 1624,
+      "y": 14748
+     },
+     {
+      "id": "n7",
+      "x": 4574,
+      "y": 3148
+     },
+     {
+      "id": "n8",
+      "x": 4574,
+      "y": 5198
+     },
+     {
+      "id": "n9",
+      "x": 4574,
+      "y": 6898
+     },
+     {
+      "id": "n10",
+      "x": 4574,
+      "y": 10348
+     },
+     {
+      "id": "n11",
+      "x": 4574,
+      "y": 10498
+     },
+     {
+      "id": "n12",
+      "x": 4574,
+      "y": 12198
+     },
+     {
+      "id": "n13",
+      "x": 4574,
+      "y": 14748
+     },
+     {
+      "id": "n14",
+      "x": 8474,
+      "y": 3148
+     },
+     {
+      "id": "n15",
+      "x": 8474,
+      "y": 8198
+     },
+     {
+      "id": "n16",
+      "x": 8474,
+      "y": 10348
+     },
+     {
+      "id": "n17",
+      "x": 8474,
+      "y": 11448
+     },
+     {
+      "id": "n18",
+      "x": 8474,
+      "y": 14748
+     },
+     {
+      "id": "n19",
+      "x": 11482,
+      "y": 3148
+     },
+     {
+      "id": "n20",
+      "x": 11482,
+      "y": 8198
+     },
+     {
+      "id": "n21",
+      "x": 11482,
+      "y": 11448
+     },
+     {
+      "id": "n22",
+      "x": 11482,
+      "y": 14748
+     }
+    ],
+    "openings": [
+     {
+      "door": {
+       "hinge": "A_SIDE",
+       "leaf": "SINGLE",
+       "opens_to": "LEFT"
+      },
+      "height_mm": 2100,
+      "id": "main_entrance",
+      "kind": "MAIN_ENTRANCE",
+      "offset_mm": 1450,
+      "sill_mm": 0,
+      "wall": "w13",
+      "width_mm": 1000
+     },
+     {
+      "door": null,
+      "height_mm": 2100,
+      "id": "void_dining",
+      "kind": "VOID",
+      "offset_mm": 1450,
+      "sill_mm": 0,
+      "wall": "w17",
+      "width_mm": 1000
+     },
+     {
+      "door": {
+       "hinge": "A_SIDE",
+       "leaf": "SINGLE",
+       "opens_to": "LEFT"
+      },
+      "height_mm": 2100,
+      "id": "door_kitchen",
+      "kind": "DOOR",
+      "offset_mm": 100,
+      "sill_mm": 0,
+      "wall": "w19",
+      "width_mm": 900
+     },
+     {
+      "door": {
+       "hinge": "A_SIDE",
+       "leaf": "SINGLE",
+       "opens_to": "LEFT"
+      },
+      "height_mm": 2100,
+      "id": "door_puja",
+      "kind": "DOOR",
+      "offset_mm": 100,
+      "sill_mm": 0,
+      "wall": "w12",
+      "width_mm": 900
+     },
+     {
+      "door": {
+       "hinge": "A_SIDE",
+       "leaf": "SINGLE",
+       "opens_to": "LEFT"
+      },
+      "height_mm": 2100,
+      "id": "door_bath_common_1",
+      "kind": "DOOR",
+      "offset_mm": 100,
+      "sill_mm": 0,
+      "wall": "w14",
+      "width_mm": 900
+     },
+     {
+      "door": {
+       "hinge": "A_SIDE",
+       "leaf": "SINGLE",
+       "opens_to": "LEFT"
+      },
+      "height_mm": 2100,
+      "id": "door_bedroom_1",
+      "kind": "DOOR",
+      "offset_mm": 100,
+      "sill_mm": 0,
+      "wall": "w15",
+      "width_mm": 900
+     },
+     {
+      "door": {
+       "hinge": "A_SIDE",
+       "leaf": "SINGLE",
+       "opens_to": "LEFT"
+      },
+      "height_mm": 2100,
+      "id": "door_bath_attached_1",
+      "kind": "DOOR",
+      "offset_mm": 100,
+      "sill_mm": 0,
+      "wall": "w8",
+      "width_mm": 900
+     },
+     {
+      "door": {
+       "hinge": "A_SIDE",
+       "leaf": "SINGLE",
+       "opens_to": "RIGHT"
+      },
+      "height_mm": 2100,
+      "id": "door_bedroom_2",
+      "kind": "DOOR",
+      "offset_mm": 100,
+      "sill_mm": 0,
+      "wall": "w22",
+      "width_mm": 900
+     },
+     {
+      "door": {
+       "hinge": "A_SIDE",
+       "leaf": "SINGLE",
+       "opens_to": "RIGHT"
+      },
+      "height_mm": 2100,
+      "id": "door_bedroom_3",
+      "kind": "DOOR",
+      "offset_mm": 100,
+      "sill_mm": 0,
+      "wall": "w25",
+      "width_mm": 900
+     },
+     {
+      "door": null,
+      "height_mm": 1200,
+      "id": "window_living",
+      "kind": "WINDOW",
+      "offset_mm": 100,
+      "sill_mm": 900,
+      "wall": "w13",
+      "width_mm": 1200
+     },
+     {
+      "door": null,
+      "height_mm": 1200,
+      "id": "window_kitchen",
+      "kind": "WINDOW",
+      "offset_mm": 875,
+      "sill_mm": 900,
+      "wall": "w11",
+      "width_mm": 1200
+     },
+     {
+      "door": null,
+      "height_mm": 1200,
+      "id": "window_dining",
+      "kind": "WINDOW",
+      "offset_mm": 1350,
+      "sill_mm": 900,
+      "wall": "w20",
+      "width_mm": 1200
+     },
+     {
+      "door": null,
+      "height_mm": 1200,
+      "id": "window_bedroom_1",
+      "kind": "WINDOW",
+      "offset_mm": 1200,
+      "sill_mm": 900,
+      "wall": "w5",
+      "width_mm": 1200
+     },
+     {
+      "door": null,
+      "height_mm": 1200,
+      "id": "window_bedroom_2",
+      "kind": "WINDOW",
+      "offset_mm": 1025,
+      "sill_mm": 900,
+      "wall": "w28",
+      "width_mm": 1200
+     },
+     {
+      "door": null,
+      "height_mm": 1200,
+      "id": "window_bedroom_3",
+      "kind": "WINDOW",
+      "offset_mm": 1050,
+      "sill_mm": 900,
+      "wall": "w29",
+      "width_mm": 1200
+     },
+     {
+      "door": null,
+      "height_mm": 1200,
+      "id": "window_bath_attached_1",
+      "kind": "WINDOW",
+      "offset_mm": 250,
+      "sill_mm": 900,
+      "wall": "w7",
+      "width_mm": 1200
+     },
+     {
+      "door": null,
+      "height_mm": 1200,
+      "id": "window_bath_common_1",
+      "kind": "WINDOW",
+      "offset_mm": 250,
+      "sill_mm": 900,
+      "wall": "w3",
+      "width_mm": 1200
+     }
+    ],
+    "plinth_mm": 450,
+    "rooms": [
+     {
+      "boundary": [
+       "n7",
+       "n14",
+       "n15",
+       "n16",
+       "n10",
+       "n9",
+       "n8"
+      ],
+      "enclosed": true,
+      "id": "living",
+      "name": "Living room",
+      "origin": {
+       "kind": "RULESET",
+       "ref": "ruleset:base_programme"
+      },
+      "required": true,
+      "size_spec": {
+       "max_area_mm2": null,
+       "min_area_mm2": 12000000,
+       "min_short_mm": 3000,
+       "pref_area_mm2": 15000000
+      },
+      "type": "LIVING",
+      "zone": "PUBLIC"
+     },
+     {
+      "boundary": [
+       "n5",
+       "n12",
+       "n13",
+       "n6"
+      ],
+      "enclosed": true,
+      "id": "kitchen",
+      "name": "Kitchen",
+      "origin": {
+       "kind": "RULESET",
+       "ref": "ruleset:base_programme"
+      },
+      "required": true,
+      "size_spec": {
+       "max_area_mm2": 14000000,
+       "min_area_mm2": 6000000,
+       "min_short_mm": 2000,
+       "pref_area_mm2": 7500000
+      },
+      "type": "KITCHEN",
+      "zone": "SERVICE"
+     },
+     {
+      "boundary": [
+       "n10",
+       "n16",
+       "n17",
+       "n18",
+       "n13",
+       "n12",
+       "n11"
+      ],
+      "enclosed": true,
+      "id": "dining",
+      "name": "Dining",
+      "origin": {
+       "kind": "DESIGN_INPUT",
+       "ref": "inputs:dining"
+      },
+      "required": true,
+      "size_spec": {
+       "max_area_mm2": null,
+       "min_area_mm2": 7500000,
+       "min_short_mm": 2500,
+       "pref_area_mm2": 9000000
+      },
+      "type": "DINING",
+      "zone": "PUBLIC"
+     },
+     {
+      "boundary": [
+       "n1",
+       "n7",
+       "n8",
+       "n2"
+      ],
+      "enclosed": true,
+      "id": "puja",
+      "name": "Puja room",
+      "origin": {
+       "kind": "REQUIREMENT",
+       "ref": "requirement:pooja_room"
+      },
+      "required": true,
+      "size_spec": {
+       "max_area_mm2": 6000000,
+       "min_area_mm2": 2500000,
+       "min_short_mm": 1500,
+       "pref_area_mm2": 3000000
+      },
+      "type": "PUJA",
+      "zone": "PRIVATE"
+     },
+     {
+      "boundary": [
+       "n14",
+       "n19",
+       "n20",
+       "n15"
+      ],
+      "enclosed": false,
+      "id": "parking",
+      "name": "Parking",
+      "origin": {
+       "kind": "REQUIREMENT",
+       "ref": "requirement:car_parking"
+      },
+      "required": true,
+      "size_spec": {
+       "max_area_mm2": null,
+       "min_area_mm2": 1,
+       "min_short_mm": 2500,
+       "pref_area_mm2": null
+      },
+      "type": "PARKING",
+      "zone": "OUTDOOR"
+     },
+     {
+      "boundary": [
+       "n3",
+       "n9",
+       "n10",
+       "n11",
+       "n4"
+      ],
+      "enclosed": true,
+      "id": "bedroom_1",
+      "name": "Bedroom 1",
+      "origin": {
+       "kind": "REQUIREMENT",
+       "ref": "requirement:bedrooms"
+      },
+      "required": true,
+      "size_spec": {
+       "max_area_mm2": null,
+       "min_area_mm2": 9000000,
+       "min_short_mm": 2800,
+       "pref_area_mm2": 10500000
+      },
+      "type": "BEDROOM",
+      "zone": "PRIVATE"
+     },
+     {
+      "boundary": [
+       "n15",
+       "n20",
+       "n21",
+       "n17",
+       "n16"
+      ],
+      "enclosed": true,
+      "id": "bedroom_2",
+      "name": "Bedroom 2",
+      "origin": {
+       "kind": "REQUIREMENT",
+       "ref": "requirement:bedrooms"
+      },
+      "required": true,
+      "size_spec": {
+       "max_area_mm2": null,
+       "min_area_mm2": 9000000,
+       "min_short_mm": 2800,
+       "pref_area_mm2": 10500000
+      },
+      "type": "BEDROOM",
+      "zone": "PRIVATE"
+     },
+     {
+      "boundary": [
+       "n17",
+       "n21",
+       "n22",
+       "n18"
+      ],
+      "enclosed": true,
+      "id": "bedroom_3",
+      "name": "Bedroom 3",
+      "origin": {
+       "kind": "REQUIREMENT",
+       "ref": "requirement:bedrooms"
+      },
+      "required": true,
+      "size_spec": {
+       "max_area_mm2": null,
+       "min_area_mm2": 9000000,
+       "min_short_mm": 2800,
+       "pref_area_mm2": 10500000
+      },
+      "type": "BEDROOM",
+      "zone": "PRIVATE"
+     },
+     {
+      "boundary": [
+       "n4",
+       "n11",
+       "n12",
+       "n5"
+      ],
+      "enclosed": true,
+      "id": "bath_attached_1",
+      "name": "Attached bathroom 1",
+      "origin": {
+       "kind": "DESIGN_INPUT",
+       "ref": "inputs:attached_bathrooms"
+      },
+      "required": true,
+      "size_spec": {
+       "max_area_mm2": 6000000,
+       "min_area_mm2": 3000000,
+       "min_short_mm": 1500,
+       "pref_area_mm2": 3600000
+      },
+      "type": "BATH_ATTACHED",
+      "zone": "SERVICE"
+     },
+     {
+      "boundary": [
+       "n2",
+       "n8",
+       "n9",
+       "n3"
+      ],
+      "enclosed": true,
+      "id": "bath_common_1",
+      "name": "Common bathroom 1",
+      "origin": {
+       "kind": "REQUIREMENT",
+       "ref": "requirement:bathrooms"
+      },
+      "required": true,
+      "size_spec": {
+       "max_area_mm2": 6000000,
+       "min_area_mm2": 3000000,
+       "min_short_mm": 1500,
+       "pref_area_mm2": 3600000
+      },
+      "type": "BATH_COMMON",
+      "zone": "SERVICE"
+     }
+    ],
+    "slab_mm": 150,
+    "stairs": [],
+    "walls": [
+     {
+      "a": "n1",
+      "b": "n2",
+      "id": "w1",
+      "kind": "EXTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 200
+     },
+     {
+      "a": "n1",
+      "b": "n7",
+      "id": "w2",
+      "kind": "EXTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 200
+     },
+     {
+      "a": "n2",
+      "b": "n3",
+      "id": "w3",
+      "kind": "EXTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 200
+     },
+     {
+      "a": "n2",
+      "b": "n8",
+      "id": "w4",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n3",
+      "b": "n4",
+      "id": "w5",
+      "kind": "EXTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 200
+     },
+     {
+      "a": "n3",
+      "b": "n9",
+      "id": "w6",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n4",
+      "b": "n5",
+      "id": "w7",
+      "kind": "EXTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 200
+     },
+     {
+      "a": "n4",
+      "b": "n11",
+      "id": "w8",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n5",
+      "b": "n6",
+      "id": "w9",
+      "kind": "EXTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 200
+     },
+     {
+      "a": "n5",
+      "b": "n12",
+      "id": "w10",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n6",
+      "b": "n13",
+      "id": "w11",
+      "kind": "EXTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 200
+     },
+     {
+      "a": "n7",
+      "b": "n8",
+      "id": "w12",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n7",
+      "b": "n14",
+      "id": "w13",
+      "kind": "EXTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 200
+     },
+     {
+      "a": "n8",
+      "b": "n9",
+      "id": "w14",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n9",
+      "b": "n10",
+      "id": "w15",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n10",
+      "b": "n11",
+      "id": "w16",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n10",
+      "b": "n16",
+      "id": "w17",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n11",
+      "b": "n12",
+      "id": "w18",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n12",
+      "b": "n13",
+      "id": "w19",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n13",
+      "b": "n18",
+      "id": "w20",
+      "kind": "EXTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 200
+     },
+     {
+      "a": "n14",
+      "b": "n15",
+      "id": "w21",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n15",
+      "b": "n16",
+      "id": "w22",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n15",
+      "b": "n20",
+      "id": "w23",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n16",
+      "b": "n17",
+      "id": "w24",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n17",
+      "b": "n18",
+      "id": "w25",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n17",
+      "b": "n21",
+      "id": "w26",
+      "kind": "INTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 100
+     },
+     {
+      "a": "n18",
+      "b": "n22",
+      "id": "w27",
+      "kind": "EXTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 200
+     },
+     {
+      "a": "n20",
+      "b": "n21",
+      "id": "w28",
+      "kind": "EXTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 200
+     },
+     {
+      "a": "n21",
+      "b": "n22",
+      "id": "w29",
+      "kind": "EXTERIOR",
+      "structural_role": "UNASSESSED",
+      "thickness_mm": 200
+     }
+    ]
+   }
+  ],
+  "meta": {
+   "body_sha256": "d4d3d0f2e06cb620061455e4a079560c3d1a60d75372eb10981a92946443765f",
+   "created_at": null,
+   "created_by": null,
+   "generator": {
+    "engine": "p2b-houseplans",
+    "engine_version": "1.0.0",
+    "intent_sha256": "c72e7afdd892013280d4587abdb6d15d4f0627b333b5331ce7a452c8bbb5b6f5",
+    "ruleset_sha256": "f85ee908d95cf88c848347ebeedb59f4790f64ff0a6459cfeec61b074c289ce6",
+    "ruleset_version": 1,
+    "seed": 7,
+    "solver": "ZONED_LOCAL_SEARCH",
+    "solver_version": "1.1.0"
+   },
+   "plan_id": null,
+   "project_id": null,
+   "question_set_version": null,
+   "requirement_version": null,
+   "revision_no": 0,
+   "schema": "p2b.houseplan",
+   "schema_version": "1.1.0",
+   "source": "GENERATED"
+  },
+  "site": {
+   "entry_edge": "edge_front",
+   "facing": "N",
+   "north_angle_deg": 180,
+   "parking": {
+    "kind": "CAR",
+    "origin": {
+     "kind": "REQUIREMENT",
+     "ref": "requirement:car_parking"
+    },
+    "placement": "INSIDE_FOOTPRINT",
+    "space_d_mm": 5000,
+    "space_w_mm": 2500,
+    "spaces": 1
+   },
+   "plot": {
+    "edges": [
+     {
+      "end": 1,
+      "id": "edge_front",
+      "kind": "ROAD",
+      "road_width_mm": null,
+      "side": "FRONT",
+      "start": 0
+     },
+     {
+      "end": 2,
+      "id": "edge_right",
+      "kind": "NEIGHBOUR",
+      "road_width_mm": null,
+      "side": "RIGHT",
+      "start": 1
+     },
+     {
+      "end": 3,
+      "id": "edge_back",
+      "kind": "NEIGHBOUR",
+      "road_width_mm": null,
+      "side": "BACK",
+      "start": 2
+     },
+     {
+      "end": 0,
+      "id": "edge_left",
+      "kind": "NEIGHBOUR",
+      "road_width_mm": null,
+      "side": "LEFT",
+      "start": 3
+     }
+    ],
+    "vertices": [
+     {
+      "x": 0,
+      "y": 0
+     },
+     {
+      "x": 12192,
+      "y": 0
+     },
+     {
+      "x": 12192,
+      "y": 18288
+     },
+     {
+      "x": 0,
+      "y": 18288
+     }
+    ]
+   },
+   "setbacks": [
+    {
+     "distance_mm": 3048,
+     "edge": "edge_front",
+     "source": "REQUIREMENT"
+    },
+    {
+     "distance_mm": 1524,
+     "edge": "edge_back",
+     "source": "REQUIREMENT"
+    },
+    {
+     "distance_mm": 1524,
+     "edge": "edge_left",
+     "source": "REQUIREMENT"
+    },
+    {
+     "distance_mm": 610,
+     "edge": "edge_right",
+     "source": "REQUIREMENT"
+    }
+   ]
+  }
+ },
+ "topology": "CENTRAL_LIVING_BEDROOM_WINGS_pR_s3_kL_open"
+}

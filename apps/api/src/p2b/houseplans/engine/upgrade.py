@@ -1,6 +1,7 @@
 """Schema versions. A reader accepts any 1.x document and refuses an unknown major version
-rather than reinterpreting it. Upgraders (one function per version step, each with tests) are
-added here when schema 1.1 or 2.0 exists; there are none yet."""
+rather than reinterpreting it. 1.1.0 (Checkpoint 2) only adds the optional `Constraint.score_milli`,
+so a 1.0.0 document is already valid 1.1.0 and needs no upgrader. Upgraders (one function per
+version step, each with tests) are added here when a step changes meaning; there are none yet."""
 
 from collections.abc import Callable, Mapping
 from typing import Any

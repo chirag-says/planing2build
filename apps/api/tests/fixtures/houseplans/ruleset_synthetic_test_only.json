@@ -1,22 +1,22 @@
 {
   "schema": "p2b.layout-ruleset",
-  "content_version": "1.0.0",
+  "content_version": "1.1.0",
   "synthetic": true,
-  "note": "SYNTHETIC TEST DATA. NOT ARCHITECTURAL RULE VALUES. NOT A PROPOSAL. Numbers chosen only so the Checkpoint 1 fixtures exercise every code; never copy them into a real ruleset (AD-05, CP1-06).",
+  "note": "SYNTHETIC TEST DATA. NOT ARCHITECTURAL RULE VALUES. NOT A PROPOSAL. Numbers chosen only so the tests, benchmarks and solver research exercise the engine; never copy them into a real ruleset (AD-05, CP1-06, CP2-U7). Checkpoint 2.1 adds open_space_min_mm, family_pool and the ZONE_ORDER and BEDROOM_GROUPING weights, also synthetic (AD-05). Checkpoint 2.2 adds the ROOM_SIZE_OUTLIER weight, also synthetic (AD-05).",
   "units": "mm",
   "grid_mm": 50,
   "walls": {"exterior_mm": 200, "interior_mm": 100, "min_mm": 50, "max_mm": 400},
   "levels": {"floor_to_floor_mm": 3000, "clear_height_mm": 2700, "slab_mm": 150, "plinth_mm": 450},
   "rooms": {
-    "LIVING": {"zone": "PUBLIC", "enclosed": true, "needs_window": true, "wet": false, "min_short_mm": 3000, "min_area_mm2": 12000000, "pref_area_mm2": 15000000},
-    "DINING": {"zone": "PUBLIC", "enclosed": true, "needs_window": true, "wet": false, "min_short_mm": 2500, "min_area_mm2": 7500000},
-    "KITCHEN": {"zone": "SERVICE", "enclosed": true, "needs_window": true, "wet": true, "min_short_mm": 2000, "min_area_mm2": 6000000},
-    "BEDROOM": {"zone": "PRIVATE", "enclosed": true, "needs_window": true, "wet": false, "min_short_mm": 2800, "min_area_mm2": 9000000, "pref_area_mm2": 10500000},
-    "BATH_ATTACHED": {"zone": "SERVICE", "enclosed": true, "needs_window": true, "wet": true, "min_short_mm": 1500, "min_area_mm2": 3000000},
-    "BATH_COMMON": {"zone": "SERVICE", "enclosed": true, "needs_window": true, "wet": true, "min_short_mm": 1500, "min_area_mm2": 3000000},
-    "WC": {"zone": "SERVICE", "enclosed": true, "needs_window": true, "wet": true, "min_short_mm": 1000, "min_area_mm2": 1200000},
-    "PUJA": {"zone": "PRIVATE", "enclosed": true, "needs_window": false, "wet": false, "min_short_mm": 1500, "min_area_mm2": 2500000},
-    "UTILITY": {"zone": "SERVICE", "enclosed": true, "needs_window": false, "wet": true, "min_short_mm": 1200, "min_area_mm2": 2000000},
+    "LIVING": {"zone": "PUBLIC", "enclosed": true, "needs_window": true, "wet": false, "min_short_mm": 3000, "min_area_mm2": 12000000, "pref_area_mm2": 15000000, "pref_short_mm": 3600, "pref_long_mm": 4200, "aspect_limit_x10": 15},
+    "DINING": {"zone": "PUBLIC", "enclosed": true, "needs_window": true, "wet": false, "min_short_mm": 2500, "min_area_mm2": 7500000, "pref_area_mm2": 9000000, "pref_short_mm": 3000, "pref_long_mm": 3000, "aspect_limit_x10": 15},
+    "KITCHEN": {"zone": "SERVICE", "enclosed": true, "needs_window": true, "wet": true, "min_short_mm": 2000, "min_area_mm2": 6000000, "pref_area_mm2": 7500000, "pref_short_mm": 2400, "pref_long_mm": 3000, "aspect_limit_x10": 18, "max_area_mm2": 14000000},
+    "BEDROOM": {"zone": "PRIVATE", "enclosed": true, "needs_window": true, "wet": false, "min_short_mm": 2800, "min_area_mm2": 9000000, "pref_area_mm2": 10500000, "pref_short_mm": 3000, "pref_long_mm": 3500, "aspect_limit_x10": 14},
+    "BATH_ATTACHED": {"zone": "SERVICE", "enclosed": true, "needs_window": true, "wet": true, "min_short_mm": 1500, "min_area_mm2": 3000000, "pref_area_mm2": 3600000, "pref_short_mm": 1500, "pref_long_mm": 2400, "aspect_limit_x10": 18, "max_area_mm2": 6000000},
+    "BATH_COMMON": {"zone": "SERVICE", "enclosed": true, "needs_window": true, "wet": true, "min_short_mm": 1500, "min_area_mm2": 3000000, "pref_area_mm2": 3600000, "pref_short_mm": 1500, "pref_long_mm": 2400, "aspect_limit_x10": 18, "max_area_mm2": 6000000},
+    "WC": {"zone": "SERVICE", "enclosed": true, "needs_window": true, "wet": true, "min_short_mm": 1000, "min_area_mm2": 1200000, "pref_area_mm2": 1800000, "pref_short_mm": 1000, "pref_long_mm": 1800, "aspect_limit_x10": 20},
+    "PUJA": {"zone": "PRIVATE", "enclosed": true, "needs_window": false, "wet": false, "min_short_mm": 1500, "min_area_mm2": 2500000, "pref_area_mm2": 3000000, "pref_short_mm": 1500, "pref_long_mm": 2000, "aspect_limit_x10": 15, "max_area_mm2": 6000000},
+    "UTILITY": {"zone": "SERVICE", "enclosed": true, "needs_window": false, "wet": true, "min_short_mm": 1200, "min_area_mm2": 2000000, "pref_area_mm2": 2500000, "pref_short_mm": 1200, "pref_long_mm": 2000, "aspect_limit_x10": 20, "max_area_mm2": 6000000},
     "PASSAGE": {"zone": "CIRCULATION", "enclosed": true, "needs_window": false, "wet": false, "min_short_mm": 1000, "min_area_mm2": 1000000},
     "PARKING": {"zone": "OUTDOOR", "enclosed": false, "needs_window": false, "wet": false, "min_short_mm": 2500, "min_area_mm2": 1}
   },
@@ -27,14 +27,14 @@
     "anchored_to_entry": ["DINING", "KITCHEN"],
     "column_order": ["DINING", "KITCHEN", "UTILITY", "PUJA", "BATH_COMMON", "BEDROOM"],
     "circulation_room": "PASSAGE",
-    "attached_to": {"UTILITY": "KITCHEN"}
+    "attached_to": {"UTILITY": "KITCHEN"},
+    "front_band_extension": ["BEDROOM", "DINING"],
+    "rear_band": ["BEDROOM"],
+    "depth_order": ["OUTDOOR", "PUBLIC", "SERVICE", "PRIVATE"],
+    "open_space_min_mm": 1500
   },
   "passage_min_width_mm": 1000,
-  "openings": {
-    "main_entrance_width_mm": 1000, "door_width_mm": 900, "door_height_mm": 2100, "min_door_width_mm": 700,
-    "void_width_mm": 1000, "jamb_clearance_mm": 100,
-    "window_width_mm": 1200, "min_window_width_mm": 500, "window_height_mm": 1200, "window_sill_mm": 900
-  },
+  "openings": {"main_entrance_width_mm": 1000, "door_width_mm": 900, "door_height_mm": 2100, "min_door_width_mm": 700, "void_width_mm": 1000, "jamb_clearance_mm": 100, "window_width_mm": 1200, "min_window_width_mm": 500, "window_height_mm": 1200, "window_sill_mm": 900},
   "fixtures": {
     "WC_WESTERN": {"w_mm": 450, "d_mm": 700, "clear_front_mm": 600, "count_group": "WC", "permitted_rooms": ["BATH_ATTACHED", "BATH_COMMON", "WC"]},
     "WC_INDIAN": {"w_mm": 450, "d_mm": 700, "clear_front_mm": 600, "count_group": "WC", "permitted_rooms": ["BATH_ATTACHED", "BATH_COMMON", "WC"]},
@@ -52,6 +52,19 @@
   "parking": {
     "CAR": {"space_w_mm": 2500, "space_d_mm": 5000},
     "TWO_WHEELER": {"space_w_mm": 1000, "space_d_mm": 2000}
+  },
+  "parking_placements": ["INSIDE_FOOTPRINT"],
+  "circulation": {"target_share_milli": 100},
+  "relations_soft": [{"a": "KITCHEN", "b": "DINING"}, {"a": "DINING", "b": "LIVING"}],
+  "setback_table": [],
+  "orientation": [],
+  "objective": {
+    "weights": {"AREA_DEVIATION": 2, "ROOM_SIZE_OUTLIER": 2, "DIMENSION_DEVIATION": 1, "ASPECT_EXCESS": 3, "CIRCULATION_SHARE": 2, "OVERSIZE": 2, "ADJACENCY": 1, "WET_CLUSTER": 1, "EXTERIOR_EXPOSURE": 1, "PRIVACY": 1, "PARKING_CONVENIENCE": 1, "ZONE_ORDER": 1, "BEDROOM_GROUPING": 1, "ORIENTATION": 1},
+    "exposure_min_mm": 1400,
+    "candidate_limit": 32,
+    "split_limit": 4,
+    "build_attempts": 5,
+    "family_pool": 20
   },
   "sources": {}
 }

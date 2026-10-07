@@ -124,7 +124,7 @@ CATALOGUE: dict[ValidationCode, tuple[ValidationCategory, RepairHint, str]] = {
     ),
     C.OPENING_OVERLAP: (
         V.OPENINGS,
-        RepairHint.USER,
+        RepairHint.AUTO,
         "Openings {opening_a} and {opening_b} overlap on one wall.",
     ),
     C.OPENING_DIMENSION_INVALID: (
@@ -164,10 +164,10 @@ CATALOGUE: dict[ValidationCode, tuple[ValidationCategory, RepairHint, str]] = {
     ),
     C.FIXTURE_CLEARANCE_BLOCKED: (
         V.FIXTURES,
-        RepairHint.USER,
+        RepairHint.AUTO,
         "The space needed in front of {fixture} is blocked.",
     ),
-    C.FIXTURE_BLOCKS_OPENING: (V.FIXTURES, RepairHint.USER, "{fixture} blocks opening {opening}."),
+    C.FIXTURE_BLOCKS_OPENING: (V.FIXTURES, RepairHint.AUTO, "{fixture} blocks opening {opening}."),
     C.ENTRANCE_MISSING: (
         V.CIRCULATION,
         RepairHint.USER,

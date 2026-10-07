@@ -99,6 +99,9 @@ class Settings(BaseSettings):
     houseplans_allow_draft_ruleset: bool = False
     houseplans_allow_synthetic_ruleset: bool = False
     houseplans_solve_timeout_seconds: float = Field(default=30, gt=0, le=600)
+    # The layout solver (Checkpoint 2): the zoned local search; the Checkpoint 1 solver stays as the
+    # fallback and reference, and is used for a ruleset without an objective section (1.0.0).
+    houseplans_solver: Literal["ZONED_LOCAL_SEARCH", "DETERMINISTIC_MVP"] = "ZONED_LOCAL_SEARCH"
 
     # Billing (Slice 3.3; SLICE3_3_READINESS). `razorpay` is the only provider that takes money;
     # `fake` is the development and test gateway (local and test only); `none` keeps buying off.

@@ -150,7 +150,17 @@ async def test_the_prototype_requirement_becomes_a_valid_plan_through_the_engine
     assert detail["validation"]["errors"] == []
     document, geometry = detail["document"], detail["geometry"]
     assert document["meta"]["schema"] == "p2b.houseplan"
-    assert document["meta"]["schema_version"] == "1.0.0"
+    assert document["meta"]["schema_version"] == "1.1.0"
+    assert document["meta"]["generator"]["solver"] == "ZONED_LOCAL_SEARCH"
+    # Soft terms are scored in the document, and the derived quality block agrees with them.
+    soft = [c for c in document["constraints"] if c["strength"] == "SOFT"]
+    assert {c["origin"]["kind"] for c in soft} == {"RULESET"}
+    assert next(c for c in soft if c["kind"] == "ORIENTATION")["outcome"] == "NOT_EVALUATED"
+    quality = detail["quality"]
+    assert quality["total"] == sum(c["weight"] * c.get("score_milli", 0) for c in soft)
+    assert {t["kind"]: t.get("score_milli") for t in quality["terms"]} == {
+        c["kind"]: c.get("score_milli") for c in soft
+    }
     assert {r["id"] for r in document["floors"][0]["rooms"]} >= {
         "living",
         "kitchen",
@@ -195,6 +205,11 @@ async def test_an_impossible_programme_ends_infeasible_with_reasons_and_no_plan(
     reason = detail["infeasibility"]["reasons"][0]
     assert reason["code"] == "AREA_BUDGET"
     assert reason["params"]["needed_mm2"] > reason["params"]["available_mm2"]
+    # The pre-check proves it: no arrangement of the rooms fits, so the plan says so plainly.
+    assert detail["infeasibility"]["classification"] == "PROVEN"
+    assert detail["infeasibility"]["message_key"] == "houseplans.infeasible.proven"
+    assert "cannot fit in any arrangement" in detail["infeasibility"]["explanation"]
+    assert {c["kind"] for c in detail["infeasibility"]["constraints"]} >= {"INSIDE_ENVELOPE"}
 
 
 async def test_an_engine_that_produces_an_invalid_plan_fails_and_shows_nothing(
