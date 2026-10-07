@@ -4,12 +4,8 @@
  * release. No figure here is a marketing statistic.
  */
 import type { BoardContent } from '@/marketing/content/sections/board';
-import { built, type BuiltContent } from '@/marketing/content/sections/built';
 import type { FaqContent } from '@/marketing/content/sections/faq';
 import { hero, type HeroContent } from '@/marketing/content/sections/hero';
-import type { SafetyContent } from '@/marketing/content/sections/safety';
-import { safety } from '@/marketing/content/sections/safety';
-import type { TradesContent } from '@/marketing/content/sections/trades';
 import { bid, type BidContent } from '@/marketing/content/sections/bid';
 
 export type PlanTier = { title: string; note: string; items: string[] };
@@ -63,24 +59,8 @@ export const homeownersProblem: BoardContent = {
   tickerSpeed: 40,
 };
 
-export const homeownersSolution: TradesContent = {
-  eyebrow: '02 · The solution',
-  heading: 'Independent.|*On your side.*',
-  button: 'See every service',
-  buttonLink: '/services',
-  fromWord: 'From',
-  rows: 6,
-  hoverPhoto: true,
-};
-
-export const homeownersHow: BuiltContent = {
-  ...built,
-  eyebrow: '03 · How Plan2Build solves it',
-  title: 'How Plan2Build solves it: plan, find, compare, select, build, verify, record',
-};
-
 export const homeownersTiers: TiersContent = {
-  eyebrow: '04 · Free, then one package',
+  eyebrow: '02 · Free, then one package',
   heading: 'Start free.|*Pay only for the plan.*',
   subCopy:
     'Your dashboard opens the moment you submit your requirements. When Plan2Build accepts your project, one package unlocks the rest of the journey. You never pay us for a contract.',
@@ -110,13 +90,8 @@ export const homeownersTiers: TiersContent = {
   buttonLink: '/start',
 };
 
-export const homeownersChecks: SafetyContent = {
-  ...safety,
-  eyebrow: '05 · Independent checks',
-};
-
 export const homeownersFaq: FaqContent = {
-  eyebrow: '06 · Questions',
+  eyebrow: '03 · Questions',
   heading: 'Before you|*start.*',
   subCopy: 'Still unsure? Call {phone} or write to {email}.',
   callLabel: 'Talk to an expert',
@@ -127,7 +102,7 @@ export const homeownersFaq: FaqContent = {
 
 export const homeownersStart: BidContent = {
   ...bid,
-  eyebrow: '07 · Plan a project',
+  eyebrow: '04 · Plan a project',
   heading: 'Tell us about|*your house.*',
   button: 'Plan a project',
 };

@@ -36,7 +36,7 @@ function ids(id: string, description: ReactNode, errors?: string[]) {
 }
 
 export function OptionalMark() {
-  return <span className="font-normal text-muted-foreground"> {common("optional")}</span>;
+  return <span className="font-sans text-base font-normal tracking-normal text-muted-foreground normal-case"> {common("optional")}</span>;
 }
 
 function Errors({ id, errors }: { id?: string; errors?: string[] }) {
@@ -75,11 +75,12 @@ export function FormField({
   const { descriptionId, errorId, describedBy, invalid } = ids(id, description, errors);
   return (
     <Field className="gap-2">
-      <FieldLabel htmlFor={id} className="text-base">
+      {/* Onboarding type scale: 18px labels, 16px help (UI_DESIGN_SYSTEM.md 3.2). */}
+      <FieldLabel htmlFor={id} className="text-lg leading-snug font-semibold">
         {label}
         {!required && <OptionalMark />}
       </FieldLabel>
-      {description && <FieldDescription id={descriptionId}>{description}</FieldDescription>}
+      {description && <FieldDescription id={descriptionId} className="text-base">{description}</FieldDescription>}
       {children({
         id,
         "aria-describedby": describedBy,
@@ -114,13 +115,14 @@ export function FormFieldset({
       id={id}
       aria-describedby={describedBy}
       data-invalid={invalid || undefined}
-      className="gap-3"
+      className="gap-4"
     >
-      <FieldLegend id={legendId} className="mb-0 font-heading text-xl leading-tight font-extrabold uppercase">
+      {/* The question: display caps at 24px, 30px from sm, as on the website's request card. */}
+      <FieldLegend id={legendId} className="mb-0 font-heading leading-[1.05] data-[variant=legend]:text-2xl sm:data-[variant=legend]:text-3xl">
         {legend}
         {!required && <OptionalMark />}
       </FieldLegend>
-      {description && <FieldDescription id={descriptionId}>{description}</FieldDescription>}
+      {description && <FieldDescription id={descriptionId} className="text-base">{description}</FieldDescription>}
       {children({ legendId, describedBy, invalid })}
       <Errors id={errorId} errors={errors} />
     </FieldSet>
@@ -135,7 +137,7 @@ export interface ChoiceOption {
 // The answer chip of the website's request card: white with an ink edge, lifting on hover, brass
 // once chosen.
 const CARD =
-  "p2b-lift flex min-h-11 cursor-pointer items-center gap-3 rounded-md border border-foreground bg-secondary px-3 py-2.5 text-base leading-snug font-semibold has-data-checked:bg-brand has-data-checked:text-brand-foreground has-data-checked:ring-1 has-data-checked:ring-foreground has-[[aria-invalid=true]]:border-destructive";
+  "p2b-lift flex min-h-12 cursor-pointer items-center gap-3 rounded-md border border-foreground bg-secondary px-4 py-3 text-base leading-snug font-semibold sm:text-lg has-data-checked:bg-brand has-data-checked:text-brand-foreground has-data-checked:ring-1 has-data-checked:ring-foreground has-[[aria-invalid=true]]:border-destructive";
 
 // Columns follow the width of the form, not the screen (container queries), so the same group
 // fits a narrow card and a full-width step.

@@ -44,21 +44,21 @@ export function RankingField({
         <div className="flex flex-col gap-5">
           {value.length > 0 && (
             <div className="flex flex-col gap-2">
-              <h4 className="text-sm font-medium">{t("rank.ranked")}</h4>
+              <h4 className="font-mono text-sm tracking-widest text-muted-foreground uppercase">{t("rank.ranked")}</h4>
               <ol className="flex flex-col gap-2">
                 {value.map((raw, index) => (
                   <li
                     key={raw}
-                    className="flex items-center gap-2 rounded-md border border-input bg-background py-1 pr-1 pl-3"
+                    className="flex min-h-12 items-center gap-3 rounded-md border border-foreground bg-secondary py-1 pr-1 pl-3"
                   >
                     <span
                       aria-hidden="true"
-                      className="flex size-7 shrink-0 items-center justify-center rounded-sm bg-primary text-sm font-semibold text-primary-foreground tabular-nums"
+                      className="flex size-8 shrink-0 items-center justify-center rounded-sm bg-brand font-mono text-sm font-semibold text-brand-foreground tabular-nums ring-1 ring-foreground"
                     >
                       {index + 1}
                     </span>
                     <span className="sr-only">{index + 1}.</span>
-                    <span className="flex-1 text-base">{label(raw)}</span>
+                    <span className="flex-1 text-base font-semibold sm:text-lg">{label(raw)}</span>
                     <Button
                       type="button"
                       variant="ghost"
@@ -95,7 +95,7 @@ export function RankingField({
           )}
           {unranked.length > 0 && (
             <div className="flex flex-col gap-2">
-              <h4 className="text-sm font-medium">{t("rank.available")}</h4>
+              <h4 className="font-mono text-sm tracking-widest text-muted-foreground uppercase">{t("rank.available")}</h4>
               <ul className="flex flex-wrap gap-2">
                 {unranked.map((option) => (
                   <li key={option.value}>

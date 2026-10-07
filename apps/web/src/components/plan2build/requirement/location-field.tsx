@@ -96,7 +96,7 @@ export function LocationField({
           ) : (
             <Notice tone="info">{t("map.noMap")}</Notice>
           )}
-          <p aria-live="polite" className="flex min-h-6 items-center gap-2 text-sm font-medium">
+          <p aria-live="polite" className="flex min-h-6 items-center gap-2 text-base font-medium">
             {value && (
               <>
                 <MapPinIcon aria-hidden="true" className="size-4 text-info" />
@@ -125,7 +125,7 @@ export function LocationField({
             className="grid grid-cols-2 items-end gap-3 sm:flex sm:flex-wrap"
           >
             <div className="flex flex-col gap-2">
-              <Label htmlFor={`${id}-lat`} className="text-sm">
+              <Label htmlFor={`${id}-lat`} className="text-base font-semibold">
                 {t("map.lat")}
               </Label>
               <Input
@@ -140,7 +140,7 @@ export function LocationField({
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor={`${id}-lng`} className="text-sm">
+              <Label htmlFor={`${id}-lng`} className="text-base font-semibold">
                 {t("map.lng")}
               </Label>
               <Input

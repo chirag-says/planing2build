@@ -272,7 +272,7 @@ export function QuestionField({ question, value, onChange, errors, description }
                 const sideId = `${id}-${side.value}`;
                 return (
                   <div key={side.value} className="flex flex-col gap-2">
-                    <Label htmlFor={sideId} className="text-sm">
+                    <Label htmlFor={sideId} className="text-base font-semibold">
                       {side.label}
                     </Label>
                     <div className="flex items-center gap-4">
@@ -295,7 +295,7 @@ export function QuestionField({ question, value, onChange, errors, description }
                         <Label
                           htmlFor={`${sideId}-not-sure`}
                           aria-hidden="true"
-                          className="text-sm font-normal"
+                          className="text-base font-normal"
                         >
                           {t("notSureYet")}
                         </Label>

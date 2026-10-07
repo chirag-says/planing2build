@@ -184,7 +184,7 @@ export function UploadsField({
             )}
           >
             <UploadIcon aria-hidden="true" className="size-6 text-muted-foreground" />
-            <p className="hidden text-sm text-muted-foreground sm:block">{t("dropHere")}</p>
+            <p className="hidden text-base text-muted-foreground sm:block">{t("dropHere")}</p>
             <Button
               type="button"
               variant="outline"

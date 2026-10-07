@@ -361,7 +361,7 @@ export function RequirementWizard({
       id="step-heading"
       ref={heading}
       tabIndex={-1}
-      className="font-heading text-xl font-semibold sm:text-2xl"
+      className="font-heading text-4xl leading-none sm:text-5xl"
     >
       {title}
     </h2>
@@ -388,7 +388,7 @@ export function RequirementWizard({
         <section aria-labelledby="step-heading" className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             {stepHeading(t("review"))}
-            <p className="text-base text-muted-foreground">{t("reviewIntro")}</p>
+            <p className="text-lg text-muted-foreground">{t("reviewIntro")}</p>
           </div>
           {bannerBlock}
           <AnswerSummary

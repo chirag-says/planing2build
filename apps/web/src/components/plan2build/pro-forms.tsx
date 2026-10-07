@@ -198,7 +198,7 @@ export function ProfileForm({ data, tiles }: { data: Dashboard; tiles: MapTiles 
         onChange={setPoint}
         tiles={tiles}
       />
-      <p className="-mt-4 text-sm text-muted-foreground">{t("profile.baseHelp")}</p>
+      <p className="-mt-4 text-base text-muted-foreground">{t("profile.baseHelp")}</p>
       {numeric("service_radius_km", t("profile.radius"), true)}
       <div aria-live="polite">
         {state === "saved" && <Notice tone="success">{t("profile.saved")}</Notice>}
@@ -269,10 +269,10 @@ export function CategoryWorkspace({ data, category }: { data: Dashboard; categor
 
       <section aria-labelledby="checklist" className="flex flex-col gap-3">
         <h2 id="checklist" className="font-heading text-xl font-semibold">{t("category.checklist")}</h2>
-        <p className="text-sm text-muted-foreground">{t("category.checklistIntro")}</p>
+        <p className="text-base text-muted-foreground">{t("category.checklistIntro")}</p>
         <ul className="flex flex-col gap-2">
           {category.requirements.map((r) => (
-            <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-3 py-2 text-sm">
+            <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-foreground/15 bg-card px-3 py-2.5 text-base">
               <span className="font-medium">{r.label}</span>
               <span className="flex flex-wrap items-center gap-2 text-muted-foreground">
                 {r.level === "WHERE_APPLICABLE" && <Badge variant="neutral">{t("category.optional")}</Badge>}
@@ -306,7 +306,7 @@ export function CategoryWorkspace({ data, category }: { data: Dashboard; categor
 
       <DocumentsSection documents={documents} categoryCode={category.code} locked={locked} />
       <ReferencesSection references={references} categoryCode={category.code} locked={locked} />
-      <p className="text-sm">
+      <p className="text-base">
         <Link href="/portfolio" className="font-medium underline underline-offset-4">{t("category.portfolioLink")}</Link>
       </p>
 
@@ -376,9 +376,9 @@ function DocumentsSection({ documents, categoryCode, locked }: {
   return (
     <section aria-labelledby="documents" className="flex flex-col gap-3">
       <h2 id="documents" className="font-heading text-xl font-semibold">{t("category.documents")}</h2>
-      <p className="text-sm text-muted-foreground">{t("category.documentsIntro")}</p>
+      <p className="text-base text-muted-foreground">{t("category.documentsIntro")}</p>
       {documents.length === 0 ? (
-        <p className="text-sm text-muted-foreground">{t("category.noDocuments")}</p>
+        <p className="text-base text-muted-foreground">{t("category.noDocuments")}</p>
       ) : (
         <Card size="sm"><CardContent>
           <ul className="divide-y divide-border">
@@ -453,13 +453,13 @@ function ReferencesSection({ references, categoryCode, locked }: {
   return (
     <section aria-labelledby="references" className="flex flex-col gap-3">
       <h2 id="references" className="font-heading text-xl font-semibold">{t("category.references")}</h2>
-      <p className="text-sm text-muted-foreground">{t("category.referencesIntro")}</p>
+      <p className="text-base text-muted-foreground">{t("category.referencesIntro")}</p>
       {references.length === 0 ? (
-        <p className="text-sm text-muted-foreground">{t("category.noReferences")}</p>
+        <p className="text-base text-muted-foreground">{t("category.noReferences")}</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {references.map((r) => (
-            <li key={r.reference_id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-3 py-2 text-sm">
+            <li key={r.reference_id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-foreground/15 bg-card px-3 py-2.5 text-base">
               <span><span className="font-medium">{r.name}</span> · {r.phone} · {r.project_note}</span>
               {!locked && (
                 <Button type="button" variant="ghost" size="sm" disabled={busy !== null}
@@ -514,7 +514,7 @@ export function PortfolioManager({ data }: { data: Dashboard }) {
   return (
     <div className="flex flex-col gap-6">
       {data.portfolio.length === 0 ? (
-        <p className="text-sm text-muted-foreground">{t("portfolio.none")}</p>
+        <p className="text-base text-muted-foreground">{t("portfolio.none")}</p>
       ) : (
         <Card size="sm"><CardContent>
           <ul className="divide-y divide-border">
