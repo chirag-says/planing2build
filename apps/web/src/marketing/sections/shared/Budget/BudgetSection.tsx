@@ -257,13 +257,13 @@ export function BudgetSection({ content, services, bidHref, siteName }: BudgetPr
                 </p>
                 <p className="budget-wk" style={TYPE.display} aria-hidden="true">
                   {weeksBefore}
-                  <span ref={weeksRef}>{result.weeks}</span>
+                  <span ref={weeksRef}>{Number.isFinite(result.weeks) ? result.weeks : '…'}</span>
                   {weeksAfter}
                 </p>
               </div>
             </div>
             <p className="gd-sr" aria-live="polite">
-              {`${resultLabel}: ${formatMoney(result.low)} to ${formatMoney(result.high)}. ${scheduleLabel}: ${weeksBefore}${result.weeks}${weeksAfter}.`}
+              {`${resultLabel}: ${formatMoney(result.low)} to ${formatMoney(result.high)}. ${scheduleLabel}: ${weeksBefore}${Number.isFinite(result.weeks) ? result.weeks : '…'}${weeksAfter}.`}
             </p>
             <div
               ref={tapeRef}
