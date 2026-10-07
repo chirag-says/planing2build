@@ -37,7 +37,7 @@ export function ProjectNav({ label, items }: { label: string; items: ProjectNavI
                     : "text-muted-foreground hover:bg-accent hover:text-foreground",
                 )}
               >
-                <span aria-hidden="true" className={cn("tabular-nums", current ? "text-brand" : "text-foreground/60")}>
+                <span aria-hidden="true" className={cn("tabular-nums", current ? "text-brand" : "text-muted-foreground")}>
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 {item.label}
