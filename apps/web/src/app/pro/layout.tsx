@@ -23,7 +23,8 @@ export default async function ProLayout({ children }: { children: React.ReactNod
   return (
     <>
       <HeaderNav brand={t("title")} tag={t("tag")} signedIn={signedIn} links={signedIn ? links : []} />
-      {children}
+      {/* The website's blueprint ground under every professional screen. */}
+      <div className="p2b-ground flex flex-1 flex-col">{children}</div>
     </>
   );
 }

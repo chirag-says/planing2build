@@ -20,10 +20,12 @@ function decode(segment: string): string {
 
 /**
  * The internal URL a click should hoist to, or null to leave the click alone: modified clicks,
- * other windows, downloads, other origins, non-page schemes, opt-outs (`data-no-trans`) and any
- * link that stays on the current page (hash links included).
+ * other windows, downloads, other origins, non-page schemes, opt-outs (`data-no-trans`), any
+ * link that stays on the current page (hash links included) and, when `publicPaths` is given,
+ * moves that neither start nor end on one of those pages (the signed-in screens navigate at
+ * once; the plate marks crossing between the website and the app).
  */
-export function hoistTarget(event: MouseEvent): { url: URL; anchor: HTMLAnchorElement } | null {
+export function hoistTarget(event: MouseEvent, publicPaths?: ReadonlySet<string>): { url: URL; anchor: HTMLAnchorElement } | null {
   if (event.defaultPrevented || event.button !== 0) return null;
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return null;
   const anchor = (event.target as Element | null)?.closest?.('a[href]');
@@ -42,6 +44,7 @@ export function hoistTarget(event: MouseEvent): { url: URL; anchor: HTMLAnchorEl
   }
   if (url.origin !== location.origin || !/^https?:$/.test(url.protocol)) return null;
   if (trimPath(url.pathname) === trimPath(location.pathname)) return null;
+  if (publicPaths && !publicPaths.has(trimPath(url.pathname)) && !publicPaths.has(trimPath(location.pathname))) return null;
   return { url, anchor };
 }
 

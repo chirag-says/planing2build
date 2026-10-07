@@ -120,3 +120,12 @@
     grid-template-columns: repeat(7, minmax(0, 1fr));
   }
 }
+/* Five steps (the professional's way to a listing). */
+.jr-rail.jr-rail-5 {
+  grid-template-columns: repeat(5, minmax(9.5rem, 1fr));
+}
+@media (min-width: 1024px) {
+  .jr-rail.jr-rail-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}

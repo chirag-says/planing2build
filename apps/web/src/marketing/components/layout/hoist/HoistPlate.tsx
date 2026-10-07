@@ -50,6 +50,7 @@ export function HoistPlate({ copy, siteName }: Props) {
   const leaveSeconds = seconds(copy.duration);
   const enterSeconds = seconds(copy.enter);
   const names = useMemo(() => new Map(copy.names.map(({ label, path }) => [trimPath(path), label])), [copy.names]);
+  const publicPaths = useMemo(() => (copy.publicPaths ? new Set(copy.publicPaths.map(trimPath)) : undefined), [copy.publicPaths]);
 
   const clearTimers = useCallback(() => {
     timers.current.forEach((timer) => window.clearTimeout(timer));
@@ -76,7 +77,7 @@ export function HoistPlate({ copy, siteName }: Props) {
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
       if (mode.current === 'leave' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const target = hoistTarget(event);
+      const target = hoistTarget(event, publicPaths);
       if (!target) return;
       event.preventDefault();
       event.stopPropagation();
@@ -105,7 +106,7 @@ export function HoistPlate({ copy, siteName }: Props) {
       clearTimers();
       document.documentElement.classList.remove(HOLD.transition);
     };
-  }, [router, names, copy.homeLabel, leaveSeconds, arrive, clearTimers, later]);
+  }, [router, names, publicPaths, copy.homeLabel, leaveSeconds, arrive, clearTimers, later]);
 
   // The new route has committed: lift the plate off it. Also covers Back pressed mid-hoist.
   useEffect(() => {

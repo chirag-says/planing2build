@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
+import { OnboardingRail } from "@/components/plan2build/onboarding-rail";
 import { AddCategoryForm } from "@/components/plan2build/pro-forms";
 import { EmptyState, Notice } from "@/components/plan2build/states";
 import { StatusBadge } from "@/components/plan2build/status-badge";
@@ -24,6 +25,7 @@ export default async function ProDashboardPage() {
   return (
     <PageContainer>
       <PageHeader title={t("dashboard.title")} description={t("dashboard.intro")} />
+      <OnboardingRail data={data} />
       {data.profile.missing.length > 0 && (
         <Notice tone="info" title={t("dashboard.profileIncomplete")}>
           <Link href="/profile" className="font-medium underline underline-offset-4">
@@ -76,8 +78,8 @@ export default async function ProDashboardPage() {
           </ul>
         )}
       </section>
-      <section aria-labelledby="add" className="flex flex-col gap-4">
-        <SectionHeader id="add" title={t("dashboard.add")} />
+      <section id="add" aria-labelledby="add-title" className="flex scroll-mt-24 flex-col gap-4">
+        <SectionHeader id="add-title" title={t("dashboard.add")} />
         {tops.every((c) => added.has(c.code)) ? (
           <p className="text-sm text-muted-foreground">{t("dashboard.allAdded")}</p>
         ) : (

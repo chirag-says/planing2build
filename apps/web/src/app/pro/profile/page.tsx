@@ -4,6 +4,7 @@ import { PageContainer, PageHeader } from "@/components/plan2build/page-header";
 import { ProfileForm } from "@/components/plan2build/pro-forms";
 import { getTranslator } from "@/lib/i18n";
 import { mapTiles } from "@/lib/map";
+import { OnboardingRail } from "@/components/plan2build/onboarding-rail";
 import { loadOwnProfile } from "@/lib/professional";
 
 export const metadata: Metadata = { title: getTranslator("Pro")("profile.title") };
@@ -14,6 +15,8 @@ export default async function ProProfilePage() {
   return (
     <PageContainer>
       <PageHeader title={t("profile.title")} description={t("profile.intro")} />
+      {/* Guided onboarding until a category is listed. */}
+      {!data.categories.some((c) => c.listing_state === "LISTED") && <OnboardingRail data={data} />}
       <ProfileForm data={data} tiles={mapTiles()} />
     </PageContainer>
   );

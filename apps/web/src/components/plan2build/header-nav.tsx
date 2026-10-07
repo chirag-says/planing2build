@@ -90,7 +90,7 @@ export function HeaderNav({
           onClick={onNavigate}
           aria-current={current ? "page" : undefined}
           className={cn(
-            "inline-flex min-h-11 items-center gap-2 rounded-md px-3 font-mono text-xs tracking-widest text-muted-foreground uppercase transition-colors hover:text-foreground sm:min-h-10",
+            "inline-flex min-h-11 items-center gap-2 rounded-md px-2.5 font-mono text-xs tracking-wider whitespace-nowrap text-muted-foreground uppercase transition-colors hover:text-foreground sm:min-h-10",
             current && "text-foreground",
             stacked && "w-full text-sm",
           )}
@@ -126,7 +126,7 @@ export function HeaderNav({
           )}
         </Link>
 
-        <nav aria-label={t("main")} className="hidden items-center gap-1 sm:flex">
+        <nav aria-label={t("main")} className="hidden min-w-0 items-center gap-0.5 sm:flex">
           {navLinks()}
           {signedIn ? (
             // Non-modal, as in the WAI-ARIA menu button pattern: a modal menu hides the page with

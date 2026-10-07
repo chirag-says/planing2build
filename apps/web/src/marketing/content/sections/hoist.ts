@@ -10,6 +10,11 @@ export type HoistCopy = {
   kicker: string;
   /** Name shown on the plate for each destination path. */
   names: Array<{ label: string; path: string }>;
+  /**
+   * The website's pages. The plate plays only for moves to or from one of them; between the
+   * signed-in screens navigation is immediate. Empty or missing: every move is hoisted.
+   */
+  publicPaths?: string[];
 };
 
 export const hoist: HoistCopy = {
@@ -18,6 +23,7 @@ export const hoist: HoistCopy = {
   enter: 0.5,
   homeLabel: 'Home',
   kicker: 'Next stage',
+  publicPaths: ['/', '/services', '/for-homeowners', '/for-professionals'],
   names: [
     { label: 'Services', path: '/services' },
     { label: 'For homeowners', path: '/for-homeowners' },

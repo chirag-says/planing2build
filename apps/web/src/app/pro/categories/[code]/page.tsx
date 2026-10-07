@@ -5,6 +5,7 @@ import { PageContainer, PageHeader } from "@/components/plan2build/page-header";
 import { CategoryHeaderBadge, CategoryWorkspace } from "@/components/plan2build/pro-forms";
 import { ProjectBreadcrumb } from "@/components/plan2build/project-breadcrumb";
 import { getTranslator } from "@/lib/i18n";
+import { OnboardingRail } from "@/components/plan2build/onboarding-rail";
 import { loadOwnProfile } from "@/lib/professional";
 
 export const metadata: Metadata = { title: getTranslator("Pro")("dashboard.categories") };
@@ -22,6 +23,8 @@ export default async function ProCategoryPage({ params }: { params: Promise<{ co
       <div className="flex flex-col gap-4">
         <ProjectBreadcrumb root={{ label: t("category.back"), href: "/" }} trail={[{ label: category.name }]} />
         <PageHeader title={category.name} actions={<CategoryHeaderBadge category={category} />} />
+        {/* Guided onboarding until a category is listed. */}
+        {!data.categories.some((c) => c.listing_state === "LISTED") && <OnboardingRail data={data} />}
       </div>
       <CategoryWorkspace data={data} category={category} />
     </PageContainer>

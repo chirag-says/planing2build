@@ -202,7 +202,46 @@
       },
       "back": "All requests"
     },
-    "tag": "Professionals"
+    "tag": "Professionals",
+    "onboarding": {
+      "title": "Getting listed",
+      "steps": {
+        "profile": {
+          "name": "Profile",
+          "text": "Name, firm, base and the radius you cover"
+        },
+        "category": {
+          "name": "Category",
+          "text": "The work you do: contractor, architect, engineer"
+        },
+        "evidence": {
+          "name": "Evidence",
+          "text": "Documents and references, then submit for review"
+        },
+        "portfolio": {
+          "name": "Portfolio",
+          "text": "Homes you have built or designed"
+        },
+        "listed": {
+          "name": "Listed",
+          "text": "Approved by Plan2Build and shown to families"
+        }
+      },
+      "states": {
+        "done": "Done",
+        "current": "Now",
+        "next": "Next",
+        "attention": "Changes asked",
+        "review": "In review"
+      },
+      "sr": {
+        "done": "{step}: done",
+        "current": "{step}: to do now",
+        "next": "{step}: not started",
+        "attention": "{step}: changes asked",
+        "review": "{step}: in review"
+      }
+    }
   },
   "Ops": {
     "title": "Plan2Build operations",
