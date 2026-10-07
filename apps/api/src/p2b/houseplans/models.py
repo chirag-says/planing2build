@@ -26,6 +26,7 @@ RULESET_STATUSES = "'DRAFT', 'APPROVED', 'PUBLISHED', 'RETIRED'"
 STATES = "'QUEUED', 'RUNNING', 'VALID', 'INFEASIBLE', 'FAILED'"
 FAILURES = "'ENGINE_ERROR', 'ENGINE_INVALID_OUTPUT', 'ENGINE_TIMEOUT', 'STALE'"
 VALIDITIES = "'VALID', 'INVALID'"
+OP_REASONS = "'USER', 'AUTO_REPAIR', 'REVERT'"
 
 
 class LayoutRuleset(Base):
@@ -179,7 +180,31 @@ class HousePlanVersion(Base):
     created_at: Mapped[datetime] = mapped_column(server_default=text("now()"))
 
 
-APPEND_ONLY = ("house_plan_versions",)
+class HousePlanOp(Base):
+    """One applied operation batch (Checkpoint 3, migration 0020): the operations, their inverse
+    batch and who applied them. Revision n of a plan is revision n-1 with `ops` applied, so
+    every head is reproducible from version 1 and the log. Append-only. Only batches the
+    validator passed are applied and logged (IC 18.7)."""
+
+    __tablename__ = "house_plan_ops"
+    __table_args__ = (
+        UniqueConstraint("plan_id", "revision_no"),
+        CheckConstraint(f"reason IN ({OP_REASONS})", name="reason"),
+        CheckConstraint("revision_no >= 1", name="revision_no_positive"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
+    plan_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("house_plans.id", ondelete="RESTRICT"))
+    revision_no: Mapped[int] = mapped_column(Integer)
+    ops: Mapped[list[dict[str, Any]]] = mapped_column(JSONB)
+    inverse: Mapped[list[dict[str, Any]]] = mapped_column(JSONB)
+    reason: Mapped[str] = mapped_column(String(12))
+    content_sha256: Mapped[str] = mapped_column(String(64))  # the resulting body
+    actor_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"))
+    created_at: Mapped[datetime] = mapped_column(server_default=text("now()"))
+
+
+APPEND_ONLY = ("house_plan_versions", "house_plan_ops")
 MUTABLE_COLUMNS = {
     "layout_rulesets": (
         "status",

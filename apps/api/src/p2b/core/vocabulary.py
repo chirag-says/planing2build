@@ -1217,6 +1217,27 @@ class PlanOpKind(StrEnum):
     DELETE_ROOM = "DELETE_ROOM"
 
 
+class PlanOpRejection(StrEnum):
+    """Why a typed operation could not apply (Checkpoint 3). Rejection happens before validation;
+    a plan that applies but breaks a rule is reported by the validator instead."""
+
+    UNKNOWN_ENTITY = "UNKNOWN_ENTITY"
+    ENTITY_EXISTS = "ENTITY_EXISTS"
+    NOT_SUPPORTED = "NOT_SUPPORTED"
+    NO_MOVEMENT = "NO_MOVEMENT"
+    NOT_AXIS_ALIGNED = "NOT_AXIS_ALIGNED"
+    WALL_WOULD_COLLAPSE = "WALL_WOULD_COLLAPSE"
+    HOSTED_ITEM_LEAVES_WALL = "HOSTED_ITEM_LEAVES_WALL"
+
+
+class PlanOpReason(StrEnum):
+    """Why an operation batch was applied (`house_plan_ops.reason`)."""
+
+    USER = "USER"
+    AUTO_REPAIR = "AUTO_REPAIR"
+    REVERT = "REVERT"
+
+
 class TopologyFamily(StrEnum):
     """Layout families the zoning engine can produce. Checkpoint 2: SPINE (front band, passage
     spine, columns, optional rear band) and FRONT_EXTENSION (one more room beside the entry room).
@@ -1278,5 +1299,5 @@ ALL_ENUMS: tuple[type[StrEnum], ...] = (
     MissingInputReason, UnsupportedReason, InfeasibleReason, PlanSource, SolverKind, RulesetStatus,
     PlanGenerationState, PlanFailureReason, PlanValidity, ValidationCategory, ValidationSeverity,
     RepairHint, EntityKind, ValidationCode, PlanOpKind, TopologyFamily, FeasibilityClass,
-    RepairReason,
+    RepairReason, PlanOpRejection, PlanOpReason,
 )  # fmt: skip

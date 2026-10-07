@@ -2,9 +2,9 @@
 models, so the contract the web app receives is the canonical schema, not a copy of it."""
 
 from datetime import datetime
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from p2b.core.vocabulary import (
     ConstraintKind,
@@ -24,6 +24,8 @@ from p2b.houseplans.engine import (
     PlanGeometry,
     ValidationReport,
 )
+from p2b.houseplans.engine.edit import MAX_BATCH
+from p2b.houseplans.engine.ops import PlanOp
 
 
 class _Out(BaseModel):
@@ -108,6 +110,16 @@ class QualityOut(_Out):
     rooms: list[RoomQualityOut]
 
 
+class EditingOut(_Out):
+    """What the editor needs besides the document (Checkpoint 3). `can_edit` is the API's answer
+    for this caller (owner of the project, plan with a document); the server checks it again on
+    every edit. `grid_mm` is the ruleset's planning grid, the editor's snap step."""
+
+    can_edit: bool
+    revision_no: int
+    grid_mm: int
+
+
 class HousePlanDetailOut(HousePlanSummaryOut):
     intent: ArchitecturalIntent
     design_inputs: DesignInputs | None
@@ -116,6 +128,21 @@ class HousePlanDetailOut(HousePlanSummaryOut):
     validation: ValidationReport | None
     infeasibility: InfeasibilityOut | None
     quality: QualityOut | None = None  # derived on read from `document` with the plan's ruleset
+    editing: EditingOut | None = None  # present when the plan has a document
+
+
+class EditHousePlanRequest(_Out):
+    """One batch of typed operations against the head revision the editor last saw. Applied
+    whole or not at all; never stored unless the validator passes."""
+
+    expected_revision: Annotated[int, Field(ge=0)]
+    ops: Annotated[list[PlanOp], Field(min_length=1, max_length=MAX_BATCH)]
+
+
+class EditHousePlanOut(HousePlanDetailOut):
+    """The plan after the batch, and the batch that undoes it (send it as a new edit to undo)."""
+
+    inverse: list[PlanOp]
 
 
 class OpsHousePlanDetailOut(HousePlanDetailOut):

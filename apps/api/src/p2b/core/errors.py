@@ -122,6 +122,28 @@ class PlanUnsupported(AppError):
     default_message = "A floor plan cannot be generated for this requirement yet."
 
 
+class RevisionConflict(AppError):
+    """The plan changed since the editor loaded it (`details.current_revision`)."""
+
+    code, status = "REVISION_CONFLICT", 409
+    default_message = "This floor plan was changed meanwhile. Reload it to continue."
+
+
+class PlanOperationRejected(AppError):
+    """An edit operation cannot apply (`details`: index, op, code); nothing was applied."""
+
+    code, status = "PLAN_OPERATION_REJECTED", 422
+    default_message = "That change cannot be made to this floor plan."
+
+
+class PlanEditInvalid(AppError):
+    """The edit applies but the validator rejects the result (`details.report`); nothing was
+    stored (IC 18.7)."""
+
+    code, status = "PLAN_EDIT_INVALID", 422
+    default_message = "That change would break the floor plan's rules, so it was not saved."
+
+
 class RulesetNotPublished(AppError):
     """No layout ruleset may be used here (production needs a PUBLISHED one; AD-05)."""
 

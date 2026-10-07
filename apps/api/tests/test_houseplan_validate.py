@@ -11,8 +11,8 @@ from p2b.core.vocabulary import PlanOpKind, RoomType, ValidationCode
 from p2b.houseplans.engine import HousePlan, apply, repair, sha256_of, validate
 from p2b.houseplans.engine.ops import (
     PLAN_OP,
+    AddRoom,
     MoveOpening,
-    MoveWall,
     OperationRejected,
     RenameRoom,
     SetRoomType,
@@ -157,8 +157,9 @@ def test_operations_are_a_closed_typed_contract() -> None:
     with pytest.raises(ValueError, match="extra"):
         PLAN_OP.validate_python({"op": "MOVE_OPENING", "opening": "d", "offset_mm": 1, "x": 5})
     plan = HousePlan.model_validate(golden_plan(BASE)["plan"])
+    # MOVE_WALL applies since Checkpoint 3; adding a room still waits for a later checkpoint
     with pytest.raises(OperationRejected, match="editing checkpoint"):
-        apply(plan, MoveWall(wall="w1", delta_mm=100))
+        apply(plan, AddRoom(host_room="living", type=RoomType.STORE, x0=0, y0=0, x1=1000, y1=1000))
     with pytest.raises(OperationRejected, match="unknown entity"):
         apply(plan, RenameRoom(room="no_such_room", name="x"))
 

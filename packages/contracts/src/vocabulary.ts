@@ -438,3 +438,9 @@ export type FeasibilityClass = (typeof FeasibilityClassValues)[number];
 
 export const RepairReasonValues = ["VALIDATION_ERROR", "OBJECTIVE"] as const;
 export type RepairReason = (typeof RepairReasonValues)[number];
+
+export const PlanOpRejectionValues = ["UNKNOWN_ENTITY", "ENTITY_EXISTS", "NOT_SUPPORTED", "NO_MOVEMENT", "NOT_AXIS_ALIGNED", "WALL_WOULD_COLLAPSE", "HOSTED_ITEM_LEAVES_WALL"] as const;
+export type PlanOpRejection = (typeof PlanOpRejectionValues)[number];
+
+export const PlanOpReasonValues = ["USER", "AUTO_REPAIR", "REVERT"] as const;
+export type PlanOpReason = (typeof PlanOpReasonValues)[number];

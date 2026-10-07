@@ -1830,5 +1830,109 @@
     "send": "Send",
     "error": "That did not work. Try again.",
     "errorReason": "That did not work: {reason}"
+  },
+  "Plan": {
+    "title": "Floor plan",
+    "planNumber": "Floor plan {number}",
+    "back": "Back to designs",
+    "disclaimer": "Concept floor plan. Not a construction, structural or approval drawing.",
+    "disclaimerDetail": "A qualified architect and structural engineer must prepare and check the drawings you build from.",
+    "rulesUnverified": "Rules not yet verified",
+    "rulesUnverifiedBody": "This plan was laid out with test rules that have not been checked by an architect. Sizes and spacings are examples only.",
+    "drawingLabel": "Concept floor plan drawing",
+    "drawingDescription": "The plan seen from above, road edge at the bottom. The room list beside the drawing gives every room with its size.",
+    "road": "Road",
+    "toolbar": "Floor plan tools",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "fit": "Fit the plan",
+    "undo": "Undo",
+    "redo": "Redo",
+    "snap": "Snap",
+    "snapHint": "Snap to the grid and to wall lines. Hold Alt while dragging to move freely.",
+    "unitsLabel": "Units",
+    "unitMetres": "Metres",
+    "unitFeet": "Feet",
+    "saving": "Saving the change…",
+    "saved": "Change saved.",
+    "readOnly": "You can view this plan. Only the project owner can change it.",
+    "editOnLargerScreen": "Open this plan on a tablet or computer to change it.",
+    "editHint": "Select a room to move it or drag one of its sides. Select a door or window to slide it along its wall. Arrow keys nudge the selection; Escape cancels.",
+    "rooms": "Rooms",
+    "roomsEmpty": "This plan has no rooms.",
+    "issues": "Checks",
+    "issuesNone": "All checks passed.",
+    "selection": "Selected",
+    "nothingSelected": "Nothing selected.",
+    "clearSize": "Clear size",
+    "area": "Area",
+    "openAreas": "Open areas",
+    "openArea": {
+      "FORECOURT": "Forecourt",
+      "SIDE_YARD": "Side yard",
+      "REAR_YARD": "Rear yard",
+      "COURT": "Open court"
+    },
+    "sides": {
+      "left": "Left side",
+      "right": "Right side",
+      "front": "Front side",
+      "back": "Back side"
+    },
+    "selectedRoom": "{name}",
+    "selectedSide": "{name}: {side}",
+    "openingKinds": {
+      "MAIN_ENTRANCE": "Main entrance",
+      "DOOR": "Door",
+      "VOID": "Opening",
+      "WINDOW": "Window"
+    },
+    "moveRoomHint": "Drag the room or use the arrow keys to move it. Rooms along the same lines change size with it.",
+    "moveSideHint": "Drag the side or use the arrow keys. Every room along this line changes with it.",
+    "moveOpeningHint": "Drag along the wall or use the arrow keys to slide it.",
+    "problem": {
+      "invalidTitle": "That change was not saved",
+      "invalidBody": "The plan would break these rules:",
+      "rejectedTitle": "That change cannot be made",
+      "conflictTitle": "This plan changed meanwhile",
+      "conflictBody": "Reload the page to see the latest plan.",
+      "failedTitle": "The change could not be saved",
+      "failedBody": "Check your connection and try again.",
+      "dismiss": "Dismiss",
+      "reload": "Reload"
+    },
+    "rejection": {
+      "UNKNOWN_ENTITY": "Part of the plan it refers to no longer exists.",
+      "ENTITY_EXISTS": "Something with that name already exists.",
+      "NOT_SUPPORTED": "This kind of change is not available yet.",
+      "NO_MOVEMENT": "Nothing would move.",
+      "NOT_AXIS_ALIGNED": "Only straight, square walls can be moved.",
+      "WALL_WOULD_COLLAPSE": "That would squeeze a wall to nothing.",
+      "HOSTED_ITEM_LEAVES_WALL": "A door or window would fall off its wall. Move it first."
+    },
+    "units": {
+      "metres": "{value} m",
+      "feetInches": "{feet}′ {inches}″",
+      "dims": "{w} × {d}",
+      "squareMetres": "{value} m²",
+      "squareFeet": "{value} sq ft"
+    },
+    "list": {
+      "title": "Your floor plans",
+      "intro": "Concept floor plans laid out from your requirement. They are concepts to discuss, not drawings to build from.",
+      "empty": "No floor plan yet.",
+      "open": "Open floor plan",
+      "state": {
+        "QUEUED": "Waiting",
+        "RUNNING": "Being laid out",
+        "VALID": "Ready",
+        "INFEASIBLE": "Does not fit",
+        "FAILED": "Could not be made"
+      }
+    },
+    "joined": "{a} · {b}",
+    "selectedOpeningBetween": "{kind} between {a} and {b}",
+    "selectedOpeningIn": "{kind} in {a}",
+    "sidesLabel": "Choose a side to move"
   }
 }

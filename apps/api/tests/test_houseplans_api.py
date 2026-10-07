@@ -25,7 +25,7 @@ from p2b.houseplans import handlers as houseplans_handlers
 from p2b.houseplans import jobs as houseplans_jobs
 from p2b.houseplans import service as houseplans_service
 from p2b.houseplans.engine import GenerationResult
-from p2b.houseplans.models import HousePlanRecord, HousePlanVersion
+from p2b.houseplans.models import HousePlanOp, HousePlanRecord, HousePlanVersion
 from p2b.integrations.clamav import AcceptAllScanner
 from p2b.integrations.email import MemoryEmailProvider
 from tests.conftest import ClientFactory, SignIn, UserFactory
@@ -494,3 +494,235 @@ def test_configuration_refuses_draft_or_synthetic_rules_where_they_do_not_belong
     values = {**base, "env": env, **(production if env == "production" else {}), **changes}
     with pytest.raises(ValueError, match=message):
         Settings.model_validate(values)
+
+
+# ---------- editing (Checkpoint 3) ----------
+
+
+def _moves(detail: dict[str, Any], *, valid: bool) -> dict[str, Any]:
+    """The first interior wall move the engine's own edit accepts (or that the validator
+    rejects), found with the same ruleset and intent the server uses."""
+    from p2b.houseplans.engine import ArchitecturalIntent, HousePlan
+    from p2b.houseplans.engine.edit import BatchRejected, edit
+    from p2b.houseplans.engine.ops import MoveWall
+    from tests.houseplans_support import ruleset
+
+    plan = HousePlan.model_validate(detail["document"])
+    intent = ArchitecturalIntent.model_validate(detail["intent"])
+    for wall in plan.floors[0].walls:
+        if wall.kind.value != "INTERIOR":
+            continue
+        for delta in (100, -100, 1500, -1500):
+            op = MoveWall(wall=wall.id, delta_mm=delta)
+            try:
+                result = edit(
+                    plan, [op], ruleset(), intent=intent, ruleset_version=None, ruleset_sha256=None
+                )
+            except BatchRejected:
+                continue
+            if result.report.valid == valid:
+                return {"op": "MOVE_WALL", "wall": wall.id, "delta_mm": delta}
+    raise AssertionError("no such move")
+
+
+async def edit_plan(
+    client: AsyncClient, project_id: str, plan_id: str, revision: int, ops: list[dict[str, Any]]
+) -> Response:
+    return await client.post(
+        f"/api/v1/projects/{project_id}/house-plans/{plan_id}/ops",
+        json={"expected_revision": revision, "ops": ops},
+        headers=H,
+    )
+
+
+async def valid_plan(
+    database: Database,
+    client_for: ClientFactory,
+    make_user: UserFactory,
+    sign_in: SignIn,
+    worker: Any,
+) -> tuple[AsyncClient, str, str, dict[str, Any]]:
+    await install_ruleset(database)
+    family, project_id = await plan_project(client_for, make_user, sign_in)
+    plan_id = (await request_plan(family, project_id)).json()["plan_id"]
+    await worker()
+    detail = (await family.get(f"/api/v1/projects/{project_id}/house-plans/{plan_id}")).json()
+    return family, project_id, plan_id, detail
+
+
+async def test_the_owner_edits_through_typed_operations_and_undoes_with_the_inverse(
+    database: Database,
+    client_for: ClientFactory,
+    make_user: UserFactory,
+    sign_in: SignIn,
+    worker: Any,
+) -> None:
+    family, project_id, plan_id, detail = await valid_plan(
+        database, client_for, make_user, sign_in, worker
+    )
+    assert detail["editing"] == {"can_edit": True, "revision_no": 0, "grid_mm": 50}
+    assert detail["geometry"]["geometry_version"] == "1.1.0"
+    original_hash = detail["document"]["meta"]["body_sha256"]
+
+    move = _moves(detail, valid=True)
+    response = await edit_plan(family, project_id, plan_id, 0, [move])
+    assert response.status_code == 200, response.text
+    edited = response.json()
+    assert edited["editing"]["revision_no"] == 1
+    assert edited["validation"]["valid"] is True
+    assert edited["document"]["meta"]["revision_no"] == 1
+    assert edited["document"]["meta"]["source"] == "EDITED"
+    assert edited["document"]["meta"]["body_sha256"] != original_hash
+    assert edited["inverse"] == [{**move, "delta_mm": -move["delta_mm"]}]
+    again = (await family.get(f"/api/v1/projects/{project_id}/house-plans/{plan_id}")).json()
+    assert again["document"] == edited["document"]
+    assert again["geometry"] == edited["geometry"]
+
+    undone = await edit_plan(family, project_id, plan_id, 1, edited["inverse"])
+    assert undone.status_code == 200, undone.text
+    assert undone.json()["document"]["meta"]["body_sha256"] == original_hash
+    assert undone.json()["editing"]["revision_no"] == 2
+
+    async with database.transaction() as session:
+        log = list(
+            await session.scalars(
+                select(HousePlanOp)
+                .where(HousePlanOp.plan_id == uuid.UUID(plan_id))
+                .order_by(HousePlanOp.revision_no)
+            )
+        )
+        versions = list(await session.scalars(select(HousePlanVersion)))
+    assert [(r.revision_no, r.reason, r.ops) for r in log] == [
+        (1, "USER", [move]),
+        (2, "USER", edited["inverse"]),
+    ]
+    assert log[1].content_sha256 == original_hash
+    # version 1, the generated plan, is untouched: edits are revisions, not versions
+    assert [v.version_no for v in versions] == [1]
+    assert versions[0].content_sha256 == original_hash
+
+
+async def test_invalid_rejected_and_stale_edits_change_nothing(
+    database: Database,
+    client_for: ClientFactory,
+    make_user: UserFactory,
+    sign_in: SignIn,
+    worker: Any,
+) -> None:
+    family, project_id, plan_id, detail = await valid_plan(
+        database, client_for, make_user, sign_in, worker
+    )
+    url = f"/api/v1/projects/{project_id}/house-plans/{plan_id}"
+
+    broken = await edit_plan(family, project_id, plan_id, 0, [_moves(detail, valid=False)])
+    assert broken.status_code == 422, broken.text
+    error = broken.json()["error"]
+    assert error["code"] == "PLAN_EDIT_INVALID"
+    report = error["details"]["report"]
+    assert report["valid"] is False
+    assert report["errors"]
+    assert all(e["entities"] and e["message"] for e in report["errors"])
+
+    rejected = await edit_plan(
+        family,
+        project_id,
+        plan_id,
+        0,
+        [_moves(detail, valid=True), {"op": "MOVE_WALL", "wall": "w_missing", "delta_mm": 100}],
+    )
+    assert rejected.status_code == 422
+    assert rejected.json()["error"]["code"] == "PLAN_OPERATION_REJECTED"
+    assert rejected.json()["error"]["details"] == {
+        "index": 1,
+        "op": "MOVE_WALL",
+        "code": "UNKNOWN_ENTITY",
+    }
+
+    stale = await edit_plan(family, project_id, plan_id, 3, [_moves(detail, valid=True)])
+    assert stale.status_code == 409
+    assert stale.json()["error"]["code"] == "REVISION_CONFLICT"
+    assert stale.json()["error"]["details"] == {"current_revision": 0}
+
+    # free geometry is not an operation: the schema refuses it
+    free = await edit_plan(
+        family, project_id, plan_id, 0, [{"op": "MOVE_WALL", "wall": "w1", "x": 100, "y": 0}]
+    )
+    assert free.status_code == 422
+    assert free.json()["error"]["code"] == "VALIDATION_ERROR"
+
+    after = (await family.get(url)).json()
+    assert after["document"] == detail["document"]
+    assert after["editing"]["revision_no"] == 0
+    async with database.transaction() as session:
+        assert (await session.scalar(select(func.count()).select_from(HousePlanOp))) == 0
+
+
+async def test_only_the_owner_edits_members_read_and_ops_staff_cannot_edit(
+    database: Database,
+    client_for: ClientFactory,
+    make_user: UserFactory,
+    sign_in: SignIn,
+    worker: Any,
+) -> None:
+    family, project_id, plan_id, detail = await valid_plan(
+        database, client_for, make_user, sign_in, worker
+    )
+    move = _moves(detail, valid=True)
+    member = await household(database, client_for, make_user, sign_in, project_id)
+    seen = (await member.get(f"/api/v1/projects/{project_id}/house-plans/{plan_id}")).json()
+    assert seen["editing"]["can_edit"] is False
+    forbidden = await edit_plan(member, project_id, plan_id, 0, [move])
+    assert forbidden.status_code == 403
+    stranger = await homeowner(client_for, make_user, sign_in)
+    assert (await edit_plan(stranger, project_id, plan_id, 0, [move])).status_code == 404
+
+    staff = await verified_staff(database, client_for, sign_in, StaffRole.OPS)
+    staff_view = (await staff.client.get(f"/api/v1/ops/house-plans/{plan_id}")).json()
+    assert staff_view["editing"]["can_edit"] is False
+    staff_edit = await staff.client.post(
+        f"/api/v1/projects/{project_id}/house-plans/{plan_id}/ops",
+        json={"expected_revision": 0, "ops": [move]},
+        headers=H,
+    )
+    assert staff_edit.status_code in (401, 403, 404)
+    unchanged = (await family.get(f"/api/v1/projects/{project_id}/house-plans/{plan_id}")).json()
+    assert unchanged["editing"]["revision_no"] == 0
+
+
+async def test_the_operation_log_is_append_only(
+    database: Database,
+    client_for: ClientFactory,
+    make_user: UserFactory,
+    sign_in: SignIn,
+    worker: Any,
+) -> None:
+    family, project_id, plan_id, detail = await valid_plan(
+        database, client_for, make_user, sign_in, worker
+    )
+    edited = await edit_plan(family, project_id, plan_id, 0, [_moves(detail, valid=True)])
+    assert edited.status_code == 200
+    for statement in (
+        "UPDATE house_plan_ops SET reason = 'REVERT'",
+        "DELETE FROM house_plan_ops",
+    ):
+        with pytest.raises(DBAPIError):
+            async with database.transaction() as session:
+                await session.execute(text(statement))
+
+
+async def test_with_the_feature_off_editing_does_not_exist(
+    app: FastAPI,
+    database: Database,
+    client_for: ClientFactory,
+    make_user: UserFactory,
+    sign_in: SignIn,
+    worker: Any,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    family, project_id, plan_id, detail = await valid_plan(
+        database, client_for, make_user, sign_in, worker
+    )
+    off = app.state.settings.model_copy(update={"houseplans_enabled": False})
+    monkeypatch.setattr(app.state, "settings", off)
+    response = await edit_plan(family, project_id, plan_id, 0, [_moves(detail, valid=True)])
+    assert response.status_code == 404

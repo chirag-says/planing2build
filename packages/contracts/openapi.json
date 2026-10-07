@@ -91,6 +91,97 @@
         "title": "AddCategoryIn",
         "type": "object"
       },
+      "AddFixture": {
+        "additionalProperties": false,
+        "properties": {
+          "fixture": {
+            "$ref": "#/components/schemas/Fixture"
+          },
+          "op": {
+            "const": "ADD_FIXTURE",
+            "default": "ADD_FIXTURE",
+            "title": "Op",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fixture"
+        ],
+        "title": "AddFixture",
+        "type": "object"
+      },
+      "AddOpening": {
+        "additionalProperties": false,
+        "properties": {
+          "op": {
+            "const": "ADD_OPENING",
+            "default": "ADD_OPENING",
+            "title": "Op",
+            "type": "string"
+          },
+          "opening": {
+            "$ref": "#/components/schemas/Opening"
+          }
+        },
+        "required": [
+          "opening"
+        ],
+        "title": "AddOpening",
+        "type": "object"
+      },
+      "AddRoom": {
+        "additionalProperties": false,
+        "properties": {
+          "host_room": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Host Room",
+            "type": "string"
+          },
+          "op": {
+            "const": "ADD_ROOM",
+            "default": "ADD_ROOM",
+            "title": "Op",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/RoomType"
+          },
+          "x0": {
+            "maximum": 10000000.0,
+            "minimum": -10000000.0,
+            "title": "X0",
+            "type": "integer"
+          },
+          "x1": {
+            "maximum": 10000000.0,
+            "minimum": -10000000.0,
+            "title": "X1",
+            "type": "integer"
+          },
+          "y0": {
+            "maximum": 10000000.0,
+            "minimum": -10000000.0,
+            "title": "Y0",
+            "type": "integer"
+          },
+          "y1": {
+            "maximum": 10000000.0,
+            "minimum": -10000000.0,
+            "title": "Y1",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "host_room",
+          "type",
+          "x0",
+          "y0",
+          "x1",
+          "y1"
+        ],
+        "title": "AddRoom",
+        "type": "object"
+      },
       "AdditionalItemIn": {
         "additionalProperties": false,
         "properties": {
@@ -3138,6 +3229,75 @@
         "title": "DeclineReason",
         "type": "string"
       },
+      "DeleteFixture": {
+        "additionalProperties": false,
+        "properties": {
+          "fixture": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Fixture",
+            "type": "string"
+          },
+          "op": {
+            "const": "DELETE_FIXTURE",
+            "default": "DELETE_FIXTURE",
+            "title": "Op",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fixture"
+        ],
+        "title": "DeleteFixture",
+        "type": "object"
+      },
+      "DeleteOpening": {
+        "additionalProperties": false,
+        "properties": {
+          "op": {
+            "const": "DELETE_OPENING",
+            "default": "DELETE_OPENING",
+            "title": "Op",
+            "type": "string"
+          },
+          "opening": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Opening",
+            "type": "string"
+          }
+        },
+        "required": [
+          "opening"
+        ],
+        "title": "DeleteOpening",
+        "type": "object"
+      },
+      "DeleteRoom": {
+        "additionalProperties": false,
+        "properties": {
+          "merge_into": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Merge Into",
+            "type": "string"
+          },
+          "op": {
+            "const": "DELETE_ROOM",
+            "default": "DELETE_ROOM",
+            "title": "Op",
+            "type": "string"
+          },
+          "room": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Room",
+            "type": "string"
+          }
+        },
+        "required": [
+          "room",
+          "merge_into"
+        ],
+        "title": "DeleteRoom",
+        "type": "object"
+      },
       "DesignBlock": {
         "description": "Why a project cannot generate now; computed by the server, never by the client.",
         "enum": [
@@ -4673,6 +4833,337 @@
         ],
         "title": "DueState",
         "type": "string"
+      },
+      "EditHousePlanOut": {
+        "additionalProperties": false,
+        "description": "The plan after the batch, and the batch that undoes it (send it as a new edit to undo).",
+        "properties": {
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "design_inputs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DesignInputs-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "document": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HousePlan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "editing": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EditingOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "failure_reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanFailureReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "geometry": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanGeometry"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "infeasibility": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InfeasibilityOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "intent": {
+            "$ref": "#/components/schemas/ArchitecturalIntent"
+          },
+          "inverse": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "ADD_FIXTURE": "#/components/schemas/AddFixture",
+                  "ADD_OPENING": "#/components/schemas/AddOpening",
+                  "ADD_ROOM": "#/components/schemas/AddRoom",
+                  "DELETE_FIXTURE": "#/components/schemas/DeleteFixture",
+                  "DELETE_OPENING": "#/components/schemas/DeleteOpening",
+                  "DELETE_ROOM": "#/components/schemas/DeleteRoom",
+                  "MOVE_FIXTURE": "#/components/schemas/MoveFixture",
+                  "MOVE_OPENING": "#/components/schemas/MoveOpening",
+                  "MOVE_WALL": "#/components/schemas/MoveWall",
+                  "RENAME_ROOM": "#/components/schemas/RenameRoom",
+                  "SET_OPENING": "#/components/schemas/SetOpening",
+                  "SET_ROOM_TYPE": "#/components/schemas/SetRoomType"
+                },
+                "propertyName": "op"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/MoveOpening"
+                },
+                {
+                  "$ref": "#/components/schemas/SetOpening"
+                },
+                {
+                  "$ref": "#/components/schemas/AddOpening"
+                },
+                {
+                  "$ref": "#/components/schemas/DeleteOpening"
+                },
+                {
+                  "$ref": "#/components/schemas/MoveFixture"
+                },
+                {
+                  "$ref": "#/components/schemas/AddFixture"
+                },
+                {
+                  "$ref": "#/components/schemas/DeleteFixture"
+                },
+                {
+                  "$ref": "#/components/schemas/RenameRoom"
+                },
+                {
+                  "$ref": "#/components/schemas/SetRoomType"
+                },
+                {
+                  "$ref": "#/components/schemas/MoveWall"
+                },
+                {
+                  "$ref": "#/components/schemas/AddRoom"
+                },
+                {
+                  "$ref": "#/components/schemas/DeleteRoom"
+                }
+              ]
+            },
+            "title": "Inverse",
+            "type": "array"
+          },
+          "is_authoritative": {
+            "const": false,
+            "default": false,
+            "title": "Is Authoritative",
+            "type": "boolean"
+          },
+          "plan_id": {
+            "title": "Plan Id",
+            "type": "string"
+          },
+          "quality": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QualityOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ruleset_is_synthetic": {
+            "title": "Ruleset Is Synthetic",
+            "type": "boolean"
+          },
+          "ruleset_status": {
+            "$ref": "#/components/schemas/RulesetStatus"
+          },
+          "ruleset_version": {
+            "title": "Ruleset Version",
+            "type": "integer"
+          },
+          "sequence": {
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "state": {
+            "$ref": "#/components/schemas/PlanGenerationState"
+          },
+          "validation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ValidationReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "validity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanValidity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "plan_id",
+          "sequence",
+          "state",
+          "validity",
+          "failure_reason",
+          "ruleset_version",
+          "ruleset_status",
+          "ruleset_is_synthetic",
+          "created_at",
+          "completed_at",
+          "intent",
+          "design_inputs",
+          "document",
+          "geometry",
+          "validation",
+          "infeasibility",
+          "inverse"
+        ],
+        "title": "EditHousePlanOut",
+        "type": "object"
+      },
+      "EditHousePlanRequest": {
+        "additionalProperties": false,
+        "description": "One batch of typed operations against the head revision the editor last saw. Applied\nwhole or not at all; never stored unless the validator passes.",
+        "properties": {
+          "expected_revision": {
+            "minimum": 0.0,
+            "title": "Expected Revision",
+            "type": "integer"
+          },
+          "ops": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "ADD_FIXTURE": "#/components/schemas/AddFixture",
+                  "ADD_OPENING": "#/components/schemas/AddOpening",
+                  "ADD_ROOM": "#/components/schemas/AddRoom",
+                  "DELETE_FIXTURE": "#/components/schemas/DeleteFixture",
+                  "DELETE_OPENING": "#/components/schemas/DeleteOpening",
+                  "DELETE_ROOM": "#/components/schemas/DeleteRoom",
+                  "MOVE_FIXTURE": "#/components/schemas/MoveFixture",
+                  "MOVE_OPENING": "#/components/schemas/MoveOpening",
+                  "MOVE_WALL": "#/components/schemas/MoveWall",
+                  "RENAME_ROOM": "#/components/schemas/RenameRoom",
+                  "SET_OPENING": "#/components/schemas/SetOpening",
+                  "SET_ROOM_TYPE": "#/components/schemas/SetRoomType"
+                },
+                "propertyName": "op"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/MoveOpening"
+                },
+                {
+                  "$ref": "#/components/schemas/SetOpening"
+                },
+                {
+                  "$ref": "#/components/schemas/AddOpening"
+                },
+                {
+                  "$ref": "#/components/schemas/DeleteOpening"
+                },
+                {
+                  "$ref": "#/components/schemas/MoveFixture"
+                },
+                {
+                  "$ref": "#/components/schemas/AddFixture"
+                },
+                {
+                  "$ref": "#/components/schemas/DeleteFixture"
+                },
+                {
+                  "$ref": "#/components/schemas/RenameRoom"
+                },
+                {
+                  "$ref": "#/components/schemas/SetRoomType"
+                },
+                {
+                  "$ref": "#/components/schemas/MoveWall"
+                },
+                {
+                  "$ref": "#/components/schemas/AddRoom"
+                },
+                {
+                  "$ref": "#/components/schemas/DeleteRoom"
+                }
+              ]
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Ops",
+            "type": "array"
+          }
+        },
+        "required": [
+          "expected_revision",
+          "ops"
+        ],
+        "title": "EditHousePlanRequest",
+        "type": "object"
+      },
+      "EditingOut": {
+        "additionalProperties": false,
+        "description": "What the editor needs besides the document (Checkpoint 3). `can_edit` is the API's answer\nfor this caller (owner of the project, plan with a document); the server checks it again on\nevery edit. `grid_mm` is the ruleset's planning grid, the editor's snap step.",
+        "properties": {
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "grid_mm": {
+            "title": "Grid Mm",
+            "type": "integer"
+          },
+          "revision_no": {
+            "title": "Revision No",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "can_edit",
+          "revision_no",
+          "grid_mm"
+        ],
+        "title": "EditingOut",
+        "type": "object"
       },
       "EligibilityCheckIn": {
         "additionalProperties": false,
@@ -6808,6 +7299,14 @@
             "title": "Level",
             "type": "integer"
           },
+          "open_areas": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/OpenArea"
+            },
+            "title": "Open Areas",
+            "type": "array"
+          },
           "openings": {
             "items": {
               "$ref": "#/components/schemas/OpeningGeom"
@@ -7226,6 +7725,16 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/HousePlan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "editing": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EditingOut"
               },
               {
                 "type": "null"
@@ -8632,6 +9141,100 @@
         "title": "MilestonesOut",
         "type": "object"
       },
+      "MoveFixture": {
+        "additionalProperties": false,
+        "properties": {
+          "fixture": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Fixture",
+            "type": "string"
+          },
+          "offset_mm": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Offset Mm",
+            "type": "integer"
+          },
+          "op": {
+            "const": "MOVE_FIXTURE",
+            "default": "MOVE_FIXTURE",
+            "title": "Op",
+            "type": "string"
+          },
+          "side": {
+            "$ref": "#/components/schemas/WallSide"
+          },
+          "wall": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Wall",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fixture",
+          "wall",
+          "offset_mm",
+          "side"
+        ],
+        "title": "MoveFixture",
+        "type": "object"
+      },
+      "MoveOpening": {
+        "additionalProperties": false,
+        "properties": {
+          "offset_mm": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Offset Mm",
+            "type": "integer"
+          },
+          "op": {
+            "const": "MOVE_OPENING",
+            "default": "MOVE_OPENING",
+            "title": "Op",
+            "type": "string"
+          },
+          "opening": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Opening",
+            "type": "string"
+          }
+        },
+        "required": [
+          "opening",
+          "offset_mm"
+        ],
+        "title": "MoveOpening",
+        "type": "object"
+      },
+      "MoveWall": {
+        "additionalProperties": false,
+        "properties": {
+          "delta_mm": {
+            "maximum": 10000000.0,
+            "minimum": -10000000.0,
+            "title": "Delta Mm",
+            "type": "integer"
+          },
+          "op": {
+            "const": "MOVE_WALL",
+            "default": "MOVE_WALL",
+            "title": "Op",
+            "type": "string"
+          },
+          "wall": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Wall",
+            "type": "string"
+          }
+        },
+        "required": [
+          "wall",
+          "delta_mm"
+        ],
+        "title": "MoveWall",
+        "type": "object"
+      },
       "NcState": {
         "description": "EX-11: closed only by an approved re-inspection.",
         "enum": [
@@ -8885,6 +9488,52 @@
           "is_test"
         ],
         "title": "OfferingVersionIn",
+        "type": "object"
+      },
+      "OpenArea": {
+        "additionalProperties": false,
+        "description": "Unbuilt space inside the buildable area (geometry 1.1.0, Checkpoint 3): a presentation\nlabel for the 2D view, never a room and never stored. `cells` are rectangles that together\nmake the area; `kind` says where it lies (see `open_areas`).",
+        "properties": {
+          "area_mm2": {
+            "title": "Area Mm2",
+            "type": "integer"
+          },
+          "cells": {
+            "items": {
+              "items": {
+                "$ref": "#/components/schemas/GPoint"
+              },
+              "type": "array"
+            },
+            "title": "Cells",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "FORECOURT",
+              "SIDE_YARD",
+              "REAR_YARD",
+              "COURT"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label_at": {
+            "$ref": "#/components/schemas/GPoint"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "cells",
+          "area_mm2",
+          "label_at"
+        ],
+        "title": "OpenArea",
         "type": "object"
       },
       "Opening": {
@@ -9761,6 +10410,16 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/HousePlan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "editing": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EditingOut"
               },
               {
                 "type": "null"
@@ -12723,8 +13382,8 @@
             "type": "array"
           },
           "geometry_version": {
-            "const": "1.0.0",
-            "default": "1.0.0",
+            "const": "1.1.0",
+            "default": "1.1.0",
             "title": "Geometry Version",
             "type": "string"
           },
@@ -16488,6 +17147,34 @@
         "title": "RelationKind",
         "type": "string"
       },
+      "RenameRoom": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "op": {
+            "const": "RENAME_ROOM",
+            "default": "RENAME_ROOM",
+            "title": "Op",
+            "type": "string"
+          },
+          "room": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Room",
+            "type": "string"
+          }
+        },
+        "required": [
+          "room",
+          "name"
+        ],
+        "title": "RenameRoom",
+        "type": "object"
+      },
       "RenewIn": {
         "additionalProperties": false,
         "properties": {
@@ -18087,6 +18774,83 @@
           "quote_reviews"
         ],
         "title": "ServicesOut",
+        "type": "object"
+      },
+      "SetOpening": {
+        "additionalProperties": false,
+        "properties": {
+          "door": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DoorSpec"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "height_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Height Mm",
+            "type": "integer"
+          },
+          "op": {
+            "const": "SET_OPENING",
+            "default": "SET_OPENING",
+            "title": "Op",
+            "type": "string"
+          },
+          "opening": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Opening",
+            "type": "string"
+          },
+          "sill_mm": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Sill Mm",
+            "type": "integer"
+          },
+          "width_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Width Mm",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "opening",
+          "width_mm",
+          "height_mm",
+          "sill_mm"
+        ],
+        "title": "SetOpening",
+        "type": "object"
+      },
+      "SetRoomType": {
+        "additionalProperties": false,
+        "properties": {
+          "op": {
+            "const": "SET_ROOM_TYPE",
+            "default": "SET_ROOM_TYPE",
+            "title": "Op",
+            "type": "string"
+          },
+          "room": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Room",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/RoomType"
+          }
+        },
+        "required": [
+          "room",
+          "type"
+        ],
+        "title": "SetRoomType",
         "type": "object"
       },
       "Setback": {
@@ -41942,6 +42706,80 @@
           }
         },
         "summary": "Get House Plan",
+        "tags": [
+          "houseplans"
+        ]
+      }
+    },
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}/ops": {
+      "post": {
+        "description": "Edit the plan with one batch of typed operations (owner only, AD-12). The server applies\nthe batch, validates the result and stores it as the next revision only when the validator\nreports no errors. No Idempotency-Key: `expected_revision` already makes a replay fail with\n409 REVISION_CONFLICT instead of applying twice. 403 for a member who is not the owner; 409\nSTATE_CONFLICT or REVISION_CONFLICT; 422 PLAN_OPERATION_REJECTED or PLAN_EDIT_INVALID (with\nthe validation report).",
+        "operationId": "post_house_plan_ops_api_v1_projects__project_id__house_plans__plan_id__ops_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Plan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditHousePlanRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditHousePlanOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post House Plan Ops",
         "tags": [
           "houseplans"
         ]

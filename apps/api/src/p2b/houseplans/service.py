@@ -34,7 +34,10 @@ from p2b.core.errors import (
     Forbidden,
     GenerationInProgress,
     NotFound,
+    PlanEditInvalid,
+    PlanOperationRejected,
     PlanUnsupported,
+    RevisionConflict,
     StateConflict,
     ValidationFailed,
 )
@@ -46,6 +49,7 @@ from p2b.core.vocabulary import (
     MembershipRole,
     PlanFailureReason,
     PlanGenerationState,
+    PlanOpReason,
     PlanValidity,
     ProjectStatus,
     SolverKind,
@@ -67,8 +71,10 @@ from p2b.houseplans.engine import (
     normalise,
     sha256_of,
 )
+from p2b.houseplans.engine.edit import BatchRejected, edit
 from p2b.houseplans.engine.model import dump
-from p2b.houseplans.models import HousePlanRecord, HousePlanVersion
+from p2b.houseplans.engine.ops import PlanOp
+from p2b.houseplans.models import HousePlanOp, HousePlanRecord, HousePlanVersion
 from p2b.houseplans.rulesets import LoadedRuleset, load_ruleset, load_ruleset_by_id
 from p2b.identity.interface import Actor
 from p2b.projects.interface import design_basis
@@ -450,14 +456,19 @@ async def run_generation(
 class PlanView:
     row: HousePlanRecord
     ruleset: LoadedRuleset
+    # the caller owns the project and the plan has a document to edit (AD-12). The API decides
+    # it; the web app only shows or hides the editing tools accordingly.
+    can_edit: bool = False
 
 
 async def _member(
     session: AsyncSession, settings: Settings, actor: Actor, project_id: uuid.UUID
-) -> None:
+) -> MembershipRole:
     require_enabled(settings)
-    if await design_basis(session, user_id=actor.user_id, project_id=project_id) is None:
+    basis = await design_basis(session, user_id=actor.user_id, project_id=project_id)
+    if basis is None:
         raise NotFound
+    return basis.role
 
 
 async def _views(session: AsyncSession, rows: list[HousePlanRecord]) -> list[PlanView]:
@@ -495,11 +506,13 @@ async def get_plan(
     project_id: uuid.UUID,
     plan_id: uuid.UUID,
 ) -> PlanView:
-    await _member(session, settings, actor, project_id)
+    role = await _member(session, settings, actor, project_id)
     row = await session.get(HousePlanRecord, plan_id)
     if row is None or row.project_id != project_id:
         raise NotFound
-    return (await _views(session, [row]))[0]
+    view = (await _views(session, [row]))[0]
+    editable = role == MembershipRole.OWNER and row.head_document is not None
+    return PlanView(view.row, view.ruleset, can_edit=editable)
 
 
 async def get_any(session: AsyncSession, settings: Settings, plan_id: uuid.UUID) -> PlanView:
@@ -512,3 +525,82 @@ async def get_any(session: AsyncSession, settings: Settings, plan_id: uuid.UUID)
 
 def document_of(view: PlanView) -> HousePlan | None:
     return HousePlan.model_validate(view.row.head_document) if view.row.head_document else None
+
+
+# ---------- edits (Checkpoint 3) ----------
+
+
+async def apply_operations(
+    session: AsyncSession,
+    settings: Settings,
+    actor: Actor,
+    project_id: uuid.UUID,
+    plan_id: uuid.UUID,
+    *,
+    expected_revision: int,
+    ops: list[PlanOp],
+) -> tuple[PlanView, tuple[PlanOp, ...]]:
+    """Applies one operation batch to the plan's head as the owner (AD-12) and returns the new
+    view with the batch that undoes it.
+
+    The batch applies whole or not at all, then the soft terms are re-measured and the
+    independent validator judges the result with the plan's own intent and ruleset. Only a
+    result with no errors is stored (IC 18.7): the head is overwritten under the row lock and
+    `expected_revision`, and the batch is appended to `house_plan_ops`. 404 for a non-member or
+    an unknown plan, 403 for a member who is not the owner, 409 STATE_CONFLICT for a plan with no
+    document, 409 REVISION_CONFLICT for a stale revision, 422 PLAN_OPERATION_REJECTED for an
+    operation that cannot apply, 422 PLAN_EDIT_INVALID with the report for a result the
+    validator rejects."""
+    role = await _member(session, settings, actor, project_id)
+    if role != MembershipRole.OWNER:
+        raise Forbidden
+    row = await session.get(HousePlanRecord, plan_id, with_for_update=True)
+    if row is None or row.project_id != project_id:
+        raise NotFound
+    if row.state != S.VALID.value or row.head_document is None:
+        raise StateConflict(details={"current_state": row.state})
+    if row.head_revision_no != expected_revision:
+        raise RevisionConflict(details={"current_revision": row.head_revision_no})
+    ruleset = await load_ruleset_by_id(session, row.ruleset_id)
+    try:
+        result = edit(
+            HousePlan.model_validate(row.head_document),
+            ops,
+            ruleset.content,
+            intent=ArchitecturalIntent.model_validate(row.intent),
+            ruleset_version=ruleset.version,
+            ruleset_sha256=ruleset.sha256,
+        )
+    except BatchRejected as rejected:
+        raise PlanOperationRejected(
+            details={
+                "index": rejected.index,
+                "op": rejected.rejected.op.value,
+                "code": rejected.rejected.code.value,
+            }
+        ) from None
+    if not result.report.valid:
+        raise PlanEditInvalid(details={"report": dump(result.report)})
+    row.head_document, row.head_report = dump(result.plan), dump(result.report)
+    row.head_revision_no += 1
+    row.version += 1
+    session.add(
+        HousePlanOp(
+            id=new_id(),
+            plan_id=row.id,
+            revision_no=row.head_revision_no,
+            ops=[dump(o) for o in ops],
+            inverse=[dump(o) for o in result.inverse],
+            reason=PlanOpReason.USER.value,
+            content_sha256=result.plan.meta.body_sha256 or "",
+            actor_id=actor.user_id,
+        )
+    )
+    await session.flush()
+    log.info(
+        "houseplan.edited",
+        plan_id=str(row.id),
+        revision=row.head_revision_no,
+        ops=[o.op.value for o in ops],
+    )
+    return PlanView(row, ruleset, can_edit=True), result.inverse

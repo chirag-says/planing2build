@@ -5333,6 +5333,31 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}/ops": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post House Plan Ops
+         * @description Edit the plan with one batch of typed operations (owner only, AD-12). The server applies
+         *     the batch, validates the result and stores it as the next revision only when the validator
+         *     reports no errors. No Idempotency-Key: `expected_revision` already makes a replay fail with
+         *     409 REVISION_CONFLICT instead of applying twice. 403 for a member who is not the owner; 409
+         *     STATE_CONFLICT or REVISION_CONFLICT; 422 PLAN_OPERATION_REJECTED or PLAN_EDIT_INVALID (with
+         *     the validation report).
+         */
+        post: operations["post_house_plan_ops_api_v1_projects__project_id__house_plans__plan_id__ops_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{project_id}/inspections/{inspection_id}/reports/{version}/url": {
         parameters: {
             query?: never;
@@ -6080,6 +6105,43 @@ export interface components {
             category: string;
             /** Subtypes */
             subtypes?: string[];
+        };
+        /** AddFixture */
+        AddFixture: {
+            fixture: components["schemas"]["Fixture"];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "ADD_FIXTURE";
+        };
+        /** AddOpening */
+        AddOpening: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "ADD_OPENING";
+            opening: components["schemas"]["Opening"];
+        };
+        /** AddRoom */
+        AddRoom: {
+            /** Host Room */
+            host_room: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "ADD_ROOM";
+            type: components["schemas"]["RoomType"];
+            /** X0 */
+            x0: number;
+            /** X1 */
+            x1: number;
+            /** Y0 */
+            y0: number;
+            /** Y1 */
+            y1: number;
         };
         /** AdditionalItemIn */
         AdditionalItemIn: {
@@ -7164,6 +7226,38 @@ export interface components {
          * @enum {string}
          */
         DeclineReason: "UNAVAILABLE" | "OUTSIDE_SERVICE_AREA" | "SCOPE_MISMATCH" | "SCHEDULE_MISMATCH" | "COMPLIANCE" | "ALREADY_ENGAGED" | "OTHER";
+        /** DeleteFixture */
+        DeleteFixture: {
+            /** Fixture */
+            fixture: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "DELETE_FIXTURE";
+        };
+        /** DeleteOpening */
+        DeleteOpening: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "DELETE_OPENING";
+            /** Opening */
+            opening: string;
+        };
+        /** DeleteRoom */
+        DeleteRoom: {
+            /** Merge Into */
+            merge_into: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "DELETE_ROOM";
+            /** Room */
+            room: string;
+        };
         /**
          * DesignBlock
          * @description Why a project cannot generate now; computed by the server, never by the client.
@@ -7678,6 +7772,72 @@ export interface components {
          * @enum {string}
          */
         DueState: "DUE" | "PAID" | "CANCELLED";
+        /**
+         * EditHousePlanOut
+         * @description The plan after the batch, and the batch that undoes it (send it as a new edit to undo).
+         */
+        EditHousePlanOut: {
+            /** Completed At */
+            completed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            design_inputs: components["schemas"]["DesignInputs-Output"] | null;
+            document: components["schemas"]["HousePlan"] | null;
+            editing?: components["schemas"]["EditingOut"] | null;
+            failure_reason: components["schemas"]["PlanFailureReason"] | null;
+            geometry: components["schemas"]["PlanGeometry"] | null;
+            infeasibility: components["schemas"]["InfeasibilityOut"] | null;
+            intent: components["schemas"]["ArchitecturalIntent"];
+            /** Inverse */
+            inverse: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["AddRoom"] | components["schemas"]["DeleteRoom"])[];
+            /**
+             * Is Authoritative
+             * @default false
+             * @constant
+             */
+            is_authoritative: false;
+            /** Plan Id */
+            plan_id: string;
+            quality?: components["schemas"]["QualityOut"] | null;
+            /** Ruleset Is Synthetic */
+            ruleset_is_synthetic: boolean;
+            ruleset_status: components["schemas"]["RulesetStatus"];
+            /** Ruleset Version */
+            ruleset_version: number;
+            /** Sequence */
+            sequence: number;
+            state: components["schemas"]["PlanGenerationState"];
+            validation: components["schemas"]["ValidationReport"] | null;
+            validity: components["schemas"]["PlanValidity"] | null;
+        };
+        /**
+         * EditHousePlanRequest
+         * @description One batch of typed operations against the head revision the editor last saw. Applied
+         *     whole or not at all; never stored unless the validator passes.
+         */
+        EditHousePlanRequest: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Ops */
+            ops: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["AddRoom"] | components["schemas"]["DeleteRoom"])[];
+        };
+        /**
+         * EditingOut
+         * @description What the editor needs besides the document (Checkpoint 3). `can_edit` is the API's answer
+         *     for this caller (owner of the project, plan with a document); the server checks it again on
+         *     every edit. `grid_mm` is the ruleset's planning grid, the editor's snap step.
+         */
+        EditingOut: {
+            /** Can Edit */
+            can_edit: boolean;
+            /** Grid Mm */
+            grid_mm: number;
+            /** Revision No */
+            revision_no: number;
+        };
         /** EligibilityCheckIn */
         EligibilityCheckIn: {
             /** Item Id */
@@ -8435,6 +8595,11 @@ export interface components {
             fixtures: components["schemas"]["FixtureGeom"][];
             /** Level */
             level: number;
+            /**
+             * Open Areas
+             * @default []
+             */
+            open_areas: components["schemas"]["OpenArea"][];
             /** Openings */
             openings: components["schemas"]["OpeningGeom"][];
             /** Rooms */
@@ -8590,6 +8755,7 @@ export interface components {
             created_at: string;
             design_inputs: components["schemas"]["DesignInputs-Output"] | null;
             document: components["schemas"]["HousePlan"] | null;
+            editing?: components["schemas"]["EditingOut"] | null;
             failure_reason: components["schemas"]["PlanFailureReason"] | null;
             geometry: components["schemas"]["PlanGeometry"] | null;
             infeasibility: components["schemas"]["InfeasibilityOut"] | null;
@@ -9074,6 +9240,45 @@ export interface components {
             /** Milestones */
             milestones: components["schemas"]["MilestoneOut"][];
         };
+        /** MoveFixture */
+        MoveFixture: {
+            /** Fixture */
+            fixture: string;
+            /** Offset Mm */
+            offset_mm: number;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "MOVE_FIXTURE";
+            side: components["schemas"]["WallSide"];
+            /** Wall */
+            wall: string;
+        };
+        /** MoveOpening */
+        MoveOpening: {
+            /** Offset Mm */
+            offset_mm: number;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "MOVE_OPENING";
+            /** Opening */
+            opening: string;
+        };
+        /** MoveWall */
+        MoveWall: {
+            /** Delta Mm */
+            delta_mm: number;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "MOVE_WALL";
+            /** Wall */
+            wall: string;
+        };
         /**
          * NcState
          * @description EX-11: closed only by an approved re-inspection.
@@ -9180,6 +9385,26 @@ export interface components {
             pricing_rule_version_id: string;
             /** Terms Version */
             terms_version: string;
+        };
+        /**
+         * OpenArea
+         * @description Unbuilt space inside the buildable area (geometry 1.1.0, Checkpoint 3): a presentation
+         *     label for the 2D view, never a room and never stored. `cells` are rectangles that together
+         *     make the area; `kind` says where it lies (see `open_areas`).
+         */
+        OpenArea: {
+            /** Area Mm2 */
+            area_mm2: number;
+            /** Cells */
+            cells: components["schemas"]["GPoint"][][];
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "FORECOURT" | "SIDE_YARD" | "REAR_YARD" | "COURT";
+            label_at: components["schemas"]["GPoint"];
         };
         /** Opening */
         Opening: {
@@ -9466,6 +9691,7 @@ export interface components {
             created_at: string;
             design_inputs: components["schemas"]["DesignInputs-Output"] | null;
             document: components["schemas"]["HousePlan"] | null;
+            editing?: components["schemas"]["EditingOut"] | null;
             /** Failure Detail */
             failure_detail: string | null;
             failure_reason: components["schemas"]["PlanFailureReason"] | null;
@@ -10418,10 +10644,10 @@ export interface components {
             floors: components["schemas"]["FloorGeometry"][];
             /**
              * Geometry Version
-             * @default 1.0.0
+             * @default 1.1.0
              * @constant
              */
-            geometry_version: "1.0.0";
+            geometry_version: "1.1.0";
             /** Plot */
             plot: components["schemas"]["GPoint"][];
             /**
@@ -11675,6 +11901,18 @@ export interface components {
          * @enum {string}
          */
         RelationKind: "ADJACENT_WITH_DOOR" | "ADJACENT_OPEN";
+        /** RenameRoom */
+        RenameRoom: {
+            /** Name */
+            name: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "RENAME_ROOM";
+            /** Room */
+            room: string;
+        };
         /** RenewIn */
         RenewIn: {
             /**
@@ -12201,6 +12439,34 @@ export interface components {
             requirement_files: components["schemas"]["FileOut"][];
             /** Response Hours */
             response_hours: number;
+        };
+        /** SetOpening */
+        SetOpening: {
+            door?: components["schemas"]["DoorSpec"] | null;
+            /** Height Mm */
+            height_mm: number;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "SET_OPENING";
+            /** Opening */
+            opening: string;
+            /** Sill Mm */
+            sill_mm: number;
+            /** Width Mm */
+            width_mm: number;
+        };
+        /** SetRoomType */
+        SetRoomType: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "SET_ROOM_TYPE";
+            /** Room */
+            room: string;
+            type: components["schemas"]["RoomType"];
         };
         /** Setback */
         Setback: {
@@ -26617,6 +26883,51 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HousePlanDetailOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_house_plan_ops_api_v1_projects__project_id__house_plans__plan_id__ops_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EditHousePlanRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EditHousePlanOut"];
                 };
             };
             /** @description Client error */

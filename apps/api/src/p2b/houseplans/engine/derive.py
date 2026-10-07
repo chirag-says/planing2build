@@ -332,6 +332,21 @@ class DimensionChain(_G):
     value_mm: int
 
 
+OpenAreaKind = Literal["FORECOURT", "SIDE_YARD", "REAR_YARD", "COURT"]
+
+
+class OpenArea(_G):
+    """Unbuilt space inside the buildable area (geometry 1.1.0, Checkpoint 3): a presentation
+    label for the 2D view, never a room and never stored. `cells` are rectangles that together
+    make the area; `kind` says where it lies (see `open_areas`)."""
+
+    id: str
+    kind: OpenAreaKind
+    cells: list[Polygon]
+    area_mm2: int
+    label_at: GPoint
+
+
 class FloorGeometry(_G):
     level: int
     rooms: list[RoomGeom]
@@ -339,6 +354,7 @@ class FloorGeometry(_G):
     openings: list[OpeningGeom]
     fixtures: list[FixtureGeom]
     dimensions: list[DimensionChain]
+    open_areas: list[OpenArea] = []
 
 
 class BBox(_G):
@@ -349,7 +365,9 @@ class BBox(_G):
 
 
 class PlanGeometry(_G):
-    geometry_version: Literal["1.0.0"] = "1.0.0"
+    # 1.1.0 (Checkpoint 3): floors carry `open_areas`. Derived on read, never stored, so the
+    # version names the shape the web app receives, nothing else.
+    geometry_version: Literal["1.1.0"] = "1.1.0"
     units: Literal["mm"] = "mm"
     bounds: BBox
     plot: Polygon
@@ -450,7 +468,15 @@ def plan_geometry(plan: HousePlan, ruleset: RulesetContent) -> PlanGeometry:
     all_points: list[Pt] = [(v.x, v.y) for v in plan.site.plot.vertices]
     for index, floor in enumerate(plan.floors):
         analysis = with_clearances(analyse(plan, index), ruleset)
-        floors.append(_floor_geometry(floor, analysis))
+        geometry = _floor_geometry(floor, analysis)
+        if envelope is not None and (
+            region := envelope.inset(*(half(ruleset.walls.exterior_mm),) * 4)
+        ):
+            rooms = [
+                [analysis.nodes[n] for n in r.boundary if n in analysis.nodes] for r in floor.rooms
+            ]
+            geometry = geometry.model_copy(update={"open_areas": open_areas(region, rooms)})
+        floors.append(geometry)
         all_points.extend(analysis.nodes.values())
     xs, ys = [p[0] for p in all_points], [p[1] for p in all_points]
     dims: list[DimensionChain] = []
@@ -579,3 +605,114 @@ def _floor_geometry(floor: Floor, analysis: Analysis) -> FloorGeometry:
         fixtures=fixtures,
         dimensions=dims,
     )
+
+
+# ---------- open areas (geometry 1.1.0) ----------
+
+
+def _inside(point2: Pt, polygon: list[Pt]) -> bool:
+    """Even-odd test of a doubled-coordinate point against a polygon (no point lies on an edge:
+    the points tested are cell centres between distinct coordinates)."""
+    x, y = point2
+    inside = False
+    for (x0, y0), (x1, y1) in zip(polygon, polygon[1:] + polygon[:1], strict=True):
+        a0, b0, a1, b1 = 2 * x0, 2 * y0, 2 * x1, 2 * y1
+        if (b0 > y) == (b1 > y):
+            continue
+        # does the edge cross the ray from the point towards +x? exact, in integers:
+        # x < a0 + (y - b0)(a1 - a0)/(b1 - b0)
+        lhs, rhs = (x - a0) * (b1 - b0), (y - b0) * (a1 - a0)
+        if (lhs < rhs) if b1 > b0 else (lhs > rhs):
+            inside = not inside
+    return inside
+
+
+def _cells_of(group: list[tuple[int, int]], xs: list[int], ys: list[int]) -> list[Rect]:
+    """A group of grid cells as few rectangles: runs along x in each row, then rows with the same
+    run stacked."""
+    rows: dict[int, list[int]] = {}
+    for i, j in group:
+        rows.setdefault(j, []).append(i)
+    strips: list[tuple[int, int, int]] = []  # (i0, i1, j): cells i0..i1 of row j
+    for j in sorted(rows):
+        run = sorted(rows[j])
+        start = prev = run[0]
+        for i in run[1:]:
+            if i != prev + 1:
+                strips.append((start, prev, j))
+                start = i
+            prev = i
+        strips.append((start, prev, j))
+    rects: list[list[int]] = []  # [i0, i1, j0, j1]
+    for i0, i1, j in strips:
+        for r in rects:
+            if r[0] == i0 and r[1] == i1 and r[3] == j - 1:
+                r[3] = j
+                break
+        else:
+            rects.append([i0, i1, j, j])
+    return [Rect(xs[i0], ys[j0], xs[i1 + 1], ys[j1 + 1]) for i0, i1, j0, j1 in rects]
+
+
+def open_areas(region: Rect, rooms: list[list[Pt]]) -> list[OpenArea]:
+    """The parts of the wall-centreline region no room covers, as connected areas.
+
+    The region is cut on every room corner coordinate into a grid; a cell is open when its centre
+    lies in no room. Open cells sharing an edge form one area. Each area is classified by where it
+    lies, for its label only: SIDE_YARD when it runs from the road edge to the back, FORECOURT
+    when it touches the road edge, REAR_YARD when it touches the back, SIDE_YARD when it touches
+    only a side, COURT when it touches no side of the region.
+    Deterministic: the order follows the grid (rows from the road, then left to right)."""
+    xs = sorted(
+        {region.x0, region.x1, *(x for r in rooms for x, _ in r if region.x0 < x < region.x1)}
+    )
+    ys = sorted(
+        {region.y0, region.y1, *(y for r in rooms for _, y in r if region.y0 < y < region.y1)}
+    )
+    open_cells = {
+        (i, j)
+        for j in range(len(ys) - 1)
+        for i in range(len(xs) - 1)
+        if not any(
+            len(r) >= 3 and _inside((xs[i] + xs[i + 1], ys[j] + ys[j + 1]), r) for r in rooms
+        )
+    }
+    out: list[OpenArea] = []
+    seen: set[tuple[int, int]] = set()
+    for start in sorted(open_cells, key=lambda c: (c[1], c[0])):
+        if start in seen:
+            continue
+        group, stack = [], [start]
+        seen.add(start)
+        while stack:
+            i, j = stack.pop()
+            group.append((i, j))
+            for nb in ((i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)):
+                if nb in open_cells and nb not in seen:
+                    seen.add(nb)
+                    stack.append(nb)
+        cells = _cells_of(group, xs, ys)
+        x0, y0 = min(c.x0 for c in cells), min(c.y0 for c in cells)
+        x1, y1 = max(c.x1 for c in cells), max(c.y1 for c in cells)
+        front, back = y0 == region.y0, y1 == region.y1
+        side = x0 == region.x0 or x1 == region.x1
+        kind: OpenAreaKind
+        if front and back:
+            kind = "SIDE_YARD"  # a strip from the road to the back
+        elif front:
+            kind = "FORECOURT"
+        elif back:
+            kind = "REAR_YARD"
+        else:
+            kind = "SIDE_YARD" if side else "COURT"
+        largest = max(cells, key=lambda c: (c.area, -c.y0, -c.x0))
+        out.append(
+            OpenArea(
+                id=f"open_{len(out) + 1}",
+                kind=kind,
+                cells=[p for c in cells if (p := _poly(c)) is not None],
+                area_mm2=sum(c.area for c in cells),
+                label_at=_gp((largest.centre2[0] // 2, largest.centre2[1] // 2)),
+            )
+        )
+    return out

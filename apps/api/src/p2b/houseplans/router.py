@@ -30,6 +30,9 @@ from p2b.houseplans.engine import (
 )
 from p2b.houseplans.engine.validate import ValidationReport
 from p2b.houseplans.schemas import (
+    EditHousePlanOut,
+    EditHousePlanRequest,
+    EditingOut,
     GenerateHousePlanRequest,
     HousePlanDetailOut,
     HousePlanListOut,
@@ -41,7 +44,14 @@ from p2b.houseplans.schemas import (
     QualityTermOut,
     RoomQualityOut,
 )
-from p2b.houseplans.service import PlanView, document_of, get_plan, list_plans, request_generation
+from p2b.houseplans.service import (
+    PlanView,
+    apply_operations,
+    document_of,
+    get_plan,
+    list_plans,
+    request_generation,
+)
 from p2b.identity.interface import Actor, require_actor
 
 router = APIRouter(tags=["houseplans"])
@@ -49,6 +59,8 @@ router = APIRouter(tags=["houseplans"])
 HOMEOWNER = require_actor(Audience.IHB)
 # Tier T2 writes, as for concept images; there is no generation quota in Checkpoint 1 (CP1-07).
 REQUEST_LIMIT = Limit("houseplan_request_session", 20, 600)
+# Edits are small and frequent (a nudge is one batch): about one a second on average.
+EDIT_LIMIT = Limit("houseplan_edit_session", 600, 600)
 
 
 def summary(view: PlanView) -> HousePlanSummaryOut:
@@ -101,6 +113,13 @@ def detail_fields(view: PlanView) -> dict[str, object]:
         "validation": ValidationReport.model_validate(row.head_report) if row.head_report else None,
         "infeasibility": infeasibility,
         "quality": quality_of(document, view.ruleset.content) if document else None,
+        "editing": EditingOut(
+            can_edit=view.can_edit,
+            revision_no=row.head_revision_no,
+            grid_mm=view.ruleset.content.grid_mm,
+        )
+        if document
+        else None,
     }
 
 
@@ -197,3 +216,35 @@ async def get_house_plan(
 ) -> HousePlanDetailOut:
     view = await get_plan(db, request.app.state.settings, actor, project_id, plan_id)
     return HousePlanDetailOut(**detail_fields(view))
+
+
+@router.post(
+    "/projects/{project_id}/house-plans/{plan_id}/ops",
+    response_model=EditHousePlanOut,
+)
+async def post_house_plan_ops(
+    project_id: uuid.UUID,
+    plan_id: uuid.UUID,
+    body: EditHousePlanRequest,
+    request: Request,
+    db: DbSession,
+    actor: Annotated[Actor, HOMEOWNER],
+) -> EditHousePlanOut:
+    """Edit the plan with one batch of typed operations (owner only, AD-12). The server applies
+    the batch, validates the result and stores it as the next revision only when the validator
+    reports no errors. No Idempotency-Key: `expected_revision` already makes a replay fail with
+    409 REVISION_CONFLICT instead of applying twice. 403 for a member who is not the owner; 409
+    STATE_CONFLICT or REVISION_CONFLICT; 422 PLAN_OPERATION_REJECTED or PLAN_EDIT_INVALID (with
+    the validation report)."""
+    database: Database = request.app.state.database
+    await enforce(database, EDIT_LIMIT, str(actor.session_id))
+    view, inverse = await apply_operations(
+        db,
+        request.app.state.settings,
+        actor,
+        project_id,
+        plan_id,
+        expected_revision=body.expected_revision,
+        ops=body.ops,
+    )
+    return EditHousePlanOut(**detail_fields(view), inverse=list(inverse))
