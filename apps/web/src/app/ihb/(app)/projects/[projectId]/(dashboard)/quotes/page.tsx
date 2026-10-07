@@ -66,13 +66,20 @@ export default async function QuotesPage({
           engaged={Boolean(data.engaged_contractor)} />
       )}
       {data.rfqs.map((rfq) => (
-        <article key={rfq.id} className="flex flex-col gap-3 rounded-md border border-border p-3" data-rfq-state={rfq.state}>
-          <h3 className="font-medium">{t("state", { state: rfq.state })}</h3>
-          <p className="text-sm">{t("deadline", { when: rfq.quotes_due_at ?? t("notSet") })}</p>
-          <h4 className="text-sm font-medium">{t("contractors")}</h4>
-          <ul className="flex flex-col gap-1 text-sm">
+        // A request for quotes as the website's site board: an ink bar with its state and deadline,
+        // then the invited contractors on ruled rows.
+        <article key={rfq.id} className="flex flex-col gap-4 overflow-hidden rounded-lg bg-card pb-4 ring-1 ring-foreground/15" data-rfq-state={rfq.state}>
+          <div className="flex flex-wrap items-center justify-between gap-2 bg-foreground px-4 py-3 text-background">
+            <h3 className="flex items-center gap-2.5 font-mono text-xs tracking-widest uppercase">
+              <span aria-hidden="true" className="size-2 bg-brand" />
+              {t("state", { state: rfq.state })}
+            </h3>
+            <p className="font-mono text-xs tracking-wider uppercase opacity-80">{t("deadline", { when: rfq.quotes_due_at ?? t("notSet") })}</p>
+          </div>
+          <h4 className="px-4 font-heading text-lg leading-none">{t("contractors")}</h4>
+          <ul className="flex flex-col px-4 text-sm">
             {rfq.invitations.map((i) => (
-              <li key={i.id}>
+              <li key={i.id} className="border-b border-foreground/10 py-2 last:border-b-0">
                 {i.contractor_name ?? i.firm_name} · {i.state} ·{" "}
                 {i.latest_quote
                   ? t("quoteStatus", { version: i.latest_quote.version_no, state: i.latest_quote.state, when: i.latest_quote.submitted_at })
@@ -80,36 +87,43 @@ export default async function QuotesPage({
               </li>
             ))}
           </ul>
-          {!rfq.comparison && <p className="text-sm text-muted-foreground">{t("pricesLater")}</p>}
+          {!rfq.comparison && <p className="px-4 text-sm text-muted-foreground">{t("pricesLater")}</p>}
           {rfq.can_cancel && (
-            <ActionButton label={t("cancel")} variant="outline" url={`/api/v1/projects/${projectId}/rfqs/${rfq.id}/cancel`} body={{}} />
+            <div className="px-4">
+              <ActionButton label={t("cancel")} variant="outline" url={`/api/v1/projects/${projectId}/rfqs/${rfq.id}/cancel`} body={{}} />
+            </div>
           )}
           {rfq.selection && (
-            <Notice tone="success">{t("selected", { name: rfq.selection.contractor_name ?? "", when: rfq.selection.selected_at })}</Notice>
+            <div className="px-4">
+              <Notice tone="success">{t("selected", { name: rfq.selection.contractor_name ?? "", when: rfq.selection.selected_at })}</Notice>
+            </div>
           )}
           {rfq.comparison && (
-            <section aria-labelledby={`cmp-${rfq.id}`} className="flex flex-col gap-3" data-testid="comparison">
-              <h4 id={`cmp-${rfq.id}`} className="font-medium">{t("comparison", { version: rfq.comparison.version_no })}</h4>
+            <section aria-labelledby={`cmp-${rfq.id}`} className="flex flex-col gap-3 px-4" data-testid="comparison">
+              <h4 id={`cmp-${rfq.id}`} className="font-heading text-xl leading-none">{t("comparison", { version: rfq.comparison.version_no })}</h4>
               <p className="text-sm">
                 {t("counts", { invited: rfq.comparison.counts.invited, received: rfq.comparison.counts.quotes_received, included: rfq.comparison.counts.included })}
               </p>
               {rfq.comparison.notes.map((n) => <p key={n} className="text-xs text-muted-foreground">{n}</p>)}
               <DownloadLink label={t("download")}
                 url={`/api/v1/projects/${projectId}/rfqs/${rfq.id}/comparisons/${rfq.comparison.id}/document`} />
+              <div className="grid gap-4 lg:grid-cols-2">
               {rfq.comparison.quotes.map((q) => (
-                <div key={q.quote_version_id} className="flex flex-col gap-2 rounded-md border border-border p-3" data-quote={q.quote_version_id}>
-                  <h5 className="font-medium">{q.contractor_name ?? q.firm_name} · v{q.quote.version_no}</h5>
-                  <p className="text-sm font-medium">{t("adjustments")}</p>
+                // A quote sheet (the website's quote audit): gaps priced in brass, the equal-scope
+                // total on the brass plate.
+                <div key={q.quote_version_id} className="flex flex-col gap-2 overflow-hidden rounded-lg bg-background p-4 ring-1 ring-foreground/20" data-quote={q.quote_version_id}>
+                  <h5 className="font-heading text-xl leading-none">{q.contractor_name ?? q.firm_name} · v{q.quote.version_no}</h5>
+                  <p className="font-mono text-xs tracking-widest uppercase">{t("adjustments")}</p>
                   {q.adjustments.length === 0 ? (
                     <p className="text-sm text-muted-foreground">{t("noAdjustments")}</p>
                   ) : (
-                    <ul className="text-sm">
-                      {q.adjustments.map((a, n) => <li key={n}>{a.deviation_type}: {a.description} ({money(a.rupee_impact)})</li>)}
+                    <ul className="flex flex-col gap-1 text-sm">
+                      {q.adjustments.map((a, n) => <li key={n} className="border-l-4 border-brand pl-2">{a.deviation_type}: {a.description} ({money(a.rupee_impact)})</li>)}
                     </ul>
                   )}
                   <p className="text-sm">{t("submitted", { amount: money(q.quote.comparable_total) })}</p>
                   <p className="text-sm">{t("adjustmentsTotal", { amount: money(q.adjustments_total) })}</p>
-                  <p className="text-sm font-medium">{t("normalised", { amount: money(q.normalised_total) })}</p>
+                  <p className="self-start bg-brand px-2 py-1 font-heading text-2xl leading-none text-brand-foreground tabular-nums">{t("normalised", { amount: money(q.normalised_total) })}</p>
                   {Number(q.quote.additional_total) > 0 && <p className="text-sm">{t("additional", { amount: money(q.quote.additional_total) })}</p>}
                   <p className="text-sm">
                     {t("validity", { from: q.quote.valid_from, to: q.quote.valid_to })} · {t("tax", { treatment: q.quote.tax_treatment })} · {t("duration", { days: q.quote.duration_days })}
@@ -128,6 +142,7 @@ export default async function QuotesPage({
                   {rfq.can_select && <SelectQuote projectId={projectId} rfqId={rfq.id} quoteVersionId={q.quote_version_id} />}
                 </div>
               ))}
+              </div>
             </section>
           )}
         </article>
