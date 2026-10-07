@@ -9,7 +9,7 @@ from decimal import Decimal
 from typing import Any
 
 from geoalchemy2 import WKTElement
-from sqlalchemy import func, select, text
+from sqlalchemy import func, select, text, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -59,8 +59,12 @@ PROJECT = TransitionTable[ProjectStatus](
         Transition(P.NEEDS_INFO, P.SUBMITTED, "resubmit"),
         Transition(P.SUBMITTED, P.CANCELLED, "cancel"),
         Transition(P.NEEDS_INFO, P.CANCELLED, "cancel"),
+        # The family may delete a draft nobody else has seen; later, operations cancel.
+        Transition(P.DRAFT, P.CANCELLED, "delete"),
     ],
 )
+# Recorded with the deletion, so the record says who ended the draft and why.
+DELETED_BY_HOMEOWNER = "Deleted by the homeowner"
 # The family may change the requirement while drafting and when operations ask for more (2.7).
 EDITABLE = frozenset({P.DRAFT.value, P.NEEDS_INFO.value})
 # Statuses in which the workspace exists (created on ACCEPTED, STATE_MODEL 5).
@@ -457,6 +461,28 @@ async def get_project(
 ) -> tuple[Project, ProjectRequirement]:
     project, _ = await _member_project(session, actor, project_id)
     return project, await _requirement(session, project.id)
+
+
+async def delete_project(session: AsyncSession, actor: Actor, project_id: uuid.UUID) -> None:
+    """DRAFT -> CANCELLED by the owner, and every membership of the project ends: the draft leaves
+    the family's list and answers 404 from then on, while its rows stay for the record (nothing is
+    physically deleted; STATE_MODEL 1 rule 3). Once submitted, a project is with Plan2Build and
+    only operations cancel it (ruling 2.1)."""
+    project, role = await _member_project(session, actor, project_id, for_update=True)
+    if role != MembershipRole.OWNER.value:
+        raise NotFound
+    current = ProjectStatus(project.status)
+    target = PROJECT.target(current, "delete")
+    now = (await session.execute(select(func.now()))).scalar_one()
+    project.status = target.value
+    project.version += 1
+    await session.execute(
+        update(ProjectMembership)
+        .where(ProjectMembership.project_id == project.id, ProjectMembership.revoked_at.is_(None))
+        .values(revoked_at=now)
+    )
+    await session.flush()
+    await _record_status(session, project, current, actor, reason=DELETED_BY_HOMEOWNER)
 
 
 async def save_requirement(

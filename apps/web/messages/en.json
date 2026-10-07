@@ -241,6 +241,24 @@
         "attention": "{step}: changes asked",
         "review": "{step}: in review"
       }
+    },
+    "kpi": {
+      "title": "At a glance",
+      "listed": "Listed categories",
+      "listedCaption": "{total, plural, =0 {None added yet} one {of # added} other {of # added}}",
+      "requests": "New requests",
+      "requestsCaption": "Waiting for your reply",
+      "quotes": "Requests to quote",
+      "quotesCaption": "Open for your quote",
+      "inspections": "Inspections",
+      "inspectionsCaption": "Scheduled or in progress"
+    },
+    "profileCard": {
+      "title": "Profile",
+      "complete": "Your profile is complete.",
+      "missing": "{count, plural, one {# detail missing} other {# details missing}}",
+      "edit": "Edit profile",
+      "portfolio": "{count, plural, =0 {No portfolio photos yet} one {# portfolio photo} other {# portfolio photos}}"
     }
   },
   "Ops": {
@@ -684,7 +702,6 @@
   },
   "Projects": {
     "title": "My projects",
-    "empty": "You have no projects yet.",
     "startNew": "Start a new home project",
     "newTitle": "Start a new home project",
     "newIntro": "Your project will be in Raipur. Next, you will answer questions about your plot, your house, your budget and what matters most to you.",
@@ -718,7 +735,24 @@
     "update": "Update your requirement",
     "needsInfoTitle": "Plan2Build needs more information",
     "cancelledTitle": "This project has been closed",
-    "reason": "Reason: {reason}"
+    "reason": "Reason: {reason}",
+    "kpi": {
+      "title": "At a glance",
+      "total": "Projects",
+      "totalCaption": "All your homes",
+      "review": "With Plan2Build",
+      "reviewCaption": "Being reviewed",
+      "active": "In progress",
+      "activeCaption": "Planning to handover",
+      "drafts": "Drafts",
+      "draftsCaption": "Requirement not sent"
+    },
+    "delete": "Delete draft",
+    "deleting": "Deleting…",
+    "deleteTitle": "Delete this draft?",
+    "deleteBody": "{code} and the answers you have given so far will be removed from your projects. This cannot be undone.",
+    "deleteCancel": "Keep draft",
+    "deleteError": "The draft could not be deleted. Try again shortly."
   },
   "Requirement": {
     "title": "Your requirement",
@@ -827,7 +861,8 @@
     "skip": "Skip to main content",
     "professionals": "Find professionals",
     "billing": "Billing",
-    "tag": "Homeowner"
+    "tag": "Homeowner",
+    "start": "Start your build plan"
   },
   "Status": {
     "label": "Status",
@@ -1018,7 +1053,31 @@
     "specificationIntro": "The decisions your house needs, in three groups.",
     "packageView": "View the package",
     "packageActive": "Your Plan2Build package is active.",
-    "packageEnded": "Your package is no longer active."
+    "packageEnded": "Your package is no longer active.",
+    "kpi": {
+      "title": "At a glance",
+      "phase": "Journey phase",
+      "phaseOf": "Phase {n} of 7",
+      "phaseNone": "Paused",
+      "estimate": "Estimate range",
+      "estimateCaption": "Indicative, before quotes",
+      "estimateNone": "Not yet",
+      "designs": "Concept designs",
+      "designsCaption": "{free} free left",
+      "package": "Package",
+      "packageValue": {
+        "ACTIVE": "Active",
+        "ENDED": "Ended",
+        "NOT_ACTIVE": "Not active"
+      },
+      "packageCaption": {
+        "ELIGIBLE": "Ready to buy",
+        "OTHER": "After the review",
+        "ACTIVE": "Services open"
+      },
+      "open": "Open {label}"
+    },
+    "journeyCard": "Your build journey"
   },
   "Designs": {
     "title": "Designs",
@@ -1894,5 +1953,30 @@
       "eligible": "Package ready to buy",
       "waiting": "Package after acceptance"
     }
+  },
+  "Shell": {
+    "sidebar": "Sidebar",
+    "workspace": "Workspace",
+    "project": "Project",
+    "switchProject": "Switch project",
+    "allProjects": "All projects",
+    "newProject": "New project",
+    "help": "Need help?",
+    "helpLink": "Ask the Plan2Build team",
+    "homeowner": "Homeowner account",
+    "professional": "Professional account",
+    "signedInAs": "Signed in as",
+    "you": "Your account",
+    "newCount": "{count, plural, one {# new} other {# new}}",
+    "groups": {
+      "plan": "Plan",
+      "build": "Build",
+      "hire": "Hire",
+      "records": "Records",
+      "work": "Work",
+      "listing": "Your listing"
+    },
+    "greeting": "Welcome back, {name}",
+    "greetingNoName": "Welcome back"
   }
 }

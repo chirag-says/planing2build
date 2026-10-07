@@ -42,7 +42,26 @@ function stateOf(phase: Phase, current: Phase | null, status: ProjectStatus): St
   return "next";
 }
 
-export function JourneyRail({ status, pkg }: { status: ProjectStatus; pkg: PackageOffer }) {
+/** The phase a project is in, numbered from 1, or null while it is paused or stopped. */
+export function journeyPhase(status: ProjectStatus): { number: number; name: string } | null {
+  const phase = PHASE_OF[status];
+  if (!phase) return null;
+  return { number: PHASES.indexOf(phase) + 1, name: getTranslator("Journey")(`phases.${phase}.name`) };
+}
+
+export function JourneyRail({
+  status,
+  pkg,
+  compact = false,
+  labelledBy,
+}: {
+  status: ProjectStatus;
+  pkg: PackageOffer;
+  /** The dashboard card: names and bars only, the phase contents left out. */
+  compact?: boolean;
+  /** A visible heading outside the rail that names it; otherwise the rail names itself. */
+  labelledBy?: string;
+}) {
   const t = getTranslator("Journey");
   const current = PHASE_OF[status] ?? null;
   const packageNote =
@@ -52,12 +71,14 @@ export function JourneyRail({ status, pkg }: { status: ProjectStatus; pkg: Packa
         ? t("package.eligible")
         : t("package.waiting");
   return (
-    <section aria-labelledby="journey-title" className="jr">
-      <h2 id="journey-title" className="sr-only">
-        {t("title")}
-      </h2>
+    <section aria-labelledby={labelledBy ?? "journey-title"} className={cn("jr", compact && "jr-compact")}>
+      {!labelledBy && (
+        <h2 id="journey-title" className="sr-only">
+          {t("title")}
+        </h2>
+      )}
       {/* Scrolls sideways on phones: focusable and named, so it scrolls from the keyboard too. */}
-      <div className="jr-scroll" role="region" tabIndex={0} aria-labelledby="journey-title">
+      <div className="jr-scroll" role="region" tabIndex={0} aria-labelledby={labelledBy ?? "journey-title"}>
         <ol className="jr-rail">
           {PHASES.map((phase, index) => {
             const state = stateOf(phase, current, status);

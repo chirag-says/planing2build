@@ -131,3 +131,22 @@
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
+/* The dashboard card: the rail at a glance, phase contents left out. */
+.jr-compact .jr-rail {
+  grid-template-columns: repeat(7, minmax(8rem, 1fr));
+  gap: 0.625rem;
+}
+.jr-compact .jr-name {
+  font-size: 1.5rem;
+}
+.jr-compact .jr-items {
+  display: none;
+}
+.jr-compact .jr-top {
+  font-size: 0.75rem;
+}
+@media (min-width: 1024px) {
+  .jr-compact .jr-rail {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+}

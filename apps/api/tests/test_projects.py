@@ -119,6 +119,43 @@ async def test_another_family_cannot_see_or_touch_the_project(
     assert (await stranger.get("/api/v1/projects")).json() == []
 
 
+async def test_an_owner_can_delete_a_draft_which_then_leaves_their_list(
+    client_for: ClientFactory, make_user: UserFactory, sign_in: SignIn, database: Database
+) -> None:
+    owner = await homeowner(client_for, make_user, sign_in)
+    project_id = (await new_project(owner))["project"]["project_id"]
+    assert (await owner.delete(f"/api/v1/projects/{project_id}", headers=H)).status_code == 204
+    assert (await owner.get("/api/v1/projects")).json() == []
+    assert (await owner.get(f"/api/v1/projects/{project_id}")).status_code == 404
+    async with database.transaction() as session:
+        project = await session.get(Project, uuid.UUID(project_id))
+        assert project is not None and project.status == "CANCELLED"
+        history = list(
+            await session.scalars(
+                select(ProjectStatusHistory)
+                .where(ProjectStatusHistory.project_id == project.id)
+                .order_by(ProjectStatusHistory.at)
+            )
+        )
+    assert [(h.from_status, h.to_status) for h in history] == [(None, "DRAFT"), ("DRAFT", "CANCELLED")]
+    assert history[-1].reason == "Deleted by the homeowner"
+
+
+async def test_only_the_owner_can_delete_and_only_while_drafting(
+    client_for: ClientFactory, make_user: UserFactory, sign_in: SignIn
+) -> None:
+    owner = await homeowner(client_for, make_user, sign_in)
+    project_id = (await new_project(owner))["project"]["project_id"]
+    stranger = await homeowner(client_for, make_user, sign_in)
+    assert (await stranger.delete(f"/api/v1/projects/{project_id}", headers=H)).status_code == 404
+    assert (await save(owner, project_id, COMPLETE, 1)).status_code == 200
+    assert (await submit(owner, project_id, 2)).status_code == 200
+    declined = await owner.delete(f"/api/v1/projects/{project_id}", headers=H)
+    assert declined.status_code == 409
+    assert declined.json()["error"]["code"] == "STATE_CONFLICT"
+    assert (await owner.get(f"/api/v1/projects/{project_id}")).json()["project"]["status"] == "SUBMITTED"
+
+
 async def test_professional_and_operations_hosts_have_no_project_routes(
     client_for: ClientFactory, make_user: UserFactory, sign_in: SignIn
 ) -> None:

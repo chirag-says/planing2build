@@ -149,7 +149,13 @@ export function ProfileForm({ data, tiles }: { data: Dashboard; tiles: MapTiles 
     }
     const { data: saved } = await browserApi.PATCH("/api/v1/pro/profile", { body });
     setState(saved ? "saved" : "error");
-    if (saved) router.refresh();
+    if (!saved) return;
+    // Onboarding ends with the last required field: on to the dashboard, where the rail
+    // continues with the category. Otherwise stay, with the saved values.
+    if (profile.missing.length > 0 && saved.profile.missing.length === 0) {
+      router.push("/");
+    }
+    router.refresh();
   }
 
   const text = (name: keyof typeof values, label: string, required = false, disabled = false) => (

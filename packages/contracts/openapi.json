@@ -5496,7 +5496,10 @@
           "COMPARISON_DOCUMENT",
           "STAGE_EVIDENCE",
           "INSPECTION_EVIDENCE",
-          "INSPECTION_REPORT"
+          "INSPECTION_REPORT",
+          "HANDOVER_DOCUMENT",
+          "BUILD_RECORD_DOCUMENT",
+          "BUILD_RECORD_EXPORT"
         ],
         "title": "FilePurpose",
         "type": "string"
@@ -33447,6 +33450,51 @@
       }
     },
     "/api/v1/projects/{project_id}": {
+      "delete": {
+        "description": "A draft the family no longer wants. Anything submitted is cancelled by operations.",
+        "operationId": "delete_project_route_api_v1_projects__project_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Delete Project Route",
+        "tags": [
+          "projects"
+        ]
+      },
       "get": {
         "operationId": "get_project_detail_api_v1_projects__project_id__get",
         "parameters": [

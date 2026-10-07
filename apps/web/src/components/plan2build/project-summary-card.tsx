@@ -4,6 +4,7 @@ import type { ProjectSummary } from "@p2b/contracts";
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 
+import { DeleteProjectButton } from "@/components/plan2build/delete-project-button";
 import { StatusBadge } from "@/components/plan2build/status-badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,7 +38,7 @@ export function ProjectSummaryCard({ project }: { project: ProjectSummary }) {
   // The requirement is the way in while it can still change (drafting, or after a request).
   const draft = project.status === "DRAFT" || project.status === "NEEDS_INFO";
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="text-base">
           <h2>{t("code", { code: project.code })}</h2>
@@ -47,10 +48,10 @@ export function ProjectSummaryCard({ project }: { project: ProjectSummary }) {
           <StatusBadge kind="project" status={project.status} withLabel />
         </CardAction>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1">
         <p className="text-sm">{nextStepText(project)}</p>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex-wrap gap-3">
         <Button asChild variant={draft ? "default" : "outline"}>
           <Link
             href={
@@ -67,6 +68,10 @@ export function ProjectSummaryCard({ project }: { project: ProjectSummary }) {
             <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
           </Link>
         </Button>
+        {/* A draft nobody else has seen can be deleted; afterwards only operations cancel. */}
+        {project.status === "DRAFT" && (
+          <DeleteProjectButton projectId={project.project_id} code={t("code", { code: project.code })} />
+        )}
       </CardFooter>
     </Card>
   );

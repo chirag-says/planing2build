@@ -312,6 +312,14 @@
   }
 }
 
+/*
+ * The signed-in app shell reads one step larger than the website: a 17px root, so text, controls
+ * and spacing all grow together. Breakpoints are unaffected (media queries use the initial size).
+ */
+html:has([data-app-shell]) {
+  font-size: 106.25%;
+}
+
 /* The blueprint ground of the website's hero: a faint 68px grid on bone. */
 .p2b-ground {
   background-color: var(--background);

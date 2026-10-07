@@ -1,8 +1,8 @@
-import { reviews } from '@/marketing/content/reviews';
+import { addons } from '@/marketing/content/addons';
 import type { OwnersContent } from '@/marketing/content/sections/owners';
 import { OwnersSection } from './OwnersSection';
 
-/** "Three quotes, one house": the quote carousel with its audit sheet. */
+/** "After handover": the add-on services, one per slide, with the service sheet. */
 export function Owners({ content }: { content: OwnersContent }) {
-  return <OwnersSection content={content} reviews={reviews} />;
+  return <OwnersSection content={content} reviews={addons} />;
 }

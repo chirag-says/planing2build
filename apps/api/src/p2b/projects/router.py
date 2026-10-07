@@ -2,7 +2,7 @@ import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Query, Request, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from p2b.billing.interface import offer_published, package_active, package_state
@@ -50,6 +50,7 @@ from p2b.projects.schemas import (
 from p2b.projects.service import (
     create_enquiry,
     create_project,
+    delete_project,
     get_project,
     list_projects,
     package_availability,
@@ -173,6 +174,15 @@ async def get_project_detail(
     return await _detail(
         db, request.app.state.settings, project, requirement, await review_message(db, project)
     )
+
+
+@router.delete("/projects/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_project_route(
+    project_id: uuid.UUID, db: DbSession, actor: Annotated[Actor, HOMEOWNER]
+) -> Response:
+    """A draft the family no longer wants. Anything submitted is cancelled by operations."""
+    await delete_project(db, actor, project_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.get("/projects/{project_id}/estimate", response_model=ProjectEstimateOut)

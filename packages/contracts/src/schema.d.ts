@@ -4195,7 +4195,11 @@ export interface paths {
         get: operations["get_project_detail_api_v1_projects__project_id__get"];
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * Delete Project Route
+         * @description A draft the family no longer wants. Anything submitted is cancelled by operations.
+         */
+        delete: operations["delete_project_route_api_v1_projects__project_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -7454,7 +7458,7 @@ export interface components {
          * @description Why a file exists; each purpose has its own limits (ADR-011).
          * @enum {string}
          */
-        FilePurpose: "REQUIREMENT_UPLOAD" | "AI_CONCEPT" | "VERIFICATION_EVIDENCE" | "PORTFOLIO" | "INVOICE" | "QUOTE_DOCUMENT" | "DRAWING" | "BUILD_PLAN_EVIDENCE" | "BUILD_PLAN_DOCUMENT" | "QUOTE_ATTACHMENT" | "COMPARISON_DOCUMENT" | "STAGE_EVIDENCE" | "INSPECTION_EVIDENCE" | "INSPECTION_REPORT";
+        FilePurpose: "REQUIREMENT_UPLOAD" | "AI_CONCEPT" | "VERIFICATION_EVIDENCE" | "PORTFOLIO" | "INVOICE" | "QUOTE_DOCUMENT" | "DRAWING" | "BUILD_PLAN_EVIDENCE" | "BUILD_PLAN_DOCUMENT" | "QUOTE_ATTACHMENT" | "COMPARISON_DOCUMENT" | "STAGE_EVIDENCE" | "INSPECTION_EVIDENCE" | "INSPECTION_REPORT" | "HANDOVER_DOCUMENT" | "BUILD_RECORD_DOCUMENT" | "BUILD_RECORD_EXPORT";
         /**
          * FileState
          * @description File object machine (STATE_MODEL section 16).
@@ -21952,6 +21956,44 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ProjectDetail"];
                 };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_project_route_api_v1_projects__project_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Client error */
             "4XX": {

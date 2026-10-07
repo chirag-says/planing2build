@@ -4,10 +4,16 @@
  * release. Rules kept: no fees for invited contractors, no paid placement, no star ratings,
  * leads show the locality only, at most three contractors per request.
  */
+import imgProEngage from '@/marketing/assets/professionals/engage.webp';
+import imgProEvidence from '@/marketing/assets/professionals/evidence.webp';
+import imgProListed from '@/marketing/assets/professionals/listed.webp';
+import imgProRecord from '@/marketing/assets/professionals/record.webp';
+import imgProQuote from '@/marketing/assets/professionals/quote.webp';
+import imgProProfile from '@/marketing/assets/professionals/profile.webp';
+import imgProRegister from '@/marketing/assets/professionals/register.webp';
 import type { BoardContent } from '@/marketing/content/sections/board';
-import { built, type BuiltContent } from '@/marketing/content/sections/built';
+import type { BuiltContent } from '@/marketing/content/sections/built';
 import type { FaqContent } from '@/marketing/content/sections/faq';
-import type { OwnersContent } from '@/marketing/content/sections/owners';
 import type { PageHeroContent } from '@/marketing/content/sections/pageHero';
 import type { Faq } from '@/marketing/content/types';
 import { professionalsSignInUrl } from '@/marketing/lib/hosts';
@@ -35,21 +41,8 @@ export const prosHero: PageHeroContent = {
   showProof: false,
 };
 
-export const prosProblem: OwnersContent = {
-  eyebrow: '01 · The problem',
-  heading: 'Your complete quote|*loses to an incomplete one.*',
-  checks: 'Every line priced or excluded; Gaps priced at the BOQ rate; Totals on equal scope; No competitor prices shown',
-  cardLabel: 'Quote audit',
-  sheetLabel: 'Quote',
-  resultLabel: 'On equal scope',
-  stampText: 'Audited',
-  showRating: false,
-  prevLabel: 'Previous quote',
-  nextLabel: 'Next quote',
-};
-
 export const prosPledges: BoardContent = {
-  eyebrow: '02 · Our rules',
+  eyebrow: '01 · Our rules',
   heading: 'Position is|*not for sale.*',
   subCopy:
     'Listing is earned with verified evidence, never bought. Requests reach you pre-qualified, and the inspection record of your work stays on your profile.',
@@ -67,10 +60,19 @@ export const prosPledges: BoardContent = {
   tickerSpeed: 40,
 };
 
-const PHOTO = Object.fromEntries(built.stages.map((stage) => [stage.slug, stage.photo]));
+/** The professionals' own screens, one per step. */
+const PRO_PHOTO = {
+  register: imgProRegister.src,
+  profile: imgProProfile.src,
+  evidence: imgProEvidence.src,
+  listed: imgProListed.src,
+  quote: imgProQuote.src,
+  engage: imgProEngage.src,
+  record: imgProRecord.src,
+};
 
 export const prosHow: BuiltContent = {
-  eyebrow: '03 · How it works',
+  eyebrow: '02 · How it works',
   title: 'How it works for professionals: register, profile, review, listed, quote, engage, record',
   levelLetter: 'S',
   stageWord: 'Step',
@@ -87,7 +89,7 @@ export const prosHow: BuiltContent = {
         { label: 'Fees', value: 'None to register' },
       ],
       result: { label: 'Then', value: 'Choose your category' },
-      photo: PHOTO.plan ?? '',
+      photo: PRO_PHOTO.register,
       cta: { label: 'Get started', href: PRO_GET_STARTED },
     },
     {
@@ -100,7 +102,7 @@ export const prosHow: BuiltContent = {
         { label: 'Service area', value: 'Pin and radius' },
       ],
       result: { label: 'Then', value: 'Add your evidence' },
-      photo: PHOTO.find ?? '',
+      photo: PRO_PHOTO.profile,
       cta: { label: '', href: '' },
     },
     {
@@ -113,7 +115,7 @@ export const prosHow: BuiltContent = {
         { label: 'Portfolio', value: 'Your past work' },
       ],
       result: { label: 'Then', value: 'Submit for review' },
-      photo: PHOTO.compare ?? '',
+      photo: PRO_PHOTO.evidence,
       cta: { label: '', href: '' },
     },
     {
@@ -126,7 +128,7 @@ export const prosHow: BuiltContent = {
         { label: 'Placement', value: 'Never for sale' },
       ],
       result: { label: 'Then', value: 'Requests arrive' },
-      photo: PHOTO.select ?? '',
+      photo: PRO_PHOTO.listed,
       cta: { label: '', href: '' },
     },
     {
@@ -139,7 +141,7 @@ export const prosHow: BuiltContent = {
         { label: 'Lead shows', value: 'Locality only' },
       ],
       result: { label: 'Then', value: 'The family chooses' },
-      photo: PHOTO.build ?? '',
+      photo: PRO_PHOTO.quote,
       cta: { label: '', href: '' },
     },
     {
@@ -152,7 +154,7 @@ export const prosHow: BuiltContent = {
         { label: 'Payments', value: 'Directly to you' },
       ],
       result: { label: 'Then', value: 'Independent checks' },
-      photo: PHOTO.verify ?? '',
+      photo: PRO_PHOTO.engage,
       cta: { label: '', href: '' },
     },
     {
@@ -165,7 +167,7 @@ export const prosHow: BuiltContent = {
         { label: 'Star ratings', value: 'None' },
       ],
       result: { label: 'You get', value: 'A verified record' },
-      photo: PHOTO.record ?? '',
+      photo: PRO_PHOTO.record,
       cta: { label: 'Get started', href: PRO_GET_STARTED },
     },
   ],
@@ -180,7 +182,7 @@ export type WhoContent = {
 };
 
 export const prosWho: WhoContent = {
-  eyebrow: '04 · Who it is for',
+  eyebrow: '03 · Who it is for',
   heading: 'Built for the people|*who build.*',
   open: [
     { name: 'Contractors', text: 'Civil contractors quoting and building homes against one standard scope.' },
@@ -192,7 +194,7 @@ export const prosWho: WhoContent = {
 };
 
 export const prosFaq: FaqContent = {
-  eyebrow: '05 · Questions',
+  eyebrow: '04 · Questions',
   heading: 'Before you|*join.*',
   subCopy: 'Questions about listing? Write to {email}.',
   callLabel: '',
@@ -237,7 +239,7 @@ export const prosFaqItems: Faq[] = [
 export type ClosingContent = { eyebrow: string; heading: string; subCopy: string; button: string; buttonLink: string };
 
 export const prosClosing: ClosingContent = {
-  eyebrow: '06 · Get started',
+  eyebrow: '05 · Get started',
   heading: 'Your work,|*on record.*',
   subCopy: 'Register with your email, complete your profile, and submit your category for review.',
   button: 'Get started',

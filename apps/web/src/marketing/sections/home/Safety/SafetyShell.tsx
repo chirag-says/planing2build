@@ -12,9 +12,13 @@ import { clamp01 } from '@/marketing/lib/ticker';
 import { TYPE } from '@/marketing/lib/typography';
 import { CALLOUTS, DRAWING_HEIGHT, DRAWING_WIDTH, drawDelay } from './drawing';
 
-/** The drawing builds while the section's pass progress goes from 0.18 to 0.62. */
-const DRAW_FROM = 0.18;
-const DRAW_SPAN = 0.44;
+/**
+ * The drawing starts building when its top is 80% of the way down the viewport and is finished
+ * by the time all of it is on screen (with a 24px margin at the bottom), so every card is in
+ * view when it lands. A drawing taller than the viewport finishes once it is centred.
+ */
+const DRAW_START = 0.8;
+const DRAW_MARGIN = 24;
 /** Markers pop in a little after the strokes at their height, cards a little after that. */
 const MARKER_LAG = 0.06;
 const CARD_LAG = 0.12;
@@ -79,8 +83,34 @@ export function SafetyShell({ id, checks, checkWord, header, strokes, labels, zo
   const [active, setActive] = useState(-1);
   const scrub = hydrated && !reduced && layout !== 'phone';
 
+  // The drawing's offset and height within the section, measured on resize so the scroll
+  // handler never reads layout.
+  const geometry = useRef({ height: 1, figTop: 0, figHeight: 1 });
+  useLayoutEffect(() => {
+    const section = ref.current;
+    const fig = section?.querySelector<HTMLElement>('.safety-fig');
+    if (!section || !fig) return;
+    const measure = () => {
+      const box = section.getBoundingClientRect();
+      const figBox = fig.getBoundingClientRect();
+      geometry.current = { height: box.height || 1, figTop: figBox.top - box.top, figHeight: figBox.height || 1 };
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(section);
+    observer.observe(fig);
+    return () => observer.disconnect();
+  }, []);
+
   const onProgress = useCallback((pass: number) => {
-    ref.current?.style.setProperty('--dr', clamp01((pass - DRAW_FROM) / DRAW_SPAN).toFixed(4));
+    const viewport = window.innerHeight || 1;
+    const { height, figTop, figHeight } = geometry.current;
+    // Back from the eased pass (0 when the section's top meets the viewport's bottom, 1 when its
+    // bottom leaves the top) to where the drawing's top sits in the viewport.
+    const top = viewport - pass * (viewport + height) + figTop;
+    const start = viewport * DRAW_START;
+    const end = Math.max(viewport - figHeight - DRAW_MARGIN, (viewport - figHeight) / 2);
+    ref.current?.style.setProperty('--dr', clamp01((start - top) / Math.max(1, start - end)).toFixed(4));
   }, []);
   useScrollProgress(ref, { enabled: scrub, onProgress });
   useEffect(() => {

@@ -1,4 +1,4 @@
-/** Copy for the home page's "Independent checks" elevation drawing: the six inspection gates. */
+/** Copy for the home page's "Live build progress" elevation drawing: where the house is right now, stage by stage. */
 
 export type SafetyCheck = { title: string; text: string };
 
@@ -19,16 +19,16 @@ export type SafetyContent = {
 };
 
 export const safety: SafetyContent = {
-  eyebrow: '05 · Independent checks',
-  heading: 'Checked before|*it is covered up.*',
+  eyebrow: '05 · Live build progress',
+  heading: 'See what stage your house|*is at right now.*',
   checks: [
-    { title: 'Foundation & plinth', text: 'Gates 1 and 2: the footings before the pour, then the plinth beam.' },
-    { title: 'Every slab', text: 'Gate 3: steel, cover and shuttering checked before each slab is poured.' },
-    { title: 'Before plaster', text: 'Gate 4: concealed wiring and plumbing photographed before the walls close.' },
-    { title: 'Waterproofing', text: 'Gate 5: terrace and bathrooms ponding-tested before the tiles go on.' },
-    { title: 'Final snag', text: 'Gate 6: every defect closed with proof before the last payment falls due.' },
+    { title: 'Foundation & plinth', text: 'Know the day the footings are poured and the plinth beam is cast.' },
+    { title: 'Every slab', text: 'Watch each floor go up, from steel tied to slab poured, level by level.' },
+    { title: 'Walls & services', text: 'See the walls rise, and the wiring and plumbing photographed before they close.' },
+    { title: 'Roof & waterproofing', text: 'Know when the terrace is sealed and tested, before a single tile goes on.' },
+    { title: 'Finishes & handover', text: 'Follow the last snags until the scaffolding comes down and the keys are yours.' },
   ],
-  checkWord: 'Check',
-  certLabel: 'Our inspection rules',
-  certs: ['Blind to the supplier', 'Time-stamped evidence', 'Capped structural remedy'],
+  checkWord: 'Stage',
+  certLabel: 'At every stage you see',
+  certs: ['Where the work is today', 'Dated site photos', 'What comes next'],
 };

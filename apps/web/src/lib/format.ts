@@ -11,6 +11,22 @@ export function formatInr(amount: string): string {
   return INR.format(Number(amount));
 }
 
+/** A rupee amount in lakh or crore, for a dashboard tile: "₹13.7 L", "₹1.25 Cr". */
+export function formatInrShort(amount: string): string {
+  const value = Number(amount);
+  if (value >= 1e7) return `₹${(value / 1e7).toFixed(2)} Cr`;
+  if (value >= 1e5) return `₹${(value / 1e5).toFixed(1)} L`;
+  return INR.format(value);
+}
+
+/** A range for a dashboard tile, the unit said once when both ends share it: "₹52.3–64.4 L". */
+export function formatInrRangeShort(low: string, high: string): string {
+  const [a, b] = [formatInrShort(low), formatInrShort(high)];
+  const unit = / (L|Cr)$/.exec(a)?.[1];
+  if (unit && b.endsWith(` ${unit}`)) return `${a.slice(0, -unit.length - 1)}–${b.slice(1)}`;
+  return `${a}–${b}`;
+}
+
 const DATE = new Intl.DateTimeFormat(`${LOCALE}-IN`, {
   day: "numeric",
   month: "short",

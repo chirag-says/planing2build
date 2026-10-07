@@ -7,12 +7,15 @@ export function PageHeader({
   title,
   description,
   actions,
+  size = "default",
   className,
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
   description?: ReactNode;
   actions?: ReactNode;
+  /** "compact" inside the app shell's dashboards, where the top bar already says where you are. */
+  size?: "default" | "compact";
   className?: string;
 }) {
   return (
@@ -25,7 +28,12 @@ export function PageHeader({
           </div>
         )}
         {/* The website's headline reveal: the title rises out of its line, then the brass beam. */}
-        <h1 className="p2b-rise-clip font-heading text-4xl leading-none font-extrabold text-balance uppercase sm:text-5xl">
+        <h1
+          className={cn(
+            "p2b-rise-clip font-heading leading-none font-extrabold text-balance uppercase",
+            size === "compact" ? "text-3xl sm:text-4xl" : "text-4xl sm:text-5xl",
+          )}
+        >
           <span className="p2b-rise-in">{title}</span>
         </h1>
         <span aria-hidden="true" className="p2b-beam" />

@@ -1,11 +1,5 @@
-import { HomeownerHeader } from "@/components/plan2build/homeowner-header";
-
-export default function IhbLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <HomeownerHeader />
-      {/* The website's blueprint ground under every signed-in screen. */}
-      <div className="p2b-ground flex flex-1 flex-col">{children}</div>
-    </>
-  );
+// The signed-in homeowner screens. Each group draws its own shell: the workspace pages with the
+// workspace sidebar, a project's pages with the project's sections as well.
+export default function IhbAppLayout({ children }: { children: React.ReactNode }) {
+  return children;
 }
