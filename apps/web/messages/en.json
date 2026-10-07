@@ -1919,7 +1919,9 @@
       "ROOMS_NOT_MERGEABLE": "{item} can only be joined to a room that shares one whole side with it.",
       "ROOM_TYPE_NOT_ALLOWED": "This plan's rules do not allow that kind of room here.",
       "REVERT_NOT_ALONE": "A restore has to be made on its own.",
-      "UNKNOWN_REVISION": "That earlier state of the plan was not found."
+      "UNKNOWN_REVISION": "That earlier state of the plan was not found.",
+      "LAST_KITCHEN_REQUIRED": "{item} is the only kitchen. A home needs one, so it cannot be removed or changed to another type.",
+      "LAST_BATHROOM_REQUIRED": "{item} is the only bathroom or toilet. A home needs one, so it cannot be removed or changed to a room that is not a bathroom or toilet."
     },
     "units": {
       "metres": "{value} m",

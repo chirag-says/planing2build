@@ -1240,6 +1240,9 @@ class PlanOpRejection(StrEnum):
     ROOM_TYPE_NOT_ALLOWED = "ROOM_TYPE_NOT_ALLOWED"
     REVERT_NOT_ALONE = "REVERT_NOT_ALONE"
     UNKNOWN_REVISION = "UNKNOWN_REVISION"
+    # Checkpoint 3.1, E-5: a home keeps at least one kitchen and one bathroom or toilet
+    LAST_KITCHEN_REQUIRED = "LAST_KITCHEN_REQUIRED"
+    LAST_BATHROOM_REQUIRED = "LAST_BATHROOM_REQUIRED"
 
 
 class RoomSide(StrEnum):

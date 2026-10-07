@@ -278,6 +278,11 @@ def apply(
                 rooms[i] = old_r.model_copy(update={"name": op.name})
                 inverse = RenameRoom(room=old_r.id, name=old_r.name)
             else:
+                lost = programme.essential_loss(plan, old_r, op.type)
+                if lost is not None:
+                    raise OperationRejected(
+                        op.op, f"{old_r.id} is the last room of its kind", lost, (old_r.id,)
+                    )
                 rooms[i] = _retyped(old_r, op, ruleset)
                 inverse = SetRoomType(room=old_r.id, type=old_r.type)
                 changed = _replace(plan, fi, "rooms", rooms)

@@ -581,6 +581,9 @@ def delete_room(plan: HousePlan, room: str, merge_into: str, ruleset: RulesetCon
         )
     gone = next(r for r in floor.rooms if r.id == room)
     keep = next(r for r in floor.rooms if r.id == merge_into)
+    lost = programme.essential_loss(plan, gone, None)
+    if lost is not None:
+        raise GraphEditRejected(f"{room} is the last room of its kind", lost, room)
     a, b = rects[room], rects[merge_into]
     union = None
     if (a.y0, a.y1) == (b.y0, b.y1) and (a.x1 == b.x0 or b.x1 == a.x0):

@@ -22,10 +22,20 @@ from p2b.core.vocabulary import (
     ConstraintOutcome,
     ConstraintStrength,
     OriginKind,
+    PlanOpRejection,
     ProgrammeChange,
     RoomType,
 )
 from p2b.houseplans.engine.model import Compromise, Constraint, HousePlan, Origin, Room
+
+# Checkpoint 3.1, decision E-5: the owner may add, remove and retype rooms, but the plan keeps
+# at least one room for each of these functions. Removing or retyping the last one is refused.
+ESSENTIAL: dict[PlanOpRejection, frozenset[RoomType]] = {
+    PlanOpRejection.LAST_KITCHEN_REQUIRED: frozenset({RoomType.KITCHEN}),
+    PlanOpRejection.LAST_BATHROOM_REQUIRED: frozenset(
+        {RoomType.BATH_ATTACHED, RoomType.BATH_COMMON, RoomType.WC}
+    ),
+}
 
 _OWNER_CONSTRAINT = "owner_room_"  # id prefix of a ROOM_PRESENT added for an owner-added type
 _RECORD = "owner_change_"
@@ -59,6 +69,21 @@ def removed_rooms(compromises: Iterable[Compromise]) -> set[str]:
         for c in owner_changes(compromises)
         if c.change_key == ProgrammeChange.ROOM_REMOVED_BY_OWNER
     }
+
+
+def essential_loss(
+    plan: HousePlan, room: Room, new_type: RoomType | None
+) -> PlanOpRejection | None:
+    """The refusal for removing `room` (`new_type` None) or retyping it to `new_type` when it is
+    the plan's last room of an essential function (ESSENTIAL); None when the change is allowed.
+    """
+    for code, types in ESSENTIAL.items():
+        if room.type not in types or (new_type is not None and new_type in types):
+            continue
+        others = sum(1 for f in plan.floors for r in f.rooms if r.id != room.id and r.type in types)
+        if others == 0:
+            return code
+    return None
 
 
 def _counted(room: Room) -> bool:

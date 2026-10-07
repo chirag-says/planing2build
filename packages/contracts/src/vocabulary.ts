@@ -439,7 +439,7 @@ export type FeasibilityClass = (typeof FeasibilityClassValues)[number];
 export const RepairReasonValues = ["VALIDATION_ERROR", "OBJECTIVE"] as const;
 export type RepairReason = (typeof RepairReasonValues)[number];
 
-export const PlanOpRejectionValues = ["UNKNOWN_ENTITY", "ENTITY_EXISTS", "NOT_SUPPORTED", "NO_MOVEMENT", "NOT_AXIS_ALIGNED", "WALL_WOULD_COLLAPSE", "HOSTED_ITEM_LEAVES_WALL", "NOT_RECTANGULAR", "HOSTED_ITEM_CHANGES_ROOMS", "DOOR_DOES_NOT_FIT", "ROOMS_WOULD_OVERLAP", "NOT_A_SLICE", "ROOMS_NOT_MERGEABLE", "ROOM_TYPE_NOT_ALLOWED", "REVERT_NOT_ALONE", "UNKNOWN_REVISION"] as const;
+export const PlanOpRejectionValues = ["UNKNOWN_ENTITY", "ENTITY_EXISTS", "NOT_SUPPORTED", "NO_MOVEMENT", "NOT_AXIS_ALIGNED", "WALL_WOULD_COLLAPSE", "HOSTED_ITEM_LEAVES_WALL", "NOT_RECTANGULAR", "HOSTED_ITEM_CHANGES_ROOMS", "DOOR_DOES_NOT_FIT", "ROOMS_WOULD_OVERLAP", "NOT_A_SLICE", "ROOMS_NOT_MERGEABLE", "ROOM_TYPE_NOT_ALLOWED", "REVERT_NOT_ALONE", "UNKNOWN_REVISION", "LAST_KITCHEN_REQUIRED", "LAST_BATHROOM_REQUIRED"] as const;
 export type PlanOpRejection = (typeof PlanOpRejectionValues)[number];
 
 export const PlanOpReasonValues = ["USER", "AUTO_REPAIR", "REVERT"] as const;
