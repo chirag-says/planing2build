@@ -137,6 +137,8 @@ export const formatCount = (value: number) =>
  * "₹95,000" below that. Negative values read as ₹0.
  */
 export function formatMoney(value: number): string {
+  // No figure yet (the API has not answered): a placeholder, never a made-up number.
+  if (!Number.isFinite(value)) return '…';
   const amount = Math.max(0, value);
   if (amount >= 1e7) return `₹${(amount / 1e7).toFixed(2)} Cr`;
   if (amount >= 1e5) return `₹${(amount / 1e5).toFixed(amount >= 2e6 ? 0 : 1)} L`;

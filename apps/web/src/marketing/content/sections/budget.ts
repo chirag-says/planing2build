@@ -35,8 +35,10 @@ export type BudgetContent = {
   lowLabel: string;
   highLabel: string;
   note: string;
-  /** Links to the site's bid page with the answers added. Empty hides the button. */
+  /** The sheet's button. Empty hides it. */
   cta: string;
+  /** Where it goes; empty = the bid page with the answers added. */
+  ctaLink?: string;
 };
 
 export const budget: BudgetContent = {
@@ -61,5 +63,7 @@ export const budget: BudgetContent = {
   lowLabel: 'Low',
   highLabel: 'High',
   note: 'Indicative for Raipur, excluding land and approvals',
-  cta: 'Start your build plan',
+  // The full estimate, by stage, from the same API (IHB_FLOW J02; S14 wording).
+  cta: 'See what your house should cost',
+  ctaLink: '/estimate',
 };

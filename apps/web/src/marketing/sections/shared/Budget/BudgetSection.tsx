@@ -26,7 +26,9 @@ import {
   slugify,
   snapSize,
 } from './estimate';
+import { useApiEstimate } from './useApiEstimate';
 import { useEstimateMotion } from './useEstimateMotion';
+import { getTranslator } from '@/lib/i18n';
 import { useSectionWidth } from '@/marketing/hooks/useSectionWidth';
 import { PHONE_MAX } from '@/marketing/lib/breakpoints';
 import './budget.css';
@@ -34,6 +36,9 @@ import './budget.css';
 /** The sheet offers at most this many job types, in the services' CMS order. */
 const MAX_TYPES = 6;
 const NO_FINISH = { label: '', factor: 1 };
+/** The sheet's finish choices, in order, as the API names them. */
+const FINISH_LEVELS = ['STANDARD', 'PREMIUM', 'LUXURY'] as const;
+const estimateCopy = getTranslator('Estimate');
 
 /** "08 · A rough budget": three answers give a budget range, a schedule and a prefilled bid link. */
 type BudgetProps = {
@@ -84,7 +89,9 @@ export function BudgetSection({ content, services, bidHref, siteName }: BudgetPr
   const rate = rates[typeSlug] ?? (jobType ? rates[slugify(jobType.name)] : undefined) ?? FALLBACK_RATE;
   const size = snapSize(sizes[typeSlug] ?? defaultSize(rate), rate);
   const finish = finishes[Math.min(finishIndex, Math.max(0, finishes.length - 1))] ?? NO_FINISH;
-  const result = estimate({
+  // The tape's tick positions are the sheet's own drawing; the money and the time come from the
+  // public estimator (floors: the first question's answers are Ground only to Ground + 3).
+  const drawing = estimate({
     rate,
     size,
     finish: finish.factor,
@@ -92,6 +99,8 @@ export function BudgetSection({ content, services, bidHref, siteName }: BudgetPr
     spread: content.spread,
     narrow,
   });
+  const api = useApiEstimate(Math.min(4, typeIndex + 1), size, FINISH_LEVELS[finishIndex] ?? 'STANDARD');
+  const result = { ...drawing, low: api?.low ?? NaN, high: api?.high ?? NaN, weeks: api?.months ?? NaN };
 
   const { tapeRef, lowRef, highRef, weeksRef, onProgress, lock } = useEstimateMotion(sectionRef, result, !reduced);
   useScrollProgress(sectionRef, { onProgress });
@@ -283,9 +292,10 @@ export function BudgetSection({ content, services, bidHref, siteName }: BudgetPr
               {note && (
                 <p className="budget-note" style={TYPE.mono}>
                   {note}
+                  {api?.isDemo && ` · ${estimateCopy('demoBadge')}`}
                 </p>
               )}
-              {cta && <Button href={bidLink(bidHref, typeSlug, size, finish.label)} label={cta} kind="solid" />}
+              {cta && <Button href={content.ctaLink || bidLink(bidHref, typeSlug, size, finish.label)} label={cta} kind="solid" />}
             </div>
           </div>
         </div>

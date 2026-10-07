@@ -12,7 +12,8 @@ const ORIGIN = {
 // Every host shows the account in the header; on the professionals and operations hosts `/`
 // leads to sign-in (professionals register there too, Slice 3.2).
 const SHELLS = [
-  { origin: ORIGIN.ihb, title: "The cheapest quote is almost never the cheapest house." },
+  // The public website's hero (UI_DESIGN_SYSTEM.md 16).
+  { origin: ORIGIN.ihb, title: "Build with clarity. Not guesswork." },
   { origin: ORIGIN.pro, title: "Sign in or register" },
   { origin: ORIGIN.ops, title: "Staff sign-in" },
 ];

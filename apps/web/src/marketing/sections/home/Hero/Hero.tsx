@@ -28,7 +28,10 @@ export function Hero({ content }: { content: HeroContent }) {
           </p>
           <h1 id="ph-title" className="ph-h1" aria-label={plainHeadline(content.heading)} style={HEADLINE}>
             {lines.map((line, lineIndex) => (
+              // The space between lines keeps the heading's text a sentence ("Build with clarity.")
+              // for copy, search and text matching; the lines are blocks, so it is not seen.
               <span key={lineIndex} className="ph-ln" aria-hidden="true">
+                {lineIndex > 0 && ' '}
                 <span className="ph-lni" style={{ animationDelay: `${120 + lineIndex * 110}ms` }}>
                   {line.map((word, wordIndex) =>
                     word.accent ? (

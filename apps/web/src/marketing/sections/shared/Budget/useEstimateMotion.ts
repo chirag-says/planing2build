@@ -67,7 +67,7 @@ export function useEstimateMotion(sectionRef: RefObject<HTMLElement | null>, res
     const low = formatMoney(current[2] * scale);
     const high = formatMoney(current[3] * scale);
     // Weeks never read 0 once the count-up has finished.
-    const weeks = String(Math.max(scale < 1 ? 0 : 1, Math.round(current[4] * scale)));
+    const weeks = Number.isFinite(current[4]) ? String(Math.max(scale < 1 ? 0 : 1, Math.round(current[4]! * scale))) : '…';
     const key = `${tapeLow}|${tapeHigh}|${low}|${high}|${weeks}`;
     if (key === motion.written) return;
     motion.written = key;
@@ -103,6 +103,12 @@ export function useEstimateMotion(sectionRef: RefObject<HTMLElement | null>, res
         if (!motion.visible) return;
         for (let index = 0; index < 5; index++) {
           const goal = motion.target[index]!;
+          // A figure that was not known yet (NaN) jumps straight to its first value.
+          if (!Number.isFinite(motion.current[index]) || !Number.isFinite(goal)) {
+            motion.current[index] = goal;
+            motion.velocity[index] = 0;
+            continue;
+          }
           const gap = goal - motion.current[index]!;
           // Settled: within 0.2% of the target and moving slower than 0.04% of it per frame.
           if (Math.abs(gap) < Math.abs(goal) * 0.002 + 1e-6 && Math.abs(motion.velocity[index]!) < Math.abs(goal) * 4e-4 + 1e-6) {
