@@ -3,18 +3,18 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
 const alertVariants = cva(
-  "group/alert relative grid w-full gap-0.5 rounded-lg border px-4 py-3 text-left text-sm has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-18 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2.5 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4",
+  "group/alert relative grid w-full gap-0.5 rounded-md border border-l-4 px-4 py-3 text-left text-sm has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-18 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2.5 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-card text-card-foreground",
+        default: "border-l-foreground bg-card text-card-foreground",
         destructive:
-          "border-destructive/40 bg-destructive-muted text-destructive *:data-[slot=alert-description]:text-foreground *:[svg]:text-current",
+          "border-destructive/40 border-l-destructive bg-destructive-muted text-destructive *:data-[slot=alert-description]:text-foreground *:[svg]:text-current",
         warning:
-          "border-warning/40 bg-warning-muted text-warning *:data-[slot=alert-description]:text-foreground",
+          "border-warning/40 border-l-warning bg-warning-muted text-warning *:data-[slot=alert-description]:text-foreground",
         success:
-          "border-success/40 bg-success-muted text-success *:data-[slot=alert-description]:text-foreground",
-        info: "border-info/40 bg-info-muted text-info *:data-[slot=alert-description]:text-foreground",
+          "border-success/40 border-l-success bg-success-muted text-success *:data-[slot=alert-description]:text-foreground",
+        info: "border-info/40 border-l-info bg-info-muted text-info *:data-[slot=alert-description]:text-foreground",
       },
     },
     defaultVariants: {

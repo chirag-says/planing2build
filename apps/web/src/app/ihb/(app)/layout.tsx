@@ -4,7 +4,8 @@ export default function IhbLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <HomeownerHeader />
-      {children}
+      {/* The website's blueprint ground under every signed-in screen. */}
+      <div className="p2b-ground flex flex-1 flex-col">{children}</div>
     </>
   );
 }

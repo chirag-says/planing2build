@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { PageHeader } from "@/components/plan2build/page-header";
+import { JourneyRail } from "@/components/plan2build/journey-rail";
 import { ProjectBreadcrumb } from "@/components/plan2build/project-breadcrumb";
 import { ProjectNav } from "@/components/plan2build/project-nav";
 import { StatusBadge } from "@/components/plan2build/status-badge";
@@ -18,7 +19,8 @@ export default async function ProjectDashboardLayout({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
-  const { project } = await loadProject(projectId);
+  const detail = await loadProject(projectId);
+  const { project } = detail;
   const t = getTranslator("Dashboard");
   const code = getTranslator("Projects")("code", { code: project.code });
   const base = `/projects/${project.project_id}`;
@@ -58,6 +60,9 @@ export default async function ProjectDashboardLayout({
           actions={<StatusBadge kind="project" status={project.status} withLabel />}
         />
       </div>
+      {/* Where the project is in the journey, on every project page; the layout stays mounted
+          between them, so the rail draws in once. */}
+      <JourneyRail status={project.status} pkg={detail.package} />
       {open ? (
         <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[12rem_minmax(0,1fr)] lg:items-start">
           <ProjectNav label={t("nav")} items={items} />

@@ -18,8 +18,8 @@ export function ProjectNav({ label, items }: { label: string; items: ProjectNavI
   const pathname = usePathname();
   return (
     <nav aria-label={label} className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0">
-      <ul className="flex gap-1 lg:flex-col">
-        {items.map((item) => {
+      <ul className="flex gap-1 lg:flex-col lg:border-t-2 lg:border-foreground">
+        {items.map((item, index) => {
           const current =
             pathname === item.href || (!item.exact && pathname.startsWith(`${item.href}/`));
           return (
@@ -27,14 +27,19 @@ export function ProjectNav({ label, items }: { label: string; items: ProjectNavI
               <Link
                 href={item.href}
                 aria-current={current ? "page" : undefined}
+                // The website's step rail: a mono number, the label in caps, the brass square on the
+                // current section.
                 className={cn(
-                  "flex min-h-11 items-center rounded-md px-3 text-sm font-medium whitespace-nowrap transition-colors",
+                  "group flex min-h-11 items-center gap-2.5 rounded-md px-3 font-mono text-xs tracking-widest whitespace-nowrap uppercase transition-colors lg:rounded-none lg:border-b lg:border-foreground/15",
                   "outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
                   current
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground",
                 )}
               >
+                <span aria-hidden="true" className={cn("tabular-nums", current ? "text-brand" : "text-foreground/60")}>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
                 {item.label}
               </Link>
             </li>

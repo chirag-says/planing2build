@@ -116,7 +116,7 @@ export function FormFieldset({
       data-invalid={invalid || undefined}
       className="gap-3"
     >
-      <FieldLegend id={legendId} className="mb-0 text-base">
+      <FieldLegend id={legendId} className="mb-0 font-heading text-xl leading-tight font-extrabold uppercase">
         {legend}
         {!required && <OptionalMark />}
       </FieldLegend>
@@ -132,8 +132,10 @@ export interface ChoiceOption {
   label: ReactNode;
 }
 
+// The answer chip of the website's request card: white with an ink edge, lifting on hover, brass
+// once chosen.
 const CARD =
-  "flex min-h-11 cursor-pointer items-center gap-3 rounded-md border border-input bg-background px-3 py-2.5 text-base leading-snug transition-colors hover:bg-accent has-data-checked:border-primary has-data-checked:bg-accent has-data-checked:font-medium has-data-checked:ring-1 has-data-checked:ring-primary has-[[aria-invalid=true]]:border-destructive";
+  "p2b-lift flex min-h-11 cursor-pointer items-center gap-3 rounded-md border border-foreground bg-secondary px-3 py-2.5 text-base leading-snug font-semibold has-data-checked:bg-brand has-data-checked:text-brand-foreground has-data-checked:ring-1 has-data-checked:ring-foreground has-[[aria-invalid=true]]:border-destructive";
 
 // Columns follow the width of the form, not the screen (container queries), so the same group
 // fits a narrow card and a full-width step.

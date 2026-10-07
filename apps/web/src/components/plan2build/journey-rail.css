@@ -1,0 +1,122 @@
+/*
+ * The journey rail: the public website's stage rail (hero step rail, schedule bars). Each phase
+ * has a bar on top: ink when done, brass for the current phase, a faint rule for what is next.
+ * One signature motion: the bars draw in left to right up to the current phase, once.
+ */
+.jr-scroll {
+  overflow-x: auto;
+  margin-inline: -1rem;
+  padding: 0.25rem 1rem 0.75rem;
+  scroll-snap-type: x proximity;
+}
+.jr-rail {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(9.5rem, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.jr-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  padding-top: 0.25rem;
+  scroll-snap-align: start;
+}
+.jr-bar {
+  display: block;
+  height: 0.375rem;
+  background: color-mix(in oklch, var(--foreground) 14%, transparent);
+  transform-origin: 0 50%;
+}
+.jr-step.is-done .jr-bar {
+  background: var(--foreground);
+}
+.jr-step.is-current .jr-bar {
+  background: var(--brand);
+  box-shadow: inset 0 0 0 1px var(--foreground);
+}
+.jr-step.is-alongside .jr-bar {
+  background: repeating-linear-gradient(-45deg, var(--brand) 0 0.5rem, var(--foreground) 0.5rem 1rem);
+}
+.jr-step:is(.is-done, .is-current, .is-alongside) .jr-bar {
+  animation: jr-draw 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(0.15s + var(--i) * 0.09s);
+}
+.jr-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.jr-top b {
+  font-weight: 600;
+  color: var(--foreground);
+}
+.jr-step.is-current .jr-top span {
+  padding: 0.125rem 0.375rem;
+  background: var(--brand);
+  color: var(--brand-foreground);
+}
+.jr-name {
+  margin: 0;
+  font-size: 1.625rem;
+  font-weight: 800;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.jr-step.is-next .jr-name {
+  color: var(--muted-foreground);
+}
+.jr-items {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+.jr-gate {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin: 0.25rem 0 0;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--foreground);
+}
+.jr-tape {
+  display: block;
+  width: 100%;
+  height: 0.5rem;
+  background: repeating-linear-gradient(-45deg, var(--brand) 0 0.5rem, var(--foreground) 0.5rem 1rem);
+}
+.jr-gate.is-open .jr-tape {
+  background: var(--foreground);
+}
+@keyframes jr-draw {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 1 1;
+  }
+}
+@media (min-width: 1024px) {
+  .jr-scroll {
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+  .jr-rail {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+}

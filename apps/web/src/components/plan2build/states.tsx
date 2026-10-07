@@ -12,7 +12,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Spinner } from "@/components/ui/spinner";
 
 export function EmptyState({
   icon: Icon,
@@ -26,7 +25,7 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <Empty className="border border-dashed border-border">
+    <Empty className="p2b-blueprint">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <Icon aria-hidden="true" />
@@ -76,8 +75,8 @@ export function Notice({
 
 export function LoadingState({ label }: { label: string }) {
   return (
-    <p role="status" className="flex items-center gap-2 text-sm text-muted-foreground">
-      <Spinner />
+    <p role="status" className="flex items-center gap-3 font-mono text-xs tracking-widest text-muted-foreground uppercase">
+      <span aria-hidden="true" className="p2b-hazard-run h-2 w-12 shrink-0" />
       {label}
     </p>
   );

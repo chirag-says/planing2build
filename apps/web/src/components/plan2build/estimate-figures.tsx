@@ -63,7 +63,7 @@ export function EstimateFigures({
           </Notice>
         )}
         <div className="flex flex-col gap-1">
-          <p className="text-2xl font-semibold tabular-nums sm:text-3xl">
+          <p className="font-heading text-4xl leading-none tabular-nums sm:text-5xl">
             {formatInr(figures.total_low)} to {formatInr(figures.total_high)}
           </p>
           <p className="text-sm text-muted-foreground tabular-nums">

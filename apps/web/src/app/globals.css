@@ -273,3 +273,84 @@
   transform: translateY(-2px);
   box-shadow: 0 3px 0 var(--foreground);
 }
+
+/*
+ * Page-level motion and grounds from the public website (UI_DESIGN_SYSTEM.md 11), for the
+ * signed-in screens. One signature per page: the h1 rises out of its line, then the brass beam.
+ */
+.p2b-rise-clip {
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+.p2b-rise-in {
+  display: block;
+  animation: p2b-rise 1.05s cubic-bezier(0.2, 0.85, 0.15, 1) both;
+}
+.p2b-beam {
+  display: block;
+  width: 3.5rem;
+  height: 0.375rem;
+  background: var(--brand);
+  box-shadow: inset 0 0 0 1px var(--foreground);
+  transform-origin: 0 50%;
+  animation: p2b-beam 0.9s cubic-bezier(0.3, 1.35, 0.45, 1) 0.45s both;
+}
+@keyframes p2b-rise {
+  from {
+    translate: 0 108%;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes p2b-beam {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 1 1;
+  }
+}
+
+/* The blueprint ground of the website's hero: a faint 68px grid on bone. */
+.p2b-ground {
+  background-color: var(--background);
+  background-image:
+    linear-gradient(color-mix(in oklch, var(--foreground) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, var(--foreground) 4%, transparent) 1px, transparent 1px);
+  background-size: 68px 68px;
+}
+
+/* Empty states sit on a dashed drawing sheet with the grid, like a page waiting for its drawing. */
+.p2b-blueprint {
+  border: 1.5px dashed color-mix(in oklch, var(--foreground) 35%, transparent);
+  border-radius: var(--radius);
+  background-color: var(--card);
+  background-image:
+    linear-gradient(color-mix(in oklch, var(--foreground) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, var(--foreground) 5%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Waiting: the loader's hazard stripe, running while the wait lasts. */
+.p2b-hazard-run {
+  display: inline-block;
+  background: repeating-linear-gradient(-45deg, var(--brand) 0 6px, var(--foreground) 6px 12px);
+  background-size: 17px 100%;
+  animation: p2b-hazard 0.6s linear infinite;
+}
+@keyframes p2b-hazard {
+  to {
+    background-position: 17px 0;
+  }
+}
+
+/*
+ * Big Shoulders Display is the website's display face: always heavy caps (UI_DESIGN_SYSTEM.md
+ * 3.2). Unlayered, so a component's lighter weight utility cannot thin it.
+ */
+.font-heading {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}

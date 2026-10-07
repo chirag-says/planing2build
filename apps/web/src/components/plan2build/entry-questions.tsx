@@ -6,7 +6,7 @@
 // WCAG 3.2.2).
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 
 import { ChoiceGroup, FormFieldset } from "@/components/plan2build/form-field";
 import { Button } from "@/components/ui/button";
@@ -46,6 +46,19 @@ function YesNo({
   );
 }
 
+/** On the hanging card each question carries its step number, as on the website's card. */
+function Step({ number, framed, children }: { number: number; framed: boolean; children: ReactNode }) {
+  if (!framed) return children;
+  return (
+    <div className="bid-step hc-step hc-q" style={{ "--i": number } as CSSProperties}>
+      <span className="hc-qnum font-mono" aria-hidden="true">
+        {String(number).padStart(2, "0")}
+      </span>
+      {children}
+    </div>
+  );
+}
+
 function Next({ href, label }: { href: string; label: string }) {
   return (
     <Button asChild size="lg" className="self-start">
@@ -57,17 +70,21 @@ function Next({ href, label }: { href: string; label: string }) {
   );
 }
 
-export function EntryQuestions() {
+export function EntryQuestions({ framed = false }: { framed?: boolean }) {
   const [newHome, setNewHome] = useState<boolean | null>(null);
   const [inRaipur, setInRaipur] = useState<boolean | null>(null);
 
   return (
     <div className="flex flex-col gap-8">
-      <YesNo id="new-home" legend={t("newHome")} value={newHome} onChange={setNewHome} />
+      <Step number={1} framed={framed}>
+        <YesNo id="new-home" legend={t("newHome")} value={newHome} onChange={setNewHome} />
+      </Step>
       <div aria-live="polite" className="flex flex-col gap-8">
         {newHome === false && <Next href="/need-help" label={t("continue")} />}
         {newHome && (
-          <YesNo id="in-raipur" legend={t("inRaipur")} value={inRaipur} onChange={setInRaipur} />
+          <Step number={2} framed={framed}>
+            <YesNo id="in-raipur" legend={t("inRaipur")} value={inRaipur} onChange={setInRaipur} />
+          </Step>
         )}
         {newHome && inRaipur === false && <Next href="/other-city" label={t("continue")} />}
         {newHome && inRaipur && (

@@ -608,7 +608,13 @@
     "inRaipur": "Is your plot in Raipur?",
     "continue": "Continue",
     "ready": "You can start your requirement. Your answers are saved at each step, so you can come back to it.",
-    "begin": "Start my requirement"
+    "begin": "Start my requirement",
+    "card": {
+      "eyebrow": "Plan a project",
+      "intro": "Two questions, then a code by email, and you can describe your home.",
+      "label": "Build plan request",
+      "note": "Takes one minute"
+    }
   },
   "Enquiry": {
     "helpTitle": "Need help?",
@@ -1776,5 +1782,55 @@
     "send": "Send",
     "error": "That did not work. Try again.",
     "errorReason": "That did not work: {reason}"
+  },
+  "Journey": {
+    "title": "Your build journey",
+    "phases": {
+      "plan": {
+        "name": "Plan",
+        "items": "Requirements · Estimate · Designs · Package · Build Plan"
+      },
+      "compare": {
+        "name": "Compare",
+        "items": "Requests to quote · Quotes on equal scope"
+      },
+      "select": {
+        "name": "Select",
+        "items": "Contractor · Scope confirmed"
+      },
+      "build": {
+        "name": "Build",
+        "items": "Stages · Decisions · Changes"
+      },
+      "verify": {
+        "name": "Verify",
+        "items": "Six independent checks · Evidence"
+      },
+      "handover": {
+        "name": "Handover",
+        "items": "Snags closed · Documents"
+      },
+      "record": {
+        "name": "Build Record",
+        "items": "Your home's permanent record"
+      }
+    },
+    "states": {
+      "done": "Done",
+      "current": "Now",
+      "next": "Next",
+      "alongside": "Alongside the build"
+    },
+    "sr": {
+      "done": "{phase}: done",
+      "current": "{phase}: current phase",
+      "next": "{phase}: not started",
+      "alongside": "{phase}: runs alongside the build"
+    },
+    "package": {
+      "active": "Package active",
+      "eligible": "Package ready to buy",
+      "waiting": "Package after acceptance"
+    }
   }
 }

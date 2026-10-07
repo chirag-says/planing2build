@@ -34,7 +34,7 @@ export function WizardProgress({
   const counter = labels.step(current + 1, total);
   return (
     <nav aria-label={labels.nav} className="flex flex-col gap-3">
-      <p className="text-sm font-medium text-muted-foreground">{counter}</p>
+      <p className="font-mono text-xs tracking-widest text-muted-foreground uppercase">{counter}</p>
       {/* Phones: one bar. From sm: one column per step, each with its own bar, on a single row. */}
       <Progress value={((current + 1) / total) * 100} aria-label={counter} className="sm:hidden" />
       <ol
@@ -63,7 +63,7 @@ export function WizardProgress({
               <span className="sr-only">{name}</span>
             </>
           );
-          const base = "flex items-start gap-1.5 rounded-sm text-left text-sm leading-snug";
+          const base = "flex items-start gap-1.5 rounded-sm text-left font-mono text-xs leading-snug tracking-wider uppercase";
           return (
             <li
               key={title}
@@ -72,7 +72,10 @@ export function WizardProgress({
             >
               <span
                 aria-hidden="true"
-                className={cn("h-1 rounded-full", isDone || isCurrent ? "bg-primary" : "bg-border")}
+                className={cn(
+                  "h-1.5",
+                  isCurrent ? "bg-brand ring-1 ring-foreground" : isDone ? "bg-foreground" : "bg-foreground/15",
+                )}
               />
               {reachable ? (
                 <button

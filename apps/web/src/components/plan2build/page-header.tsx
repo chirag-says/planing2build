@@ -17,11 +17,18 @@ export function PageHeader({
 }) {
   return (
     <header className={cn("flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between", className)}>
-      <div className="flex min-w-0 flex-col gap-2">
-        {eyebrow && <div className="text-sm text-muted-foreground">{eyebrow}</div>}
-        <h1 className="font-heading text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
-          {title}
+      <div className="flex min-w-0 flex-col gap-3">
+        {eyebrow && (
+          <div className="flex items-center gap-2.5 font-mono text-xs tracking-widest text-muted-foreground uppercase">
+            <span aria-hidden="true" className="size-2 shrink-0 bg-brand ring-1 ring-foreground" />
+            {eyebrow}
+          </div>
+        )}
+        {/* The website's headline reveal: the title rises out of its line, then the brass beam. */}
+        <h1 className="p2b-rise-clip font-heading text-4xl leading-none font-extrabold text-balance uppercase sm:text-5xl">
+          <span className="p2b-rise-in">{title}</span>
         </h1>
+        <span aria-hidden="true" className="p2b-beam" />
         {description && (
           <div className="max-w-prose text-base text-pretty text-muted-foreground">{description}</div>
         )}
@@ -50,7 +57,10 @@ export function SectionHeader({
       <div className="flex min-w-0 flex-col gap-1">
         <Heading
           id={id}
-          className={cn("font-heading font-semibold", level === 2 ? "text-xl" : "text-lg")}
+          className={cn(
+            "font-heading font-extrabold uppercase",
+            level === 2 ? "text-2xl leading-none" : "text-xl leading-none",
+          )}
         >
           {title}
         </Heading>

@@ -176,3 +176,24 @@
     padding: 2rem 1.25rem 1.5rem;
   }
 }
+
+/* A question on the card: its number chip beside the legend (the website's .bid-st). */
+.hc-q {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 0.75rem;
+  align-items: start;
+}
+.hc-qnum {
+  margin-top: 0.125rem;
+  padding: 0.1875rem 0.375rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  background: var(--gd-ink);
+  color: var(--gd-cloud);
+}
+.hc-q legend {
+  font-size: 1.5rem;
+  line-height: 1;
+}
