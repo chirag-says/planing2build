@@ -31,6 +31,7 @@ from p2b.houseplans.engine import (
     score_plan,
 )
 from p2b.houseplans.engine.build import ROOM_NAMES
+from p2b.houseplans.engine.insertion import insertion_slots
 from p2b.houseplans.engine.ops import PLAN_OP, RevertToRevision, RevertToVersion
 from p2b.houseplans.engine.validate import ValidationReport
 from p2b.houseplans.models import HousePlanOp, HousePlanVersion
@@ -48,6 +49,7 @@ from p2b.houseplans.schemas import (
     HousePlanVersionOut,
     InfeasibilityOut,
     InfeasibleReasonOut,
+    InsertionSlotOut,
     InvolvedConstraintOut,
     OpeningSizesOut,
     QualityOut,
@@ -135,11 +137,16 @@ def detail_fields(view: PlanView) -> dict[str, object]:
 
 
 def editing_of(view: PlanView) -> EditingOut:
-    return editing_block(view.ruleset.content, view.can_edit, view.row.head_revision_no)
+    return editing_block(
+        view.ruleset.content, view.can_edit, view.row.head_revision_no, document_of(view)
+    )
 
 
-def editing_block(content: RulesetContent, can_edit: bool, revision_no: int) -> EditingOut:
+def editing_block(
+    content: RulesetContent, can_edit: bool, revision_no: int, document: HousePlan | None = None
+) -> EditingOut:
     o = content.openings
+    slots = insertion_slots(document, content) if document is not None and can_edit else []
     return EditingOut(
         can_edit=can_edit,
         revision_no=revision_no,
@@ -150,6 +157,7 @@ def editing_block(content: RulesetContent, can_edit: bool, revision_no: int) -> 
                 name=ROOM_NAMES[t],
                 needs_window=rule.needs_window,
                 min_short_mm=rule.min_short_mm,
+                min_area_mm2=rule.min_area_mm2,
             )
             for t, rule in content.rooms.items()
             if rule.enclosed
@@ -166,6 +174,20 @@ def editing_block(content: RulesetContent, can_edit: bool, revision_no: int) -> 
         ),
         interior_wall_mm=content.walls.interior_mm,
         exterior_wall_mm=content.walls.exterior_mm,
+        insertion_slots=[
+            InsertionSlotOut(
+                host_room=s.host_room,
+                side=s.side,
+                offset_mm=s.offset_mm,
+                length_mm=s.length_mm,
+                max_depth_mm=s.max_depth_mm,
+                open_area=s.open_area,
+                open_area_kind=s.open_area_kind,
+                depth_allowance_mm=s.depth_allowance_mm,
+                length_allowance_mm=s.length_allowance_mm,
+            )
+            for s in slots
+        ],
     )
 
 

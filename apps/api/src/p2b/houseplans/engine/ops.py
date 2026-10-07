@@ -119,6 +119,21 @@ class AddRoom(Frozen):
     depth_mm: PosMm
 
 
+class AddRoomOutside(Frozen):
+    """A new room in open space against an outside wall of the host (Checkpoint 3.2): `depth_mm`
+    beyond the host's `side`, `length_mm` long from `offset_mm` along that side, measured from
+    its left (LEFT, RIGHT sides: front) end. Positions are along a known side, never free
+    coordinates (`graph_edit.add_room_outside`)."""
+
+    op: Literal[PlanOpKind.ADD_ROOM_OUTSIDE] = PlanOpKind.ADD_ROOM_OUTSIDE
+    host_room: Id
+    type: RoomType
+    side: RoomSide
+    offset_mm: NonNegMm
+    length_mm: PosMm
+    depth_mm: PosMm
+
+
 class DeleteRoom(Frozen):
     op: Literal[PlanOpKind.DELETE_ROOM] = PlanOpKind.DELETE_ROOM
     room: Id
@@ -154,13 +169,14 @@ PlanOp = Annotated[
     | MoveWall
     | MoveEdge
     | AddRoom
+    | AddRoomOutside
     | DeleteRoom
     | RevertToRevision
     | RevertToVersion,
     Field(discriminator="op"),
 ]
 PLAN_OP: TypeAdapter[PlanOp] = TypeAdapter(PlanOp)
-STRUCTURAL = (MoveEdge, AddRoom, DeleteRoom)
+STRUCTURAL = (MoveEdge, AddRoom, AddRoomOutside, DeleteRoom)
 REVERTS = (RevertToRevision, RevertToVersion)
 
 
@@ -299,13 +315,24 @@ def apply(
 
 
 def _structural(
-    plan: HousePlan, op: MoveEdge | AddRoom | DeleteRoom, ruleset: RulesetContent
+    plan: HousePlan, op: MoveEdge | AddRoom | AddRoomOutside | DeleteRoom, ruleset: RulesetContent
 ) -> HousePlan:
     try:
         if isinstance(op, MoveEdge):
             return graph_edit.move_edge(plan, op.room, op.side, op.delta_mm, ruleset)
         if isinstance(op, AddRoom):
             return graph_edit.add_room(plan, op.host_room, op.type, op.side, op.depth_mm, ruleset)
+        if isinstance(op, AddRoomOutside):
+            return graph_edit.add_room_outside(
+                plan,
+                op.host_room,
+                op.type,
+                op.side,
+                op.offset_mm,
+                op.length_mm,
+                op.depth_mm,
+                ruleset,
+            )
         return graph_edit.delete_room(plan, op.room, op.merge_into, ruleset)
     except graph_edit.GraphEditRejected as rejected:
         raise OperationRejected(op.op, rejected.reason, rejected.code, rejected.entities) from None

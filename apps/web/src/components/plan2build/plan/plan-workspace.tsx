@@ -20,6 +20,7 @@ import { PlanCanvas, type PlanCanvasHandle } from "@/components/plan2build/plan/
 import { PlanHistory } from "@/components/plan2build/plan/plan-history";
 import {
   ChangesPanel,
+  OpenAreaPanel,
   OpeningPanel,
   OpeningsList,
   RoomPanel,
@@ -230,7 +231,12 @@ export function PlanWorkspace({
             onCommit={onCommit}
             onPicked={() => canvas.current?.focus()}
           />
-          <RoomList state={state} onSelect={(id) => dispatch({ type: "select", selection: { kind: "room", id } })} />
+          <RoomList
+            state={state}
+            editable={editable}
+            onSelect={(id) => dispatch({ type: "select", selection: { kind: "room", id } })}
+            onSelectArea={(id) => dispatch({ type: "select", selection: { kind: "area", id } })}
+          />
           <OpeningsList state={state} dispatch={dispatch} onCommit={onCommit} roomId={selectedRoom(state)} />
           <ChangesPanel state={state} />
           <Checks state={state} />
@@ -390,6 +396,15 @@ function Inspector({
           roomId={sel.id}
         />
       )}
+      {editable && sel?.kind === "area" && (
+        <OpenAreaPanel
+          key={`${sel.id}-${revision}-${state.units}`}
+          state={state}
+          dispatch={dispatch}
+          onCommit={onCommit}
+          areaId={sel.id}
+        />
+      )}
       {editable && sel?.kind === "opening" && (
         <OpeningPanel
           key={`${sel.id}-${revision}-${state.units}`}
@@ -403,7 +418,17 @@ function Inspector({
   );
 }
 
-function RoomList({ state, onSelect }: { state: EditorState; onSelect: (id: string) => void }) {
+function RoomList({
+  state,
+  editable,
+  onSelect,
+  onSelectArea,
+}: {
+  state: EditorState;
+  editable: boolean;
+  onSelect: (id: string) => void;
+  onSelectArea: (id: string) => void;
+}) {
   const floor = state.plan.geometry.floors[0];
   const rooms = floor?.rooms ?? [];
   const open = floor?.open_areas ?? [];
@@ -436,12 +461,39 @@ function RoomList({ state, onSelect }: { state: EditorState; onSelect: (id: stri
         <>
           <h4 className="pt-2 text-sm font-medium">{t("openAreas")}</h4>
           <ul className="flex flex-col gap-1 text-sm">
-            {open.map((a) => (
-              <li key={a.id} className="flex justify-between gap-2 px-2">
-                <span>{t(`openArea.${a.kind}`)}</span>
-                <span className="text-muted-foreground">{formatArea(a.area_mm2, state.units)}</span>
-              </li>
-            ))}
+            {open.map((a) => {
+              const slots = state.plan.editing.insertion_slots.filter((s) => s.open_area === a.id).length;
+              const pressed = state.selection?.kind === "area" && state.selection.id === a.id;
+              const content = (
+                <>
+                  <span className="flex flex-col">
+                    <span>{t(`openArea.${a.kind}`)}</span>
+                    {editable && (
+                      <span className="text-xs text-muted-foreground">
+                        {slots > 0 ? t("insert.canAdd") : t("insert.cannotAdd")}
+                      </span>
+                    )}
+                  </span>
+                  <span className="text-muted-foreground">{formatArea(a.area_mm2, state.units)}</span>
+                </>
+              );
+              return (
+                <li key={a.id}>
+                  {editable ? (
+                    <button
+                      type="button"
+                      aria-pressed={pressed}
+                      onClick={() => onSelectArea(a.id)}
+                      className="flex min-h-11 w-full justify-between gap-2 rounded-md px-2 py-1 text-left hover:bg-accent aria-pressed:bg-accent"
+                    >
+                      {content}
+                    </button>
+                  ) : (
+                    <div className="flex justify-between gap-2 px-2">{content}</div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </>
       )}

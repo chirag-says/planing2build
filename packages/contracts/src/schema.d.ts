@@ -6190,6 +6190,30 @@ export interface components {
             side: components["schemas"]["RoomSide"];
             type: components["schemas"]["RoomType"];
         };
+        /**
+         * AddRoomOutside
+         * @description A new room in open space against an outside wall of the host (Checkpoint 3.2): `depth_mm`
+         *     beyond the host's `side`, `length_mm` long from `offset_mm` along that side, measured from
+         *     its left (LEFT, RIGHT sides: front) end. Positions are along a known side, never free
+         *     coordinates (`graph_edit.add_room_outside`).
+         */
+        AddRoomOutside: {
+            /** Depth Mm */
+            depth_mm: number;
+            /** Host Room */
+            host_room: string;
+            /** Length Mm */
+            length_mm: number;
+            /** Offset Mm */
+            offset_mm: number;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "ADD_ROOM_OUTSIDE";
+            side: components["schemas"]["RoomSide"];
+            type: components["schemas"]["RoomType"];
+        };
         /** AdditionalItemIn */
         AdditionalItemIn: {
             /** Description */
@@ -7839,7 +7863,7 @@ export interface components {
             infeasibility: components["schemas"]["InfeasibilityOut"] | null;
             intent: components["schemas"]["ArchitecturalIntent"];
             /** Inverse */
-            inverse: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["MoveEdge"] | components["schemas"]["AddRoom"] | components["schemas"]["DeleteRoom"] | components["schemas"]["RevertToRevision"] | components["schemas"]["RevertToVersion"])[];
+            inverse: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["MoveEdge"] | components["schemas"]["AddRoom"] | components["schemas"]["AddRoomOutside"] | components["schemas"]["DeleteRoom"] | components["schemas"]["RevertToRevision"] | components["schemas"]["RevertToVersion"])[];
             /**
              * Is Authoritative
              * @default false
@@ -7869,7 +7893,7 @@ export interface components {
             /** Expected Revision */
             expected_revision: number;
             /** Ops */
-            ops: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["MoveEdge"] | components["schemas"]["AddRoom"] | components["schemas"]["DeleteRoom"] | components["schemas"]["RevertToRevision"] | components["schemas"]["RevertToVersion"])[];
+            ops: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["MoveEdge"] | components["schemas"]["AddRoom"] | components["schemas"]["AddRoomOutside"] | components["schemas"]["DeleteRoom"] | components["schemas"]["RevertToRevision"] | components["schemas"]["RevertToVersion"])[];
         };
         /**
          * EditingOut
@@ -7886,6 +7910,11 @@ export interface components {
             exterior_wall_mm?: number | null;
             /** Grid Mm */
             grid_mm: number;
+            /**
+             * Insertion Slots
+             * @default []
+             */
+            insertion_slots: components["schemas"]["InsertionSlotOut"][];
             /** Interior Wall Mm */
             interior_wall_mm?: number | null;
             openings?: components["schemas"]["OpeningSizesOut"] | null;
@@ -8972,6 +9001,32 @@ export interface components {
              * @description Shown to the family
              */
             message: string;
+        };
+        /**
+         * InsertionSlotOut
+         * @description Where a room can be added in open space against an outside wall (Checkpoint 3.2),
+         *     derived from the document on read (`engine/insertion.py`). Lengths are centreline lengths;
+         *     the clear size is smaller by the allowances. A suggestion: the server checks every
+         *     ADD_ROOM_OUTSIDE again and the validator judges the result.
+         */
+        InsertionSlotOut: {
+            /** Depth Allowance Mm */
+            depth_allowance_mm: number;
+            /** Host Room */
+            host_room: string;
+            /** Length Allowance Mm */
+            length_allowance_mm: number;
+            /** Length Mm */
+            length_mm: number;
+            /** Max Depth Mm */
+            max_depth_mm: number;
+            /** Offset Mm */
+            offset_mm: number;
+            /** Open Area */
+            open_area: string | null;
+            /** Open Area Kind */
+            open_area_kind: string | null;
+            side: components["schemas"]["RoomSide"];
         };
         /**
          * InspectionKind
@@ -10817,7 +10872,7 @@ export interface components {
          *     deterministic repair, the future editor and future natural-language edits.
          * @enum {string}
          */
-        PlanOpKind: "MOVE_OPENING" | "SET_OPENING" | "ADD_OPENING" | "DELETE_OPENING" | "MOVE_FIXTURE" | "ADD_FIXTURE" | "DELETE_FIXTURE" | "RENAME_ROOM" | "SET_ROOM_TYPE" | "MOVE_WALL" | "ADD_ROOM" | "DELETE_ROOM" | "MOVE_EDGE" | "REVERT_TO_REVISION" | "REVERT_TO_VERSION";
+        PlanOpKind: "MOVE_OPENING" | "SET_OPENING" | "ADD_OPENING" | "DELETE_OPENING" | "MOVE_FIXTURE" | "ADD_FIXTURE" | "DELETE_FIXTURE" | "RENAME_ROOM" | "SET_ROOM_TYPE" | "MOVE_WALL" | "ADD_ROOM" | "DELETE_ROOM" | "MOVE_EDGE" | "ADD_ROOM_OUTSIDE" | "REVERT_TO_REVISION" | "REVERT_TO_VERSION";
         /**
          * PlanOpReason
          * @description Why an operation batch was applied (`house_plan_ops.reason`).
@@ -12527,6 +12582,8 @@ export interface components {
          *     `name` is the default room name the engine gives the type.
          */
         RoomTypeOut: {
+            /** Min Area Mm2 */
+            min_area_mm2?: number | null;
             /** Min Short Mm */
             min_short_mm: number;
             /** Name */

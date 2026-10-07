@@ -2090,6 +2090,28 @@
     "unitSymbol": {
       "m": "m",
       "ft": "ft"
+    },
+    "insert": {
+      "help": "Add a room in this open space, against an outside wall of the house. It gets a door from the room it stands against, and a window if it needs one.",
+      "where": "Against which wall",
+      "slot": "Beside {room}, {side}: up to {depth} deep and {length} long inside",
+      "type": "Room type",
+      "depth": "Depth from the wall ({unit})",
+      "length": "Length along the wall ({unit})",
+      "align": "Place it",
+      "alignStart": "At the start of the wall",
+      "alignEnd": "At the end of the wall",
+      "sizesNote": "Sizes are measured to the wall centres; the space inside is slightly smaller.",
+      "shallow": "This {area} is {available} deep here, but a {type} needs at least {needed}.",
+      "narrow": "This wall gives {available} inside, but a {type} needs at least {needed}.",
+      "small": "That would give {area} inside, but a {type} needs at least {needed}.",
+      "tooDeep": "The open space reaches only {available} from this wall.",
+      "tooLong": "This stretch of wall is only {available} long.",
+      "preview": "Show on the plan",
+      "add": "Add room",
+      "noSlot": "No wall of the house faces this {area} with enough free space for a room.",
+      "canAdd": "A room can be added here",
+      "cannotAdd": "No room can be added here"
     }
   }
 }

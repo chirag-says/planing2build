@@ -8,13 +8,14 @@
 // end with the page; the server's revisions (every stored batch) and named versions persist and
 // are restored by typed operations that make a new revision, so undo and restore never rewrite
 // history. A structural edit's inverse is REVERT_TO_REVISION, so undo works the same for it.
-import type { Axis, MoveMode, Side } from "./edit";
+import type { Axis, MoveMode, Rect, Side } from "./edit";
 import type { PlanOp, PlanState, ValidationIssue } from "./types";
 
 export type Selection =
   | { kind: "room"; id: string }
   | { kind: "side"; room: string; side: Side }
-  | { kind: "opening"; id: string; room?: string }; // room: the list it was picked from
+  | { kind: "opening"; id: string; room?: string } // room: the list it was picked from
+  | { kind: "area"; id: string }; // a derived open area (Checkpoint 3.2), to add a room in
 
 export type Drag =
   // a room side moving along its axis: its line from `from` to `to` (world mm)
@@ -49,6 +50,7 @@ export interface EditorState {
   snap: boolean;
   units: Units;
   moveMode: MoveMode;
+  preview: Rect | null; // a room about to be added in open space: drawn, never sent
 }
 
 export type Direction = "do" | "undo" | "redo";
@@ -64,6 +66,7 @@ export type EditorAction =
   | { type: "snap"; on: boolean }
   | { type: "units"; units: Units }
   | { type: "moveMode"; mode: MoveMode }
+  | { type: "preview"; rect: Rect | null }
   | { type: "reload"; plan: PlanState };
 
 export function initialState(plan: PlanState): EditorState {
@@ -78,6 +81,7 @@ export function initialState(plan: PlanState): EditorState {
     snap: true,
     units: "m",
     moveMode: "edge",
+    preview: null,
   };
 }
 
@@ -86,7 +90,7 @@ export const HISTORY_LIMIT = 100;
 export function editorReducer(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
     case "select":
-      return { ...state, selection: action.selection, drag: null };
+      return { ...state, selection: action.selection, drag: null, preview: null };
     case "drag":
       return state.busy ? state : { ...state, drag: action.drag };
     case "cancel":
@@ -108,7 +112,7 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
         redo = redo.slice(0, -1);
         undo = [...undo, batch].slice(-HISTORY_LIMIT);
       }
-      return { ...state, plan: action.plan, busy: false, drag: null, problem: null, undo, redo };
+      return { ...state, plan: action.plan, busy: false, drag: null, problem: null, undo, redo, preview: null };
     }
     case "failed":
       return { ...state, busy: false, drag: null, problem: action.problem };
@@ -120,6 +124,8 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       return { ...state, units: action.units };
     case "moveMode":
       return { ...state, moveMode: action.mode };
+    case "preview":
+      return { ...state, preview: action.rect };
     case "reload":
       return { ...initialState(action.plan), snap: state.snap, units: state.units, moveMode: state.moveMode };
   }

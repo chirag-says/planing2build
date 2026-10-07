@@ -61,7 +61,7 @@ def main() -> None:
             "document": dump(result.plan),
             "geometry": dump(plan_geometry(result.plan, rules)),
             "validation": dump(result.report),
-            "editing": dump(editing_block(rules, True, 0)),
+            "editing": dump(editing_block(rules, True, 0, result.plan)),
         }
         path = OUT / f"{name}.json"
         path.write_text(json.dumps(detail, sort_keys=True, separators=(",", ":")) + "\n", "utf-8")

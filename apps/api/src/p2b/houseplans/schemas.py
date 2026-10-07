@@ -16,6 +16,7 @@ from p2b.core.vocabulary import (
     PlanOpKind,
     PlanOpReason,
     PlanValidity,
+    RoomSide,
     RoomType,
     RulesetStatus,
 )
@@ -120,6 +121,24 @@ class RoomTypeOut(_Out):
     name: str
     needs_window: bool
     min_short_mm: int
+    min_area_mm2: int | None = None  # Checkpoint 3.2: clear area, for the add-room check
+
+
+class InsertionSlotOut(_Out):
+    """Where a room can be added in open space against an outside wall (Checkpoint 3.2),
+    derived from the document on read (`engine/insertion.py`). Lengths are centreline lengths;
+    the clear size is smaller by the allowances. A suggestion: the server checks every
+    ADD_ROOM_OUTSIDE again and the validator judges the result."""
+
+    host_room: str
+    side: RoomSide
+    offset_mm: int
+    length_mm: int
+    max_depth_mm: int
+    open_area: str | None
+    open_area_kind: str | None
+    depth_allowance_mm: int
+    length_allowance_mm: int
 
 
 class OpeningSizesOut(_Out):
@@ -149,6 +168,7 @@ class EditingOut(_Out):
     openings: OpeningSizesOut | None = None
     interior_wall_mm: int | None = None
     exterior_wall_mm: int | None = None
+    insertion_slots: list[InsertionSlotOut] = []
 
 
 class HousePlanDetailOut(HousePlanSummaryOut):

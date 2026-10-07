@@ -166,6 +166,57 @@
         "title": "AddRoom",
         "type": "object"
       },
+      "AddRoomOutside": {
+        "additionalProperties": false,
+        "description": "A new room in open space against an outside wall of the host (Checkpoint 3.2): `depth_mm`\nbeyond the host's `side`, `length_mm` long from `offset_mm` along that side, measured from\nits left (LEFT, RIGHT sides: front) end. Positions are along a known side, never free\ncoordinates (`graph_edit.add_room_outside`).",
+        "properties": {
+          "depth_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Depth Mm",
+            "type": "integer"
+          },
+          "host_room": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Host Room",
+            "type": "string"
+          },
+          "length_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Length Mm",
+            "type": "integer"
+          },
+          "offset_mm": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Offset Mm",
+            "type": "integer"
+          },
+          "op": {
+            "const": "ADD_ROOM_OUTSIDE",
+            "default": "ADD_ROOM_OUTSIDE",
+            "title": "Op",
+            "type": "string"
+          },
+          "side": {
+            "$ref": "#/components/schemas/RoomSide"
+          },
+          "type": {
+            "$ref": "#/components/schemas/RoomType"
+          }
+        },
+        "required": [
+          "host_room",
+          "type",
+          "side",
+          "offset_mm",
+          "length_mm",
+          "depth_mm"
+        ],
+        "title": "AddRoomOutside",
+        "type": "object"
+      },
       "AdditionalItemIn": {
         "additionalProperties": false,
         "properties": {
@@ -4909,6 +4960,7 @@
                   "ADD_FIXTURE": "#/components/schemas/AddFixture",
                   "ADD_OPENING": "#/components/schemas/AddOpening",
                   "ADD_ROOM": "#/components/schemas/AddRoom",
+                  "ADD_ROOM_OUTSIDE": "#/components/schemas/AddRoomOutside",
                   "DELETE_FIXTURE": "#/components/schemas/DeleteFixture",
                   "DELETE_OPENING": "#/components/schemas/DeleteOpening",
                   "DELETE_ROOM": "#/components/schemas/DeleteRoom",
@@ -4960,6 +5012,9 @@
                 },
                 {
                   "$ref": "#/components/schemas/AddRoom"
+                },
+                {
+                  "$ref": "#/components/schemas/AddRoomOutside"
                 },
                 {
                   "$ref": "#/components/schemas/DeleteRoom"
@@ -5072,6 +5127,7 @@
                   "ADD_FIXTURE": "#/components/schemas/AddFixture",
                   "ADD_OPENING": "#/components/schemas/AddOpening",
                   "ADD_ROOM": "#/components/schemas/AddRoom",
+                  "ADD_ROOM_OUTSIDE": "#/components/schemas/AddRoomOutside",
                   "DELETE_FIXTURE": "#/components/schemas/DeleteFixture",
                   "DELETE_OPENING": "#/components/schemas/DeleteOpening",
                   "DELETE_ROOM": "#/components/schemas/DeleteRoom",
@@ -5125,6 +5181,9 @@
                   "$ref": "#/components/schemas/AddRoom"
                 },
                 {
+                  "$ref": "#/components/schemas/AddRoomOutside"
+                },
+                {
                   "$ref": "#/components/schemas/DeleteRoom"
                 },
                 {
@@ -5170,6 +5229,14 @@
           "grid_mm": {
             "title": "Grid Mm",
             "type": "integer"
+          },
+          "insertion_slots": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/InsertionSlotOut"
+            },
+            "title": "Insertion Slots",
+            "type": "array"
           },
           "interior_wall_mm": {
             "anyOf": [
@@ -8285,6 +8352,74 @@
           "message"
         ],
         "title": "InformationRequest",
+        "type": "object"
+      },
+      "InsertionSlotOut": {
+        "additionalProperties": false,
+        "description": "Where a room can be added in open space against an outside wall (Checkpoint 3.2),\nderived from the document on read (`engine/insertion.py`). Lengths are centreline lengths;\nthe clear size is smaller by the allowances. A suggestion: the server checks every\nADD_ROOM_OUTSIDE again and the validator judges the result.",
+        "properties": {
+          "depth_allowance_mm": {
+            "title": "Depth Allowance Mm",
+            "type": "integer"
+          },
+          "host_room": {
+            "title": "Host Room",
+            "type": "string"
+          },
+          "length_allowance_mm": {
+            "title": "Length Allowance Mm",
+            "type": "integer"
+          },
+          "length_mm": {
+            "title": "Length Mm",
+            "type": "integer"
+          },
+          "max_depth_mm": {
+            "title": "Max Depth Mm",
+            "type": "integer"
+          },
+          "offset_mm": {
+            "title": "Offset Mm",
+            "type": "integer"
+          },
+          "open_area": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open Area"
+          },
+          "open_area_kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open Area Kind"
+          },
+          "side": {
+            "$ref": "#/components/schemas/RoomSide"
+          }
+        },
+        "required": [
+          "host_room",
+          "side",
+          "offset_mm",
+          "length_mm",
+          "max_depth_mm",
+          "open_area",
+          "open_area_kind",
+          "depth_allowance_mm",
+          "length_allowance_mm"
+        ],
+        "title": "InsertionSlotOut",
         "type": "object"
       },
       "InspectionKind": {
@@ -13708,6 +13843,7 @@
           "ADD_ROOM",
           "DELETE_ROOM",
           "MOVE_EDGE",
+          "ADD_ROOM_OUTSIDE",
           "REVERT_TO_REVISION",
           "REVERT_TO_VERSION"
         ],
@@ -18821,6 +18957,17 @@
         "additionalProperties": false,
         "description": "A room type the editor may offer (Checkpoint 3.1): enclosed types of the plan's ruleset.\n`name` is the default room name the engine gives the type.",
         "properties": {
+          "min_area_mm2": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Area Mm2"
+          },
           "min_short_mm": {
             "title": "Min Short Mm",
             "type": "integer"
