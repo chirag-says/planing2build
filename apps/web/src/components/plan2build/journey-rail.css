@@ -8,6 +8,8 @@
   margin-inline: -1rem;
   padding: 0.25rem 1rem 0.75rem;
   scroll-snap-type: x proximity;
+  /* Snap to the padding edge, not the box edge, so the first phase keeps its margin. */
+  scroll-padding-inline: 1rem;
 }
 .jr-rail {
   display: grid;

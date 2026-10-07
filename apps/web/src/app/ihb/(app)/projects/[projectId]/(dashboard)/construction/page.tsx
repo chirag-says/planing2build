@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { BuildProgress } from "@/components/plan2build/build-progress";
 import { AssuranceSection } from "@/components/plan2build/assurance-view";
 import { ActionButton } from "@/components/plan2build/build-plan";
 import { SectionHeader } from "@/components/plan2build/page-header";
@@ -61,6 +62,7 @@ export default async function ProjectConstructionPage({
     <section aria-labelledby="stages" className="flex flex-col gap-4">
       <SectionHeader id="stages" title={t("title")} description={t("intro")} />
       <p className="text-sm" data-testid="contractor">{contractor}</p>
+      <BuildProgress stages={data.stages} label={(s) => labels.get(s.id) ?? s.name} />
       <ol className="flex flex-col gap-2">
         {data.stages.map((s) => (
           <li key={s.id} className="flex flex-col gap-2 rounded-md border border-border p-3 text-sm"

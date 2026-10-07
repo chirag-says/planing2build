@@ -1718,7 +1718,20 @@
     "receivedMark": "Record the outside contractor's received mark (JSON)",
     "send": "Send",
     "error": "That did not work. Try again.",
-    "errorReason": "That did not work: {reason}"
+    "errorReason": "That did not work: {reason}",
+    "drawing": {
+      "title": "Your house, stage by stage",
+      "summary": "{done} of {total} stages complete",
+      "now": "Now: {stage}",
+      "none": "Nothing started yet",
+      "alt": "Elevation drawing of the house. {done} of {total} stages complete.",
+      "legend": {
+        "done": "Complete",
+        "active": "In progress",
+        "todo": "Not started",
+        "held": "On hold or blocked"
+      }
+    }
   },
   "Assurance": {
     "title": "Inspections",
