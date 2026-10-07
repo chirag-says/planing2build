@@ -47,6 +47,7 @@ from p2b.houseplans.engine.geom import (
 )
 from p2b.houseplans.engine.intent import ArchitecturalIntent
 from p2b.houseplans.engine.model import Floor, Frozen, HousePlan, ParamValue, Room
+from p2b.houseplans.engine.programme import expected_counts, removed_rooms
 from p2b.houseplans.engine.ruleset import RulesetContent
 from p2b.houseplans.engine.upgrade import is_supported, schema_version_of
 
@@ -878,7 +879,9 @@ def _requirements(ctx: Ctx) -> list[ValidationIssue]:
         return out
     if intent.parking is not None and (not parking_rooms or spec is None):
         out.append(issue(C.PARKING_MISSING, [(EntityKind.DOCUMENT, "parking")]))
-    expected = Counter(p.room_type for p in intent.programme)
+    # the requirement plus the room changes the owner made while editing (Checkpoint 3.1)
+    expected = expected_counts(Counter(p.room_type for p in intent.programme), ctx.plan.compromises)
+    removed = removed_rooms(ctx.plan.compromises)
     actual = Counter(r.type for r in ctx.floor.rooms if r.origin.kind.value != "SOLVER")
     for room_type in sorted(set(expected) | set(actual)):
         if expected[room_type] != actual[room_type]:
@@ -896,7 +899,7 @@ def _requirements(ctx: Ctx) -> list[ValidationIssue]:
                 )
             )
     for rel in intent.relations:
-        if rel.strength != ConstraintStrength.HARD:
+        if rel.strength != ConstraintStrength.HARD or {rel.room, rel.host} & removed:
             continue
         wanted = (
             {OpeningKind.DOOR}

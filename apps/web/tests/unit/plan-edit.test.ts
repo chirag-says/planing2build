@@ -67,10 +67,10 @@ describe("gestures as typed operations", () => {
     for (const room of document.floors[0].rooms) {
       for (const side of roomSides(document, room.id) ?? []) {
         for (const delta of [150, -100]) {
-          const op = moveSideOp(document, side, delta);
+          // "line" is the Checkpoint 3 MOVE_WALL; "edge" (MOVE_EDGE) is tested in plan-edit-cp31
+          const op = moveSideOp(document, room.id, side, delta, "line");
           expect(op).not.toBeNull();
-          if (!op) continue;
-          expect(op.op).toBe("MOVE_WALL");
+          if (!op || op.op !== "MOVE_WALL") throw new Error("not MOVE_WALL");
           expect(Number.isInteger(op.delta_mm)).toBe(true);
           expect(lineAfter(document, op)).toEqual({ axis: side.axis, coord: side.coord + delta });
         }
@@ -82,8 +82,8 @@ describe("gestures as typed operations", () => {
     const { document } = fixture("1bhk_25x40_south_small");
     const side = roomSides(document, "living")?.[0];
     if (!side) throw new Error("no side");
-    expect(moveSideOp(document, side, 0)).toBeNull();
-    expect(moveSideOp(document, side, 0.4)).toBeNull();
+    expect(moveSideOp(document, "living", side, 0, "line")).toBeNull();
+    expect(moveSideOp(document, "living", side, 0.4)).toBeNull();
   });
 
   it("moves a room as one batch, leading side first", () => {
@@ -92,9 +92,9 @@ describe("gestures as typed operations", () => {
     const right = sides?.find((s) => s.side === "right");
     const left = sides?.find((s) => s.side === "left");
     if (!right || !left) throw new Error("no sides");
-    const forward = moveRoomOps(document, "kitchen", "x", 300) as MoveWallOp[];
+    const forward = moveRoomOps(document, "kitchen", "x", 300, "line") as MoveWallOp[];
     expect(forward.map((op) => lineAfter(document, op).coord)).toEqual([right.coord + 300, left.coord + 300]);
-    const back = moveRoomOps(document, "kitchen", "x", -300) as MoveWallOp[];
+    const back = moveRoomOps(document, "kitchen", "x", -300, "line") as MoveWallOp[];
     expect(back.map((op) => lineAfter(document, op).coord)).toEqual([left.coord - 300, right.coord - 300]);
   });
 
@@ -129,7 +129,7 @@ describe("gestures as typed operations", () => {
 
   it("serialises operations as the contract's plain JSON", () => {
     const { document } = fixture("2bhk_30x50_north_twowheeler_open");
-    const ops = moveRoomOps(document, "living", "y", 100);
+    const ops = moveRoomOps(document, "living", "y", 100, "line");
     expect(JSON.parse(JSON.stringify(ops))).toEqual(ops);
     for (const op of ops) {
       expect(Object.keys(op).sort()).toEqual(["delta_mm", "op", "wall"]);

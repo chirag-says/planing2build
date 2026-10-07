@@ -144,6 +144,14 @@ class PlanEditInvalid(AppError):
     default_message = "That change would break the floor plan's rules, so it was not saved."
 
 
+class PlanHistoryUnavailable(AppError):
+    """An earlier state of the plan cannot be rebuilt exactly from its operation log (the
+    replayed result does not match the recorded hash), so it is not restored (Checkpoint 3.1)."""
+
+    code, status = "PLAN_HISTORY_UNAVAILABLE", 409
+    default_message = "That earlier state of the floor plan cannot be restored."
+
+
 class RulesetNotPublished(AppError):
     """No layout ruleset may be used here (production needs a PUBLISHED one; AD-05)."""
 

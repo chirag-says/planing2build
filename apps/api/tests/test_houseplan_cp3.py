@@ -11,6 +11,7 @@ from p2b.core.vocabulary import (
     OpeningKind,
     PlanOpRejection,
     PlanSource,
+    RoomSide,
     RoomType,
     WallKind,
 )
@@ -137,7 +138,8 @@ def test_a_zero_move_an_unknown_wall_and_unsupported_operations_are_rejected() -
         (MoveWall(wall=wall, delta_mm=0), PlanOpRejection.NO_MOVEMENT),
         (MoveWall(wall="w_missing", delta_mm=100), PlanOpRejection.UNKNOWN_ENTITY),
         (
-            AddRoom(host_room="living", type=RoomType.STORE, x0=0, y0=0, x1=1000, y1=1000),
+            # Checkpoint 3.1: the structural edits need the plan's ruleset to apply
+            AddRoom(host_room="living", type=RoomType.STORE, side=RoomSide.BACK, depth_mm=1000),
             PlanOpRejection.NOT_SUPPORTED,
         ),
         (DeleteRoom(room="dining", merge_into="living"), PlanOpRejection.NOT_SUPPORTED),

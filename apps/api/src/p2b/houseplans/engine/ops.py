@@ -4,15 +4,19 @@ apply returns the new plan and the inverse operation, so history and undo are ex
 batches are logged in `house_plan_ops` (Checkpoint 3).
 
 Checkpoint 1 applies the opening, fixture and room-label operations; Checkpoint 3 adds MOVE_WALL
-(`_move_wall`). ADD_ROOM and DELETE_ROOM are defined so the contract is stable, and refuse to
-apply until a later editing checkpoint implements their graph edits (they must keep rooms and
-walls on one planar graph)."""
+(`_move_wall`); Checkpoint 3.1 adds the structural edits MOVE_EDGE, ADD_ROOM and DELETE_ROOM
+(`graph_edit`), which rebuild the planar graph and so need the plan's ruleset. Their inverse is
+REVERT_TO_REVISION of the revision they were applied to: the plan service rebuilds that revision
+from version 1 and the operation log. REVERT_TO_REVISION and REVERT_TO_VERSION are applied by
+the plan service alone, never here. Room additions, removals and type changes are recorded as
+the owner's programme changes (`programme`)."""
 
 from typing import Annotated, Any, Literal
 
 from pydantic import Field, TypeAdapter
 
-from p2b.core.vocabulary import PlanOpKind, PlanOpRejection, RoomType, WallSide
+from p2b.core.vocabulary import PlanOpKind, PlanOpRejection, RoomSide, RoomType, WallSide
+from p2b.houseplans.engine import graph_edit, programme
 from p2b.houseplans.engine.model import (
     DoorSpec,
     Fixture,
@@ -25,8 +29,11 @@ from p2b.houseplans.engine.model import (
     NonNegMm,
     Opening,
     PosMm,
+    Room,
+    SizeSpec,
     Text,
 )
+from p2b.houseplans.engine.ruleset import RulesetContent
 
 
 class MoveOpening(Frozen):
@@ -90,20 +97,48 @@ class MoveWall(Frozen):
     delta_mm: Mm  # perpendicular to the wall, toward its LEFT side when positive
 
 
+class MoveEdge(Frozen):
+    """One side of a rectangular room, moved along +x (LEFT, RIGHT) or +y (FRONT, BACK); only
+    the part of that line that must move with it moves (`graph_edit.move_edge`)."""
+
+    op: Literal[PlanOpKind.MOVE_EDGE] = PlanOpKind.MOVE_EDGE
+    room: Id
+    side: RoomSide
+    delta_mm: Mm
+
+
 class AddRoom(Frozen):
+    """A new room split off one side of the host across its full width, `depth_mm` deep, with a
+    door from the host (`graph_edit.add_room`). Checkpoint 3.1 replaced the never-applied
+    free-rectangle form (x0, y0, x1, y1): the browser sends no coordinates."""
+
     op: Literal[PlanOpKind.ADD_ROOM] = PlanOpKind.ADD_ROOM
     host_room: Id
     type: RoomType
-    x0: Mm
-    y0: Mm
-    x1: Mm
-    y1: Mm
+    side: RoomSide
+    depth_mm: PosMm
 
 
 class DeleteRoom(Frozen):
     op: Literal[PlanOpKind.DELETE_ROOM] = PlanOpKind.DELETE_ROOM
     room: Id
     merge_into: Id
+
+
+class RevertToRevision(Frozen):
+    """Make the plan what it was at `revision`, as a new revision (Checkpoint 3.1). The undo of
+    a structural edit; applied by the plan service, alone in its batch."""
+
+    op: Literal[PlanOpKind.REVERT_TO_REVISION] = PlanOpKind.REVERT_TO_REVISION
+    revision: Annotated[int, Field(ge=0)]
+
+
+class RevertToVersion(Frozen):
+    """Make the plan what named version `version` holds, as a new revision (Checkpoint 3.1).
+    Applied by the plan service, alone in its batch."""
+
+    op: Literal[PlanOpKind.REVERT_TO_VERSION] = PlanOpKind.REVERT_TO_VERSION
+    version: Annotated[int, Field(ge=1)]
 
 
 PlanOp = Annotated[
@@ -117,11 +152,16 @@ PlanOp = Annotated[
     | RenameRoom
     | SetRoomType
     | MoveWall
+    | MoveEdge
     | AddRoom
-    | DeleteRoom,
+    | DeleteRoom
+    | RevertToRevision
+    | RevertToVersion,
     Field(discriminator="op"),
 ]
 PLAN_OP: TypeAdapter[PlanOp] = TypeAdapter(PlanOp)
+STRUCTURAL = (MoveEdge, AddRoom, DeleteRoom)
+REVERTS = (RevertToRevision, RevertToVersion)
 
 
 class OperationRejected(Exception):
@@ -133,9 +173,11 @@ class OperationRejected(Exception):
         op: PlanOpKind,
         reason: str,
         code: PlanOpRejection = PlanOpRejection.NOT_SUPPORTED,
+        entities: tuple[str, ...] = (),
     ):
         super().__init__(f"{op.value}: {reason}")
         self.op, self.reason, self.code = op, reason, code
+        self.entities = entities  # the ids the editor names in its message (Checkpoint 3.1)
 
 
 def _floor_index(plan: HousePlan, attr: str, ident: str) -> tuple[int, int]:
@@ -152,10 +194,20 @@ def _replace(plan: HousePlan, fi: int, attr: str, items: list[Any]) -> HousePlan
     return plan.model_copy(update={"floors": floors})
 
 
-def apply(plan: HousePlan, op: PlanOp) -> tuple[HousePlan, PlanOp]:
+def apply(
+    plan: HousePlan, op: PlanOp, ruleset: RulesetContent | None = None
+) -> tuple[HousePlan, PlanOp]:
     """The plan with `op` applied, and the operation that undoes it. The result is not validated
-    here: callers validate after every batch."""
+    here: callers validate after every batch. The structural edits need `ruleset` (wall
+    thicknesses, door and window sizes); with it, a room type change is checked against it and
+    takes the type's zone and sizes."""
     try:
+        if isinstance(op, STRUCTURAL):
+            if ruleset is None:
+                raise OperationRejected(op.op, "needs the plan's ruleset")
+            return _structural(plan, op, ruleset), RevertToRevision(revision=plan.meta.revision_no)
+        if isinstance(op, REVERTS):
+            raise OperationRejected(op.op, "applied by the plan service, alone in its batch")
         if isinstance(op, MoveOpening | SetOpening | DeleteOpening):
             fi, i = _floor_index(plan, "openings", op.opening)
             items = list(plan.floors[fi].openings)
@@ -186,7 +238,9 @@ def apply(plan: HousePlan, op: PlanOp) -> tuple[HousePlan, PlanOp]:
             return _replace(plan, fi, "openings", items), inverse
         if isinstance(op, AddOpening):
             if any(o.id == op.opening.id for f in plan.floors for o in f.openings):
-                raise OperationRejected(op.op, "opening id exists", PlanOpRejection.ENTITY_EXISTS)
+                raise OperationRejected(
+                    op.op, "opening id exists", PlanOpRejection.ENTITY_EXISTS, (op.opening.id,)
+                )
             fi = 0
             return (
                 _replace(plan, fi, "openings", [*plan.floors[fi].openings, op.opening]),
@@ -209,7 +263,9 @@ def apply(plan: HousePlan, op: PlanOp) -> tuple[HousePlan, PlanOp]:
             return _replace(plan, fi, "fixtures", fixtures), inverse
         if isinstance(op, AddFixture):
             if any(x.id == op.fixture.id for f in plan.floors for x in f.fixtures):
-                raise OperationRejected(op.op, "fixture id exists", PlanOpRejection.ENTITY_EXISTS)
+                raise OperationRejected(
+                    op.op, "fixture id exists", PlanOpRejection.ENTITY_EXISTS, (op.fixture.id,)
+                )
             return (
                 _replace(plan, 0, "fixtures", [*plan.floors[0].fixtures, op.fixture]),
                 DeleteFixture(fixture=op.fixture.id),
@@ -222,16 +278,60 @@ def apply(plan: HousePlan, op: PlanOp) -> tuple[HousePlan, PlanOp]:
                 rooms[i] = old_r.model_copy(update={"name": op.name})
                 inverse = RenameRoom(room=old_r.id, name=old_r.name)
             else:
-                rooms[i] = old_r.model_copy(update={"type": op.type})
+                rooms[i] = _retyped(old_r, op, ruleset)
                 inverse = SetRoomType(room=old_r.id, type=old_r.type)
+                changed = _replace(plan, fi, "rooms", rooms)
+                return programme.room_retyped(changed, old_r, op.type), inverse
             return _replace(plan, fi, "rooms", rooms), inverse
         if isinstance(op, MoveWall):
             return _move_wall(plan, op)
     except LookupError as missing:
+        ident = str(missing.args[0]) if missing.args else ""
         raise OperationRejected(
-            op.op, f"unknown entity {missing}", PlanOpRejection.UNKNOWN_ENTITY
+            op.op, f"unknown entity {ident}", PlanOpRejection.UNKNOWN_ENTITY, (ident,)
         ) from None
-    raise OperationRejected(op.op, "not supported until a later editing checkpoint")
+    raise OperationRejected(op.op, "not supported")
+
+
+def _structural(
+    plan: HousePlan, op: MoveEdge | AddRoom | DeleteRoom, ruleset: RulesetContent
+) -> HousePlan:
+    try:
+        if isinstance(op, MoveEdge):
+            return graph_edit.move_edge(plan, op.room, op.side, op.delta_mm, ruleset)
+        if isinstance(op, AddRoom):
+            return graph_edit.add_room(plan, op.host_room, op.type, op.side, op.depth_mm, ruleset)
+        return graph_edit.delete_room(plan, op.room, op.merge_into, ruleset)
+    except graph_edit.GraphEditRejected as rejected:
+        raise OperationRejected(op.op, rejected.reason, rejected.code, rejected.entities) from None
+
+
+def _retyped(room: Room, op: SetRoomType, ruleset: RulesetContent | None) -> Room:
+    """The room with its new type. With a ruleset, the type must exist there and keep the room
+    enclosed or open as it is (that decides which walls exist), and the room takes the type's
+    zone and sizes."""
+    if ruleset is None:
+        return room.model_copy(update={"type": op.type})
+    rule = ruleset.rooms.get(op.type)
+    if rule is None or rule.enclosed != room.enclosed:
+        raise OperationRejected(
+            op.op,
+            f"{room.id} cannot become {op.type.value}",
+            PlanOpRejection.ROOM_TYPE_NOT_ALLOWED,
+            (room.id,),
+        )
+    return room.model_copy(
+        update={
+            "type": op.type,
+            "zone": rule.zone,
+            "size_spec": SizeSpec(
+                min_short_mm=rule.min_short_mm,
+                min_area_mm2=rule.min_area_mm2,
+                pref_area_mm2=rule.pref_area_mm2,
+                max_area_mm2=rule.max_area_mm2,
+            ),
+        }
+    )
 
 
 # ---------- MOVE_WALL ----------
@@ -300,7 +400,10 @@ def _move_wall(plan: HousePlan, op: MoveWall) -> tuple[HousePlan, PlanOp]:
     axis, run, moved = wall_run(floor, wall.id)
     if not axis:
         raise OperationRejected(
-            op.op, f"wall {wall.id} is not axis-aligned", PlanOpRejection.NOT_AXIS_ALIGNED
+            op.op,
+            f"wall {wall.id} is not axis-aligned",
+            PlanOpRejection.NOT_AXIS_ALIGNED,
+            (wall.id,),
         )
     if op.delta_mm == 0:
         raise OperationRejected(op.op, "zero movement", PlanOpRejection.NO_MOVEMENT)
@@ -324,12 +427,16 @@ def _move_wall(plan: HousePlan, op: MoveWall) -> tuple[HousePlan, PlanOp]:
                 op.op,
                 f"wall {w.id} meets the moving line but is not perpendicular to it",
                 PlanOpRejection.NOT_AXIS_ALIGNED,
+                (w.id,),
             )
         before = (old_b.x - old_a.x) + (old_b.y - old_a.y)
         after = (new_b.x - new_a.x) + (new_b.y - new_a.y)
         if after == 0 or (after > 0) != (before > 0):
             raise OperationRejected(
-                op.op, f"wall {w.id} would collapse", PlanOpRejection.WALL_WOULD_COLLAPSE
+                op.op,
+                f"wall {w.id} would collapse",
+                PlanOpRejection.WALL_WOULD_COLLAPSE,
+                (w.id,),
             )
         length_change[w.id] = (abs(after) - abs(before), w.a in moved)
 
@@ -339,7 +446,10 @@ def _move_wall(plan: HousePlan, op: MoveWall) -> tuple[HousePlan, PlanOp]:
             return offset
         if offset + change < 0:
             raise OperationRejected(
-                op.op, f"{item} would leave wall {wall_id}", PlanOpRejection.HOSTED_ITEM_LEAVES_WALL
+                op.op,
+                f"{item} would leave wall {wall_id}",
+                PlanOpRejection.HOSTED_ITEM_LEAVES_WALL,
+                (item,),
             )
         return offset + change
 

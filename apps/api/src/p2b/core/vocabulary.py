@@ -1215,6 +1215,9 @@ class PlanOpKind(StrEnum):
     MOVE_WALL = "MOVE_WALL"
     ADD_ROOM = "ADD_ROOM"
     DELETE_ROOM = "DELETE_ROOM"
+    MOVE_EDGE = "MOVE_EDGE"
+    REVERT_TO_REVISION = "REVERT_TO_REVISION"
+    REVERT_TO_VERSION = "REVERT_TO_VERSION"
 
 
 class PlanOpRejection(StrEnum):
@@ -1228,6 +1231,35 @@ class PlanOpRejection(StrEnum):
     NOT_AXIS_ALIGNED = "NOT_AXIS_ALIGNED"
     WALL_WOULD_COLLAPSE = "WALL_WOULD_COLLAPSE"
     HOSTED_ITEM_LEAVES_WALL = "HOSTED_ITEM_LEAVES_WALL"
+    NOT_RECTANGULAR = "NOT_RECTANGULAR"
+    HOSTED_ITEM_CHANGES_ROOMS = "HOSTED_ITEM_CHANGES_ROOMS"
+    DOOR_DOES_NOT_FIT = "DOOR_DOES_NOT_FIT"
+    ROOMS_WOULD_OVERLAP = "ROOMS_WOULD_OVERLAP"
+    NOT_A_SLICE = "NOT_A_SLICE"
+    ROOMS_NOT_MERGEABLE = "ROOMS_NOT_MERGEABLE"
+    ROOM_TYPE_NOT_ALLOWED = "ROOM_TYPE_NOT_ALLOWED"
+    REVERT_NOT_ALONE = "REVERT_NOT_ALONE"
+    UNKNOWN_REVISION = "UNKNOWN_REVISION"
+
+
+class RoomSide(StrEnum):
+    """A side of a rectangular room in the plot frame (Checkpoint 3.1, MOVE_EDGE): LEFT is -x,
+    RIGHT +x, FRONT the road side (-y), BACK +y."""
+
+    LEFT = "LEFT"
+    RIGHT = "RIGHT"
+    FRONT = "FRONT"
+    BACK = "BACK"
+
+
+class ProgrammeChange(StrEnum):
+    """A change the owner made to the requirement's room programme while editing (Checkpoint
+    3.1), recorded as a HousePlan compromise (I-P6). The validator counts rooms against the
+    requirement plus these recorded changes; the requirement itself is never modified."""
+
+    ROOM_ADDED_BY_OWNER = "ROOM_ADDED_BY_OWNER"
+    ROOM_REMOVED_BY_OWNER = "ROOM_REMOVED_BY_OWNER"
+    ROOM_TYPE_CHANGED_BY_OWNER = "ROOM_TYPE_CHANGED_BY_OWNER"
 
 
 class PlanOpReason(StrEnum):
@@ -1299,5 +1331,5 @@ ALL_ENUMS: tuple[type[StrEnum], ...] = (
     MissingInputReason, UnsupportedReason, InfeasibleReason, PlanSource, SolverKind, RulesetStatus,
     PlanGenerationState, PlanFailureReason, PlanValidity, ValidationCategory, ValidationSeverity,
     RepairHint, EntityKind, ValidationCode, PlanOpKind, TopologyFamily, FeasibilityClass,
-    RepairReason, PlanOpRejection, PlanOpReason,
+    RepairReason, PlanOpRejection, PlanOpReason, RoomSide, ProgrammeChange,
 )  # fmt: skip

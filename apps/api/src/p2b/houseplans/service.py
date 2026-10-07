@@ -35,6 +35,7 @@ from p2b.core.errors import (
     GenerationInProgress,
     NotFound,
     PlanEditInvalid,
+    PlanHistoryUnavailable,
     PlanOperationRejected,
     PlanUnsupported,
     RevisionConflict,
@@ -50,6 +51,8 @@ from p2b.core.vocabulary import (
     PlanFailureReason,
     PlanGenerationState,
     PlanOpReason,
+    PlanOpRejection,
+    PlanSource,
     PlanValidity,
     ProjectStatus,
     SolverKind,
@@ -71,9 +74,16 @@ from p2b.houseplans.engine import (
     normalise,
     sha256_of,
 )
-from p2b.houseplans.engine.edit import BatchRejected, edit
+from p2b.houseplans.engine.edit import BatchRejected, apply_edit, edit
 from p2b.houseplans.engine.model import dump
-from p2b.houseplans.engine.ops import PlanOp
+from p2b.houseplans.engine.ops import (
+    PLAN_OP,
+    REVERTS,
+    PlanOp,
+    RevertToRevision,
+    RevertToVersion,
+)
+from p2b.houseplans.engine.validate import validate
 from p2b.houseplans.models import HousePlanOp, HousePlanRecord, HousePlanVersion
 from p2b.houseplans.rulesets import LoadedRuleset, load_ruleset, load_ruleset_by_id
 from p2b.identity.interface import Actor
@@ -527,7 +537,45 @@ def document_of(view: PlanView) -> HousePlan | None:
     return HousePlan.model_validate(view.row.head_document) if view.row.head_document else None
 
 
-# ---------- edits (Checkpoint 3) ----------
+# ---------- edits (Checkpoint 3, 3.1) ----------
+
+MAX_VERSIONS = 100  # named versions per plan
+# Logged batches a restore may replay from the nearest named version: about 3.5 ms each on the
+# development machine, so a few seconds at most in a worker thread (Checkpoint 3.1 report).
+MAX_REPLAY = 1000
+
+
+async def _owned_plan(
+    session: AsyncSession,
+    settings: Settings,
+    actor: Actor,
+    project_id: uuid.UUID,
+    plan_id: uuid.UUID,
+    expected_revision: int,
+) -> HousePlanRecord:
+    """The plan row, locked, for a change by its owner at the revision the editor saw (AD-12).
+    404 for a non-member or an unknown plan, 403 for a member who is not the owner, 409
+    STATE_CONFLICT for a plan with no document, 409 REVISION_CONFLICT for a stale revision. The
+    role and the revision are the server's own; nothing the client says about them is trusted."""
+    role = await _member(session, settings, actor, project_id)
+    if role != MembershipRole.OWNER:
+        raise Forbidden
+    row = await session.get(HousePlanRecord, plan_id, with_for_update=True)
+    if row is None or row.project_id != project_id:
+        raise NotFound
+    if row.state != S.VALID.value or row.head_document is None:
+        raise StateConflict(details={"current_state": row.state})
+    if row.head_revision_no != expected_revision:
+        raise RevisionConflict(details={"current_revision": row.head_revision_no})
+    return row
+
+
+def _rejected(
+    index: int, op: PlanOp, code: PlanOpRejection, entities: tuple[str, ...] = ()
+) -> PlanOperationRejected:
+    return PlanOperationRejected(
+        details={"index": index, "op": op.op.value, "code": code.value, "entities": list(entities)}
+    )
 
 
 async def apply_operations(
@@ -546,42 +594,59 @@ async def apply_operations(
     The batch applies whole or not at all, then the soft terms are re-measured and the
     independent validator judges the result with the plan's own intent and ruleset. Only a
     result with no errors is stored (IC 18.7): the head is overwritten under the row lock and
-    `expected_revision`, and the batch is appended to `house_plan_ops`. 404 for a non-member or
-    an unknown plan, 403 for a member who is not the owner, 409 STATE_CONFLICT for a plan with no
-    document, 409 REVISION_CONFLICT for a stale revision, 422 PLAN_OPERATION_REJECTED for an
-    operation that cannot apply, 422 PLAN_EDIT_INVALID with the report for a result the
-    validator rejects."""
-    role = await _member(session, settings, actor, project_id)
-    if role != MembershipRole.OWNER:
-        raise Forbidden
-    row = await session.get(HousePlanRecord, plan_id, with_for_update=True)
-    if row is None or row.project_id != project_id:
-        raise NotFound
-    if row.state != S.VALID.value or row.head_document is None:
-        raise StateConflict(details={"current_state": row.state})
-    if row.head_revision_no != expected_revision:
-        raise RevisionConflict(details={"current_revision": row.head_revision_no})
+    `expected_revision`, and the batch is appended to `house_plan_ops`.
+
+    A REVERT_TO_REVISION or REVERT_TO_VERSION (Checkpoint 3.1) must be alone in its batch. It
+    makes the head what that revision or named version held, as a new revision: the revision is
+    rebuilt from the nearest snapshot and the log (`revision_state`), nothing in the history
+    changes, and the restore is audited.
+
+    Errors: those of `_owned_plan`; 422 PLAN_OPERATION_REJECTED for an operation that cannot
+    apply (`details`: index, op, code, entities); 422 PLAN_EDIT_INVALID with the report for a
+    result the validator rejects; 409 PLAN_HISTORY_UNAVAILABLE when a revision cannot be rebuilt
+    exactly."""
+    row = await _owned_plan(session, settings, actor, project_id, plan_id, expected_revision)
     ruleset = await load_ruleset_by_id(session, row.ruleset_id)
-    try:
-        result = edit(
-            HousePlan.model_validate(row.head_document),
-            ops,
+    intent = ArchitecturalIntent.model_validate(row.intent)
+    head = HousePlan.model_validate(row.head_document)
+    reverts = [i for i, o in enumerate(ops) if isinstance(o, REVERTS)]
+    if reverts and len(ops) > 1:
+        raise _rejected(reverts[0], ops[reverts[0]], PlanOpRejection.REVERT_NOT_ALONE)
+    inverse: tuple[PlanOp, ...]
+    op = ops[0]
+    if isinstance(op, RevertToRevision | RevertToVersion):
+        plan = await _restored(session, row, head, op, ruleset.content)
+        report = validate(
+            plan,
             ruleset.content,
-            intent=ArchitecturalIntent.model_validate(row.intent),
+            intent=intent,
             ruleset_version=ruleset.version,
             ruleset_sha256=ruleset.sha256,
         )
-    except BatchRejected as rejected:
-        raise PlanOperationRejected(
-            details={
-                "index": rejected.index,
-                "op": rejected.rejected.op.value,
-                "code": rejected.rejected.code.value,
-            }
-        ) from None
-    if not result.report.valid:
-        raise PlanEditInvalid(details={"report": dump(result.report)})
-    row.head_document, row.head_report = dump(result.plan), dump(result.report)
+        inverse = (RevertToRevision(revision=row.head_revision_no),)
+        reason = PlanOpReason.REVERT
+    else:
+        try:
+            result = edit(
+                head,
+                ops,
+                ruleset.content,
+                intent=intent,
+                ruleset_version=ruleset.version,
+                ruleset_sha256=ruleset.sha256,
+            )
+        except BatchRejected as rejected:
+            raise _rejected(
+                rejected.index,
+                ops[rejected.index],
+                rejected.rejected.code,
+                rejected.rejected.entities,
+            ) from None
+        plan, report, inverse = result.plan, result.report, result.inverse
+        reason = PlanOpReason.USER
+    if not report.valid:
+        raise PlanEditInvalid(details={"report": dump(report)})
+    row.head_document, row.head_report = dump(plan), dump(report)
     row.head_revision_no += 1
     row.version += 1
     session.add(
@@ -590,12 +655,25 @@ async def apply_operations(
             plan_id=row.id,
             revision_no=row.head_revision_no,
             ops=[dump(o) for o in ops],
-            inverse=[dump(o) for o in result.inverse],
-            reason=PlanOpReason.USER.value,
-            content_sha256=result.plan.meta.body_sha256 or "",
+            inverse=[dump(o) for o in inverse],
+            reason=reason.value,
+            content_sha256=plan.meta.body_sha256 or "",
             actor_id=actor.user_id,
         )
     )
+    if reverts:
+        await record(
+            session,
+            action="houseplan.restored",
+            entity_type="house_plan",
+            entity_id=row.id,
+            project_id=row.project_id,
+            actor_type=ActorType.USER,
+            actor_user_id=actor.user_id,
+            session_id=actor.session_id,
+            old_value={"revision_no": row.head_revision_no - 1},
+            new_value={"revision_no": row.head_revision_no, "restored": dump(ops[0])},
+        )
     await session.flush()
     log.info(
         "houseplan.edited",
@@ -603,4 +681,284 @@ async def apply_operations(
         revision=row.head_revision_no,
         ops=[o.op.value for o in ops],
     )
-    return PlanView(row, ruleset, can_edit=True), result.inverse
+    return PlanView(row, ruleset, can_edit=True), inverse
+
+
+async def _restored(
+    session: AsyncSession,
+    row: HousePlanRecord,
+    head: HousePlan,
+    op: RevertToRevision | RevertToVersion,
+    content: RulesetContent,
+) -> HousePlan:
+    """The head with the body of the revision or version `op` names, as revision head + 1. The
+    version is looked up within this plan only."""
+    if isinstance(op, RevertToVersion):
+        version = await session.scalar(
+            select(HousePlanVersion).where(
+                HousePlanVersion.plan_id == row.id, HousePlanVersion.version_no == op.version
+            )
+        )
+        if version is None:
+            raise _rejected(0, op, PlanOpRejection.UNKNOWN_REVISION)
+        target = _snapshot(version)
+    else:
+        if op.revision > row.head_revision_no:
+            raise _rejected(0, op, PlanOpRejection.UNKNOWN_REVISION)
+        if op.revision == row.head_revision_no:
+            raise _rejected(0, op, PlanOpRejection.NO_MOVEMENT)
+        target = await revision_state(session, row.id, op.revision, content)
+    meta = head.meta.model_copy(
+        update={
+            "revision_no": row.head_revision_no + 1,
+            "source": PlanSource.EDITED,
+            "body_sha256": sha256_of(target.body()),
+        }
+    )
+    return target.model_copy(update={"meta": meta})
+
+
+def _snapshot(version: HousePlanVersion) -> HousePlan:
+    plan = HousePlan.model_validate(version.document)
+    if sha256_of(plan.body()) != version.content_sha256:
+        raise PlanHistoryUnavailable(details={"version_no": version.version_no})
+    return plan.model_copy(
+        update={"meta": plan.meta.model_copy(update={"revision_no": version.revision_no})}
+    )
+
+
+async def revision_state(
+    session: AsyncSession, plan_id: uuid.UUID, revision: int, content: RulesetContent
+) -> HousePlan:
+    """The plan as it was at `revision`, rebuilt from the latest named version at or before it
+    and the operation log: each logged batch is applied again exactly as `edit` applied it (a
+    restore row takes the state it restored), and every step must reproduce the body hash the
+    log recorded. Raises PlanHistoryUnavailable when one does not (the engine that wrote the log
+    behaved differently), rather than restore something that never existed, and when more than
+    MAX_REPLAY batches lie between the revision and its nearest named version. The replay is
+    pure computation and runs in a worker thread, so it never blocks the event loop."""
+    snapshots = (
+        await session.execute(
+            select(HousePlanVersion.revision_no, HousePlanVersion.version_no)
+            .where(HousePlanVersion.plan_id == plan_id, HousePlanVersion.revision_no <= revision)
+            .order_by(HousePlanVersion.revision_no, HousePlanVersion.version_no)
+        )
+    ).all()
+    rows = [
+        _Logged(r.revision_no, r.ops, r.content_sha256)
+        for r in (
+            await session.execute(
+                select(HousePlanOp.revision_no, HousePlanOp.ops, HousePlanOp.content_sha256)
+                .where(HousePlanOp.plan_id == plan_id, HousePlanOp.revision_no <= revision)
+                .order_by(HousePlanOp.revision_no)
+            )
+        ).all()
+    ]
+    restores = {
+        r.revision_no: op
+        for r in rows
+        if len(r.ops) == 1
+        and isinstance(op := PLAN_OP.validate_python(r.ops[0]), RevertToRevision | RevertToVersion)
+    }
+    # start from the latest snapshot that no later restore reaches back past
+    need = {revision}
+    while True:
+        start = max(rev for rev, _ in snapshots if rev <= min(need))
+        need |= {
+            op.revision
+            for rev, op in restores.items()
+            if rev > start and isinstance(op, RevertToRevision)
+        }
+        if min(need) >= start:
+            break
+    replayed = [r for r in rows if r.revision_no > start]
+    if len(replayed) > MAX_REPLAY:
+        raise PlanHistoryUnavailable(
+            details={"revision_no": revision, "reason": "TOO_FAR", "limit": MAX_REPLAY}
+        )
+    first = max(v for rev, v in snapshots if rev == start)
+    wanted = {first} | {
+        op.version
+        for rev, op in restores.items()
+        if rev > start and isinstance(op, RevertToVersion)
+    }
+    documents = {
+        v.version_no: _Snapshot(v.version_no, v.revision_no, v.document, v.content_sha256)
+        for v in (
+            await session.scalars(
+                select(HousePlanVersion).where(
+                    HousePlanVersion.plan_id == plan_id, HousePlanVersion.version_no.in_(wanted)
+                )
+            )
+        ).all()
+    }
+    return await asyncio.to_thread(
+        _replay, documents, first, start, replayed, restores, need, content
+    )
+
+
+@dataclass(frozen=True)
+class _Logged:
+    revision_no: int
+    ops: list[dict[str, Any]]
+    content_sha256: str
+
+
+@dataclass(frozen=True)
+class _Snapshot:
+    version_no: int
+    revision_no: int
+    document: dict[str, Any]
+    content_sha256: str
+
+
+def _replay(
+    documents: dict[int, _Snapshot],
+    first: int,
+    start: int,
+    rows: list[_Logged],
+    restores: dict[int, RevertToRevision | RevertToVersion],
+    need: set[int],
+    content: RulesetContent,
+) -> HousePlan:
+    def snapshot(version_no: int) -> HousePlan:
+        found = documents.get(version_no)
+        if found is None:
+            raise KeyError(version_no)
+        plan = HousePlan.model_validate(found.document)
+        if sha256_of(plan.body()) != found.content_sha256:
+            raise PlanHistoryUnavailable(details={"version_no": version_no})
+        return plan.model_copy(
+            update={"meta": plan.meta.model_copy(update={"revision_no": found.revision_no})}
+        )
+
+    state = snapshot(first)
+    kept = {start: state}
+    for r in rows:
+        restore = restores.get(r.revision_no)
+        try:
+            if isinstance(restore, RevertToRevision):
+                state = kept[restore.revision]
+            elif isinstance(restore, RevertToVersion):
+                state = snapshot(restore.version)
+            else:
+                state, _ = apply_edit(state, [PLAN_OP.validate_python(o) for o in r.ops], content)
+        except (BatchRejected, KeyError, ValueError):
+            raise PlanHistoryUnavailable(details={"revision_no": r.revision_no}) from None
+        if sha256_of(state.body()) != r.content_sha256:
+            raise PlanHistoryUnavailable(details={"revision_no": r.revision_no})
+        state = state.model_copy(
+            update={"meta": state.meta.model_copy(update={"revision_no": r.revision_no})}
+        )
+        if r.revision_no in need:
+            kept[r.revision_no] = state
+    return state
+
+
+# ---------- history (Checkpoint 3.1) ----------
+
+
+async def _readable_plan(
+    session: AsyncSession,
+    settings: Settings,
+    actor: Actor,
+    project_id: uuid.UUID,
+    plan_id: uuid.UUID,
+) -> HousePlanRecord:
+    await _member(session, settings, actor, project_id)
+    row = await session.get(HousePlanRecord, plan_id)
+    if row is None or row.project_id != project_id:
+        raise NotFound
+    return row
+
+
+async def list_versions(
+    session: AsyncSession,
+    settings: Settings,
+    actor: Actor,
+    project_id: uuid.UUID,
+    plan_id: uuid.UUID,
+) -> list[HousePlanVersion]:
+    """The plan's named versions, oldest first (members read them; AD-12)."""
+    row = await _readable_plan(session, settings, actor, project_id, plan_id)
+    return list(
+        (
+            await session.scalars(
+                select(HousePlanVersion)
+                .where(HousePlanVersion.plan_id == row.id)
+                .order_by(HousePlanVersion.version_no)
+            )
+        ).all()
+    )
+
+
+async def save_version(
+    session: AsyncSession,
+    settings: Settings,
+    actor: Actor,
+    project_id: uuid.UUID,
+    plan_id: uuid.UUID,
+    *,
+    name: str,
+    expected_revision: int,
+) -> HousePlanVersion:
+    """Keeps the head as a named, immutable version (owner only). The snapshot is the server's
+    head under the row lock at the revision the editor saw, never a document from the client.
+    409 STATE_CONFLICT once the plan has MAX_VERSIONS versions."""
+    row = await _owned_plan(session, settings, actor, project_id, plan_id, expected_revision)
+    count, last = (
+        await session.execute(
+            select(func.count(), func.max(HousePlanVersion.version_no)).where(
+                HousePlanVersion.plan_id == row.id
+            )
+        )
+    ).one()
+    if count >= MAX_VERSIONS:
+        raise StateConflict(details={"reason": "VERSION_LIMIT", "limit": MAX_VERSIONS})
+    head = HousePlan.model_validate(row.head_document)
+    version = HousePlanVersion(
+        id=new_id(),
+        plan_id=row.id,
+        version_no=(last or 0) + 1,
+        name=name,
+        revision_no=row.head_revision_no,
+        schema_version=head.meta.schema_version,
+        document=row.head_document,
+        content_sha256=sha256_of(head.body()),
+        validity=row.head_validity or PlanValidity.VALID.value,
+        report=row.head_report or {},
+        created_by=actor.user_id,
+    )
+    session.add(version)
+    await record(
+        session,
+        action="houseplan.version_saved",
+        entity_type="house_plan",
+        entity_id=row.id,
+        project_id=row.project_id,
+        actor_type=ActorType.USER,
+        actor_user_id=actor.user_id,
+        session_id=actor.session_id,
+        new_value={"version_no": version.version_no, "revision_no": version.revision_no},
+    )
+    await session.flush()
+    return version
+
+
+async def list_revisions(
+    session: AsyncSession,
+    settings: Settings,
+    actor: Actor,
+    project_id: uuid.UUID,
+    plan_id: uuid.UUID,
+    *,
+    before: int | None,
+    limit: int,
+) -> tuple[HousePlanRecord, list[HousePlanOp]]:
+    """The newest `limit` logged revisions below `before`, newest first (members read them)."""
+    row = await _readable_plan(session, settings, actor, project_id, plan_id)
+    query = select(HousePlanOp).where(HousePlanOp.plan_id == row.id)
+    if before is not None:
+        query = query.where(HousePlanOp.revision_no < before)
+    ops = (await session.scalars(query.order_by(HousePlanOp.revision_no.desc()).limit(limit))).all()
+    return row, list(ops)

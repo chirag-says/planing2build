@@ -88,6 +88,7 @@ describe("editor state", () => {
     expect(problemOf("PLAN_OPERATION_REJECTED", { index: 0, op: "MOVE_WALL", code: "WALL_WOULD_COLLAPSE" })).toEqual({
       kind: "rejected",
       code: "WALL_WOULD_COLLAPSE",
+      entities: [], // Checkpoint 3.1 names what a rejection concerns; none sent here
     });
     expect(problemOf("REVISION_CONFLICT", { current_revision: 4 })).toEqual({ kind: "conflict" });
     expect(problemOf(null, undefined)).toEqual({ kind: "failed" });

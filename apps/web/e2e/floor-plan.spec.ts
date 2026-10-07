@@ -195,3 +195,73 @@ test("a generated floor plan is drawn from its geometry and edited through valid
   await expect(page.getByRole("button", { name: "Redo" })).toBeEnabled();
   await expectAccessible(page);
 });
+
+test("rooms, doors and windows, versions and restore work from the keyboard and survive a reload", async ({
+  page,
+  request,
+}) => {
+  const planned = await plannedProject(page, request);
+  test.skip(planned === null, "the houseplans feature is off on this stack");
+  if (!planned) return;
+  test.skip((page.viewportSize()?.width ?? 0) < 768, "editing is for tablets and computers (AD-14)");
+  const { id, planId, call, detail } = planned;
+  const url = `/api/v1/projects/${id}/house-plans/${planId}`;
+  const head = async () => (await call(url, "GET")).body;
+  await page.goto(`${IHB}/projects/${id}/designs/plans/${planId}`);
+  const idle = page.locator("[data-plan-canvas]:not([data-busy])");
+
+  // sides move just the part that must move by default; the whole line is one choice away
+  const modes = page.getByRole("group", { name: "When a side moves" });
+  await expect(modes.getByRole("button", { name: "Just this side" })).toHaveAttribute("aria-pressed", "true");
+  await expect(modes.getByRole("button", { name: "Whole line" })).toHaveAttribute("aria-pressed", "false");
+
+  // rename the living room through its panel
+  const living = detail.document.floors[0].rooms.find((r: { type: string }) => r.type === "LIVING");
+  await page.getByRole("button", { name: new RegExp(`^${living.name}`) }).click();
+  await page.getByLabel("Name", { exact: true }).fill("Family room");
+  await page.getByRole("button", { name: "Rename" }).click();
+  await expect(async () => expect((await head()).editing.revision_no).toBe(1)).toPass({ timeout: 15_000 });
+  await expect(page.getByRole("button", { name: /^Family room/ })).toBeVisible();
+
+  // every door and window is a button in the list: reach one with the keyboard and select it
+  const list = page.getByRole("list", { name: "Doors and windows of Family room" });
+  const first = list.getByRole("button").first();
+  await first.focus();
+  await page.keyboard.press("Enter");
+  await expect(first).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "Move towards the end of the wall" })).toBeVisible();
+  await page.getByRole("button", { name: "Move towards the end of the wall" }).click();
+  await expect(idle).toBeVisible({ timeout: 15_000 });
+  const moved = await head();
+  // the server decides: either a new revision, or nothing stored and the reason shown
+  if (moved.editing.revision_no === 1) {
+    await expect(page.getByText(/That change (was not saved|cannot be made)/)).toBeVisible();
+  } else {
+    expect(moved.editing.revision_no).toBe(2);
+  }
+  await expectAccessible(page);
+
+  // keep this state as a named version, then restore the generated plan as a new change
+  await page.getByLabel("Version name").fill("Renamed living room");
+  await page.getByRole("button", { name: "Save this version" }).click();
+  await expect(page.getByText("Version saved.")).toBeVisible();
+  await expect(page.getByText("Renamed living room")).toBeVisible();
+  const before = (await head()).editing.revision_no;
+  await page.getByRole("button", { name: "Restore version Generated" }).click();
+  await expect(async () => {
+    const restored = await head();
+    expect(restored.editing.revision_no).toBe(before + 1);
+    expect(restored.document.meta.body_sha256).toBe(detail.document.meta.body_sha256);
+  }).toPass({ timeout: 15_000 });
+  await expect(page.getByRole("button", { name: new RegExp(`^${living.name}`) })).toBeVisible();
+
+  // a reload starts from the server's head: same plan, same revision, the history still there
+  await page.reload();
+  await expect(page.getByRole("button", { name: new RegExp(`^${living.name}`) })).toBeVisible();
+  await expect(page.getByText("Version 1 restored")).toBeVisible();
+  await expect(page.getByText("Renamed living room")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Undo" })).toBeDisabled(); // undo was this visit's
+  const versions = await call(`${url}/versions`, "GET");
+  expect(versions.body.items.map((v: { name: string }) => v.name)).toEqual(["Generated", "Renamed living room"]);
+  await expectAccessible(page);
+});

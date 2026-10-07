@@ -25,6 +25,7 @@ from p2b.houseplans.engine import (  # noqa: E402
     plan_geometry,
 )
 from p2b.houseplans.engine.model import dump  # noqa: E402
+from p2b.houseplans.router import editing_block  # noqa: E402
 
 CASES = (
     "1bhk_25x40_south_small",  # small, two-wheeler
@@ -60,7 +61,7 @@ def main() -> None:
             "document": dump(result.plan),
             "geometry": dump(plan_geometry(result.plan, rules)),
             "validation": dump(result.report),
-            "editing": {"can_edit": True, "revision_no": 0, "grid_mm": rules.grid_mm},
+            "editing": dump(editing_block(rules, True, 0)),
         }
         path = OUT / f"{name}.json"
         path.write_text(json.dumps(detail, sort_keys=True, separators=(",", ":")) + "\n", "utf-8")

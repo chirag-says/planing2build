@@ -1,15 +1,20 @@
 // The editor's state, one reducer per page (HR S; IC 19.6). It holds the last server response
 // (the canonical document and its derived geometry), UI state (selection, a drag preview, snap,
-// units) and the undo and redo stacks of operation batches with their server-computed inverses
-// (HR O.3). The preview is drawn over the plan and never sent: a committed gesture becomes an
-// operation batch, and only the server's answer changes the plan here.
-import type { Axis, Side } from "./edit";
+// units, how sides move) and the undo and redo stacks of operation batches with their
+// server-computed inverses (HR O.3). The preview is drawn over the plan and never sent: a
+// committed gesture becomes an operation batch, and only the server's answer changes the plan.
+//
+// Three histories, kept apart (Checkpoint 3.1): this session's undo and redo stacks live here and
+// end with the page; the server's revisions (every stored batch) and named versions persist and
+// are restored by typed operations that make a new revision, so undo and restore never rewrite
+// history. A structural edit's inverse is REVERT_TO_REVISION, so undo works the same for it.
+import type { Axis, MoveMode, Side } from "./edit";
 import type { PlanOp, PlanState, ValidationIssue } from "./types";
 
 export type Selection =
   | { kind: "room"; id: string }
   | { kind: "side"; room: string; side: Side }
-  | { kind: "opening"; id: string };
+  | { kind: "opening"; id: string; room?: string }; // room: the list it was picked from
 
 export type Drag =
   // a room side moving along its axis: its line from `from` to `to` (world mm)
@@ -21,8 +26,9 @@ export type Drag =
 
 export type Problem =
   | { kind: "invalid"; issues: ValidationIssue[] } // PLAN_EDIT_INVALID: the validator said no
-  | { kind: "rejected"; code: string } // PLAN_OPERATION_REJECTED: the operation cannot apply
+  | { kind: "rejected"; code: string; entities: string[] } // PLAN_OPERATION_REJECTED: cannot apply
   | { kind: "conflict" } // REVISION_CONFLICT: changed elsewhere; reload
+  | { kind: "history" } // PLAN_HISTORY_UNAVAILABLE: an earlier state cannot be rebuilt exactly
   | { kind: "failed" }; // anything else (network, server)
 
 export interface Batch {
@@ -42,6 +48,7 @@ export interface EditorState {
   redo: Batch[];
   snap: boolean;
   units: Units;
+  moveMode: MoveMode;
 }
 
 export type Direction = "do" | "undo" | "redo";
@@ -56,6 +63,7 @@ export type EditorAction =
   | { type: "dismiss" }
   | { type: "snap"; on: boolean }
   | { type: "units"; units: Units }
+  | { type: "moveMode"; mode: MoveMode }
   | { type: "reload"; plan: PlanState };
 
 export function initialState(plan: PlanState): EditorState {
@@ -69,6 +77,7 @@ export function initialState(plan: PlanState): EditorState {
     redo: [],
     snap: true,
     units: "m",
+    moveMode: "edge",
   };
 }
 
@@ -109,8 +118,10 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       return { ...state, snap: action.on };
     case "units":
       return { ...state, units: action.units };
+    case "moveMode":
+      return { ...state, moveMode: action.mode };
     case "reload":
-      return { ...initialState(action.plan), snap: state.snap, units: state.units };
+      return { ...initialState(action.plan), snap: state.snap, units: state.units, moveMode: state.moveMode };
   }
 }
 
@@ -132,10 +143,12 @@ export function problemOf(code: string | null, details: unknown): Problem {
     return { kind: "invalid", issues: report?.errors ?? [] };
   }
   if (code === "PLAN_OPERATION_REJECTED") {
-    const rejected = (details as { code?: unknown } | undefined)?.code;
-    return { kind: "rejected", code: typeof rejected === "string" ? rejected : "NOT_SUPPORTED" };
+    const d = details as { code?: unknown; entities?: unknown } | undefined;
+    const entities = Array.isArray(d?.entities) ? d.entities.filter((e) => typeof e === "string") : [];
+    return { kind: "rejected", code: typeof d?.code === "string" ? d.code : "NOT_SUPPORTED", entities };
   }
   if (code === "REVISION_CONFLICT") return { kind: "conflict" };
+  if (code === "PLAN_HISTORY_UNAVAILABLE") return { kind: "history" };
   return { kind: "failed" };
 }
 

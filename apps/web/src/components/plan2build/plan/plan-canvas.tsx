@@ -243,10 +243,12 @@ export function PlanCanvas({
     if (!drag) return [];
     if (drag.kind === "side") {
       const side = roomSides(doc, drag.room)?.find((s) => s.side === drag.side);
-      const op = side ? moveSideOp(doc, side, drag.to - drag.from) : null;
+      const op = side ? moveSideOp(doc, drag.room, side, drag.to - drag.from, state.moveMode) : null;
       return op ? [op] : [];
     }
-    if (drag.kind === "room") return drag.delta === 0 ? [] : moveRoomOps(doc, drag.room, drag.axis, drag.delta);
+    if (drag.kind === "room") {
+      return drag.delta === 0 ? [] : moveRoomOps(doc, drag.room, drag.axis, drag.delta, state.moveMode);
+    }
     const host = hostedOpening(doc, drag.id);
     const op = host ? moveOpeningOp(host, drag.offset) : null;
     return op ? [op] : [];
@@ -269,11 +271,14 @@ export function PlanCanvas({
     const sel = state.selection;
     let ops: PlanOp[] = [];
     if (sel.kind === "room") {
-      ops = dir[0] !== 0 ? moveRoomOps(doc, sel.id, "x", dir[0] * step) : moveRoomOps(doc, sel.id, "y", dir[1] * step);
+      ops =
+        dir[0] !== 0
+          ? moveRoomOps(doc, sel.id, "x", dir[0] * step, state.moveMode)
+          : moveRoomOps(doc, sel.id, "y", dir[1] * step, state.moveMode);
     } else if (sel.kind === "side") {
       const side = roomSides(doc, sel.room)?.find((s) => s.side === sel.side);
       const along = side?.axis === "x" ? dir[0] : dir[1];
-      const op = side && along ? moveSideOp(doc, side, along * step) : null;
+      const op = side && along ? moveSideOp(doc, sel.room, side, along * step, state.moveMode) : null;
       ops = op ? [op] : [];
     } else {
       const host = hostedOpening(doc, sel.id);

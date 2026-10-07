@@ -20,5 +20,5 @@ export function formatDims(w: number, d: number, units: Units): string {
 
 export function formatArea(mm2: number, units: Units): string {
   if (units === "ft") return t("units.squareFeet", { value: Math.round(mm2 / 92_903.04) });
-  return t("units.squareMetres", { value: (mm2 / 1_000_000).toFixed(1) });
+  return t("units.squareMetres", { value: (mm2 / 1_000_000).toFixed(2) });
 }

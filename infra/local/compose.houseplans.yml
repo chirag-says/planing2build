@@ -1,0 +1,16 @@
+# LOCAL only: the concept floor plan feature for manual and end-to-end checks (Checkpoint 3.1).
+#   pnpm local:up:houseplans          -> the local stack with these settings on
+#   pnpm local:houseplans:ruleset     -> load the synthetic test ruleset (DRAFT, synthetic)
+#   pnpm local:reset-rate-limits      -> clear the counters a repeated e2e run trips
+# Draft and synthetic rulesets are allowed here only because P2B_ENV is local: the configuration
+# refuses them in production, and these values are test values, never rules (AD-05).
+x-houseplans: &houseplans
+  P2B_HOUSEPLANS_ENABLED: "true"
+  P2B_HOUSEPLANS_ALLOW_DRAFT_RULESET: "true"
+  P2B_HOUSEPLANS_ALLOW_SYNTHETIC_RULESET: "true"
+
+services:
+  api:
+    environment: *houseplans
+  worker:
+    environment: *houseplans

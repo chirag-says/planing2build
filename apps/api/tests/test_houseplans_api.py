@@ -7,6 +7,7 @@ import asyncio
 import uuid
 from collections.abc import AsyncIterator
 from datetime import timedelta
+from functools import cache
 from typing import Any
 
 import pytest
@@ -83,11 +84,18 @@ def _synthetic_rules_allowed(app: FastAPI, monkeypatch: pytest.MonkeyPatch) -> N
     monkeypatch.setattr(app.state, "settings", allowed)
 
 
-@pytest.fixture(scope="session")
-def plan_app() -> App:
+@cache
+def _job_app() -> App:
+    # one job app per test session, even when another module imports these fixtures
+    # (test_houseplans_history_api): each import registers its own session fixture
     return build_job_app(
         get_settings(), [(houseplans_handlers.JOB_NAMESPACE, houseplans_jobs.blueprint)]
     )
+
+
+@pytest.fixture(scope="session")
+def plan_app() -> App:
+    return _job_app()
 
 
 @pytest.fixture
@@ -560,7 +568,11 @@ async def test_the_owner_edits_through_typed_operations_and_undoes_with_the_inve
     family, project_id, plan_id, detail = await valid_plan(
         database, client_for, make_user, sign_in, worker
     )
-    assert detail["editing"] == {"can_edit": True, "revision_no": 0, "grid_mm": 50}
+    editing = detail["editing"]
+    assert (editing["can_edit"], editing["revision_no"], editing["grid_mm"]) == (True, 0, 50)
+    assert {t["type"] for t in editing["room_types"]} >= {"BEDROOM", "KITCHEN"}
+    assert "PARKING" not in {t["type"] for t in editing["room_types"]}  # open rooms are not offered
+    assert editing["openings"]["door_width_mm"] == 900
     assert detail["geometry"]["geometry_version"] == "1.1.0"
     original_hash = detail["document"]["meta"]["body_sha256"]
 
@@ -636,6 +648,7 @@ async def test_invalid_rejected_and_stale_edits_change_nothing(
         "index": 1,
         "op": "MOVE_WALL",
         "code": "UNKNOWN_ENTITY",
+        "entities": ["w_missing"],
     }
 
     stale = await edit_plan(family, project_id, plan_id, 3, [_moves(detail, valid=True)])

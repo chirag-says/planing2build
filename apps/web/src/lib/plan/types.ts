@@ -22,6 +22,12 @@ export type EditingInfo = Schemas["EditingOut"];
 export type PlanOp = Schemas["EditHousePlanRequest"]["ops"][number];
 export type MoveWallOp = Schemas["MoveWall"];
 export type MoveOpeningOp = Schemas["MoveOpening"];
+export type Opening = Schemas["Opening"];
+export type Compromise = Schemas["Compromise"];
+export type RoomType = Schemas["RoomType"];
+export type RoomSideName = Schemas["RoomSide"];
+export type PlanVersion = Schemas["HousePlanVersionOut"];
+export type PlanRevision = Schemas["HousePlanRevisionOut"];
 
 /** The part of a plan detail the drawing and the editor read. */
 export interface PlanState {

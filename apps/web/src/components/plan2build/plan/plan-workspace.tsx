@@ -17,11 +17,19 @@ import {
 import { useCallback, useMemo, useReducer, useRef, useSyncExternalStore, type KeyboardEvent } from "react";
 
 import { PlanCanvas, type PlanCanvasHandle } from "@/components/plan2build/plan/plan-canvas";
+import { PlanHistory } from "@/components/plan2build/plan/plan-history";
+import {
+  ChangesPanel,
+  OpeningPanel,
+  OpeningsList,
+  RoomPanel,
+  SidePanel,
+} from "@/components/plan2build/plan/plan-panels";
 import { Notice } from "@/components/plan2build/states";
 import { Button } from "@/components/ui/button";
 import { browserApi, errorCode } from "@/lib/api/browser";
 import { getTranslator } from "@/lib/i18n";
-import { roomSides } from "@/lib/plan/edit";
+import { roomSides, type MoveMode } from "@/lib/plan/edit";
 import {
   editorReducer,
   flaggedEntities,
@@ -33,6 +41,7 @@ import {
   type EditorState,
   type Units,
 } from "@/lib/plan/editor";
+import { issueText, rejectionText } from "@/lib/plan/messages";
 import type { PlanOp, PlanState, RoomGeom, ValidationIssue } from "@/lib/plan/types";
 import { formatArea, formatDims } from "@/lib/plan/units";
 
@@ -179,6 +188,18 @@ export function PlanWorkspace({
               <MagnetIcon aria-hidden="true" data-icon="inline-start" />
               {t("snap")}
             </Button>
+            <div role="group" aria-label={t("moveMode.label")} title={t("moveMode.hint")} className="flex gap-1">
+              {(["edge", "line"] as const satisfies readonly MoveMode[]).map((mode) => (
+                <Button
+                  key={mode}
+                  variant={state.moveMode === mode ? "secondary" : "ghost"}
+                  aria-pressed={state.moveMode === mode}
+                  onClick={() => dispatch({ type: "moveMode", mode })}
+                >
+                  {t(`moveMode.${mode}`)}
+                </Button>
+              ))}
+            </div>
           </>
         )}
       </div>
@@ -206,10 +227,14 @@ export function PlanWorkspace({
             state={state}
             editable={editable}
             dispatch={dispatch}
+            onCommit={onCommit}
             onPicked={() => canvas.current?.focus()}
           />
           <RoomList state={state} onSelect={(id) => dispatch({ type: "select", selection: { kind: "room", id } })} />
-          <Checks issues={[...(state.plan.validation?.errors ?? []), ...(state.plan.validation?.warnings ?? [])]} />
+          <OpeningsList state={state} dispatch={dispatch} onCommit={onCommit} roomId={selectedRoom(state)} />
+          <ChangesPanel state={state} />
+          <Checks state={state} />
+          <PlanHistory projectId={projectId} planId={planId} state={state} editable={editable} onCommit={onCommit} />
         </aside>
       </div>
     </div>
@@ -220,9 +245,24 @@ function announce(el: HTMLParagraphElement | null, text: string) {
   if (el) el.textContent = text;
 }
 
+/** The room whose doors and windows are listed: the selected room, the room of a selected side,
+ * or for a selected opening the list it was picked from (else the room it belongs to). */
+function selectedRoom(state: EditorState): string | null {
+  const sel = state.selection;
+  if (sel?.kind === "room") return sel.id;
+  if (sel?.kind === "side") return sel.room;
+  if (sel?.kind === "opening") {
+    if (sel.room) return sel.room;
+    const connects = state.plan.geometry.floors[0]?.openings.find((o) => o.id === sel.id)?.connects ?? [];
+    return connects.find((c) => c !== "EXTERIOR") ?? null;
+  }
+  return null;
+}
+
 function ProblemNotice({ state, onDismiss }: { state: EditorState; onDismiss: () => void }) {
   const p = state.problem;
   if (!p) return null;
+  const { document: doc, geometry } = state.plan;
   const action =
     p.kind === "conflict" ? (
       <Button variant="outline" onClick={() => window.location.reload()}>
@@ -238,6 +278,7 @@ function ProblemNotice({ state, onDismiss }: { state: EditorState; onDismiss: ()
     invalid: t("problem.invalidTitle"),
     rejected: t("problem.rejectedTitle"),
     conflict: t("problem.conflictTitle"),
+    history: t("problem.historyTitle"),
     failed: t("problem.failedTitle"),
   }[p.kind];
   return (
@@ -248,13 +289,14 @@ function ProblemNotice({ state, onDismiss }: { state: EditorState; onDismiss: ()
             <p>{t("problem.invalidBody")}</p>
             <ul className="list-disc pl-5">
               {p.issues.map((issue, i) => (
-                <li key={`${issue.code}-${i}`}>{issue.message}</li>
+                <li key={`${issue.code}-${i}`}>{issueText(issue, doc, geometry, state.units)}</li>
               ))}
             </ul>
           </>
         )}
-        {p.kind === "rejected" && <p>{rejectionText(p.code)}</p>}
+        {p.kind === "rejected" && <p>{rejectionText(p.code, p.entities, doc, geometry)}</p>}
         {p.kind === "conflict" && <p>{t("problem.conflictBody")}</p>}
+        {p.kind === "history" && <p>{t("problem.historyBody")}</p>}
         {p.kind === "failed" && <p>{t("problem.failedBody")}</p>}
       </Notice>
       <div>{action}</div>
@@ -262,30 +304,17 @@ function ProblemNotice({ state, onDismiss }: { state: EditorState; onDismiss: ()
   );
 }
 
-const REJECTIONS = [
-  "UNKNOWN_ENTITY",
-  "ENTITY_EXISTS",
-  "NOT_SUPPORTED",
-  "NO_MOVEMENT",
-  "NOT_AXIS_ALIGNED",
-  "WALL_WOULD_COLLAPSE",
-  "HOSTED_ITEM_LEAVES_WALL",
-] as const;
-
-function rejectionText(code: string): string {
-  const known = REJECTIONS.find((c) => c === code) ?? "NOT_SUPPORTED";
-  return t(`rejection.${known}`);
-}
-
 function Inspector({
   state,
   editable,
   dispatch,
+  onCommit,
   onPicked,
 }: {
   state: EditorState;
   editable: boolean;
   dispatch: (action: EditorAction) => void;
+  onCommit: (ops: PlanOp[]) => void;
   onPicked: () => void;
 }) {
   const sel = state.selection;
@@ -312,11 +341,13 @@ function Inspector({
     const opening = floor?.openings.find((o) => o.id === sel.id);
     if (opening) {
       const kind = t(`openingKinds.${opening.kind}`);
-      const [a, b] = opening.connects;
+      // an outside opening joins one room and the outside: name only the room
+      const [a, b] = opening.connects.filter((c) => c !== "EXTERIOR");
       body = b ? t("selectedOpeningBetween", { kind, a: nameOf(a), b: nameOf(b) }) : t("selectedOpeningIn", { kind, a: nameOf(a ?? "") });
       hint = t("moveOpeningHint");
     }
   }
+  const revision = state.plan.editing.revision_no;
   // keyboard access to every gesture: pick a side here, then nudge it with the arrow keys
   const sides = editable && roomId ? (roomSides(state.plan.document, roomId) ?? []) : [];
   return (
@@ -346,6 +377,27 @@ function Inspector({
             );
           })}
         </div>
+      )}
+      {editable && sel?.kind === "side" && (
+        <SidePanel state={state} dispatch={dispatch} onCommit={onCommit} roomId={sel.room} side={sel.side} />
+      )}
+      {editable && sel?.kind === "room" && (
+        <RoomPanel
+          key={`${sel.id}-${revision}`}
+          state={state}
+          dispatch={dispatch}
+          onCommit={onCommit}
+          roomId={sel.id}
+        />
+      )}
+      {editable && sel?.kind === "opening" && (
+        <OpeningPanel
+          key={`${sel.id}-${revision}-${state.units}`}
+          state={state}
+          dispatch={dispatch}
+          onCommit={onCommit}
+          openingId={sel.id}
+        />
       )}
     </section>
   );
@@ -406,7 +458,9 @@ function roomSize(room: RoomGeom, units: Units): string | null {
   return dims && area ? t("joined", { a: dims, b: area }) : (dims ?? area);
 }
 
-function Checks({ issues }: { issues: ValidationIssue[] }) {
+function Checks({ state }: { state: EditorState }) {
+  const { document: doc, geometry, validation } = state.plan;
+  const issues: ValidationIssue[] = [...(validation?.errors ?? []), ...(validation?.warnings ?? [])];
   return (
     <section aria-labelledby="plan-checks" className="flex flex-col gap-2 rounded-lg border p-3">
       <h3 id="plan-checks" className="text-sm font-medium">
@@ -417,7 +471,7 @@ function Checks({ issues }: { issues: ValidationIssue[] }) {
       ) : (
         <ul className="list-disc pl-5 text-sm">
           {issues.map((issue, i) => (
-            <li key={`${issue.code}-${i}`}>{issue.message}</li>
+            <li key={`${issue.code}-${i}`}>{issueText(issue, doc, geometry, state.units)}</li>
           ))}
         </ul>
       )}

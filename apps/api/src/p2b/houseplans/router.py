@@ -4,7 +4,7 @@ answers 404 while `houseplans_enabled` is off."""
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, Query, Request, status
 from fastapi.responses import JSONResponse
 
 from p2b.core.config import Settings
@@ -17,6 +17,8 @@ from p2b.core.vocabulary import (
     InfeasibleReason,
     PlanFailureReason,
     PlanGenerationState,
+    PlanOpKind,
+    PlanOpReason,
     PlanValidity,
     RulesetStatus,
 )
@@ -28,7 +30,10 @@ from p2b.houseplans.engine import (
     plan_geometry,
     score_plan,
 )
+from p2b.houseplans.engine.build import ROOM_NAMES
+from p2b.houseplans.engine.ops import PLAN_OP, RevertToRevision, RevertToVersion
 from p2b.houseplans.engine.validate import ValidationReport
+from p2b.houseplans.models import HousePlanOp, HousePlanVersion
 from p2b.houseplans.schemas import (
     EditHousePlanOut,
     EditHousePlanRequest,
@@ -36,13 +41,20 @@ from p2b.houseplans.schemas import (
     GenerateHousePlanRequest,
     HousePlanDetailOut,
     HousePlanListOut,
+    HousePlanRevisionListOut,
+    HousePlanRevisionOut,
     HousePlanSummaryOut,
+    HousePlanVersionListOut,
+    HousePlanVersionOut,
     InfeasibilityOut,
     InfeasibleReasonOut,
     InvolvedConstraintOut,
+    OpeningSizesOut,
     QualityOut,
     QualityTermOut,
     RoomQualityOut,
+    RoomTypeOut,
+    SaveHousePlanVersionRequest,
 )
 from p2b.houseplans.service import (
     PlanView,
@@ -50,7 +62,10 @@ from p2b.houseplans.service import (
     document_of,
     get_plan,
     list_plans,
+    list_revisions,
+    list_versions,
     request_generation,
+    save_version,
 )
 from p2b.identity.interface import Actor, require_actor
 
@@ -61,6 +76,8 @@ HOMEOWNER = require_actor(Audience.IHB)
 REQUEST_LIMIT = Limit("houseplan_request_session", 20, 600)
 # Edits are small and frequent (a nudge is one batch): about one a second on average.
 EDIT_LIMIT = Limit("houseplan_edit_session", 600, 600)
+# Saving a named version is a deliberate act (Checkpoint 3.1).
+VERSION_LIMIT = Limit("houseplan_version_session", 30, 600)
 
 
 def summary(view: PlanView) -> HousePlanSummaryOut:
@@ -113,14 +130,43 @@ def detail_fields(view: PlanView) -> dict[str, object]:
         "validation": ValidationReport.model_validate(row.head_report) if row.head_report else None,
         "infeasibility": infeasibility,
         "quality": quality_of(document, view.ruleset.content) if document else None,
-        "editing": EditingOut(
-            can_edit=view.can_edit,
-            revision_no=row.head_revision_no,
-            grid_mm=view.ruleset.content.grid_mm,
-        )
-        if document
-        else None,
+        "editing": editing_of(view) if document else None,
     }
+
+
+def editing_of(view: PlanView) -> EditingOut:
+    return editing_block(view.ruleset.content, view.can_edit, view.row.head_revision_no)
+
+
+def editing_block(content: RulesetContent, can_edit: bool, revision_no: int) -> EditingOut:
+    o = content.openings
+    return EditingOut(
+        can_edit=can_edit,
+        revision_no=revision_no,
+        grid_mm=content.grid_mm,
+        room_types=[
+            RoomTypeOut(
+                type=t,
+                name=ROOM_NAMES[t],
+                needs_window=rule.needs_window,
+                min_short_mm=rule.min_short_mm,
+            )
+            for t, rule in content.rooms.items()
+            if rule.enclosed
+        ],
+        openings=OpeningSizesOut(
+            door_width_mm=o.door_width_mm,
+            min_door_width_mm=o.min_door_width_mm,
+            door_height_mm=o.door_height_mm,
+            window_width_mm=o.window_width_mm,
+            min_window_width_mm=o.min_window_width_mm,
+            window_height_mm=o.window_height_mm,
+            window_sill_mm=o.window_sill_mm,
+            jamb_clearance_mm=o.jamb_clearance_mm,
+        ),
+        interior_wall_mm=content.walls.interior_mm,
+        exterior_wall_mm=content.walls.exterior_mm,
+    )
 
 
 def quality_of(document: HousePlan, content: RulesetContent) -> QualityOut | None:
@@ -248,3 +294,114 @@ async def post_house_plan_ops(
         ops=body.ops,
     )
     return EditHousePlanOut(**detail_fields(view), inverse=list(inverse))
+
+
+def version_out(version: HousePlanVersion, actor: Actor) -> HousePlanVersionOut:
+    return HousePlanVersionOut(
+        version_no=version.version_no,
+        name=version.name,
+        revision_no=version.revision_no,
+        validity=PlanValidity(version.validity),
+        created_at=version.created_at,
+        created_by_you=version.created_by == actor.user_id,
+    )
+
+
+def revision_out(op: HousePlanOp, actor: Actor) -> HousePlanRevisionOut:
+    ops = [PLAN_OP.validate_python(o) for o in op.ops]
+    first = ops[0] if ops else None
+    return HousePlanRevisionOut(
+        revision_no=op.revision_no,
+        reason=PlanOpReason(op.reason),
+        ops=[PlanOpKind(o.op) for o in ops],
+        restored_revision=first.revision if isinstance(first, RevertToRevision) else None,
+        restored_version=first.version if isinstance(first, RevertToVersion) else None,
+        created_at=op.created_at,
+        by_you=op.actor_id == actor.user_id,
+    )
+
+
+@router.get(
+    "/projects/{project_id}/house-plans/{plan_id}/versions",
+    response_model=HousePlanVersionListOut,
+)
+async def get_house_plan_versions(
+    project_id: uuid.UUID,
+    plan_id: uuid.UUID,
+    request: Request,
+    db: DbSession,
+    actor: Annotated[Actor, HOMEOWNER],
+) -> HousePlanVersionListOut:
+    """The plan's named versions, oldest first; version 1 is the generated plan (members read)."""
+    versions = await list_versions(db, request.app.state.settings, actor, project_id, plan_id)
+    return HousePlanVersionListOut(items=[version_out(v, actor) for v in versions])
+
+
+@router.post(
+    "/projects/{project_id}/house-plans/{plan_id}/versions",
+    status_code=status.HTTP_201_CREATED,
+    response_model=HousePlanVersionOut,
+    responses={201: {"model": HousePlanVersionOut}},
+)
+async def post_house_plan_version(
+    project_id: uuid.UUID,
+    plan_id: uuid.UUID,
+    body: SaveHousePlanVersionRequest,
+    key: IdempotencyKeyHeader,
+    request: Request,
+    db: DbSession,
+    actor: Annotated[Actor, HOMEOWNER],
+) -> JSONResponse:
+    """Keep the plan as it is now as a named, immutable version (owner only). Restore it later
+    with REVERT_TO_VERSION through the operations route. 403 for a member who is not the owner;
+    409 STATE_CONFLICT (also at the version limit) or REVISION_CONFLICT."""
+    database: Database = request.app.state.database
+    await enforce(database, VERSION_LIMIT, str(actor.session_id))
+
+    async def act() -> tuple[int, dict[str, object]]:
+        version = await save_version(
+            db,
+            request.app.state.settings,
+            actor,
+            project_id,
+            plan_id,
+            name=body.name,
+            expected_revision=body.expected_revision,
+        )
+        await db.refresh(version, ["created_at"])
+        return 201, version_out(version, actor).model_dump(mode="json")
+
+    return await run_once(
+        db,
+        session_id=actor.session_id,
+        key=key,
+        request_body={"plan_id": str(plan_id), **body.model_dump(mode="json")},
+        action=act,
+    )
+
+
+@router.get(
+    "/projects/{project_id}/house-plans/{plan_id}/revisions",
+    response_model=HousePlanRevisionListOut,
+)
+async def get_house_plan_revisions(
+    project_id: uuid.UUID,
+    plan_id: uuid.UUID,
+    request: Request,
+    db: DbSession,
+    actor: Annotated[Actor, HOMEOWNER],
+    before: Annotated[int | None, Query(ge=1)] = None,
+    limit: Annotated[int, Query(ge=1, le=100)] = 50,
+) -> HousePlanRevisionListOut:
+    """The plan's logged revisions, newest first, `limit` at a time below `before` (members
+    read). Revision 0 is the generated plan and has no entry."""
+    row, ops = await list_revisions(
+        db, request.app.state.settings, actor, project_id, plan_id, before=before, limit=limit
+    )
+    items = [revision_out(op, actor) for op in ops]
+    oldest = items[-1].revision_no if items else None
+    return HousePlanRevisionListOut(
+        head_revision_no=row.head_revision_no,
+        items=items,
+        next_before=oldest if len(items) == limit and oldest and oldest > 1 else None,
+    )

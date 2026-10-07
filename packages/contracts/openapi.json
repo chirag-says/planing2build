@@ -131,7 +131,14 @@
       },
       "AddRoom": {
         "additionalProperties": false,
+        "description": "A new room split off one side of the host across its full width, `depth_mm` deep, with a\ndoor from the host (`graph_edit.add_room`). Checkpoint 3.1 replaced the never-applied\nfree-rectangle form (x0, y0, x1, y1): the browser sends no coordinates.",
         "properties": {
+          "depth_mm": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Depth Mm",
+            "type": "integer"
+          },
           "host_room": {
             "pattern": "^[a-z][a-z0-9_]{0,47}$",
             "title": "Host Room",
@@ -143,41 +150,18 @@
             "title": "Op",
             "type": "string"
           },
+          "side": {
+            "$ref": "#/components/schemas/RoomSide"
+          },
           "type": {
             "$ref": "#/components/schemas/RoomType"
-          },
-          "x0": {
-            "maximum": 10000000.0,
-            "minimum": -10000000.0,
-            "title": "X0",
-            "type": "integer"
-          },
-          "x1": {
-            "maximum": 10000000.0,
-            "minimum": -10000000.0,
-            "title": "X1",
-            "type": "integer"
-          },
-          "y0": {
-            "maximum": 10000000.0,
-            "minimum": -10000000.0,
-            "title": "Y0",
-            "type": "integer"
-          },
-          "y1": {
-            "maximum": 10000000.0,
-            "minimum": -10000000.0,
-            "title": "Y1",
-            "type": "integer"
           }
         },
         "required": [
           "host_room",
           "type",
-          "x0",
-          "y0",
-          "x1",
-          "y1"
+          "side",
+          "depth_mm"
         ],
         "title": "AddRoom",
         "type": "object"
@@ -4928,10 +4912,13 @@
                   "DELETE_FIXTURE": "#/components/schemas/DeleteFixture",
                   "DELETE_OPENING": "#/components/schemas/DeleteOpening",
                   "DELETE_ROOM": "#/components/schemas/DeleteRoom",
+                  "MOVE_EDGE": "#/components/schemas/MoveEdge",
                   "MOVE_FIXTURE": "#/components/schemas/MoveFixture",
                   "MOVE_OPENING": "#/components/schemas/MoveOpening",
                   "MOVE_WALL": "#/components/schemas/MoveWall",
                   "RENAME_ROOM": "#/components/schemas/RenameRoom",
+                  "REVERT_TO_REVISION": "#/components/schemas/RevertToRevision",
+                  "REVERT_TO_VERSION": "#/components/schemas/RevertToVersion",
                   "SET_OPENING": "#/components/schemas/SetOpening",
                   "SET_ROOM_TYPE": "#/components/schemas/SetRoomType"
                 },
@@ -4969,10 +4956,19 @@
                   "$ref": "#/components/schemas/MoveWall"
                 },
                 {
+                  "$ref": "#/components/schemas/MoveEdge"
+                },
+                {
                   "$ref": "#/components/schemas/AddRoom"
                 },
                 {
                   "$ref": "#/components/schemas/DeleteRoom"
+                },
+                {
+                  "$ref": "#/components/schemas/RevertToRevision"
+                },
+                {
+                  "$ref": "#/components/schemas/RevertToVersion"
                 }
               ]
             },
@@ -5079,10 +5075,13 @@
                   "DELETE_FIXTURE": "#/components/schemas/DeleteFixture",
                   "DELETE_OPENING": "#/components/schemas/DeleteOpening",
                   "DELETE_ROOM": "#/components/schemas/DeleteRoom",
+                  "MOVE_EDGE": "#/components/schemas/MoveEdge",
                   "MOVE_FIXTURE": "#/components/schemas/MoveFixture",
                   "MOVE_OPENING": "#/components/schemas/MoveOpening",
                   "MOVE_WALL": "#/components/schemas/MoveWall",
                   "RENAME_ROOM": "#/components/schemas/RenameRoom",
+                  "REVERT_TO_REVISION": "#/components/schemas/RevertToRevision",
+                  "REVERT_TO_VERSION": "#/components/schemas/RevertToVersion",
                   "SET_OPENING": "#/components/schemas/SetOpening",
                   "SET_ROOM_TYPE": "#/components/schemas/SetRoomType"
                 },
@@ -5120,10 +5119,19 @@
                   "$ref": "#/components/schemas/MoveWall"
                 },
                 {
+                  "$ref": "#/components/schemas/MoveEdge"
+                },
+                {
                   "$ref": "#/components/schemas/AddRoom"
                 },
                 {
                   "$ref": "#/components/schemas/DeleteRoom"
+                },
+                {
+                  "$ref": "#/components/schemas/RevertToRevision"
+                },
+                {
+                  "$ref": "#/components/schemas/RevertToVersion"
                 }
               ]
             },
@@ -5142,19 +5150,59 @@
       },
       "EditingOut": {
         "additionalProperties": false,
-        "description": "What the editor needs besides the document (Checkpoint 3). `can_edit` is the API's answer\nfor this caller (owner of the project, plan with a document); the server checks it again on\nevery edit. `grid_mm` is the ruleset's planning grid, the editor's snap step.",
+        "description": "What the editor needs besides the document (Checkpoint 3). `can_edit` is the API's answer\nfor this caller (owner of the project, plan with a document); the server checks it again on\nevery edit. `grid_mm` is the ruleset's planning grid, the editor's snap step. Checkpoint 3.1\nadds the room types and opening sizes the editor offers, and the wall thicknesses it needs to\nshow clear sizes; the server checks every value again.",
         "properties": {
           "can_edit": {
             "title": "Can Edit",
             "type": "boolean"
           },
+          "exterior_wall_mm": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exterior Wall Mm"
+          },
           "grid_mm": {
             "title": "Grid Mm",
             "type": "integer"
           },
+          "interior_wall_mm": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interior Wall Mm"
+          },
+          "openings": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpeningSizesOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "revision_no": {
             "title": "Revision No",
             "type": "integer"
+          },
+          "room_types": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/RoomTypeOut"
+            },
+            "title": "Room Types",
+            "type": "array"
           }
         },
         "required": [
@@ -7871,6 +7919,100 @@
         "title": "HousePlanListOut",
         "type": "object"
       },
+      "HousePlanRevisionListOut": {
+        "additionalProperties": false,
+        "properties": {
+          "head_revision_no": {
+            "title": "Head Revision No",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HousePlanRevisionOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_before": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Before"
+          }
+        },
+        "required": [
+          "head_revision_no",
+          "items",
+          "next_before"
+        ],
+        "title": "HousePlanRevisionListOut",
+        "type": "object"
+      },
+      "HousePlanRevisionOut": {
+        "additionalProperties": false,
+        "description": "One logged revision: what kinds of operation made it, or what it restored.",
+        "properties": {
+          "by_you": {
+            "title": "By You",
+            "type": "boolean"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "ops": {
+            "items": {
+              "$ref": "#/components/schemas/PlanOpKind"
+            },
+            "title": "Ops",
+            "type": "array"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/PlanOpReason"
+          },
+          "restored_revision": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restored Revision"
+          },
+          "restored_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restored Version"
+          },
+          "revision_no": {
+            "title": "Revision No",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "revision_no",
+          "reason",
+          "ops",
+          "created_at",
+          "by_you"
+        ],
+        "title": "HousePlanRevisionOut",
+        "type": "object"
+      },
       "HousePlanSummaryOut": {
         "additionalProperties": false,
         "properties": {
@@ -7953,6 +8095,63 @@
           "completed_at"
         ],
         "title": "HousePlanSummaryOut",
+        "type": "object"
+      },
+      "HousePlanVersionListOut": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HousePlanVersionOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "HousePlanVersionListOut",
+        "type": "object"
+      },
+      "HousePlanVersionOut": {
+        "additionalProperties": false,
+        "description": "A named, immutable snapshot of the plan (version 1 is the generated plan).",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by_you": {
+            "title": "Created By You",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "revision_no": {
+            "title": "Revision No",
+            "type": "integer"
+          },
+          "validity": {
+            "$ref": "#/components/schemas/PlanValidity"
+          },
+          "version_no": {
+            "title": "Version No",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version_no",
+          "name",
+          "revision_no",
+          "validity",
+          "created_at",
+          "created_by_you"
+        ],
+        "title": "HousePlanVersionOut",
         "type": "object"
       },
       "InfeasibilityOut": {
@@ -9141,6 +9340,39 @@
         "title": "MilestonesOut",
         "type": "object"
       },
+      "MoveEdge": {
+        "additionalProperties": false,
+        "description": "One side of a rectangular room, moved along +x (LEFT, RIGHT) or +y (FRONT, BACK); only\nthe part of that line that must move with it moves (`graph_edit.move_edge`).",
+        "properties": {
+          "delta_mm": {
+            "maximum": 10000000.0,
+            "minimum": -10000000.0,
+            "title": "Delta Mm",
+            "type": "integer"
+          },
+          "op": {
+            "const": "MOVE_EDGE",
+            "default": "MOVE_EDGE",
+            "title": "Op",
+            "type": "string"
+          },
+          "room": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$",
+            "title": "Room",
+            "type": "string"
+          },
+          "side": {
+            "$ref": "#/components/schemas/RoomSide"
+          }
+        },
+        "required": [
+          "room",
+          "side",
+          "delta_mm"
+        ],
+        "title": "MoveEdge",
+        "type": "object"
+      },
       "MoveFixture": {
         "additionalProperties": false,
         "properties": {
@@ -9658,6 +9890,56 @@
         ],
         "title": "OpeningKind",
         "type": "string"
+      },
+      "OpeningSizesOut": {
+        "additionalProperties": false,
+        "description": "The plan ruleset's opening sizes, for new and resized doors and windows.",
+        "properties": {
+          "door_height_mm": {
+            "title": "Door Height Mm",
+            "type": "integer"
+          },
+          "door_width_mm": {
+            "title": "Door Width Mm",
+            "type": "integer"
+          },
+          "jamb_clearance_mm": {
+            "title": "Jamb Clearance Mm",
+            "type": "integer"
+          },
+          "min_door_width_mm": {
+            "title": "Min Door Width Mm",
+            "type": "integer"
+          },
+          "min_window_width_mm": {
+            "title": "Min Window Width Mm",
+            "type": "integer"
+          },
+          "window_height_mm": {
+            "title": "Window Height Mm",
+            "type": "integer"
+          },
+          "window_sill_mm": {
+            "title": "Window Sill Mm",
+            "type": "integer"
+          },
+          "window_width_mm": {
+            "title": "Window Width Mm",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "door_width_mm",
+          "min_door_width_mm",
+          "door_height_mm",
+          "window_width_mm",
+          "min_window_width_mm",
+          "window_height_mm",
+          "window_sill_mm",
+          "jamb_clearance_mm"
+        ],
+        "title": "OpeningSizesOut",
+        "type": "object"
       },
       "OpsAnswerIn": {
         "additionalProperties": false,
@@ -13409,6 +13691,38 @@
         ],
         "title": "PlanGeometry",
         "type": "object"
+      },
+      "PlanOpKind": {
+        "description": "Typed HousePlan operations (CP1-11): the one way a plan changes after generation, shared by\ndeterministic repair, the future editor and future natural-language edits.",
+        "enum": [
+          "MOVE_OPENING",
+          "SET_OPENING",
+          "ADD_OPENING",
+          "DELETE_OPENING",
+          "MOVE_FIXTURE",
+          "ADD_FIXTURE",
+          "DELETE_FIXTURE",
+          "RENAME_ROOM",
+          "SET_ROOM_TYPE",
+          "MOVE_WALL",
+          "ADD_ROOM",
+          "DELETE_ROOM",
+          "MOVE_EDGE",
+          "REVERT_TO_REVISION",
+          "REVERT_TO_VERSION"
+        ],
+        "title": "PlanOpKind",
+        "type": "string"
+      },
+      "PlanOpReason": {
+        "description": "Why an operation batch was applied (`house_plan_ops.reason`).",
+        "enum": [
+          "USER",
+          "AUTO_REPAIR",
+          "REVERT"
+        ],
+        "title": "PlanOpReason",
+        "type": "string"
       },
       "PlanSource": {
         "enum": [
@@ -17641,6 +17955,50 @@
         "title": "ResultsIn",
         "type": "object"
       },
+      "RevertToRevision": {
+        "additionalProperties": false,
+        "description": "Make the plan what it was at `revision`, as a new revision (Checkpoint 3.1). The undo of\na structural edit; applied by the plan service, alone in its batch.",
+        "properties": {
+          "op": {
+            "const": "REVERT_TO_REVISION",
+            "default": "REVERT_TO_REVISION",
+            "title": "Op",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 0.0,
+            "title": "Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "revision"
+        ],
+        "title": "RevertToRevision",
+        "type": "object"
+      },
+      "RevertToVersion": {
+        "additionalProperties": false,
+        "description": "Make the plan what named version `version` holds, as a new revision (Checkpoint 3.1).\nApplied by the plan service, alone in its batch.",
+        "properties": {
+          "op": {
+            "const": "REVERT_TO_VERSION",
+            "default": "REVERT_TO_VERSION",
+            "title": "Op",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "title": "RevertToVersion",
+        "type": "object"
+      },
       "ReviewDetailOut": {
         "properties": {
           "case_decision": {
@@ -18428,6 +18786,17 @@
         "title": "RoomQualityOut",
         "type": "object"
       },
+      "RoomSide": {
+        "description": "A side of a rectangular room in the plot frame (Checkpoint 3.1, MOVE_EDGE): LEFT is -x,\nRIGHT +x, FRONT the road side (-y), BACK +y.",
+        "enum": [
+          "LEFT",
+          "RIGHT",
+          "FRONT",
+          "BACK"
+        ],
+        "title": "RoomSide",
+        "type": "string"
+      },
       "RoomType": {
         "enum": [
           "LIVING",
@@ -18448,6 +18817,35 @@
         "title": "RoomType",
         "type": "string"
       },
+      "RoomTypeOut": {
+        "additionalProperties": false,
+        "description": "A room type the editor may offer (Checkpoint 3.1): enclosed types of the plan's ruleset.\n`name` is the default room name the engine gives the type.",
+        "properties": {
+          "min_short_mm": {
+            "title": "Min Short Mm",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "needs_window": {
+            "title": "Needs Window",
+            "type": "boolean"
+          },
+          "type": {
+            "$ref": "#/components/schemas/RoomType"
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "needs_window",
+          "min_short_mm"
+        ],
+        "title": "RoomTypeOut",
+        "type": "object"
+      },
       "RulesetStatus": {
         "description": "A layout ruleset (ADR-025): DRAFT; APPROVED after an architect's review; PUBLISHED (one at a\ntime, the only status production may use); RETIRED. Content never changes.",
         "enum": [
@@ -18458,6 +18856,30 @@
         ],
         "title": "RulesetStatus",
         "type": "string"
+      },
+      "SaveHousePlanVersionRequest": {
+        "additionalProperties": false,
+        "description": "Keep the head the editor shows (`expected_revision`) as a named version.",
+        "properties": {
+          "expected_revision": {
+            "minimum": 0.0,
+            "title": "Expected Revision",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "pattern": "^[^\\x00-\\x1f]+$",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "expected_revision"
+        ],
+        "title": "SaveHousePlanVersionRequest",
+        "type": "object"
       },
       "ScheduleEntryIn": {
         "additionalProperties": false,
@@ -42780,6 +43202,246 @@
           }
         },
         "summary": "Post House Plan Ops",
+        "tags": [
+          "houseplans"
+        ]
+      }
+    },
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}/revisions": {
+      "get": {
+        "description": "The plan's logged revisions, newest first, `limit` at a time below `before` (members\nread). Revision 0 is the generated plan and has no entry.",
+        "operationId": "get_house_plan_revisions_api_v1_projects__project_id__house_plans__plan_id__revisions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Plan Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "before",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Before"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HousePlanRevisionListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Get House Plan Revisions",
+        "tags": [
+          "houseplans"
+        ]
+      }
+    },
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}/versions": {
+      "get": {
+        "description": "The plan's named versions, oldest first; version 1 is the generated plan (members read).",
+        "operationId": "get_house_plan_versions_api_v1_projects__project_id__house_plans__plan_id__versions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Plan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HousePlanVersionListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Get House Plan Versions",
+        "tags": [
+          "houseplans"
+        ]
+      },
+      "post": {
+        "description": "Keep the plan as it is now as a named, immutable version (owner only). Restore it later\nwith REVERT_TO_VERSION through the operations route. 403 for a member who is not the owner;\n409 STATE_CONFLICT (also at the version limit) or REVISION_CONFLICT.",
+        "operationId": "post_house_plan_version_api_v1_projects__project_id__house_plans__plan_id__versions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Plan Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A new UUID for each action; reuse it only to retry the same request.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "description": "A new UUID for each action; reuse it only to retry the same request.",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveHousePlanVersionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HousePlanVersionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Client error"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Server error"
+          }
+        },
+        "summary": "Post House Plan Version",
         "tags": [
           "houseplans"
         ]

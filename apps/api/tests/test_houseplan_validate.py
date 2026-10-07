@@ -7,7 +7,7 @@ from typing import Any
 
 import pytest
 
-from p2b.core.vocabulary import PlanOpKind, RoomType, ValidationCode
+from p2b.core.vocabulary import PlanOpKind, RoomSide, RoomType, ValidationCode
 from p2b.houseplans.engine import HousePlan, apply, repair, sha256_of, validate
 from p2b.houseplans.engine.ops import (
     PLAN_OP,
@@ -15,6 +15,7 @@ from p2b.houseplans.engine.ops import (
     MoveOpening,
     OperationRejected,
     RenameRoom,
+    RevertToRevision,
     SetRoomType,
 )
 from tests.houseplans_support import (
@@ -157,9 +158,15 @@ def test_operations_are_a_closed_typed_contract() -> None:
     with pytest.raises(ValueError, match="extra"):
         PLAN_OP.validate_python({"op": "MOVE_OPENING", "opening": "d", "offset_mm": 1, "x": 5})
     plan = HousePlan.model_validate(golden_plan(BASE)["plan"])
-    # MOVE_WALL applies since Checkpoint 3; adding a room still waits for a later checkpoint
-    with pytest.raises(OperationRejected, match="editing checkpoint"):
-        apply(plan, AddRoom(host_room="living", type=RoomType.STORE, x0=0, y0=0, x1=1000, y1=1000))
+    # MOVE_WALL applies since Checkpoint 3; the structural edits of Checkpoint 3.1 need the
+    # plan's ruleset, and a revert is the plan service's alone
+    with pytest.raises(OperationRejected, match="ruleset"):
+        apply(
+            plan,
+            AddRoom(host_room="living", type=RoomType.STORE, side=RoomSide.BACK, depth_mm=1000),
+        )
+    with pytest.raises(OperationRejected, match="plan service"):
+        apply(plan, RevertToRevision(revision=0))
     with pytest.raises(OperationRejected, match="unknown entity"):
         apply(plan, RenameRoom(room="no_such_room", name="x"))
 

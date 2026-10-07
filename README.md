@@ -42,3 +42,16 @@ Open http://ihb.localhost:8080, http://pro.localhost:8080 and http://admin.local
 | Regenerate the API contract | `pnpm contracts` |
 | New migration | `cd apps/api && uv run alembic revision -m "..."` (hand-review it) |
 | Stop the stack | `pnpm local:down` |
+
+### Concept floor plans locally
+
+The floor plan feature is off by default and the test ruleset is synthetic, so it needs three steps, all local only:
+
+| Step | Command |
+|---|---|
+| Start the stack with the feature on (draft and synthetic rulesets allowed only because `P2B_ENV` is `local`) | `pnpm local:up:houseplans` |
+| Load the synthetic test ruleset (DRAFT, marked synthetic; its values are test values, never rules) | `pnpm local:houseplans:ruleset` |
+| Run the floor plan end-to-end spec | `pnpm --filter @p2b/web test:e2e floor-plan` |
+| Before a repeated e2e run: clear the sign-in and floor plan rate counters of the local database only | `pnpm local:reset-rate-limits` |
+
+`scripts/local_houseplans.py` refuses any database other than the local Compose one (127.0.0.1:55432, `p2b` or `p2b_test`). Production refuses draft and synthetic rulesets in its configuration.

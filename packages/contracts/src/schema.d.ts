@@ -5358,6 +5358,53 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get House Plan Revisions
+         * @description The plan's logged revisions, newest first, `limit` at a time below `before` (members
+         *     read). Revision 0 is the generated plan and has no entry.
+         */
+        get: operations["get_house_plan_revisions_api_v1_projects__project_id__house_plans__plan_id__revisions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get House Plan Versions
+         * @description The plan's named versions, oldest first; version 1 is the generated plan (members read).
+         */
+        get: operations["get_house_plan_versions_api_v1_projects__project_id__house_plans__plan_id__versions_get"];
+        put?: never;
+        /**
+         * Post House Plan Version
+         * @description Keep the plan as it is now as a named, immutable version (owner only). Restore it later
+         *     with REVERT_TO_VERSION through the operations route. 403 for a member who is not the owner;
+         *     409 STATE_CONFLICT (also at the version limit) or REVISION_CONFLICT.
+         */
+        post: operations["post_house_plan_version_api_v1_projects__project_id__house_plans__plan_id__versions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{project_id}/inspections/{inspection_id}/reports/{version}/url": {
         parameters: {
             query?: never;
@@ -6124,8 +6171,15 @@ export interface components {
             op: "ADD_OPENING";
             opening: components["schemas"]["Opening"];
         };
-        /** AddRoom */
+        /**
+         * AddRoom
+         * @description A new room split off one side of the host across its full width, `depth_mm` deep, with a
+         *     door from the host (`graph_edit.add_room`). Checkpoint 3.1 replaced the never-applied
+         *     free-rectangle form (x0, y0, x1, y1): the browser sends no coordinates.
+         */
         AddRoom: {
+            /** Depth Mm */
+            depth_mm: number;
             /** Host Room */
             host_room: string;
             /**
@@ -6133,15 +6187,8 @@ export interface components {
              * @enum {string}
              */
             op: "ADD_ROOM";
+            side: components["schemas"]["RoomSide"];
             type: components["schemas"]["RoomType"];
-            /** X0 */
-            x0: number;
-            /** X1 */
-            x1: number;
-            /** Y0 */
-            y0: number;
-            /** Y1 */
-            y1: number;
         };
         /** AdditionalItemIn */
         AdditionalItemIn: {
@@ -7792,7 +7839,7 @@ export interface components {
             infeasibility: components["schemas"]["InfeasibilityOut"] | null;
             intent: components["schemas"]["ArchitecturalIntent"];
             /** Inverse */
-            inverse: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["AddRoom"] | components["schemas"]["DeleteRoom"])[];
+            inverse: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["MoveEdge"] | components["schemas"]["AddRoom"] | components["schemas"]["DeleteRoom"] | components["schemas"]["RevertToRevision"] | components["schemas"]["RevertToVersion"])[];
             /**
              * Is Authoritative
              * @default false
@@ -7822,21 +7869,33 @@ export interface components {
             /** Expected Revision */
             expected_revision: number;
             /** Ops */
-            ops: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["AddRoom"] | components["schemas"]["DeleteRoom"])[];
+            ops: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["MoveEdge"] | components["schemas"]["AddRoom"] | components["schemas"]["DeleteRoom"] | components["schemas"]["RevertToRevision"] | components["schemas"]["RevertToVersion"])[];
         };
         /**
          * EditingOut
          * @description What the editor needs besides the document (Checkpoint 3). `can_edit` is the API's answer
          *     for this caller (owner of the project, plan with a document); the server checks it again on
-         *     every edit. `grid_mm` is the ruleset's planning grid, the editor's snap step.
+         *     every edit. `grid_mm` is the ruleset's planning grid, the editor's snap step. Checkpoint 3.1
+         *     adds the room types and opening sizes the editor offers, and the wall thicknesses it needs to
+         *     show clear sizes; the server checks every value again.
          */
         EditingOut: {
             /** Can Edit */
             can_edit: boolean;
+            /** Exterior Wall Mm */
+            exterior_wall_mm?: number | null;
             /** Grid Mm */
             grid_mm: number;
+            /** Interior Wall Mm */
+            interior_wall_mm?: number | null;
+            openings?: components["schemas"]["OpeningSizesOut"] | null;
             /** Revision No */
             revision_no: number;
+            /**
+             * Room Types
+             * @default []
+             */
+            room_types: components["schemas"]["RoomTypeOut"][];
         };
         /** EligibilityCheckIn */
         EligibilityCheckIn: {
@@ -8785,6 +8844,37 @@ export interface components {
             /** Items */
             items: components["schemas"]["HousePlanSummaryOut"][];
         };
+        /** HousePlanRevisionListOut */
+        HousePlanRevisionListOut: {
+            /** Head Revision No */
+            head_revision_no: number;
+            /** Items */
+            items: components["schemas"]["HousePlanRevisionOut"][];
+            /** Next Before */
+            next_before: number | null;
+        };
+        /**
+         * HousePlanRevisionOut
+         * @description One logged revision: what kinds of operation made it, or what it restored.
+         */
+        HousePlanRevisionOut: {
+            /** By You */
+            by_you: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Ops */
+            ops: components["schemas"]["PlanOpKind"][];
+            reason: components["schemas"]["PlanOpReason"];
+            /** Restored Revision */
+            restored_revision?: number | null;
+            /** Restored Version */
+            restored_version?: number | null;
+            /** Revision No */
+            revision_no: number;
+        };
         /** HousePlanSummaryOut */
         HousePlanSummaryOut: {
             /** Completed At */
@@ -8812,6 +8902,31 @@ export interface components {
             sequence: number;
             state: components["schemas"]["PlanGenerationState"];
             validity: components["schemas"]["PlanValidity"] | null;
+        };
+        /** HousePlanVersionListOut */
+        HousePlanVersionListOut: {
+            /** Items */
+            items: components["schemas"]["HousePlanVersionOut"][];
+        };
+        /**
+         * HousePlanVersionOut
+         * @description A named, immutable snapshot of the plan (version 1 is the generated plan).
+         */
+        HousePlanVersionOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By You */
+            created_by_you: boolean;
+            /** Name */
+            name: string;
+            /** Revision No */
+            revision_no: number;
+            validity: components["schemas"]["PlanValidity"];
+            /** Version No */
+            version_no: number;
         };
         /**
          * InfeasibilityOut
@@ -9240,6 +9355,23 @@ export interface components {
             /** Milestones */
             milestones: components["schemas"]["MilestoneOut"][];
         };
+        /**
+         * MoveEdge
+         * @description One side of a rectangular room, moved along +x (LEFT, RIGHT) or +y (FRONT, BACK); only
+         *     the part of that line that must move with it moves (`graph_edit.move_edge`).
+         */
+        MoveEdge: {
+            /** Delta Mm */
+            delta_mm: number;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "MOVE_EDGE";
+            /** Room */
+            room: string;
+            side: components["schemas"]["RoomSide"];
+        };
         /** MoveFixture */
         MoveFixture: {
             /** Fixture */
@@ -9441,6 +9573,28 @@ export interface components {
          * @enum {string}
          */
         OpeningKind: "MAIN_ENTRANCE" | "DOOR" | "VOID" | "WINDOW";
+        /**
+         * OpeningSizesOut
+         * @description The plan ruleset's opening sizes, for new and resized doors and windows.
+         */
+        OpeningSizesOut: {
+            /** Door Height Mm */
+            door_height_mm: number;
+            /** Door Width Mm */
+            door_width_mm: number;
+            /** Jamb Clearance Mm */
+            jamb_clearance_mm: number;
+            /** Min Door Width Mm */
+            min_door_width_mm: number;
+            /** Min Window Width Mm */
+            min_window_width_mm: number;
+            /** Window Height Mm */
+            window_height_mm: number;
+            /** Window Sill Mm */
+            window_sill_mm: number;
+            /** Window Width Mm */
+            window_width_mm: number;
+        };
         /** OpsAnswerIn */
         OpsAnswerIn: {
             /** Answer */
@@ -10657,6 +10811,19 @@ export interface components {
              */
             units: "mm";
         };
+        /**
+         * PlanOpKind
+         * @description Typed HousePlan operations (CP1-11): the one way a plan changes after generation, shared by
+         *     deterministic repair, the future editor and future natural-language edits.
+         * @enum {string}
+         */
+        PlanOpKind: "MOVE_OPENING" | "SET_OPENING" | "ADD_OPENING" | "DELETE_OPENING" | "MOVE_FIXTURE" | "ADD_FIXTURE" | "DELETE_FIXTURE" | "RENAME_ROOM" | "SET_ROOM_TYPE" | "MOVE_WALL" | "ADD_ROOM" | "DELETE_ROOM" | "MOVE_EDGE" | "REVERT_TO_REVISION" | "REVERT_TO_VERSION";
+        /**
+         * PlanOpReason
+         * @description Why an operation batch was applied (`house_plan_ops.reason`).
+         * @enum {string}
+         */
+        PlanOpReason: "USER" | "AUTO_REPAIR" | "REVERT";
         /**
          * PlanSource
          * @enum {string}
@@ -12062,6 +12229,34 @@ export interface components {
             /** Results */
             results: components["schemas"]["ResultIn"][];
         };
+        /**
+         * RevertToRevision
+         * @description Make the plan what it was at `revision`, as a new revision (Checkpoint 3.1). The undo of
+         *     a structural edit; applied by the plan service, alone in its batch.
+         */
+        RevertToRevision: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "REVERT_TO_REVISION";
+            /** Revision */
+            revision: number;
+        };
+        /**
+         * RevertToVersion
+         * @description Make the plan what named version `version` holds, as a new revision (Checkpoint 3.1).
+         *     Applied by the plan service, alone in its batch.
+         */
+        RevertToVersion: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "REVERT_TO_VERSION";
+            /** Version */
+            version: number;
+        };
         /** ReviewDetailOut */
         ReviewDetailOut: {
             /** Case Decision */
@@ -12315,10 +12510,31 @@ export interface components {
             room_type: components["schemas"]["RoomType"];
         };
         /**
+         * RoomSide
+         * @description A side of a rectangular room in the plot frame (Checkpoint 3.1, MOVE_EDGE): LEFT is -x,
+         *     RIGHT +x, FRONT the road side (-y), BACK +y.
+         * @enum {string}
+         */
+        RoomSide: "LEFT" | "RIGHT" | "FRONT" | "BACK";
+        /**
          * RoomType
          * @enum {string}
          */
         RoomType: "LIVING" | "DINING" | "KITCHEN" | "BEDROOM" | "BATH_ATTACHED" | "BATH_COMMON" | "WC" | "PUJA" | "UTILITY" | "STORE" | "PASSAGE" | "FOYER" | "STAIR_HALL" | "PARKING";
+        /**
+         * RoomTypeOut
+         * @description A room type the editor may offer (Checkpoint 3.1): enclosed types of the plan's ruleset.
+         *     `name` is the default room name the engine gives the type.
+         */
+        RoomTypeOut: {
+            /** Min Short Mm */
+            min_short_mm: number;
+            /** Name */
+            name: string;
+            /** Needs Window */
+            needs_window: boolean;
+            type: components["schemas"]["RoomType"];
+        };
         /**
          * RulesetStatus
          * @description A layout ruleset (ADR-025): DRAFT; APPROVED after an architect's review; PUBLISHED (one at a
@@ -12326,6 +12542,16 @@ export interface components {
          * @enum {string}
          */
         RulesetStatus: "DRAFT" | "APPROVED" | "PUBLISHED" | "RETIRED";
+        /**
+         * SaveHousePlanVersionRequest
+         * @description Keep the head the editor shows (`expected_revision`) as a named version.
+         */
+        SaveHousePlanVersionRequest: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Name */
+            name: string;
+        };
         /** ScheduleEntryIn */
         ScheduleEntryIn: {
             /** Duration Days */
@@ -26928,6 +27154,139 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EditHousePlanOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_house_plan_revisions_api_v1_projects__project_id__house_plans__plan_id__revisions_get: {
+        parameters: {
+            query?: {
+                before?: number | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanRevisionListOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_house_plan_versions_api_v1_projects__project_id__house_plans__plan_id__versions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanVersionListOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_house_plan_version_api_v1_projects__project_id__house_plans__plan_id__versions_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveHousePlanVersionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanVersionOut"];
                 };
             };
             /** @description Client error */
