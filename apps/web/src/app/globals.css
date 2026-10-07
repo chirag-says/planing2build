@@ -354,3 +354,47 @@
   text-transform: uppercase;
   letter-spacing: 0.01em;
 }
+
+/*
+ * Image reveal from the website's kit (.gd-um): the frame opens from the bottom while the image
+ * settles from 1.28x. Staggered by --i; `p2b-fade` is the quieter entrance for later images.
+ */
+.p2b-unmask {
+  animation: p2b-unmask 1.35s cubic-bezier(0.7, 0, 0.2, 1) calc(var(--i, 0) * 0.09s) both;
+}
+.p2b-unmask .p2b-unmask-img {
+  animation: p2b-settle 1.9s cubic-bezier(0.16, 0.84, 0.24, 1) calc(var(--i, 0) * 0.09s) both;
+}
+.p2b-fade {
+  animation: p2b-fade 0.8s ease both;
+}
+.p2b-unmask-img {
+  transition: scale 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+:is(.p2b-unmask, .p2b-fade):hover .p2b-unmask-img {
+  scale: 1.04;
+}
+@keyframes p2b-unmask {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@keyframes p2b-settle {
+  from {
+    scale: 1.28;
+  }
+  to {
+    scale: 1;
+  }
+}
+@keyframes p2b-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

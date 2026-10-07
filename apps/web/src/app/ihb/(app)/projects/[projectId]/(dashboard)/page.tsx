@@ -148,7 +148,7 @@ function DesignsSummary({ designs, base }: { designs: DesignList; base: string }
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {latest.map((design) => (
               <li key={design.design_id}>
-                <DesignThumbnail design={design} href={`${base}/designs/${design.design_id}`} />
+                <DesignThumbnail design={design} href={`${base}/designs/${design.design_id}`} index={design.sequence - 1} />
               </li>
             ))}
           </ul>

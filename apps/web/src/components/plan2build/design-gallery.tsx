@@ -43,10 +43,15 @@ export function IllustrativeBadge() {
 }
 
 /** The image with its "Illustrative" badge; a link to the design when `href` is given. */
-export function DesignThumbnail({ design, href }: { design: Design; href?: string }) {
+/**
+ * One design. `index` staggers the website's image unmask (kit .gd-um): the first row opens
+ * from the bottom and settles from 1.28x; later images only fade in, so the gallery has one
+ * reveal, not one per card.
+ */
+export function DesignThumbnail({ design, href, index = 0 }: { design: Design; href?: string; index?: number }) {
   const viewLabel = t(`viewShort.${design.view}`);
   const frame =
-    "group relative block overflow-hidden rounded-md border border-border bg-muted outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
+    `group relative block overflow-hidden rounded-md border border-foreground/20 bg-muted outline-none focus-visible:ring-3 focus-visible:ring-ring/50 ${index < 3 ? "p2b-unmask" : "p2b-fade"}`;
   const content = (
     <>
       {design.image_url ? (
@@ -55,7 +60,7 @@ export function DesignThumbnail({ design, href }: { design: Design; href?: strin
         <img
           src={design.image_url}
           alt={t("imageAlt", { view: viewLabel, number: design.sequence })}
-          className="aspect-[4/3] w-full object-cover transition-opacity group-hover:opacity-90"
+          className="p2b-unmask-img aspect-[4/3] w-full object-cover"
           loading="lazy"
         />
       ) : (
@@ -63,7 +68,7 @@ export function DesignThumbnail({ design, href }: { design: Design; href?: strin
           {design.state === "FAILED" ? (
             <ImageIcon aria-hidden="true" className="size-8" />
           ) : (
-            <Spinner className="size-6" />
+            <span aria-hidden="true" className="p2b-hazard-run h-2 w-16" />
           )}
           <span className="sr-only">{t("designNumber", { number: design.sequence })}</span>
         </div>
@@ -75,12 +80,15 @@ export function DesignThumbnail({ design, href }: { design: Design; href?: strin
       )}
     </>
   );
+  const order = { "--i": Math.min(index, 2) } as React.CSSProperties;
   return href ? (
-    <Link href={href} className={frame}>
+    <Link href={href} className={frame} style={order}>
       {content}
     </Link>
   ) : (
-    <div className={frame}>{content}</div>
+    <div className={frame} style={order}>
+      {content}
+    </div>
   );
 }
 
@@ -100,7 +108,7 @@ function DesignCard({
     <li>
       <Card size="sm" className="h-full gap-3 py-3">
         <CardContent className="flex flex-col gap-3 px-3">
-          <DesignThumbnail design={design} href={href} />
+          <DesignThumbnail design={design} href={href} index={design.sequence - 1} />
           <div className="flex flex-wrap items-center justify-between gap-2">
             <Link href={href} className="text-sm font-medium underline-offset-4 hover:underline">
               {t("designNumber", { number: design.sequence })} · {t(`viewShort.${design.view}`)}
