@@ -212,10 +212,10 @@ The motion of the public website, reused and never reinvented. One signature ani
 
 | Where | Allowed |
 |---|---|
-| Every screen | Page transition (the hoist plate); the h1 word rise with the brass plate; section entrance (fade and rise once); button feedback (glyph swap, fill, magnetic lean on fine pointers, press); dialog, sheet and menu enter and exit; spinners and progress |
+| Every screen | Page transition (the hoist plate) for moves between the public website and the signed-in screens, while signed-in screens navigate at once; the h1 rise with the brass beam; section entrance (fade and rise once); button feedback (glyph swap, fill, magnetic lean on fine pointers, press); dialog, sheet and menu enter and exit; spinners and progress |
 | Public pages | The loader on the first visit; the section animations of the public website (site board, quote sheets, elevation drawing, stage chart, hanging photo and card, crane, footer lift); smooth scrolling on fine pointers |
 | Sign-in and form screens | The hanging card lowering once on load |
-| Signed-in screens | At most one signature animation per section, playing once; nothing loops |
+| Signed-in screens | At most one signature animation per section, playing once; nothing loops. Journey rail bars draw in once on entering a project; the elevation drawing draws its complete stages once; design images open with the website's image unmask (first row), later ones fade |
 
 Looping animation is allowed only on public pages (status dot, handover ticker). `prefers-reduced-motion: reduce` turns transitions and animations off globally. Every animation ends before the Playwright axe check runs.
 
@@ -253,7 +253,7 @@ Edits made to the generated primitives:
 | card (1.2) | Outline in `foreground` at 15% | Paper sheet on the bone ground |
 | badge (1.2) | Mono caps with wide tracking | The public website's labels |
 
-Plan2Build components in `components/plan2build/`: PageContainer, PageHeader, SectionHeader; HangingCard and CardStep (1.2: sign-in and form screens on the public website's hanging card); FormField, FormFieldset, ChoiceGroup, CheckboxGroup, OptionalMark; FormActions; WizardProgress; ConfirmationDialog; Notice, EmptyState, LoadingState; StatusBadge; FileRow; AnswerSummary; ProjectSummaryCard; ProjectBreadcrumb; HomeownerHeader and HeaderNav; feature components (sign-in form, entry questions, enquiry form and page, estimator, create-project button, download button, requirement wizard with its location, ranking, question and uploads fields).
+Plan2Build components in `components/plan2build/`: PageContainer, PageHeader, SectionHeader; HangingCard, CardStep and CardSheet (1.2: sign-in and short form screens on the public website's hanging card, long forms on the card as a sheet); JourneyRail (1.2: the seven homeowner phases from the project status and package state, on every project page); OnboardingRail (1.2: a professional's way to a listing, from their own profile); BuildProgress (1.2: the house as an elevation drawing filled in by stage state, no dates or percentages); FormField, FormFieldset, ChoiceGroup, CheckboxGroup, OptionalMark; FormActions; WizardProgress; ConfirmationDialog; Notice, EmptyState, LoadingState; StatusBadge; FileRow; AnswerSummary; ProjectSummaryCard; ProjectBreadcrumb; HomeownerHeader and HeaderNav; feature components (sign-in form, entry questions, enquiry form and page, estimator, create-project button, download button, requirement wizard with its location, ranking, question and uploads fields).
 
 ## 14. Forbidden patterns
 
