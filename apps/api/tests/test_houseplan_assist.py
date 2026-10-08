@@ -151,7 +151,7 @@ def test_a_proposal_is_described_with_the_servers_own_areas() -> None:
 
 def test_the_plan_summary_names_rooms_and_never_carries_coordinates() -> None:
     summary = plan_summary(plan(), ruleset())
-    assert {r["id"] for r in summary["rooms"]} == {r.id for r in plan().floors[0].rooms}
+    assert {r.split("|")[0] for r in summary["rooms"]} == {r.id for r in plan().floors[0].rooms}
     text = json.dumps(summary)
     for word in ("nodes", "walls", "polygon", "x0", "offset_mm"):
         assert word not in text

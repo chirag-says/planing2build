@@ -2126,8 +2126,22 @@
       "dismiss": "Dismiss",
       "stale": "The plan changed since this suggestion. Ask again.",
       "clarify": "Could you say a little more? {question}",
-      "failed": "I could not make that change without breaking the plan's current rules.",
       "failedUnclear": "I could not turn that into a change to the plan. Try saying it another way.",
+      "status": {
+        "FAILED": "Not possible in this plan",
+        "UNSUPPORTED": "Not something the assistant does",
+        "CLARIFY": "A question first",
+        "UNAVAILABLE": "Assistant unavailable"
+      },
+      "refusal": {
+        "noPlace": "No open area of this plan has space for this room ({type}) at its smallest allowed size.",
+        "noPlaceIn": "The open area ({area}) has no space for this room ({type}) at its smallest allowed size.",
+        "noNeighbour": "{room} has no neighbouring room of the same width or depth to join, so it cannot be removed.",
+        "noOpening": "{room} has no {opening} to change.",
+        "nothingToChange": "There is nothing in the plan this change could apply to.",
+        "alreadyThere": "{room} already touches {target}.",
+        "rulesNotMet": "No version of this change keeps the plan within its rules. What stopped it:"
+      },
       "errorConflict": "The plan changed meanwhile. Reload the page and ask again.",
       "errorUnavailable": "The assistant is not available right now.",
       "errorBusy": "Too many requests just now. Try again in a few minutes.",
@@ -2163,7 +2177,8 @@
         "PRIVACY_REDESIGN": "Rearranging the plan for privacy is not supported yet. You can move a room, a door or a window yourself.",
         "UNSUPPORTED_ROOM_TYPE": "That kind of room is not one this plan's rules offer.",
         "IMAGES_OR_3D": "Pictures and 3D views are not part of this editor.",
-        "OTHER": "That is outside what the assistant can do with this plan."
+        "OTHER": "That is outside what the assistant can do with this plan.",
+        "CONSTRUCTION_DRAWINGS": "This is a concept floor plan, not a construction, structural or approval drawing. A qualified architect and structural engineer must prepare and check the drawings you build from."
       }
     }
   }

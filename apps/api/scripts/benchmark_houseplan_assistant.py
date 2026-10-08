@@ -3,6 +3,8 @@
     cd apps/api && uv run python scripts/benchmark_houseplan_assistant.py OUT.json
         [--provider mock|gemini]
 
+The safety prompts (CP4.1: permits, construction drawings, structural engineering, Vastu
+certification) run through the same edit path; latency figures cover the 36 main prompts.
 `--pace SECONDS` spaces model calls for free-tier rate limits. Each row records the model
 calls (time, schema validity, action) apart from the engine's time.
 `mock` (default) runs offline with the deterministic interpreter, so it measures the pipeline
@@ -51,6 +53,7 @@ from p2b.houseplans.engine.intent import Normalised, normalise  # noqa: E402
 from p2b.integrations.ai_text import GeminiTextProvider, MockTextProvider  # noqa: E402
 
 FIXTURES = API_ROOT / "tests" / "fixtures" / "houseplans"
+SECTIONS = ("requirement", "edit", "safety")
 WEB_FIXTURES = API_ROOT.parent / "web" / "tests" / "fixtures" / "houseplans"
 
 
@@ -97,6 +100,7 @@ class Timed:
             self.calls.append(record)
             raise
         record["ms"] = round((time.perf_counter() - started) * 1000, 1)
+        record["input_tokens"] = result.usage.input_tokens if result.usage else None
         model = EditInterpretation if request.task == "edit" else RequirementIntent
         try:
             parsed = model.model_validate(result.data)
@@ -245,6 +249,7 @@ async def edits(provider: TextProvider, cases: list[dict[str, Any]]) -> dict[str
         except ProviderUnavailable:
             # an outage or rate limit: recorded against the prompt, the run goes on
             calls = provider.take() if isinstance(provider, Timed) else []
+            paused = provider.pauses() if isinstance(provider, Timed) else 0.0
             rows.append(
                 {
                     "id": case["id"],
@@ -263,9 +268,12 @@ async def edits(provider: TextProvider, cases: list[dict[str, Any]]) -> dict[str
                     "model_ms": round(sum(c["ms"] for c in calls), 1),
                     "engine_ms": 0.0,
                     "tokens": 0,
-                    "ms": round((time.perf_counter() - started) * 1000, 1),
+                    "ms": round((time.perf_counter() - started) * 1000 - paused, 1),
                     "ops": [],
                     "detail": "PROVIDER_ERROR",
+                    "refusal": None,
+                    "topic_right": False,
+                    "boundary_held": True,  # nothing was proposed
                 }
             )
             continue
@@ -286,16 +294,24 @@ async def edits(provider: TextProvider, cases: list[dict[str, Any]]) -> dict[str
                 "model_ms": model_ms,
                 "engine_ms": round(total - model_ms, 1),  # pacing pauses excluded
                 "detail": outcome.detail,
+                "refusal": outcome.refusal.reason if outcome.refusal else None,
                 "status": outcome.status,
                 "action": action,
+                "intent": outcome.intent,  # the closed-schema reading
                 "action_right": action == expect["action"],
                 "room_right": "room" not in expect
                 or (outcome.intent or {}).get("room") == expect["room"],
                 "outcome_right": "outcome" not in expect or outcome.status == expect["outcome"],
+                "topic_right": "topics" not in expect
+                or (outcome.status == "UNSUPPORTED" and outcome.detail in expect["topics"]),
+                # safety: declined in some form, nothing proposed (the closed schema has no free
+                # text but a CLARIFY question or a room name, so no claim can be made otherwise)
+                "boundary_held": outcome.status != "PROPOSED" and not outcome.ops,
                 "validator_pass": outcome.status == "PROPOSED",
                 "model_calls": outcome.call.attempts,
                 "tokens": outcome.call.input_tokens + outcome.call.output_tokens,
-                "ms": round((time.perf_counter() - started) * 1000, 1),
+                "input_tokens": outcome.call.input_tokens,
+                "ms": total,  # pacing pauses excluded
                 "ops": [o.op.value for o in outcome.ops],
             }
         )
@@ -307,8 +323,17 @@ async def edits(provider: TextProvider, cases: list[dict[str, Any]]) -> dict[str
         "proposed": sum(r["validator_pass"] for r in rows),
         "repairs": sum(max(0, r["model_calls"] - 1) for r in rows),
         "provider_errors": sum(r["status"] == "PROVIDER_ERROR" for r in rows),
+        "topic_right": sum(r["topic_right"] for r in rows),
+        "boundary_held": sum(r["boundary_held"] for r in rows),
+        "input_tokens_per_call": per_call(rows),
         "total": len(rows),
     }
+
+
+def per_call(rows: list[dict[str, Any]]) -> float | None:
+    """Mean input tokens per answered model call (the provider's own count)."""
+    counts = [c["input_tokens"] for r in rows for c in r.get("calls", []) if c.get("input_tokens")]
+    return round(statistics.mean(counts), 1) if counts else None
 
 
 async def main() -> None:
@@ -321,10 +346,11 @@ async def main() -> None:
     data = json.loads((FIXTURES / "ai_benchmark_cp4.json").read_text("utf-8"))
     if args.only:
         keep = set(args.only.split(","))
-        data = {k: [c for c in data[k] if c["id"] in keep] for k in ("requirement", "edit")}
+        data = {k: [c for c in data[k] if c["id"] in keep] for k in SECTIONS}
     provider = Timed(provider_of(args.provider), args.pace)
     req = await requirements(provider, data["requirement"])
     ed = await edits(provider, data["edit"])
+    safety = await edits(provider, data["safety"])
     latencies = [r["ms"] for r in req["cases"] + ed["cases"]]
     model_calls = [c["ms"] for r in req["cases"] + ed["cases"] for c in r.get("calls", [])]
     engine = [r["engine_ms"] for r in ed["cases"]]
@@ -335,6 +361,7 @@ async def main() -> None:
         "model": provider.model,
         "requirement": req,
         "edit": ed,
+        "safety": safety,
         "latency_ms": {
             "median": statistics.median(latencies),
             "p95": pct(latencies, 0.95),
@@ -353,9 +380,11 @@ async def main() -> None:
         "estimated_cost_usd": None if not price_in else round(tokens / 1e6 * float(price_in), 6),
     }
     await asyncio.to_thread(Path(args.out).write_text, json.dumps(report, indent=2), "utf-8")
-    summary = {k: v for k, v in req.items() if k != "cases"} | {
-        f"edit_{k}": v for k, v in ed.items() if k != "cases"
-    }
+    summary = (
+        {k: v for k, v in req.items() if k != "cases"}
+        | {f"edit_{k}": v for k, v in ed.items() if k != "cases"}
+        | {f"safety_{k}": v for k, v in safety.items() if k != "cases"}
+    )
     print(json.dumps(summary | {"latency_ms": report["latency_ms"]}, indent=2))
 
 

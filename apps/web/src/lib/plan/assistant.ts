@@ -6,7 +6,7 @@ import { getTranslator } from "@/lib/i18n";
 
 import type { Rect } from "./edit";
 import type { Units } from "./editor";
-import { labelOf, roomTypeLabel } from "./messages";
+import { issueText, labelOf, rejectionText, roomTypeLabel } from "./messages";
 import type { AssistantEdit, HousePlan, PlanGeometry } from "./types";
 import { formatArea, formatLength } from "./units";
 
@@ -78,24 +78,75 @@ export function changeLines(edit: AssistantEdit, doc: HousePlan, units: Units): 
   return lines;
 }
 
-/** Why there is no proposal, from the status and its detail code. */
-export function outcomeLine(edit: AssistantEdit): string {
+const TOPICS = [
+  "ADD_FLOOR",
+  "FREE_SHAPE",
+  "STRUCTURAL_ENGINEERING",
+  "PERMIT_COMPLIANCE",
+  "VASTU_CERTIFICATION",
+  "PRIVACY_REDESIGN",
+  "UNSUPPORTED_ROOM_TYPE",
+  "IMAGES_OR_3D",
+  "CONSTRUCTION_DRAWINGS",
+] as const;
+
+const OPEN_AREAS = ["FORECOURT", "SIDE_YARD", "REAR_YARD", "COURT"] as const;
+
+/** Why the engine made no proposal: its own reason (CP4.1), never the model's rewording. */
+function refusalLine(edit: AssistantEdit, doc: HousePlan): string {
+  const refusal = edit.refusal;
+  const i = (edit.intent ?? {}) as Record<string, string>;
+  const room = i.room ? labelOf(i.room, doc, null) : "";
+  switch (refusal?.reason) {
+    case "LAST_KITCHEN_REQUIRED":
+    case "LAST_BATHROOM_REQUIRED": {
+      // the same words as when the owner tries it by hand
+      const entities = refusal.rejections.find((r) => r.code === refusal.reason)?.entities ?? [i.room ?? ""];
+      return rejectionText(refusal.reason, entities, doc, null);
+    }
+    case "NO_PLACE_FOR_ROOM": {
+      const type = roomTypeLabel(i.room_type ?? "");
+      const area = OPEN_AREAS.find((a) => a === i.area);
+      return area
+        ? t("assistant.refusal.noPlaceIn", { type, area: t(`openArea.${area}`) })
+        : t("assistant.refusal.noPlace", { type });
+    }
+    case "NOTHING_TO_CHANGE":
+      if (i.action === "REMOVE_ROOM") return t("assistant.refusal.noNeighbour", { room });
+      if (i.opening)
+        return t("assistant.refusal.noOpening", {
+          room,
+          opening: i.opening === "DOOR" ? t("openingNouns.DOOR") : t("openingNouns.WINDOW"),
+        });
+      return t("assistant.refusal.nothingToChange");
+    case "ALREADY_THERE":
+      return t("assistant.refusal.alreadyThere", { room, target: labelOf(i.target ?? "", doc, null) });
+    default:
+      return t("assistant.refusal.rulesNotMet");
+  }
+}
+
+/** Why there is no proposal: the main line, from the status and the engine's or model's code. */
+export function outcomeLine(edit: AssistantEdit, doc: HousePlan): string {
   if (edit.status === "UNSUPPORTED") {
-    const topics = [
-      "ADD_FLOOR",
-      "FREE_SHAPE",
-      "STRUCTURAL_ENGINEERING",
-      "PERMIT_COMPLIANCE",
-      "VASTU_CERTIFICATION",
-      "PRIVACY_REDESIGN",
-      "UNSUPPORTED_ROOM_TYPE",
-      "IMAGES_OR_3D",
-    ] as const;
-    const known = topics.find((x) => x === edit.detail);
+    const known = TOPICS.find((x) => x === edit.detail);
     return known ? t(`assistant.unsupported.${known}`) : t("assistant.unsupported.OTHER");
   }
   if (edit.status === "CLARIFY") return t("assistant.clarify", { question: edit.detail ?? "" });
-  return edit.detail === "MALFORMED_ANSWER" ? t("assistant.failedUnclear") : t("assistant.failed");
+  // FAILED: the engine's reason when it refused a reading; otherwise no answer could be read
+  return edit.refusal ? refusalLine(edit, doc) : t("assistant.failedUnclear");
+}
+
+/** What stopped every version of the change, in the validator's and the editor's own words:
+ * listed only when no single rule explains the refusal. */
+export function refusalDetails(edit: AssistantEdit, doc: HousePlan, units: Units): string[] {
+  const refusal = edit.refusal;
+  if (refusal?.reason !== "RULES_NOT_MET") return [];
+  const lines = [
+    ...refusal.rejections.map((r) => rejectionText(r.code, r.entities, doc, null)),
+    ...refusal.issues.map((issue) => issueText(issue, doc, null, units)),
+  ];
+  return [...new Set(lines)];
 }
 
 /** The rectangle of the room the proposal changes most visibly, for the preview overlay. */

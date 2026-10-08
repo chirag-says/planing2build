@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { browserApi, errorCode } from "@/lib/api/browser";
 import { getTranslator } from "@/lib/i18n";
-import { changeLines, intentLine, outcomeLine, previewOf } from "@/lib/plan/assistant";
+import { changeLines, intentLine, outcomeLine, previewOf, refusalDetails } from "@/lib/plan/assistant";
 import type { EditorAction, EditorState } from "@/lib/plan/editor";
 import type { AssistantEdit, PlanOp } from "@/lib/plan/types";
 
@@ -23,7 +23,7 @@ type Phase =
   | { kind: "idle" }
   | { kind: "asking" }
   | { kind: "answer"; edit: AssistantEdit }
-  | { kind: "error"; message: string };
+  | { kind: "error"; message: string; unavailable: boolean };
 
 export function AssistantPanel({
   projectId,
@@ -70,7 +70,8 @@ export function AssistantPanel({
           : code === "RATE_LIMITED"
             ? t("assistant.errorBusy")
             : t("assistant.errorFailed");
-    setPhase({ kind: "error", message });
+    const unavailable = code === "PROVIDER_UNAVAILABLE" || code === "RATE_LIMITED";
+    setPhase({ kind: "error", message, unavailable });
   }
 
   function cancel() {
@@ -80,6 +81,7 @@ export function AssistantPanel({
 
   const answer = phase.kind === "answer" ? phase.edit : null;
   const stale = answer !== null && answer.expected_revision !== revision;
+  const details = answer ? refusalDetails(answer, doc, state.units) : [];
 
   return (
     <section aria-labelledby={`${ids}-title`} className="flex flex-col gap-2 rounded-lg border p-3">
@@ -109,9 +111,14 @@ export function AssistantPanel({
         </Button>
       </form>
       <div aria-live="polite" className="flex flex-col gap-2 text-sm">
-        {phase.kind === "error" && <p className="text-destructive">{phase.message}</p>}
+        {phase.kind === "error" && (
+          <div data-status={phase.unavailable ? "UNAVAILABLE" : "ERROR"} className="flex flex-col gap-1">
+            {phase.unavailable && <p className="font-medium">{t("assistant.status.UNAVAILABLE")}</p>}
+            <p className="text-destructive">{phase.message}</p>
+          </div>
+        )}
         {answer && answer.status === "PROPOSED" && (
-          <div className="flex flex-col gap-2 rounded-md bg-muted p-2">
+          <div data-status="PROPOSED" className="flex flex-col gap-2 rounded-md bg-muted p-2">
             <p className="font-medium">{t("assistant.proposal")}</p>
             <p>{intentLine(answer, doc)}</p>
             <ul className="list-disc pl-5">
@@ -138,8 +145,17 @@ export function AssistantPanel({
           </div>
         )}
         {answer && answer.status !== "PROPOSED" && (
-          <div className="flex flex-col gap-2">
-            <p>{outcomeLine(answer)}</p>
+          <div data-status={answer.status} className="flex flex-col gap-2">
+            <p className="font-medium">{t(`assistant.status.${answer.status}`)}</p>
+            {answer.status === "FAILED" && answer.refusal && <p>{intentLine(answer, doc)}</p>}
+            <p>{outcomeLine(answer, doc)}</p>
+            {details.length > 0 && (
+              <ul className="list-disc pl-5">
+                {details.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            )}
             <div>
               <Button variant="ghost" onClick={cancel}>
                 {t("assistant.dismiss")}

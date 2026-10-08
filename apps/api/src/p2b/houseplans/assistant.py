@@ -8,8 +8,10 @@ The model never sees or returns coordinates and never changes a plan: it answers
 schema (`engine.assist`), the engine compiles the intent into the first candidate batch that
 the validator passes, and nothing is stored until the owner applies the proposal through the
 operations route like any other edit. When no candidate passes, the refusal reasons go back to
-the model for a different reading, at most `ai_text_max_repairs` times, then the assistant says
-it could not make the change. The feature is off unless `houseplans_ai_enabled` is set.
+the model for a different reading, at most `ai_text_max_repairs` times. The engine's refusal is
+final (CP4.1): if no later reading passes, the owner gets the engine's reason for the first
+refused reading, never the model's rewording of it, and a protected function (the last kitchen
+or bathroom, E-5) ends the request at once. The feature is off unless `houseplans_ai_enabled`.
 
 Privacy: the request text is sent to the provider with the plan summary (room ids, names,
 types, sizes, open-area kinds); it is not stored or logged. Logs carry the provider, model,
@@ -37,15 +39,19 @@ from p2b.core.errors import (
 from p2b.core.vocabulary import MembershipRole
 from p2b.houseplans.engine import ArchitecturalIntent, HousePlan, RulesetContent
 from p2b.houseplans.engine.assist import (
+    PROTECTED,
     EditInterpretation,
+    NoProposal,
     OpeningChange,
     Proposal,
+    RefusalReason,
     RequirementBridge,
     RequirementIntent,
     RoomChange,
     compile_edit,
     describe,
     plan_summary,
+    refusal_reason,
     requirement_answers,
 )
 from p2b.houseplans.engine.ops import PlanOp
@@ -68,8 +74,10 @@ EDIT_SYSTEM = ROLE + (
     "Answer with exactly one intent in the JSON schema. Name rooms only by the ids in the plan "
     "summary. Never give coordinates, millimetres, shapes or walls: the plan's engine decides "
     "all geometry and its rules decide what is allowed. Use UNSUPPORTED with a topic for "
-    "another floor, curved or free shapes, structural engineering, permits or approvals, Vastu "
-    "certification, a privacy redesign, images or 3D, or a room type the summary does not list. "
+    "another floor, curved or free shapes, structural engineering (columns, beams, foundations), "
+    "permits, approvals or compliance, construction or working drawings and building from this "
+    "plan, Vastu certification, a privacy redesign, images or 3D, or a room type the summary "
+    "does not list. "
     "Use CLARIFY with one short question when the room or the change is not clear. When "
     "previous_failure is given, the last reading could not be applied for those reasons: give a "
     "smaller or different reading of the same request, or CLARIFY."
@@ -78,8 +86,8 @@ REQUIREMENT_SYSTEM = ROLE + (
     "Turn the homeowner's description of the home into the JSON schema. Fill only what they "
     "said; leave everything else empty and never guess sizes, setbacks or facing. Put questions "
     "you need answered in clarifications, and anything outside a single-storey concept plan "
-    "(another floor, structural engineering, permits, Vastu certification, images or 3D) in "
-    "unsupported."
+    "(another floor, structural engineering, permits or approvals, construction drawings, Vastu "
+    "certification, images or 3D) in unsupported."
 )
 
 
@@ -95,6 +103,14 @@ class Call:
 
 
 @dataclass(frozen=True)
+class Refusal:
+    """The engine's reason for making no proposal (see `engine.assist.RefusalReason`)."""
+
+    reason: RefusalReason
+    refused: NoProposal  # with the operation rejections and validator errors met
+
+
+@dataclass(frozen=True)
 class EditOutcome:
     status: Literal["PROPOSED", "UNSUPPORTED", "CLARIFY", "FAILED"]
     intent: dict[str, Any] | None
@@ -105,6 +121,7 @@ class EditOutcome:
     detail: str | None  # the unsupported topic, the question, or why it failed
     expected_revision: int
     call: Call
+    refusal: Refusal | None = None  # FAILED by the engine: its reason, for the owner
 
 
 @dataclass(frozen=True)
@@ -223,6 +240,8 @@ async def interpret_edit(
     intent_data: dict[str, Any] | None = None
     status: Literal["PROPOSED", "UNSUPPORTED", "CLARIFY", "FAILED"] = "FAILED"
     detail: str | None = "NOTHING_VALID"
+    refusal: Refusal | None = None  # the first reading the engine refused, with its reason
+    refused_intent: dict[str, Any] | None = None
     for _ in range(1 + max_repairs):
         user: dict[str, Any] = {"plan": summary, "request": text[:MAX_TEXT]}
         if failure:
@@ -257,14 +276,25 @@ async def interpret_edit(
                 call,
             )
         if compiled.reason in ("UNSUPPORTED", "CLARIFY"):
+            if refusal is not None:
+                break  # the model gave up on a reading the engine refused: the refusal stands
             status = compiled.reason
             detail = compiled.detail
             break
+        reason = refusal_reason(interpretation.intent, compiled)
+        if reason is not None and (refusal is None or reason in PROTECTED):
+            refusal, refused_intent = Refusal(reason, compiled), intent_data
+        if reason in PROTECTED:
+            break  # a protected function is a rule, not a reading to repair
         failure = f"{compiled.reason}:{compiled.detail}"
         detail = compiled.reason
+    if refusal is not None:
+        status, detail, intent_data = "FAILED", refusal.reason, refused_intent
     call = meter.done()
     _log(call, "edit", status)
-    return EditOutcome(status, intent_data, (), None, [], [], detail, expected_revision, call)
+    return EditOutcome(
+        status, intent_data, (), None, [], [], detail, expected_revision, call, refusal
+    )
 
 
 async def interpret_requirement(

@@ -22,7 +22,7 @@ from p2b.core.vocabulary import (
     PlanValidity,
     RulesetStatus,
 )
-from p2b.houseplans.assistant import Call, interpret_requirement, propose_edit
+from p2b.houseplans.assistant import Call, Refusal, interpret_requirement, propose_edit
 from p2b.houseplans.engine import (
     ArchitecturalIntent,
     DesignInputs,
@@ -40,6 +40,8 @@ from p2b.houseplans.schemas import (
     AssistantCallOut,
     AssistantEditOut,
     AssistantEditRequest,
+    AssistantRefusalOut,
+    AssistantRejectionOut,
     AssistantRequirementOut,
     AssistantRequirementRequest,
     EditHousePlanOut,
@@ -456,6 +458,19 @@ def call_out(call: Call) -> AssistantCallOut:
     )
 
 
+def refusal_out(refusal: Refusal | None) -> AssistantRefusalOut | None:
+    if refusal is None:
+        return None
+    return AssistantRefusalOut(
+        reason=refusal.reason,
+        rejections=[
+            AssistantRejectionOut(op=r.op, code=r.code, entities=list(r.entities))
+            for r in refusal.refused.rejections
+        ],
+        issues=list(refusal.refused.issues),
+    )
+
+
 @router.post(
     "/projects/{project_id}/house-plans/{plan_id}/assistant/edit",
     response_model=AssistantEditOut,
@@ -495,6 +510,7 @@ async def post_house_plan_assistant_edit(
         rooms=[RoomChangeOut(**vars(r)) for r in outcome.rooms],
         openings=[OpeningChangeOut(**vars(o)) for o in outcome.openings],
         detail=outcome.detail,
+        refusal=refusal_out(outcome.refusal),
         call=call_out(outcome.call),
     )
 

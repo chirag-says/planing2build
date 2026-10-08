@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { AssistantPanel } from "@/components/plan2build/plan/plan-assistant";
-import { changeLines, intentLine, outcomeLine, previewOf } from "@/lib/plan/assistant";
+import { changeLines, intentLine, outcomeLine, previewOf, refusalDetails } from "@/lib/plan/assistant";
 import { initialState } from "@/lib/plan/editor";
 import type { AssistantEdit } from "@/lib/plan/types";
 
@@ -41,6 +41,7 @@ function proposal(over: Partial<AssistantEdit> = {}): AssistantEdit {
     ],
     openings: [{ opening: "window_living", kind: "RESIZED", width_before_mm: 1200, width_after_mm: 1500 }],
     detail: null,
+    refusal: null,
     call,
     ...over,
   };
@@ -59,17 +60,89 @@ describe("reading a proposal", () => {
   });
 
   it("explains unsupported, unclear and failed requests without inventing anything", () => {
-    expect(outcomeLine(proposal({ status: "UNSUPPORTED", detail: "ADD_FLOOR", ops: [], rooms: [], openings: [] }))).toMatch(
-      /single storey/,
-    );
-    expect(outcomeLine(proposal({ status: "UNSUPPORTED", detail: "SOMETHING", ops: [] }))).toMatch(/outside what/);
-    expect(outcomeLine(proposal({ status: "CLARIFY", detail: "Which room?" }))).toBe(
+    const doc = plan.document;
+    expect(
+      outcomeLine(proposal({ status: "UNSUPPORTED", detail: "ADD_FLOOR", ops: [], rooms: [], openings: [] }), doc),
+    ).toMatch(/single storey/);
+    expect(outcomeLine(proposal({ status: "UNSUPPORTED", detail: "SOMETHING", ops: [] }), doc)).toMatch(/outside what/);
+    expect(outcomeLine(proposal({ status: "CLARIFY", detail: "Which room?" }), doc)).toBe(
       "Could you say a little more? Which room?",
     );
-    expect(outcomeLine(proposal({ status: "FAILED", detail: "NOTHING_VALID" }))).toBe(
-      "I could not make that change without breaking the plan's current rules.",
+    // FAILED without the engine's refusal: the model's answers could not be read as a change
+    expect(outcomeLine(proposal({ status: "FAILED", detail: "MALFORMED_ANSWER", refusal: null }), doc)).toMatch(
+      /another way/,
     );
-    expect(outcomeLine(proposal({ status: "FAILED", detail: "MALFORMED_ANSWER" }))).toMatch(/another way/);
+  });
+});
+
+// Checkpoint 4.1: when the engine refuses, the owner reads the engine's reason, in the same
+// words the editor uses for a manual edit, whatever the model said on a repair.
+describe("the engine's refusal", () => {
+  const doc = plan.document;
+  const failed = (over: Partial<AssistantEdit>) =>
+    proposal({ status: "FAILED", ops: [], preview: null, rooms: [], openings: [], ...over });
+
+  it("names the protected function, as a manual edit would", () => {
+    const kitchen = failed({
+      intent: { action: "REMOVE_ROOM", room: "kitchen" },
+      detail: "LAST_KITCHEN_REQUIRED",
+      refusal: {
+        reason: "LAST_KITCHEN_REQUIRED",
+        rejections: [{ op: "DELETE_ROOM", code: "LAST_KITCHEN_REQUIRED", entities: ["kitchen"] }],
+        issues: [],
+      },
+    });
+    expect(intentLine(kitchen, doc)).toBe("Remove Kitchen.");
+    expect(outcomeLine(kitchen, doc)).toBe(
+      "Kitchen is the only kitchen. A home needs one, so it cannot be removed or changed to another type.",
+    );
+    const bath = failed({
+      intent: { action: "CHANGE_ROOM_TYPE", room: "bath_common_1", room_type: "PUJA" },
+      detail: "LAST_BATHROOM_REQUIRED",
+      refusal: {
+        reason: "LAST_BATHROOM_REQUIRED",
+        rejections: [{ op: "SET_ROOM_TYPE", code: "LAST_BATHROOM_REQUIRED", entities: ["bath_common_1"] }],
+        issues: [],
+      },
+    });
+    expect(outcomeLine(bath, doc)).toMatch(/is the only bathroom or toilet\. A home needs one/);
+    expect(refusalDetails(bath, doc, "m")).toEqual([]);
+  });
+
+  it("says where a new room does not fit, and lists what stopped every candidate", () => {
+    const court = failed({
+      intent: { action: "ADD_ROOM", room_type: "BEDROOM", area: "COURT" },
+      refusal: { reason: "NO_PLACE_FOR_ROOM", rejections: [], issues: [] },
+    });
+    expect(outcomeLine(court, doc)).toBe(
+      "The open area (Open court) has no space for this room (Bedroom) at its smallest allowed size.",
+    );
+    const rules = failed({
+      intent: { action: "RESIZE_ROOM", room: "bedroom_1", change: "LARGER", amount: "MODERATE" },
+      refusal: {
+        reason: "RULES_NOT_MET",
+        rejections: [{ op: "MOVE_EDGE", code: "HOSTED_ITEM_LEAVES_WALL", entities: [] }],
+        issues: [],
+      },
+    });
+    expect(outcomeLine(rules, doc)).toMatch(/^No version of this change keeps the plan within its rules/);
+    expect(refusalDetails(rules, doc, "m")).toHaveLength(1);
+  });
+
+  it("declines permits, drawings, structure and Vastu certification without claiming any", () => {
+    for (const topic of [
+      "PERMIT_COMPLIANCE",
+      "CONSTRUCTION_DRAWINGS",
+      "STRUCTURAL_ENGINEERING",
+      "VASTU_CERTIFICATION",
+    ]) {
+      const line = outcomeLine(failed({ status: "UNSUPPORTED", detail: topic }), doc);
+      expect(line).not.toMatch(/outside what/); // each has its own sentence
+      expect(line).not.toMatch(/\b(is|are) (approved|compliant|certified)\b/i);
+    }
+    expect(outcomeLine(failed({ status: "UNSUPPORTED", detail: "CONSTRUCTION_DRAWINGS" }), doc)).toMatch(
+      /not a construction, structural or approval drawing/,
+    );
   });
 });
 

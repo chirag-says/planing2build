@@ -172,11 +172,13 @@ _TYPES = {
     "bathroom": "BATH_COMMON", "bath": "BATH_COMMON", "pooja": "PUJA", "puja": "PUJA",
     "prayer": "PUJA", "utility": "UTILITY", "store": "STORE", "passage": "PASSAGE",
 }  # fmt: skip
-_UNSUPPORTED = (
-    (r"\b(floor|storey|story|g\+1|duplex|upstairs|first floor)\b", "ADD_FLOOR"),
+_ADD_FLOOR = r"\b(floor|storey|story|g\+1|duplex|upstairs|first floor)\b"
+_UNSUPPORTED = (  # in order: the first match wins
     (r"\b(vastu)\b", "VASTU_CERTIFICATION"),
+    (r"\b(drawings?|blueprints?|build (?:directly )?from)\b", "CONSTRUCTION_DRAWINGS"),
     (r"\b(beam|column|structural|load|foundation)\b", "STRUCTURAL_ENGINEERING"),
-    (r"\b(permit|approval|sanction|legal|compliance)\b", "PERMIT_COMPLIANCE"),
+    (r"\b(permit|approv\w*|sanction|legal|complian\w*|municipal\w*)\b", "PERMIT_COMPLIANCE"),
+    (_ADD_FLOOR, "ADD_FLOOR"),
     (r"\b(curved|circular|round|diagonal|angled|free ?form)\b", "FREE_SHAPE"),
     (r"\b(render|image|photo|3d|picture)\b", "IMAGES_OR_3D"),
     (r"\b(privacy|private)\b", "PRIVACY_REDESIGN"),
@@ -248,10 +250,9 @@ def _requirement(text: str) -> dict[str, Any]:
         out["private_rooms"] = ["MASTER_BEDROOM"]
     if "vastu" in t:
         out["vastu"] = "WHERE_POSSIBLE"
-    for pattern, topic in _UNSUPPORTED[:1]:
-        if re.search(pattern, t):
-            out["floors"] = 2
-            out["unsupported"].append(topic)
+    if re.search(_ADD_FLOOR, t):
+        out["floors"] = 2
+        out["unsupported"].append("ADD_FLOOR")
     if re.search(r"vastu (?:certif|compliant|approved)", t):
         out["unsupported"].append("VASTU_CERTIFICATION")
     if "plot" not in t and not plot:
@@ -277,9 +278,20 @@ def _room_ref(t: str, rooms: list[dict[str, Any]], skip: str | None = None) -> s
     return None
 
 
+def _plan_rooms(plan: dict[str, Any]) -> list[dict[str, Any]]:
+    """The summary's room rows (`room_columns` order, `|` separated) as dicts."""
+    columns = str(plan.get("room_columns", "")).split("|")
+    rooms: list[dict[str, Any]] = [
+        dict(zip(columns, str(row).split("|"), strict=False)) for row in plan.get("rooms", [])
+    ]
+    for r in rooms:
+        r["area_m2"] = float(r.get("area_m2") or 0)
+    return rooms
+
+
 def _edit(text: str, plan: dict[str, Any], failure: str | None) -> dict[str, Any]:
     t = text.lower()
-    rooms = plan.get("rooms", [])
+    rooms = _plan_rooms(plan)
     for pattern, topic in _UNSUPPORTED:
         if re.search(pattern, t):
             return {"intent": {"action": "UNSUPPORTED", "topic": topic}}

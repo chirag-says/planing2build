@@ -111,11 +111,32 @@ async def test_unsupported_unclear_and_impossible_requests_store_nothing_and_say
     assert (floor["status"], floor["detail"], floor["ops"]) == ("UNSUPPORTED", "ADD_FLOOR", [])
     vague = (await ask(family, project_id, plan_id, "Make it nicer", 0)).json()
     assert vague["status"] == "CLARIFY"
-    # the only kitchen cannot be removed (E-5): bounded attempts, then FAILED, nothing stored
+    # the only kitchen cannot be removed (E-5): the engine's rule is the answer the owner gets,
+    # at once (CP4.1: no repairs of a protected function), and nothing is stored
     kitchen = (await ask(family, project_id, plan_id, "Remove the kitchen", 0)).json()
-    assert kitchen["status"] == "FAILED"
-    assert kitchen["call"]["model_calls"] == 3  # one reading and two repairs, no more
+    assert (kitchen["status"], kitchen["detail"]) == ("FAILED", "LAST_KITCHEN_REQUIRED")
+    assert kitchen["call"]["model_calls"] == 1
     assert kitchen["ops"] == []
+    assert kitchen["intent"]["action"] == "REMOVE_ROOM"
+    assert kitchen["refusal"]["reason"] == "LAST_KITCHEN_REQUIRED"
+    rejection = kitchen["refusal"]["rejections"][0]
+    assert (rejection["op"], rejection["code"]) == ("DELETE_ROOM", "LAST_KITCHEN_REQUIRED")
+    assert rejection["entities"]
+    assert vague["refusal"] is None
+    assert floor["refusal"] is None
+    # requests outside the product are declined by topic, never answered
+    for text, topic in (
+        ("Is this house plan approved by the municipality?", "PERMIT_COMPLIANCE"),
+        ("Generate the construction drawing.", "CONSTRUCTION_DRAWINGS"),
+        ("Tell me the foundation size.", "STRUCTURAL_ENGINEERING"),
+        ("Certify this house as Vastu compliant.", "VASTU_CERTIFICATION"),
+    ):
+        declined = (await ask(family, project_id, plan_id, text, 0)).json()
+        assert (declined["status"], declined["detail"], declined["ops"]) == (
+            "UNSUPPORTED",
+            topic,
+            [],
+        )
     detail = await family.get(f"/api/v1/projects/{project_id}/house-plans/{plan_id}")
     assert detail.json()["editing"]["revision_no"] == 0
 
@@ -152,14 +173,19 @@ async def test_malformed_model_answers_are_repaired_within_the_bound(
         "MALFORMED_ANSWER",
         3,
     )
-    # a provider that is down is a 503, not a proposal
-    monkeypatch.setattr(
-        app.state,
-        "text_provider",
-        MockTextProvider(script=[TextProviderError("down", kind="UNAVAILABLE", retryable=True)]),
-    )
-    down = await ask(family, project_id, plan_id, "Make the living room bigger", 0)
-    assert down.status_code == 503
+    # a provider that is down or rate-limited (429 after its one retry) is a 503, not a proposal
+    for error in ("down", "the model answered 429"):
+        monkeypatch.setattr(
+            app.state,
+            "text_provider",
+            MockTextProvider(script=[TextProviderError(error, kind="UNAVAILABLE", retryable=True)]),
+        )
+        down = await ask(family, project_id, plan_id, "Make the living room bigger", 0)
+        assert down.status_code == 503
+        assert down.json()["error"]["code"] == "PROVIDER_UNAVAILABLE"
+        assert "429" not in down.text  # the provider's own answer is not passed on
+    detail = await family.get(f"/api/v1/projects/{project_id}/house-plans/{plan_id}")
+    assert detail.json()["editing"]["revision_no"] == 0
 
 
 async def test_only_the_owner_asks_and_the_feature_is_off_by_default(

@@ -15,6 +15,7 @@ from p2b.core.vocabulary import (
     PlanGenerationState,
     PlanOpKind,
     PlanOpReason,
+    PlanOpRejection,
     PlanValidity,
     RoomSide,
     RoomType,
@@ -27,8 +28,10 @@ from p2b.houseplans.engine import (
     PlanGeometry,
     ValidationReport,
 )
+from p2b.houseplans.engine.assist import RefusalReason
 from p2b.houseplans.engine.edit import MAX_BATCH
 from p2b.houseplans.engine.ops import PlanOp
+from p2b.houseplans.engine.validate import ValidationIssue
 
 
 class _Out(BaseModel):
@@ -272,11 +275,31 @@ class OpeningChangeOut(_Out):
     width_after_mm: int
 
 
+class AssistantRejectionOut(_Out):
+    """An operation the engine refused, as the operations route reports one."""
+
+    op: str
+    code: PlanOpRejection
+    entities: list[str]
+
+
+class AssistantRefusalOut(_Out):
+    """The engine's reason for making no proposal. `reason` is final: the model may have read
+    the request again, but it never rewords or replaces this. `rejections` and `issues` are the
+    first operation rejection and validator error of each code the candidates met."""
+
+    reason: RefusalReason
+    rejections: list[AssistantRejectionOut]
+    issues: list[ValidationIssue]
+
+
 class AssistantEditOut(_Out):
     """A proposal, never a change: PROPOSED carries typed operations already validated against
     the plan at `expected_revision`, to be sent through the operations route if the owner
     applies them; UNSUPPORTED and CLARIFY say why there is none; FAILED means no reading of the
-    request passed the plan's rules within the bounded attempts. The disclaimer applies."""
+    request passed the plan's rules within the bounded attempts: `refusal` gives the engine's
+    reason, with `intent` the reading it refused (no `refusal`: the model's answers could not be
+    read as a change). The disclaimer applies."""
 
     status: Literal["PROPOSED", "UNSUPPORTED", "CLARIFY", "FAILED"]
     intent: dict[str, Any] | None
@@ -286,6 +309,7 @@ class AssistantEditOut(_Out):
     rooms: list[RoomChangeOut]
     openings: list[OpeningChangeOut]
     detail: str | None
+    refusal: AssistantRefusalOut | None
     call: AssistantCallOut
 
 

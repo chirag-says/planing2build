@@ -766,7 +766,7 @@
       },
       "AssistantEditOut": {
         "additionalProperties": false,
-        "description": "A proposal, never a change: PROPOSED carries typed operations already validated against\nthe plan at `expected_revision`, to be sent through the operations route if the owner\napplies them; UNSUPPORTED and CLARIFY say why there is none; FAILED means no reading of the\nrequest passed the plan's rules within the bounded attempts. The disclaimer applies.",
+        "description": "A proposal, never a change: PROPOSED carries typed operations already validated against\nthe plan at `expected_revision`, to be sent through the operations route if the owner\napplies them; UNSUPPORTED and CLARIFY say why there is none; FAILED means no reading of the\nrequest passed the plan's rules within the bounded attempts: `refusal` gives the engine's\nreason, with `intent` the reading it refused (no `refusal`: the model's answers could not be\nread as a change). The disclaimer applies.",
         "properties": {
           "call": {
             "$ref": "#/components/schemas/AssistantCallOut"
@@ -892,6 +892,16 @@
               }
             ]
           },
+          "refusal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AssistantRefusalOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "rooms": {
             "items": {
               "$ref": "#/components/schemas/RoomChangeOut"
@@ -919,6 +929,7 @@
           "rooms",
           "openings",
           "detail",
+          "refusal",
           "call"
         ],
         "title": "AssistantEditOut",
@@ -945,6 +956,72 @@
           "expected_revision"
         ],
         "title": "AssistantEditRequest",
+        "type": "object"
+      },
+      "AssistantRefusalOut": {
+        "additionalProperties": false,
+        "description": "The engine's reason for making no proposal. `reason` is final: the model may have read\nthe request again, but it never rewords or replaces this. `rejections` and `issues` are the\nfirst operation rejection and validator error of each code the candidates met.",
+        "properties": {
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationIssue"
+            },
+            "title": "Issues",
+            "type": "array"
+          },
+          "reason": {
+            "enum": [
+              "LAST_KITCHEN_REQUIRED",
+              "LAST_BATHROOM_REQUIRED",
+              "NO_PLACE_FOR_ROOM",
+              "NOTHING_TO_CHANGE",
+              "ALREADY_THERE",
+              "RULES_NOT_MET"
+            ],
+            "title": "Reason",
+            "type": "string"
+          },
+          "rejections": {
+            "items": {
+              "$ref": "#/components/schemas/AssistantRejectionOut"
+            },
+            "title": "Rejections",
+            "type": "array"
+          }
+        },
+        "required": [
+          "reason",
+          "rejections",
+          "issues"
+        ],
+        "title": "AssistantRefusalOut",
+        "type": "object"
+      },
+      "AssistantRejectionOut": {
+        "additionalProperties": false,
+        "description": "An operation the engine refused, as the operations route reports one.",
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/PlanOpRejection"
+          },
+          "entities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Entities",
+            "type": "array"
+          },
+          "op": {
+            "title": "Op",
+            "type": "string"
+          }
+        },
+        "required": [
+          "op",
+          "code",
+          "entities"
+        ],
+        "title": "AssistantRejectionOut",
         "type": "object"
       },
       "AssistantRequirementOut": {
@@ -14234,6 +14311,33 @@
           "REVERT"
         ],
         "title": "PlanOpReason",
+        "type": "string"
+      },
+      "PlanOpRejection": {
+        "description": "Why a typed operation could not apply (Checkpoint 3). Rejection happens before validation;\na plan that applies but breaks a rule is reported by the validator instead.",
+        "enum": [
+          "UNKNOWN_ENTITY",
+          "ENTITY_EXISTS",
+          "NOT_SUPPORTED",
+          "NO_MOVEMENT",
+          "NOT_AXIS_ALIGNED",
+          "WALL_WOULD_COLLAPSE",
+          "HOSTED_ITEM_LEAVES_WALL",
+          "NOT_RECTANGULAR",
+          "HOSTED_ITEM_CHANGES_ROOMS",
+          "DOOR_DOES_NOT_FIT",
+          "ROOMS_WOULD_OVERLAP",
+          "NOT_A_SLICE",
+          "ROOMS_NOT_MERGEABLE",
+          "ROOM_TYPE_NOT_ALLOWED",
+          "REVERT_NOT_ALONE",
+          "UNKNOWN_REVISION",
+          "LAST_KITCHEN_REQUIRED",
+          "LAST_BATHROOM_REQUIRED",
+          "NOT_ON_OUTSIDE_WALL",
+          "OUTSIDE_BUILDABLE_AREA"
+        ],
+        "title": "PlanOpRejection",
         "type": "string"
       },
       "PlanSource": {

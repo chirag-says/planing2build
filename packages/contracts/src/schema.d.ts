@@ -6432,7 +6432,9 @@ export interface components {
          * @description A proposal, never a change: PROPOSED carries typed operations already validated against
          *     the plan at `expected_revision`, to be sent through the operations route if the owner
          *     applies them; UNSUPPORTED and CLARIFY say why there is none; FAILED means no reading of the
-         *     request passed the plan's rules within the bounded attempts. The disclaimer applies.
+         *     request passed the plan's rules within the bounded attempts: `refusal` gives the engine's
+         *     reason, with `intent` the reading it refused (no `refusal`: the model's answers could not be
+         *     read as a change). The disclaimer applies.
          */
         AssistantEditOut: {
             call: components["schemas"]["AssistantCallOut"];
@@ -6449,6 +6451,7 @@ export interface components {
             /** Ops */
             ops: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["MoveEdge"] | components["schemas"]["AddRoom"] | components["schemas"]["AddRoomOutside"] | components["schemas"]["DeleteRoom"] | components["schemas"]["RevertToRevision"] | components["schemas"]["RevertToVersion"])[];
             preview: components["schemas"]["PlanGeometry"] | null;
+            refusal: components["schemas"]["AssistantRefusalOut"] | null;
             /** Rooms */
             rooms: components["schemas"]["RoomChangeOut"][];
             /**
@@ -6466,6 +6469,34 @@ export interface components {
             expected_revision: number;
             /** Text */
             text: string;
+        };
+        /**
+         * AssistantRefusalOut
+         * @description The engine's reason for making no proposal. `reason` is final: the model may have read
+         *     the request again, but it never rewords or replaces this. `rejections` and `issues` are the
+         *     first operation rejection and validator error of each code the candidates met.
+         */
+        AssistantRefusalOut: {
+            /** Issues */
+            issues: components["schemas"]["ValidationIssue"][];
+            /**
+             * Reason
+             * @enum {string}
+             */
+            reason: "LAST_KITCHEN_REQUIRED" | "LAST_BATHROOM_REQUIRED" | "NO_PLACE_FOR_ROOM" | "NOTHING_TO_CHANGE" | "ALREADY_THERE" | "RULES_NOT_MET";
+            /** Rejections */
+            rejections: components["schemas"]["AssistantRejectionOut"][];
+        };
+        /**
+         * AssistantRejectionOut
+         * @description An operation the engine refused, as the operations route reports one.
+         */
+        AssistantRejectionOut: {
+            code: components["schemas"]["PlanOpRejection"];
+            /** Entities */
+            entities: string[];
+            /** Op */
+            op: string;
         };
         /**
          * AssistantRequirementOut
@@ -11037,6 +11068,13 @@ export interface components {
          * @enum {string}
          */
         PlanOpReason: "USER" | "AUTO_REPAIR" | "REVERT";
+        /**
+         * PlanOpRejection
+         * @description Why a typed operation could not apply (Checkpoint 3). Rejection happens before validation;
+         *     a plan that applies but breaks a rule is reported by the validator instead.
+         * @enum {string}
+         */
+        PlanOpRejection: "UNKNOWN_ENTITY" | "ENTITY_EXISTS" | "NOT_SUPPORTED" | "NO_MOVEMENT" | "NOT_AXIS_ALIGNED" | "WALL_WOULD_COLLAPSE" | "HOSTED_ITEM_LEAVES_WALL" | "NOT_RECTANGULAR" | "HOSTED_ITEM_CHANGES_ROOMS" | "DOOR_DOES_NOT_FIT" | "ROOMS_WOULD_OVERLAP" | "NOT_A_SLICE" | "ROOMS_NOT_MERGEABLE" | "ROOM_TYPE_NOT_ALLOWED" | "REVERT_NOT_ALONE" | "UNKNOWN_REVISION" | "LAST_KITCHEN_REQUIRED" | "LAST_BATHROOM_REQUIRED" | "NOT_ON_OUTSIDE_WALL" | "OUTSIDE_BUILDABLE_AREA";
         /**
          * PlanSource
          * @enum {string}

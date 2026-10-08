@@ -343,6 +343,14 @@ test("the assistant proposes a change in words, the owner applies it, and it can
   expect((await call(url, "GET")).body.editing.revision_no).toBe(0);
   await dismiss.click();
 
+  // when the engine refuses, the owner reads the engine's own rule (CP4.1), nothing stored
+  await words.fill("Remove the kitchen");
+  await suggest.click();
+  await expect(panel.getByText("Not possible in this plan", { exact: true })).toBeVisible({ timeout: 15_000 });
+  await expect(panel.getByText(/is the only kitchen\. A home needs one/)).toBeVisible();
+  expect((await call(url, "GET")).body.editing.revision_no).toBe(0);
+  await dismiss.click();
+
   // a supported request becomes a proposal with the engine's numbers, not stored yet. Which
   // change the plan's rules allow depends on the plan, so a few plain requests are tried.
   const living = detail.document.floors[0].rooms.find((r: { type: string }) => r.type === "LIVING");

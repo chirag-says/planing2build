@@ -18,7 +18,7 @@ stored until the owner confirms it and the server applies and validates it again
 from collections.abc import Iterator
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, cast
 
 from pydantic import Field, StringConstraints
 
@@ -28,6 +28,7 @@ from p2b.core.vocabulary import (
     KitchenArrangement,
     OpeningKind,
     ParkingKind,
+    PlanOpRejection,
     RoomSide,
     RoomType,
     SetbackSide,
@@ -49,7 +50,9 @@ from p2b.houseplans.engine.ops import (
     SetOpening,
     SetRoomType,
 )
+from p2b.houseplans.engine.programme import ESSENTIAL
 from p2b.houseplans.engine.ruleset import RulesetContent
+from p2b.houseplans.engine.validate import ValidationIssue
 
 ShortText = Annotated[str, StringConstraints(min_length=1, max_length=200)]
 RoomName = Annotated[str, StringConstraints(min_length=1, max_length=60)]
@@ -65,6 +68,7 @@ UnsupportedTopic = Literal[
     "PRIVACY_REDESIGN",
     "UNSUPPORTED_ROOM_TYPE",
     "IMAGES_OR_3D",
+    "CONSTRUCTION_DRAWINGS",
     "OTHER",
 ]
 
@@ -326,10 +330,54 @@ class Proposal:
 
 
 @dataclass(frozen=True)
+class Rejection:
+    """An operation the engine refused, in the shape the operations route reports it."""
+
+    op: str
+    code: PlanOpRejection
+    entities: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class NoProposal:
     reason: Literal["UNKNOWN_ROOM", "ALREADY_THERE", "NOTHING_VALID", "UNSUPPORTED", "CLARIFY"]
     detail: str  # the topic, question, room id or the refusals seen (for the model's retry)
     tried: int
+    # what stopped the candidates: the first operation rejection and the first validator error
+    # of each code, in the order met (the owner reads these; the model only sees the codes)
+    rejections: tuple[Rejection, ...] = ()
+    issues: tuple[ValidationIssue, ...] = ()
+
+
+# Why the engine made no proposal for a reading it could compile, for the owner. Unlike the
+# model's answers, these are facts about the plan: the assistant reports them as they are.
+RefusalReason = Literal[
+    "LAST_KITCHEN_REQUIRED",  # E-5: the plan keeps one kitchen
+    "LAST_BATHROOM_REQUIRED",  # E-5: the plan keeps one bathroom or toilet
+    "NO_PLACE_FOR_ROOM",  # no open area fits the room at its smallest allowed size
+    "NOTHING_TO_CHANGE",  # the room has no such door or window, or no neighbour to join
+    "ALREADY_THERE",  # the rooms already touch
+    "RULES_NOT_MET",  # every candidate broke a rule: `rejections` and `issues` say which
+]
+MAX_REASONS = 4  # of each kind shown to the owner
+
+
+def refusal_reason(intent: Any, refused: NoProposal) -> RefusalReason | None:
+    """The engine's reason for the owner, or None when the refusal is about the model's answer
+    (an unknown room id) or is the model's own UNSUPPORTED or CLARIFY."""
+    if refused.reason == "ALREADY_THERE":
+        return "ALREADY_THERE"
+    if refused.reason != "NOTHING_VALID":
+        return None
+    for r in refused.rejections:
+        if r.code in ESSENTIAL:  # a protected function outranks every other reason
+            return cast(RefusalReason, r.code.value)
+    if refused.tried == 0:
+        return "NO_PLACE_FOR_ROOM" if isinstance(intent, AddRoomIntent) else "NOTHING_TO_CHANGE"
+    return "RULES_NOT_MET"
+
+
+PROTECTED: frozenset[str] = frozenset(code.value for code in ESSENTIAL)  # final: never repaired
 
 
 Compiled = Proposal | NoProposal
@@ -499,6 +547,8 @@ def compile_edit(
     else:
         candidates = _resize_opening(plan, intent)
     seen: list[str] = []
+    rejections: dict[str, Rejection] = {}
+    issues: dict[str, ValidationIssue] = {}
     tried = 0
     for ops in candidates:
         if tried >= MAX_CANDIDATES:
@@ -509,15 +559,25 @@ def compile_edit(
                 plan, ops, ruleset, intent=arch, ruleset_version=None, ruleset_sha256=None
             )
         except BatchRejected as rejected:
-            seen.append(rejected.rejected.code.value)
+            r = rejected.rejected
+            seen.append(r.code.value)
+            rejections.setdefault(r.code.value, Rejection(r.op.value, r.code, r.entities))
             continue
         if result.report.valid:
             return Proposal(tuple(ops), result, tried)
         seen.extend(e.code.value for e in result.report.errors)
+        for e in result.report.errors:
+            issues.setdefault(e.code.value, e)
     if tried == 0 and isinstance(intent, MoveRoomToward):
         return NoProposal("ALREADY_THERE", intent.target, 0)
     detail = ",".join(sorted(set(seen))) or "NO_CANDIDATE"
-    return NoProposal("NOTHING_VALID", detail, tried)
+    return NoProposal(
+        "NOTHING_VALID",
+        detail,
+        tried,
+        tuple(rejections.values())[:MAX_REASONS],
+        tuple(issues.values())[:MAX_REASONS],
+    )
 
 
 # ---------- what a proposal changes, for the person to read ----------
@@ -586,27 +646,39 @@ def describe(
     return rooms, openings
 
 
+ROOM_COLUMNS = "id|name|type|clear_m|area_m2|openings"
+
+
+def _num(value: float) -> str:
+    return f"{round(value, 2):g}"  # 4.3, 11.47: no trailing zeros
+
+
 def plan_summary(plan: HousePlan, ruleset: RulesetContent) -> dict[str, Any]:
-    """What the model may know about the plan: ids, names, types, sizes and open areas. No
-    coordinates are sent: the model only names rooms and chooses an action."""
+    """What the model may know about the plan: ids, names, types, clear sizes, areas, the kinds
+    of opening each room has, the open areas and the room types the rules offer. No coordinates
+    are sent: the model only names rooms and chooses an action.
+
+    One row per room, its fields in `room_columns` order and separated by `|` (CP4.1: the same
+    facts as one JSON object per room, about a quarter fewer input tokens per request, measured
+    with the provider's own count). A `|` in an owner's room name is sent as `/`."""
     geometry = plan_geometry(plan, ruleset).floors[0]
-    openings: dict[str, list[str]] = {}
+    openings: dict[str, set[str]] = {}
     for o in geometry.openings:
         for room in o.connects:
-            openings.setdefault(room, []).append(o.kind)
+            openings.setdefault(room, set()).add(o.kind)
     return {
+        "room_columns": ROOM_COLUMNS,
         "rooms": [
-            {
-                "id": r.id,
-                "name": r.name,
-                "type": r.type,
-                "clear_m": [
-                    round((r.clear_w_mm or 0) / 1000, 2),
-                    round((r.clear_d_mm or 0) / 1000, 2),
-                ],
-                "area_m2": round((r.carpet_area_mm2 or 0) / 1_000_000, 2),
-                "openings": sorted(set(openings.get(r.id, []))),
-            }
+            "|".join(
+                (
+                    r.id,
+                    r.name.replace("|", "/"),
+                    r.type,
+                    f"{_num((r.clear_w_mm or 0) / 1000)}x{_num((r.clear_d_mm or 0) / 1000)}",
+                    _num((r.carpet_area_mm2 or 0) / 1_000_000),
+                    " ".join(sorted(openings.get(r.id, ()))),
+                )
+            )
             for r in geometry.rooms
         ],
         "open_areas": sorted({a.kind for a in geometry.open_areas or []}),
