@@ -351,3 +351,31 @@ def test_the_settings_keep_the_assistant_off_and_the_mock_out_of_production() ->
     assert Settings.model_fields["houseplans_ai_enabled"].default is False
     assert Settings.model_fields["ai_text_provider"].default == "none"
     assert Settings.model_fields["ai_text_model"].default is None
+
+
+def test_the_schema_sent_to_gemini_uses_only_forms_it_enforces() -> None:
+    """Live validation (2026-10-08): with `oneOf`, `const` and a discriminator the model invented
+    actions. The adapter sends `anyOf`, one-value enums and a required tag; our own models stay
+    the authority on every answer."""
+    sent = _inline(EditInterpretation.model_json_schema())
+    text = json.dumps(sent)
+    for absent in ('"oneOf"', '"const"', '"discriminator"', '"$ref"', '"$defs"', '"default"'):
+        assert absent not in text
+    variants = sent["properties"]["intent"]["anyOf"]
+    actions = {v["properties"]["action"]["enum"][0] for v in variants}
+    assert actions == {
+        "RESIZE_ROOM", "MOVE_ROOM_TOWARD", "ADD_ROOM", "CHANGE_ROOM_TYPE", "REMOVE_ROOM",
+        "RENAME_ROOM", "MOVE_OPENING", "RESIZE_OPENING", "UNSUPPORTED", "CLARIFY",
+    }  # fmt: skip
+    assert all("action" in v["required"] for v in variants)
+    # the requirement schema loses nothing it constrains
+    req = _inline(RequirementIntent.model_json_schema())
+    assert req["properties"]["bedrooms"]["anyOf"][0]["maximum"] == 12
+    # a map keyed by side is sent as explicit keys (the model wrote "front" and "rear" otherwise)
+    setbacks = req["properties"]["plot"]["properties"]["setbacks_ft"]["anyOf"][0]
+    assert set(setbacks["properties"]) == {"FRONT", "BACK", "LEFT", "RIGHT"}
+    assert setbacks["additionalProperties"] is False
+    assert "propertyNames" not in json.dumps(req)
+    # an answer naming an unknown action is still refused by our own model
+    with pytest.raises(ValidationError):
+        EditInterpretation.model_validate({"intent": {"action": "MODIFY_SIZE", "room": "living"}})

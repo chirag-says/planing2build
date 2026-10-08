@@ -26,18 +26,53 @@ from p2b.core.config import Settings
 
 
 def _inline(schema: dict[str, Any]) -> dict[str, Any]:
-    """The schema with every `$ref` replaced by its definition and pydantic-only keys removed:
-    a self-contained JSON Schema for the model's structured output."""
+    """The schema as a self-contained JSON Schema in the forms Gemini's structured output
+    enforces: every `$ref` replaced by its definition; `oneOf` as `anyOf`; `const` as a one-value
+    `enum`; pydantic's `discriminator`, `default` and `title` removed; and a one-value enum field
+    (a union's tag, such as `action`) made required. Live validation (2026-10-08) showed the
+    model ignoring the tag otherwise and inventing actions. Our own models still validate every
+    answer exactly as strictly: this only tells the model the shape more plainly."""
     defs = schema.get("$defs", {})
+    dropped = ("$defs", "title", "discriminator", "default")
 
     def walk(node: Any) -> Any:
-        if isinstance(node, dict):
-            if "$ref" in node:
-                return walk(defs[node["$ref"].rsplit("/", 1)[-1]])
-            return {k: walk(v) for k, v in node.items() if k not in ("$defs", "title")}
         if isinstance(node, list):
             return [walk(v) for v in node]
-        return node
+        if not isinstance(node, dict):
+            return node
+        if "$ref" in node:
+            return walk(defs[node["$ref"].rsplit("/", 1)[-1]])
+        out: dict[str, Any] = {}
+        for key, value in node.items():
+            if key in dropped:
+                continue
+            if key == "const":
+                out["enum"] = [value]
+            elif key == "oneOf":
+                out["anyOf"] = walk(value)
+            else:
+                out[key] = walk(value)
+        # a map keyed by an enum (setbacks by side): explicit properties, which the model
+        # follows; `propertyNames` alone let it write "front" and "rear" (live, 2026-10-08)
+        names = out.get("propertyNames")
+        if (
+            isinstance(names, dict)
+            and names.get("enum")
+            and isinstance(out.get("additionalProperties"), dict)
+        ):
+            out["properties"] = {n: out["additionalProperties"] for n in names["enum"]}
+            out["additionalProperties"] = False
+            del out["propertyNames"]
+        properties = out.get("properties")
+        if isinstance(properties, dict):
+            tags = [
+                k
+                for k, v in properties.items()
+                if isinstance(v, dict) and len(v.get("enum", ())) == 1
+            ]
+            if tags:
+                out["required"] = list(dict.fromkeys([*out.get("required", []), *tags]))
+        return out
 
     return walk(schema)  # type: ignore[no-any-return]
 
