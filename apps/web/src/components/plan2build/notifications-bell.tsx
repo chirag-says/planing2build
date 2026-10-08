@@ -1,5 +1,5 @@
-// The bell in the top bar: what needs the family and unread messages, counted; it opens the
-// project's notifications page (lib/inbox.ts, a preview until the API has notifications).
+// The bell in the top bar: the next actions that need the family, counted; it opens the project's
+// notifications page (lib/inbox.ts, derived from the API's own records).
 import { BellIcon } from "lucide-react";
 import Link from "next/link";
 
