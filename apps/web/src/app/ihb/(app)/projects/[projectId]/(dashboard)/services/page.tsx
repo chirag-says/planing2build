@@ -13,6 +13,7 @@ import {
   ShareFiles,
   WithdrawButton,
 } from "@/components/plan2build/engagements";
+import { PackageLock } from "@/components/plan2build/package-lock";
 import { SectionHeader } from "@/components/plan2build/page-header";
 import { Notice } from "@/components/plan2build/states";
 import { StatusBadge } from "@/components/plan2build/status-badge";
@@ -149,6 +150,7 @@ function CategoryCard({
                         </Link>
                       </Button>
                     )}
+                    {!canConnect && !full && <PackageLock projectId={projectId} />}
                     <OutsideProfessionalDialog projectId={projectId} code={category.code} name={category.name} />
                   </div>
                 </div>
@@ -293,7 +295,7 @@ export default async function ProjectServicesPage({
                 categories={view.categories.map((c) => ({ code: c.code, name: c.name }))}
               />
             ) : (
-              <p className="text-sm text-muted-foreground">{t("errors.PACKAGE_REQUIRED")}</p>
+              <PackageLock projectId={projectId} reason={t("quote.locked")} />
             ))}
         </section>
       )}

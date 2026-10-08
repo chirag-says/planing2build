@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { AcceptPanel, DownloadButton } from "@/components/plan2build/build-plan";
 import { SnapshotView } from "@/components/plan2build/build-plan-view";
+import { PackageLock } from "@/components/plan2build/package-lock";
 import { Notice } from "@/components/plan2build/states";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
@@ -44,8 +45,11 @@ export default async function BuildPlanVersionPage({
         )}
       </div>
       {snapshot.data.version.state === "ACCEPTED" && <Notice tone="success">{t("acceptedNotice")}</Notice>}
-      {snapshot.data.version.state === "ISSUED" && plan.data.can_act && (
+      {snapshot.data.version.state === "ISSUED" && plan.data.can_act && plan.data.package_state === "ACTIVE" && (
         <AcceptPanel projectId={projectId} versionId={versionId} />
+      )}
+      {snapshot.data.version.state === "ISSUED" && plan.data.can_act && plan.data.package_state !== "ACTIVE" && (
+        <PackageLock projectId={projectId} reason={t("acceptLocked")} />
       )}
       <SnapshotView view={snapshot.data} />
     </section>

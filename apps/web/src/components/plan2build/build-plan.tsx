@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
 import { FormField } from "@/components/plan2build/form-field";
+import { PackageLock } from "@/components/plan2build/package-lock";
 import { Notice } from "@/components/plan2build/states";
 import { StatusBadge } from "@/components/plan2build/status-badge";
 import { Button } from "@/components/ui/button";
@@ -449,13 +450,17 @@ export function DesignRequestCard({
   projectId,
   request,
   checkers = [],
+  locked = false,
 }: {
   audience: Audience;
   projectId: string;
   request: Request;
   checkers?: { id: string; name: string }[];
+  /** The family's package is not active: its set actions show locked (BP-09), the page says why. */
+  locked?: boolean;
 }) {
   const action = useCall();
+  const familyLocked = locked && audience === "family";
   const open = request.sets.find((s) => ["DRAFT", "SUBMITTED", "IN_CHECK"].includes(s.state));
   return (
     <article aria-label={t(`kinds.${request.kind}`)} className="flex flex-col gap-3 rounded-md border border-border p-3">
@@ -482,7 +487,10 @@ export function DesignRequestCard({
               </li>
             ))}
           </ul>
-          {set.state === "DRAFT" && request.can_provide && (
+          {familyLocked && (set.state === "SUBMITTED" || (set.state === "DRAFT" && request.can_provide)) && (
+            <PackageLock projectId={projectId} />
+          )}
+          {set.state === "DRAFT" && request.can_provide && !familyLocked && (
             <>
               <AddDrawingForm audience={audience} projectId={projectId} requestId={request.id} setId={set.id} />
               <Button type="button" className="self-start" disabled={set.files.length === 0 || action.busy}
@@ -491,14 +499,14 @@ export function DesignRequestCard({
               </Button>
             </>
           )}
-          {set.state === "SUBMITTED" && audience === "family" && <FamilyDecision projectId={projectId} setId={set.id} />}
+          {set.state === "SUBMITTED" && audience === "family" && !familyLocked && <FamilyDecision projectId={projectId} setId={set.id} />}
           {set.state === "IN_CHECK" && audience === "ops" && (
             <CheckForm projectId={projectId} requestId={request.id} setId={set.id} checkers={checkers} />
           )}
         </section>
       ))}
       <ErrorNotice error={action.error} />
-      {!open && request.can_provide && (
+      {!open && request.can_provide && !familyLocked && (
         <Button type="button" variant="outline" className="self-start" disabled={action.busy}
           onClick={() => void action.run("POST", paths(audience, projectId).newSet(request.id), undefined, true)}>
           {t("newSet")}
