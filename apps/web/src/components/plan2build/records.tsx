@@ -8,12 +8,13 @@ import type { components } from "@p2b/contracts";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
-import { call, postWhenChecked, problem, uploadEvidence } from "@/components/plan2build/execution";
+import { call, postWhenChecked, problem, uploadEvidence, uploadOpsFile } from "@/components/plan2build/execution";
 import { FormField } from "@/components/plan2build/form-field";
 import { Notice } from "@/components/plan2build/states";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
 import { getTranslator } from "@/lib/i18n";
 
 const t = getTranslator("Records");
@@ -78,6 +79,30 @@ export function AcknowledgeHandover({ projectId }: { projectId: string }) {
 }
 
 export function HandoverDocumentForm({ engagementId }: { engagementId: string }) {
+  const base = `/api/v1/pro/engagements/${engagementId}/handover`;
+  return (
+    <DocumentForm idPrefix="handover" documentsUrl={`${base}/documents`}
+      upload={(file) => uploadEvidence(`${base}/uploads`, file, false)} />
+  );
+}
+
+/** Operations add a document received outside the portal: the raw upload, then the document. */
+export function OpsHandoverDocumentForm({ projectId }: { projectId: string }) {
+  return (
+    <DocumentForm idPrefix="ops-handover" documentsUrl={`/api/v1/ops/projects/${projectId}/handover/documents`}
+      upload={(file) => uploadOpsFile(`/api/v1/ops/projects/${projectId}/handover-files`, file)} />
+  );
+}
+
+function DocumentForm({
+  idPrefix,
+  documentsUrl,
+  upload,
+}: {
+  idPrefix: string;
+  documentsUrl: string;
+  upload: (file: File) => Promise<string | null>;
+}) {
   const router = useRouter();
   const [kind, setKind] = useState<string>("MANUAL");
   const [title, setTitle] = useState("");
@@ -85,7 +110,6 @@ export function HandoverDocumentForm({ engagementId }: { engagementId: string })
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
-  const base = `/api/v1/pro/engagements/${engagementId}/handover`;
 
   async function add(event: FormEvent) {
     event.preventDefault();
@@ -93,13 +117,13 @@ export function HandoverDocumentForm({ engagementId }: { engagementId: string })
     setBusy(true);
     setError(null);
     setAdded(false);
-    const fileId = await uploadEvidence(`${base}/uploads`, file, false);
+    const fileId = await upload(file);
     if (!fileId) {
       setBusy(false);
       setError(t("error"));
       return;
     }
-    const result = await postWhenChecked(`${base}/documents`, { kind, title, file_id: fileId });
+    const result = await postWhenChecked(documentsUrl, { kind, title, file_id: fileId });
     setBusy(false);
     if (!result.ok) {
       setError(problem(result));
@@ -111,24 +135,25 @@ export function HandoverDocumentForm({ engagementId }: { engagementId: string })
     router.refresh();
   }
   return (
-    <form onSubmit={add} className="flex flex-col gap-2" data-testid="handover-document-form">
-      <FormField id="handover-kind" label={t("kind")} required>
+    <form onSubmit={add} className="flex flex-col gap-2" data-testid={`${idPrefix}-document-form`}>
+      <FormField id={`${idPrefix}-kind`} label={t("kind")} required>
         {(f) => (
           <select {...f} className={SELECT} value={kind} onChange={(e) => setKind(e.target.value)}>
             {KINDS.map((k) => <option key={k} value={k}>{t(`kinds.${k}`)}</option>)}
           </select>
         )}
       </FormField>
-      <FormField id="handover-title" label={t("title")} required>
-        {(f) => <Input {...f} value={title} onChange={(e) => setTitle(e.target.value)} />}
+      <FormField id={`${idPrefix}-title`} label={t("title")} required>
+        {(f) => <Input {...f} maxLength={200} value={title} onChange={(e) => setTitle(e.target.value)} />}
       </FormField>
-      <FormField id="handover-file" label={t("file")} required>
+      <FormField id={`${idPrefix}-file`} label={t("file")} required>
         {(f) => <Input {...f} type="file" accept="application/pdf,image/jpeg,image/png" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />}
       </FormField>
       <Button type="submit" variant="outline" className="self-start" disabled={busy || !title.trim() || !file}>
         {busy && <Spinner />}
         {t("add")}
       </Button>
+      {busy && <p role="status" className="text-sm text-muted-foreground">{t("ops.checking")}</p>}
       {added && <Notice tone="success" live="polite">{t("added")}</Notice>}
       {error && <Notice tone="error" live="assertive">{error}</Notice>}
     </form>
@@ -136,6 +161,18 @@ export function HandoverDocumentForm({ engagementId }: { engagementId: string })
 }
 
 export function WarrantyForm({ engagementId, documents }: { engagementId: string; documents: Document[] }) {
+  return (
+    <WarrantyFields idPrefix="warranty" url={`/api/v1/pro/engagements/${engagementId}/handover/warranties`} documents={documents} />
+  );
+}
+
+export function OpsWarrantyForm({ projectId, documents }: { projectId: string; documents: Document[] }) {
+  return (
+    <WarrantyFields idPrefix="ops-warranty" url={`/api/v1/ops/projects/${projectId}/handover/warranties`} documents={documents} />
+  );
+}
+
+function WarrantyFields({ idPrefix, url, documents }: { idPrefix: string; url: string; documents: Document[] }) {
   const router = useRouter();
   const warrantyDocs = documents.filter((d) => d.kind === "WARRANTY");
   // The document is chosen when submitting, so one added after this form rendered is offered.
@@ -149,7 +186,7 @@ export function WarrantyForm({ engagementId, documents }: { engagementId: string
     event.preventDefault();
     setBusy(true);
     setError(null);
-    const result = await call("POST", `/api/v1/pro/engagements/${engagementId}/handover/warranties`, {
+    const result = await call("POST", url, {
       ...values, document_id: documentId || null,
     }, true);
     setBusy(false);
@@ -157,17 +194,17 @@ export function WarrantyForm({ engagementId, documents }: { engagementId: string
     else setError(problem(result));
   }
   return (
-    <form onSubmit={add} className="flex flex-col gap-2" data-testid="warranty-form">
+    <form onSubmit={add} className="flex flex-col gap-2" data-testid={`${idPrefix}-form`}>
       {(["item", "term", "installer"] as const).map((key) => (
-        <FormField key={key} id={`warranty-${key}`} label={t(key)} required>
+        <FormField key={key} id={`${idPrefix}-${key}`} label={t(key)} required>
           {(f) => <Input {...f} value={values[key]} onChange={(e) => set(key, e.target.value)} />}
         </FormField>
       ))}
-      <FormField id="warranty-expiry" label={t("expiry")} required>
+      <FormField id={`${idPrefix}-expiry`} label={t("expiry")} required>
         {(f) => <Input {...f} type="date" value={values.expiry_date} onChange={(e) => set("expiry_date", e.target.value)} />}
       </FormField>
       {warrantyDocs.length > 0 && (
-        <FormField id="warranty-document" label={t("forDocument")}>
+        <FormField id={`${idPrefix}-document`} label={t("forDocument")}>
           {(f) => (
             <select {...f} className={SELECT} value={documentId} onChange={(e) => set("document_id", e.target.value)}>
               {warrantyDocs.map((d) => <option key={d.id} value={d.id}>{d.title}</option>)}
@@ -179,6 +216,139 @@ export function WarrantyForm({ engagementId, documents }: { engagementId: string
         {busy && <Spinner />}
         {t("addWarranty")}
       </Button>
+      {error && <Notice tone="error" live="assertive">{error}</Notice>}
+    </form>
+  );
+}
+
+// --- operations --------------------------------------------------------------------------------
+
+/** Assemble the Build Record draft from the records. A new version after an issued one corrects
+ * it, so the reason is asked for then (409 REASON_REQUIRED otherwise). */
+export function AssembleBuildRecord({ projectId, mode }: { projectId: string; mode: "first" | "reassemble" | "correction" }) {
+  const router = useRouter();
+  const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
+  const correction = mode === "correction";
+
+  async function assemble(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    setError(null);
+    setDone(false);
+    const result = await call("POST", `/api/v1/ops/projects/${projectId}/build-record/assemble`, {
+      reason: correction ? reason.trim() : null,
+    }, true);
+    setBusy(false);
+    if (!result.ok) {
+      setError(problem(result));
+      return;
+    }
+    setDone(true);
+    setReason("");
+    router.refresh();
+  }
+  return (
+    <form onSubmit={assemble} className="flex flex-col gap-2" data-testid="assemble-build-record">
+      <p className="text-sm text-muted-foreground">{t(`ops.assembleModes.${mode}`)}</p>
+      {correction && (
+        <FormField id="assemble-reason" label={t("ops.correctionReason")} required>
+          {(f) => <Input {...f} maxLength={2000} value={reason} onChange={(e) => setReason(e.target.value)} />}
+        </FormField>
+      )}
+      <Button type="submit" variant="outline" className="self-start" disabled={busy || (correction && !reason.trim())}>
+        {busy && <Spinner />}
+        {mode === "reassemble" ? t("ops.reassemble") : t("ops.assemble")}
+      </Button>
+      {done && <Notice tone="success" live="polite">{t("ops.assembled")}</Notice>}
+      {error && <Notice tone="error" live="assertive">{error}</Notice>}
+    </form>
+  );
+}
+
+type RecordSnapshot = components["schemas"]["BuildRecordSnapshotOut"];
+
+/** One Build Record version as recorded (GET /ops/build-records/{id}): hashes and the snapshot. */
+export function BuildRecordSnapshot({ recordId }: { recordId: string }) {
+  const [record, setRecord] = useState<RecordSnapshot | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function load() {
+    if (record) {
+      setRecord(null);
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    const result = await call("GET", `/api/v1/ops/build-records/${recordId}`);
+    setBusy(false);
+    if (result.ok) setRecord(result.body as RecordSnapshot);
+    else setError(problem(result));
+  }
+  return (
+    <div className="flex flex-col gap-2">
+      <Button type="button" variant="ghost" size="sm" className="self-start" disabled={busy} aria-expanded={Boolean(record)}
+        onClick={() => void load()}>
+        {busy && <Spinner />}
+        {record ? t("ops.hideSnapshot") : t("ops.showSnapshot")}
+      </Button>
+      {busy && <p role="status" className="text-sm text-muted-foreground">{t("ops.loading")}</p>}
+      {error && <Notice tone="error" live="assertive">{error}</Notice>}
+      {record && (
+        <div className="flex flex-col gap-1 text-xs" data-testid="build-record-snapshot">
+          {record.json_sha256 && <span className="font-mono break-all">{t("ops.jsonHash", { hash: record.json_sha256 })}</span>}
+          {record.pdf_sha256 && <span className="font-mono break-all">{t("ops.pdfHash", { hash: record.pdf_sha256 })}</span>}
+          <pre tabIndex={0} aria-label={t("ops.snapshot")} className="max-h-96 overflow-auto rounded-md bg-muted p-2">
+            {JSON.stringify(record.snapshot, null, 2)}
+          </pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** ADMIN drafts a new acknowledgement statement version; activating it is a separate step. */
+export function AcknowledgementStatementForm() {
+  const router = useRouter();
+  const [text, setText] = useState("");
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+  const short = text.trim().length < 20;
+
+  async function save(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    setError(null);
+    setSaved(false);
+    const result = await call("POST", "/api/v1/admin/acknowledgement-statements", { text: text.trim(), note: note.trim() }, true);
+    setBusy(false);
+    if (!result.ok) {
+      setError(problem(result));
+      return;
+    }
+    setSaved(true);
+    setText("");
+    setNote("");
+    router.refresh();
+  }
+  return (
+    <form onSubmit={save} className="flex flex-col gap-3" data-testid="acknowledgement-statement-form">
+      <FormField id="statement-text" label={t("ops.statementText")} description={t("ops.statementTextHelp")} required>
+        {(f) => <Textarea {...f} rows={6} maxLength={4000} value={text} onChange={(e) => setText(e.target.value)} />}
+      </FormField>
+      <FormField id="statement-note" label={t("ops.statementNote")} required>
+        {(f) => <Input {...f} maxLength={1000} value={note} onChange={(e) => setNote(e.target.value)} />}
+      </FormField>
+      <Button type="submit" variant="outline" className="self-start" disabled={busy || short || !note.trim()}>
+        {busy && <Spinner />}
+        {t("ops.createDraft")}
+      </Button>
+      {saved && <Notice tone="success" live="polite">{t("ops.draftSaved")}</Notice>}
       {error && <Notice tone="error" live="assertive">{error}</Notice>}
     </form>
   );

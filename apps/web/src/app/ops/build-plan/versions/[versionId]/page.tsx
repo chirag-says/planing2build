@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import {
   ActionButton,
+  ConfirmAction,
   DownloadButton,
   JsonForm,
   ReasonAction,
@@ -15,6 +16,7 @@ import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2buil
 import { Notice } from "@/components/plan2build/states";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
+import { canRefreshCriteria, canRevokeSignoff } from "@/lib/ops-admin";
 import { requireVerifiedStaff } from "@/lib/staff";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -104,6 +106,22 @@ export default async function OpsVersionPage({ params }: { params: Promise<{ ver
           <JsonForm id="schedule-json" label={t("ops.scheduleJson")} method="PUT" url={`${base}/schedule`} wrap="entries"
             initial={JSON.stringify(schedule, null, 1)} submitLabel={t("ops.save")} />
           <ScopeForm versionId={versionId} scope={snap.scope} />
+          {canRefreshCriteria(state) && snap.values.length > 0 && (
+            <details className="text-sm">
+              <summary className="cursor-pointer font-medium">{t("ops.refreshTitle")}</summary>
+              <p className="my-2 text-muted-foreground">{t("ops.refreshIntro")}</p>
+              <ul className="flex flex-col gap-2">
+                {snap.values.map((v) => (
+                  <li key={v.code} className="flex flex-col gap-1 rounded-md border border-border p-2" data-testid={`refresh-${v.code}`}>
+                    <span className="font-medium">{v.code} · {v.item}</span>
+                    <span className="text-muted-foreground">{v.criteria}</span>
+                    <ActionButton label={t("ops.refresh")} url={`${base}/values/${encodeURIComponent(v.code)}/refresh`} once={false}
+                      variant="outline" />
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
           <ActionButton label={t("ops.submit")} url={`${base}/submit`} />
           <ReasonAction label={t("ops.withdraw")} url={`${base}/withdraw`} />
         </section>
@@ -122,6 +140,23 @@ export default async function OpsVersionPage({ params }: { params: Promise<{ ver
         </section>
       )}
       {state === "ISSUED" && <ReasonAction label={t("ops.withdraw")} url={`${base}/withdraw`} />}
+      {snap.signoffs.some((s) => canRevokeSignoff(state, s.state)) && (
+        <section aria-labelledby="revoke" className="flex flex-col gap-3">
+          <SectionHeader id="revoke" title={t("ops.revokeSection")}
+            description={state === "IN_REVIEW" ? t("ops.revokeBeforeIssue") : t("ops.revokeAfterIssue")} />
+          <ul className="flex flex-col gap-3 text-sm">
+            {snap.signoffs.filter((s) => canRevokeSignoff(state, s.state)).map((s) => (
+              <li key={s.id} className="flex flex-col gap-2 rounded-md border border-border p-3" data-testid={`signoff-${s.id}`}>
+                <span className="font-medium">{s.line_code}: {s.engineer_name} ({s.registration_number ?? "-"})</span>
+                <ConfirmAction id={`revoke-${s.id}`} reason label={t("ops.revoke")} url={`/api/v1/ops/signoffs/${s.id}/revoke`}
+                  title={t("ops.revokeTitle", { line: s.line_code })}
+                  description={state === "IN_REVIEW" ? t("ops.revokeBeforeIssue") : t("ops.revokeAfterIssue")}
+                  done={t("ops.revoked")} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       <SnapshotView view={snap} />
     </PageContainer>
   );

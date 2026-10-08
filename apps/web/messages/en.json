@@ -287,7 +287,9 @@
       "buildPlan": "Build Plan setup",
       "rfqs": "RFQs",
       "execution": "Execution",
-      "assurance": "Assurance"
+      "assurance": "Assurance",
+      "acknowledgementStatements": "Acknowledgement statements",
+      "staff": "Staff accounts"
     },
     "signIn": {
       "title": "Staff sign-in",
@@ -318,6 +320,14 @@
         "MFA_ALREADY_ENROLLED": "An authenticator app is already set up for this account.",
         "RATE_LIMITED": "Too many attempts. Wait a few minutes and try again.",
         "default": "Something went wrong. Try again shortly."
+      },
+      "status": {
+        "notEnrolled": "No authenticator app is set up for this account.",
+        "noRecoveryCodes": "Your authenticator app is set up. You have no recovery codes left.",
+        "verified": "Your authenticator app is set up and this session is verified.",
+        "notVerified": "Your authenticator app is set up. This session needs a code.",
+        "recoveryLeft": "{count, plural, =0 {No recovery codes left} one {# recovery code left} other {# recovery codes left}}",
+        "unavailable": "The authenticator status could not be read. You can still enter a code."
       }
     },
     "noAccess": {
@@ -577,7 +587,29 @@
       "by": "{role}",
       "file": "File {index}"
     },
-    "tag": "Operations"
+    "tag": "Operations",
+    "staff": {
+      "title": "Staff accounts",
+      "intro": "Operations and ADMIN accounts. Accounts are created and changed from the command line, not here.",
+      "error": "The staff list could not be loaded.",
+      "empty": "No staff accounts.",
+      "email": "Email",
+      "roles": "Roles",
+      "status": "Status",
+      "mfa": "Authenticator",
+      "mfaOn": "Set up",
+      "mfaOff": "Not set up",
+      "roleNames": {
+        "OPS": "Operations",
+        "ADMIN": "ADMIN"
+      },
+      "statuses": {
+        "PENDING_VERIFICATION": "Email not verified",
+        "ACTIVE": "Active",
+        "SUSPENDED": "Suspended",
+        "CLOSED": "Closed"
+      }
+    }
   },
   "NotFound": {
     "title": "Page not found"
@@ -1595,7 +1627,25 @@
       "uploadEvidence": "Upload evidence",
       "acceptanceStatements": "Acceptance statements",
       "newStatement": "New statement version (ADMIN, JSON with text and note)",
-      "activate": "Activate (ADMIN)"
+      "activate": "Activate (ADMIN)",
+      "cancel": "Cancel",
+      "retire": "Retire (ADMIN)",
+      "retireTitle": "Retire the {geography} rate card, version {version}?",
+      "retireBody": "A retired card can no longer price a new Build Plan version. Versions already priced with it keep their rates. This cannot be undone.",
+      "retired": "Rate card retired.",
+      "endChecker": "End appointment (ADMIN)",
+      "endCheckerTitle": "End {name}'s appointment as a drawing checker?",
+      "endCheckerBody": "They will no longer be offered as a checker for drawing sets. Checks they already recorded stay as they are. To appoint them again, add a new appointment.",
+      "noCheckers": "No drawing checkers are appointed.",
+      "refreshTitle": "Refresh criteria from the specification master",
+      "refreshIntro": "A draft keeps the criteria it was started with. Refresh a line to take the current published master text for it.",
+      "refresh": "Refresh criteria",
+      "revokeSection": "Revoke a structural sign-off",
+      "revokeBeforeIssue": "Before issue, revoking voids the sign-off and the line needs a new one.",
+      "revokeAfterIssue": "After issue, the signed record stays as it is; the revocation is recorded and blocks the family's acceptance.",
+      "revoke": "Revoke sign-off",
+      "revokeTitle": "Revoke the sign-off for {line}?",
+      "revoked": "Sign-off revoked."
     }
   },
   "Rfq": {
@@ -2772,7 +2822,75 @@
     "openHandover": "Handover and Build Record",
     "send": "Send",
     "error": "That did not work. Try again.",
-    "errorReason": "That did not work: {reason}"
+    "errorReason": "That did not work: {reason}",
+    "ops": {
+      "intro": "Documents and warranties received for this project, the owner's acknowledgement and the Build Record.",
+      "loadError": "The handover could not be loaded.",
+      "openIntro": "Open the handover once the final snag inspection is cleared and every finding is closed.",
+      "added": "Added {when} by {role}",
+      "remove": "Remove",
+      "removeTitle": "Remove \"{title}\" from the handover?",
+      "removeBody": "The document is taken off the handover list. Add it again if it was removed by mistake.",
+      "linkedToWarranty": "A warranty names this document, so it cannot be removed.",
+      "checking": "Uploading and checking the file…",
+      "noWarranties": "No warranties yet.",
+      "statement": "Statement the owner acknowledged",
+      "nextStep": "Next step",
+      "readyIntro": "When every document and warranty is recorded, confirm the handover is ready. The owner can then acknowledge it.",
+      "waitingForOwner": "Waiting for the owner's acknowledgement. Reopen the handover to change documents.",
+      "issueWithout": "Issue without acknowledgement",
+      "issueWithoutTitle": "Issue the handover without the owner's acknowledgement?",
+      "issueWithoutBody": "The owner sees that Plan2Build issued the handover, with your reason. The handover closes and cannot be reopened.",
+      "closed": "The handover is closed. Assemble and issue the Build Record below.",
+      "timeline": "Timeline",
+      "openedAt": "Opened",
+      "readyAt": "Ready",
+      "acknowledgedAt": "Acknowledged",
+      "issuedAt": "Issued",
+      "issueReason": "Issued without acknowledgement: {reason}",
+      "statementsLink": "Acknowledgement statements",
+      "assembleWhen": "A Build Record is assembled once the handover is acknowledged or issued.",
+      "basis": {
+        "ACKNOWLEDGED": "Basis: acknowledged by the owner",
+        "ISSUED_BY_OPERATIONS": "Basis: issued by Plan2Build"
+      },
+      "issuedOn": "Issued {when}",
+      "assembleModes": {
+        "first": "Assemble version 1 from the project's records.",
+        "reassemble": "Assemble the draft again from the current records.",
+        "correction": "A new version corrects the issued one. Say what it corrects."
+      },
+      "correctionReason": "What this version corrects",
+      "assemble": "Assemble the draft",
+      "reassemble": "Assemble again",
+      "assembled": "Draft assembled.",
+      "showSnapshot": "Show the recorded content",
+      "hideSnapshot": "Hide the recorded content",
+      "loading": "Loading…",
+      "snapshot": "Recorded content",
+      "jsonHash": "Data file sha256 {hash}",
+      "pdfHash": "PDF sha256 {hash}",
+      "statementsTitle": "Acknowledgement statements",
+      "statementsIntro": "The statement an owner reads and accepts when acknowledging a handover. The active version is shown to owners; $project_code is replaced with the project's code.",
+      "statementVersions": "Versions",
+      "statementVersion": "Version {version}",
+      "statementStates": {
+        "DRAFT": "Draft",
+        "ACTIVE": "Active",
+        "RETIRED": "Retired"
+      },
+      "noStatements": "No statement versions yet.",
+      "activate": "Activate",
+      "activateTitle": "Activate version {version}?",
+      "activateBody": "Owners will see this version from now on. The version active now is retired.",
+      "newStatement": "New statement version",
+      "statementText": "Statement text",
+      "statementTextHelp": "At least 20 characters. $project_code is the only placeholder.",
+      "statementNote": "Note on this version",
+      "createDraft": "Save as draft",
+      "draftSaved": "Draft saved. Activate it from the list when it is ready.",
+      "adminOnly": "Only ADMIN can draft or activate a statement."
+    }
   },
   "Plan": {
     "title": "Floor plan",

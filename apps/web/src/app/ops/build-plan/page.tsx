@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 
-import { ActionButton, JsonForm } from "@/components/plan2build/build-plan";
+import { ActionButton, ConfirmAction, JsonForm } from "@/components/plan2build/build-plan";
 import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
+import { canRetireCard } from "@/lib/ops-admin";
 import { requireVerifiedStaff } from "@/lib/staff";
 
 export const metadata: Metadata = { title: getTranslator("Ops")("nav.buildPlan") };
@@ -50,6 +51,11 @@ export default async function OpsBuildPlanSetupPage() {
                 {admin && <ActionButton label={t("ops.publish")} url={`/api/v1/admin/item-rate-cards/${card.id}/publish`} />}
               </>
             )}
+            {canRetireCard(card.status, admin) && (
+              <ConfirmAction id={`retire-${card.id}`} label={t("ops.retire")} url={`/api/v1/admin/item-rate-cards/${card.id}/retire`}
+                title={t("ops.retireTitle", { geography: card.geography, version: card.version })}
+                description={t("ops.retireBody")} done={t("ops.retired")} />
+            )}
           </article>
         ))}
         <JsonForm id="new-card" label={t("ops.newCard")} method="POST" url="/api/v1/ops/item-rate-cards"
@@ -57,11 +63,18 @@ export default async function OpsBuildPlanSetupPage() {
       </section>
       <section aria-labelledby="checkers" className="flex flex-col gap-3">
         <SectionHeader id="checkers" title={t("ops.checkers")} />
-        <ul className="text-sm">
+        <ul className="flex flex-col gap-2 text-sm">
           {(checkers.data ?? []).map((c) => (
-            <li key={c.id}>{c.name}: {c.qualification}{c.user_id ? " (account)" : ""}</li>
+            <li key={c.id} className="flex flex-col gap-1">
+              <span>{c.name}: {c.qualification}{c.user_id ? " (account)" : ""}</span>
+              {admin && (
+                <ConfirmAction id={`end-${c.id}`} label={t("ops.endChecker")} url={`/api/v1/admin/drawing-checkers/${c.id}/end`}
+                  once={false} title={t("ops.endCheckerTitle", { name: c.name })} description={t("ops.endCheckerBody")} />
+              )}
+            </li>
           ))}
         </ul>
+        {(checkers.data ?? []).length === 0 && <p className="text-sm text-muted-foreground">{t("ops.noCheckers")}</p>}
         {admin && (
           <JsonForm id="new-checker" label={t("ops.appoint")} method="POST" url="/api/v1/admin/drawing-checkers"
             initial={JSON.stringify({ name: "", qualification: "", registration_reference: null, user_id: null }, null, 2)}
