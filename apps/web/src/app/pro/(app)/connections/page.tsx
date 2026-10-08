@@ -11,13 +11,11 @@ import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/componen
 import { serverApi } from "@/lib/api/server";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { getTranslator } from "@/lib/i18n";
-import { requireOnboarded } from "@/lib/professional";
 
 export const metadata: Metadata = { title: getTranslator("Pro")("connections.title") };
 
 // Requests families sent (Slice 3.4). Before acceptance each shows the brief only (N-08).
 export default async function ProConnectionsPage() {
-  await requireOnboarded();
   const { data, response } = await (await serverApi()).GET("/api/v1/pro/connections");
   if (response.status === 401) redirect("/sign-in?next=%2Fconnections");
   if (response.status === 404) redirect("/profile");

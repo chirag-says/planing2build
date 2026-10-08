@@ -22,15 +22,15 @@ export function OnboardingRail({ data }: { data: Dashboard }) {
   const listed = states.includes("LISTED");
   const steps: Step[] = [
     { key: "profile", href: "/profile", done: data.profile.missing.length === 0 },
-    { key: "category", href: "/#add", done: data.categories.length > 0 },
+    { key: "category", href: "/services#add", done: data.categories.length > 0 },
     {
       key: "evidence",
-      href: draft ? `/categories/${draft.code}` : "/",
+      href: draft ? `/categories/${draft.code}` : "/services",
       done: submitted && !states.includes("CHANGES_REQUESTED"),
       state: states.includes("CHANGES_REQUESTED") ? "attention" : undefined,
     },
     { key: "portfolio", href: "/portfolio", done: data.portfolio.length > 0 },
-    { key: "listed", href: "/", done: listed, state: !listed && states.includes("PENDING_REVIEW") ? "review" : undefined },
+    { key: "listed", href: "/services", done: listed, state: !listed && states.includes("PENDING_REVIEW") ? "review" : undefined },
   ];
   // The first step not done is the one to do now; a step with its own state keeps it.
   const firstOpen = steps.findIndex((step) => !step.done);

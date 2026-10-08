@@ -38,7 +38,7 @@ export function ProjectSwitcher({
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger
         className={cn(
-          "group flex w-full items-center gap-3 rounded-md bg-foreground/5 p-3 text-left ring-1 ring-foreground/10 transition-colors",
+          "group flex w-full items-center gap-3 rounded-md bg-foreground/5 px-3 py-2 text-left ring-1 ring-foreground/10 transition-colors",
           "outline-none hover:bg-foreground/10 focus-visible:ring-3 focus-visible:ring-ring/50",
         )}
       >
@@ -47,8 +47,11 @@ export function ProjectSwitcher({
             <span aria-hidden="true" className="size-1.5 bg-brand" />
             {shell("project")} · {status}
           </span>
-          <span className="truncate font-heading text-xl leading-none">{current.code}</span>
-          {current.locality && <span className="truncate text-sm text-muted-foreground">{current.locality}</span>}
+          {/* Two lines, so it sits inside the top bar. */}
+          <span className="flex min-w-0 items-baseline gap-2">
+            <span className="shrink-0 font-heading text-xl leading-none">{current.code}</span>
+            {current.locality && <span className="truncate text-sm text-muted-foreground">{current.locality}</span>}
+          </span>
         </span>
         <ChevronsUpDownIcon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground group-hover:text-foreground" />
         <span className="sr-only">{shell("switchProject")}</span>

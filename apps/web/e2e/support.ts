@@ -350,7 +350,7 @@ export async function contractor(browser: Browser, request: APIRequestContext, n
   const email = uniqueEmail();
   await page.goto(`${PRO}/sign-in`);
   await signInByCode(page, request, email);
-  await expect(page.getByRole("heading", { level: 1, name: "Your professional profile" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByLabel("Your professional identity")).toBeVisible({ timeout: 30_000 });
   const profileId = sql(`
     UPDATE professional_profiles SET display_name = '${name}', firm_name = '${name} LLP',
       base_locality = 'Civil Lines', base_geom = ST_GeogFromText('SRID=4326;POINT(81.64 21.24)'),
@@ -403,4 +403,39 @@ export async function engagedContractor(
     AND category_code = 'CONTRACTOR' AND state = 'ACTIVE'`);
   const userId = sql(`SELECT user_id FROM professional_profiles WHERE id = '${profileId}'`);
   return { pro, engagementId, userId };
+}
+
+/** The sidebar group each project section sits in (homeowner overview v3: seven groups). */
+const SECTION_GROUP: Record<string, string> = {
+  Overview: "Home",
+  Requirement: "My project",
+  Estimate: "My project",
+  Designs: "My project",
+  Package: "My project",
+  "Build Plan": "My project",
+  Professionals: "Quotes",
+  "Contractor quotes": "Quotes",
+  "Construction stages": "Construction",
+  Specification: "Construction",
+  Notifications: "Home",
+  Messages: "Home",
+};
+
+/**
+ * A project section's link in the "Project sections" navigation. On wide screens only the current
+ * group is open, so a section in a closed group is reached through its group first; the phone row
+ * lists every section.
+ */
+export async function openSection(page: Page, name: string): Promise<void> {
+  const sections = page.getByRole("navigation", { name: "Project sections" });
+  const link = sections.getByRole("link", { name, exact: true });
+  if (!(await link.isVisible())) {
+    const group = SECTION_GROUP[name];
+    if (group) await sections.getByRole("link", { name: group, exact: true }).click();
+  }
+  // A click that lands before hydration does nothing; retry until the section is open.
+  await expect(async () => {
+    await link.click();
+    await expect(link).toHaveAttribute("aria-current", "page", { timeout: 2_000 });
+  }).toPass({ timeout: 20_000 });
 }

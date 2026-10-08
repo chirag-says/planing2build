@@ -127,6 +127,13 @@ export function BuiltSection({ content, projects, heading, projectsHref }: Built
     [count],
   );
 
+  /** Scrolls to the end of the pinned section, so the next one starts at the top of the viewport. */
+  const skip = useCallback(() => {
+    const section = ref.current;
+    if (!section) return;
+    scrollPageTo(section.getBoundingClientRect().bottom + window.scrollY, { duration: STEP_DURATION });
+  }, []);
+
   const style: StyleWithVars = {
     ...TYPE.body,
     background: 'var(--gd-night)',
@@ -150,6 +157,7 @@ export function BuiltSection({ content, projects, heading, projectsHref }: Built
           active={activeIndex}
           pinned={scrollDriven}
           onStep={step}
+          onSkip={skip}
         />
       )}
       {layout !== 'pin' && (

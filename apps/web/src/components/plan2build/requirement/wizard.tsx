@@ -8,6 +8,7 @@
 import type { FileView, Question, QuestionSet } from "@p2b/contracts";
 import { ArrowLeftIcon, ArrowRightIcon, CircleCheckIcon, PencilIcon, SendIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { cn } from "cn";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 
 import { AnswerSummary } from "@/components/plan2build/answer-summary";
@@ -85,8 +86,23 @@ export function RequirementWizard({
   const router = useRouter();
   const byKey = questionsByKey(set);
   const reviewStep = set.sections.length;
-  const stepTitles = [...set.sections.map((section) => section.title), t("review")];
+  // The rail shows one short word per step, so every label sits on one line; the step's heading
+  // keeps its full title. A section without a short label falls back to its title.
+  const rail: Record<string, string> = {
+    plot: t("rail.plot"),
+    house: t("rail.house"),
+    budget_timing: t("rail.budget_timing"),
+    priorities: t("rail.priorities"),
+    more: t("rail.more"),
+  };
+  const stepTitles = [...set.sections.map((section) => rail[section.key] ?? section.title), t("rail.review")];
   const [step, setStep] = useState(0);
+  // The step rail stays at the top of the window while the family scrolls through a step, and
+  // the current step's bar fills with how far they have scrolled through it.
+  const railBox = useRef<HTMLDivElement>(null);
+  const stepBody = useRef<HTMLDivElement>(null);
+  const [scrolled, setScrolled] = useState(0);
+  const [stuck, setStuck] = useState(false);
   const [furthest, setFurthest] = useState(0);
   const [answers, setAnswers] = useState<Answers>(initialAnswers);
   const [version, setVersion] = useState(initialVersion);
@@ -367,6 +383,35 @@ export function RequirementWizard({
     </h2>
   );
 
+  useEffect(() => {
+    let frame = 0;
+    const measure = () => {
+      frame = 0;
+      const rail = railBox.current;
+      const body = stepBody.current;
+      if (!rail || !body) return;
+      const railRect = rail.getBoundingClientRect();
+      const bodyRect = body.getBoundingClientRect();
+      // From the step's top reaching the rail to its bottom reaching the bottom of the window.
+      const span = bodyRect.height - (window.innerHeight - railRect.bottom);
+      const through = span <= 0 ? 1 : (railRect.bottom - bodyRect.top) / span;
+      setScrolled(Math.min(1, Math.max(0, through)));
+      const stickAt = parseFloat(getComputedStyle(rail).top) || 0;
+      setStuck(window.scrollY > 0 && railRect.top <= stickAt + 0.5);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+    measure();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [step]);
+
   const back = step > 0 && (
     <Button type="button" variant="outline" size="lg" onClick={() => goTo(step - 1)}>
       <ArrowLeftIcon aria-hidden="true" data-icon="inline-start" />
@@ -376,13 +421,24 @@ export function RequirementWizard({
 
   return (
     <div className="flex flex-col gap-8">
-      <WizardProgress
-        steps={stepTitles}
-        current={step}
-        furthest={furthest}
-        onSelect={goTo}
-        labels={PROGRESS_LABELS}
-      />
+      {/* Sticks under the site header; a hairline and shadow appear once content scrolls under it. */}
+      <div
+        ref={railBox}
+        className={cn(
+          "sticky top-16 z-20 -mx-2 rounded-b-md bg-card px-2 py-3 transition-shadow duration-200 lg:top-18",
+          stuck && "shadow-[0_10px_18px_-14px_rgb(0_0_0/0.35),0_1px_0_0_rgb(0_0_0/0.08)]",
+        )}
+      >
+        <WizardProgress
+          steps={stepTitles}
+          current={step}
+          furthest={furthest}
+          onSelect={goTo}
+          labels={PROGRESS_LABELS}
+          progress={scrolled}
+        />
+      </div>
+      <div ref={stepBody} className="flex flex-col gap-8">
 
       {step === reviewStep ? (
         <section aria-labelledby="step-heading" className="flex flex-col gap-6">
@@ -451,6 +507,7 @@ export function RequirementWizard({
           </FormActions>
         </form>
       )}
+      </div>
     </div>
   );
 }

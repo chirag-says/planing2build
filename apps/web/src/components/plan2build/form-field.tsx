@@ -99,11 +99,14 @@ export function FormFieldset({
   required = false,
   description,
   errors,
+  legendSize = "question",
   children,
 }: {
   id: string;
   legend: ReactNode;
   required?: boolean;
+  /** "label" when a section heading already asks the question: the legend becomes a mono caption. */
+  legendSize?: "question" | "label";
   description?: ReactNode;
   errors?: string[];
   children: (group: { legendId: string; describedBy?: string; invalid: boolean }) => ReactNode;
@@ -118,7 +121,14 @@ export function FormFieldset({
       className="gap-4"
     >
       {/* The question: display caps at 24px, 30px from sm, as on the website's request card. */}
-      <FieldLegend id={legendId} className="mb-0 font-heading leading-[1.05] data-[variant=legend]:text-2xl sm:data-[variant=legend]:text-3xl">
+      <FieldLegend
+        id={legendId}
+        className={
+          legendSize === "label"
+            ? "mb-0 font-mono tracking-widest text-muted-foreground uppercase data-[variant=legend]:text-xs"
+            : "mb-0 font-heading leading-[1.05] data-[variant=legend]:text-2xl sm:data-[variant=legend]:text-3xl"
+        }
+      >
         {legend}
         {!required && <OptionalMark />}
       </FieldLegend>

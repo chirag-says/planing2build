@@ -199,6 +199,11 @@
 }
 
 /* The card as a static sheet for long forms: no slings, no drop. */
+/* Clip, not hide: a hidden overflow would make the sheet a scroll container, and the wizard's
+   step rail could no longer stick to the top of the window while the family scrolls. */
+.bid-card.hc-sheet {
+  overflow: clip;
+}
 .hc-sheet {
   background: var(--card);
   box-shadow:

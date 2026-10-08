@@ -1,82 +1,101 @@
-// The homeowner host's signed-in shell (UI_DESIGN_SYSTEM.md section 9). The workspace sidebar
-// (projects, estimator, directory, billing) opens with the first project; until then a signed-in
-// homeowner is onboarding (the entry questions, then the first requirement) and keeps the
-// website-style header, as a signed-out visitor does. On a project's pages the project switcher
-// and the project's sections sit above the workspace links.
+// The homeowner host's signed-in shell (UI_DESIGN_SYSTEM.md section 9). A signed-in homeowner has
+// the app shell (projects, directory, billing) from the first sign-in, with or without a project:
+// the requirement is asked for, never required. Only the entry steps of a requirement keep the
+// website-style header until the family has a project (`entry`), as a signed-out visitor sees it.
+// On a project's pages the top bar names the home (the
+// project switcher) beside the notifications bell, and the sidebar carries the project's sections
+// in seven groups (ProjectSectionsNav). Phones get the groups as a scrolling row in the page.
 import type { ReactNode } from "react";
 
-import { AppShell, type ShellGroup, type ShellSection } from "@/components/plan2build/app-shell";
+import { AppShell, type ShellSection } from "@/components/plan2build/app-shell";
 import { HomeownerHeader } from "@/components/plan2build/homeowner-header";
+import { NotificationsBell } from "@/components/plan2build/notifications-bell";
+import {
+  ProjectSectionsNav,
+  type SectionGroup,
+  type SectionIcon,
+  type SectionItem,
+} from "@/components/plan2build/project-sections-nav";
 import { ProjectSwitcher } from "@/components/plan2build/project-switcher";
 import { getTranslator } from "@/lib/i18n";
+import { getInbox } from "@/lib/inbox-server";
 import { dashboardOpen, hasStagesAndLines, type ProjectDetail } from "@/lib/project";
 import { currentUser, initialsOf, ownProjects } from "@/lib/session";
 
-/** The project's sections, grouped the way the build runs. Only sections with content appear. */
-export function projectGroups(detail: ProjectDetail): ShellGroup[] {
+type GroupKey = "home" | "project" | "quotes" | "construction" | "verify" | "records" | "journey";
+
+/**
+ * The project's sections in seven groups (ProjectSectionsNav). Only sections with content appear;
+ * a draft has its overview, the requirement being written and the journey.
+ */
+export function projectGroups(detail: ProjectDetail): SectionGroup[] {
   const t = getTranslator("Dashboard");
-  const shell = getTranslator("Shell");
+  const o = getTranslator("Overview");
   const { project } = detail;
   const base = `/projects/${project.project_id}`;
-  const overview = { href: base, label: t("areas.overview"), icon: "overview", exact: true } as const;
-  // A draft has no dashboard yet: its overview and the requirement being written.
+  const g = (key: GroupKey, icon: SectionIcon, items: SectionItem[]): SectionGroup => ({
+    key,
+    label: t(`groups.${key}`),
+    icon,
+    items,
+  });
+  const journey = g("journey", "journey", [{ href: `${base}/journey`, label: t("areas.journey"), icon: "journey" }]);
   if (!dashboardOpen(project.status)) {
-    return [{ items: [overview, { href: `${base}/requirement`, label: t("areas.requirement"), icon: "requirement" }] }];
+    return [
+      g("home", "home", [{ href: base, label: t("areas.overview"), icon: "overview", exact: true }]),
+      g("project", "project", [{ href: `${base}/requirement`, label: t("areas.requirement"), icon: "requirement" }]),
+      journey,
+    ];
   }
   const built = hasStagesAndLines(project.status);
   return [
-    {
-      label: shell("groups.plan"),
-      items: [
-        overview,
-        { href: `${base}/answers`, label: t("areas.requirement"), icon: "requirement" },
-        { href: `${base}/estimate`, label: t("areas.estimate"), icon: "estimate" },
-        { href: `${base}/designs`, label: t("areas.designs"), icon: "designs" },
-        { href: `${base}/build-plan`, label: t("areas.buildPlan"), icon: "buildPlan" },
-      ],
-    },
+    g("home", "home", [
+      { href: base, label: t("areas.overview"), icon: "overview", exact: true },
+      { href: `${base}/notifications`, label: t("areas.notifications"), icon: "notifications" },
+      { href: `${base}/messages`, label: t("areas.messages"), icon: "messages" },
+    ]),
+    g("project", "project", [
+      { href: `${base}/answers`, label: t("areas.requirement"), icon: "requirement" },
+      { href: `${base}/estimate`, label: t("areas.estimate"), icon: "estimate" },
+      { href: `${base}/designs`, label: t("areas.designs"), icon: "designs" },
+      { href: `${base}/package`, label: t("areas.package"), icon: "package" },
+      { href: `${base}/build-plan`, label: t("areas.buildPlan"), icon: "buildPlan" },
+    ]),
+    g("quotes", "quotes", [
+      // Needs, requests and engagements per category (Slice 3.4); the directory is one step on.
+      { href: `${base}/services`, label: t("areas.professionals"), icon: "professionals" },
+      // Requests for contractor quotes on the accepted Build Plan (Slice 3.6).
+      { href: `${base}/quotes`, label: t("areas.quotes"), icon: "quotes" },
+    ]),
     ...(built
       ? [
-          {
-            label: shell("groups.build"),
-            items: [
-              { href: `${base}/construction`, label: t("areas.construction"), icon: "construction" },
-              { href: `${base}/specification`, label: t("areas.specification"), icon: "specification" },
-            ] as ShellGroup["items"],
-          },
+          g("construction", "construction", [
+            { href: `${base}/construction`, label: t("areas.construction"), icon: "construction" },
+            { href: `${base}/specification`, label: t("areas.specification"), icon: "specification" },
+          ]),
+          g("verify", "verify", [{ href: `${base}/construction#inspections`, label: o("nav.inspections"), icon: "inspections" }]),
         ]
       : []),
-    {
-      label: shell("groups.hire"),
-      items: [
-        // Needs, requests and engagements per category (Slice 3.4); the directory is one step on.
-        { href: `${base}/services`, label: t("areas.professionals"), icon: "professionals" },
-        // Requests for contractor quotes on the accepted Build Plan (Slice 3.6).
-        { href: `${base}/quotes`, label: t("areas.quotes"), icon: "quotes" },
-      ],
-    },
-    {
-      label: shell("groups.records"),
-      items: [
-        { href: `${base}/documents`, label: t("areas.documents"), icon: "documents" },
-        { href: `${base}/package`, label: t("areas.package"), icon: "package" },
-      ],
-    },
+    g("records", "records", [{ href: `${base}/documents`, label: t("areas.documents"), icon: "documents" }]),
+    journey,
   ];
 }
 
 export async function HomeownerShell({
   project,
+  entry = false,
   children,
 }: {
   /** On a project's pages: the project, for the switcher and its sections. */
   project?: ProjectDetail;
+  /** The first steps of a requirement: header only until the family has a project. */
+  entry?: boolean;
   children: ReactNode;
 }) {
   const user = await currentUser();
-  // On a project's pages the project itself is the proof that onboarding is done.
+  // Signing in gets a homeowner the app shell at once; only the entry steps keep the header.
   const projects = user ? await ownProjects() : null;
-  if (!user || (!project && (projects?.length ?? 0) === 0)) {
+  if (!user || (entry && !project && (projects?.length ?? 0) === 0)) {
     return (
       <>
         <HomeownerHeader />
@@ -104,36 +123,30 @@ export async function HomeownerShell({
   };
 
   let sidebarTop: ReactNode;
-  let sections: ShellSection[] = [workspace];
+  const sections: ShellSection[] = [workspace];
   let context: ReactNode;
+  let headerActions: ReactNode;
   if (project) {
-    const all = projects;
-    const current = {
-      id: project.project.project_id,
-      code: projectsT("code", { code: project.project.code }),
-      locality: project.project.locality ?? null,
-    };
-    sidebarTop = (
+    const base = `/projects/${project.project.project_id}`;
+    const switcher = (
       <ProjectSwitcher
-        current={{ ...current, code: project.project.code }}
+        current={{ id: project.project.project_id, code: project.project.code, locality: project.project.locality ?? null }}
         status={getTranslator("Status")(`project.${project.project.status}`)}
-        projects={(all ?? [project.project]).map((p) => ({
-          id: p.project_id,
-          code: p.code,
-          locality: p.locality ?? null,
-        }))}
+        projects={(projects ?? [project.project]).map((p) => ({ id: p.project_id, code: p.code, locality: p.locality ?? null }))}
       />
     );
-    sections = [{ navLabel: getTranslator("Dashboard")("nav"), groups: projectGroups(project) }, workspace];
-    context = (
-      <p className="flex min-w-0 items-center gap-2.5 font-mono text-sm tracking-widest text-muted-foreground uppercase">
-        <span aria-hidden="true" className="size-2 shrink-0 bg-brand ring-1 ring-foreground" />
-        <span className="truncate">
-          {current.code}
-          {current.locality && ` · ${current.locality}`}
-        </span>
-      </p>
+    // Which home this is sits in the top bar, always in view; the phone menu repeats it.
+    context = <div className="max-w-sm">{switcher}</div>;
+    sidebarTop = (
+      <>
+        <div className="md:hidden">{switcher}</div>
+        <ProjectSectionsNav label={getTranslator("Dashboard")("nav")} groups={projectGroups(project)} />
+      </>
     );
+    if (dashboardOpen(project.project.status)) {
+      const inbox = await getInbox(project.project.project_id);
+      headerActions = <NotificationsBell href={`${base}/notifications`} count={inbox.unread} />;
+    }
   } else {
     context = (
       <p className="flex min-w-0 items-center gap-2.5 font-mono text-sm tracking-widest text-muted-foreground uppercase">
@@ -157,7 +170,8 @@ export async function HomeownerShell({
       sidebarTop={sidebarTop}
       helpHref="/need-help"
       context={context}
-      primaryAction={{ href: "/start", label: shell("newProject") }}
+      headerActions={headerActions}
+      primaryAction={project ? undefined : { href: "/start", label: shell("newProject") }}
       accountLinks={[
         { href: "/projects", label: t("projects"), icon: "projects" },
         { href: "/account/billing", label: t("billing"), icon: "billing" },

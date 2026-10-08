@@ -4,7 +4,9 @@
 // running out, the design detail and "Use as design reference". Axe on every screen.
 import { expect, test } from "@playwright/test";
 
-import { IHB, expectAccessible as axe, sql, submitRequirement } from "./support";
+import { IHB, expectAccessible as axe, sql, submitRequirement,
+  openSection,
+} from "./support";
 
 test("generate designs, see the gallery, run out of free designs, mark a reference", async ({
   page,
@@ -16,11 +18,14 @@ test("generate designs, see the gallery, run out of free designs, mark a referen
 
   // Overview: the way in, with the free count.
   await page.goto(base);
-  await expect(page.getByRole("heading", { name: "Your designs" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^Your home/ })).toBeVisible();
   await expect(page.getByText("3 of 3 free designs left")).toBeVisible();
   await axe(page);
-  await page.getByRole("link", { name: "Generate My Design" }).click();
-  await expect(page).toHaveURL(`${base}/designs`);
+  // A click that lands before hydration does nothing; retry until the page has moved on.
+  await expect(async () => {
+    await page.getByRole("link", { name: "Generate My Design" }).click();
+    await expect(page).toHaveURL(`${base}/designs`, { timeout: 2_000 });
+  }).toPass({ timeout: 20_000 });
   await expect(page).toHaveTitle(/^Designs · Project P2B-RPR-\d+ \| Plan2Build$/);
   const sections = page.getByRole("navigation", { name: "Project sections" });
   await expect(sections.getByRole("link", { name: "Designs" })).toHaveAttribute("aria-current", "page");
@@ -76,8 +81,10 @@ test("generate designs, see the gallery, run out of free designs, mark a referen
   await axe(page);
 
   // The detail: illustrative warning, what the family may know, and a reference.
-  await gallery.getByRole("link", { name: "Design 1 · Exterior concept" }).click();
-  await expect(page).toHaveURL(/\/designs\/[0-9a-f-]+$/);
+  await expect(async () => {
+    await gallery.getByRole("link", { name: "Design 1 · Exterior concept" }).click();
+    await expect(page).toHaveURL(/\/designs\/[0-9a-f-]+$/, { timeout: 2_000 });
+  }).toPass({ timeout: 20_000 });
   await expect(sections.getByRole("link", { name: "Designs" })).toHaveAttribute("aria-current", "page");
   await expect(page.getByText("An illustrative concept only")).toBeVisible();
   await expect(page.getByText(/not a drawing, a plan, a structural design or an approved design/)).toBeVisible();
@@ -99,9 +106,10 @@ test("generate designs, see the gallery, run out of free designs, mark a referen
   await expect(page.getByText(/^Marked as a design reference on /)).toBeVisible();
 
   // The overview shows the latest concepts.
-  await sections.getByRole("link", { name: "Overview" }).click();
+  await openSection(page, "Overview");
   await expect(page.getByText("0 of 3 free designs left")).toBeVisible();
-  await expect(page.getByRole("img", { name: /Illustrative concept\.$/ })).toHaveCount(3);
+  // The overview shows the newest concept as the house; the gallery has the rest.
+  await expect(page.getByRole("img", { name: /Illustrative concept\.$/ })).toHaveCount(1);
   await expect(page.getByRole("link", { name: "Generate My Design" })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "See all designs" })).toBeVisible();
   await axe(page);

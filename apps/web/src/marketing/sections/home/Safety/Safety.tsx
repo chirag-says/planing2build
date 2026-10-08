@@ -1,48 +1,15 @@
 import { Eyebrow } from '@/marketing/components/ui/Eyebrow';
 import { Heading } from '@/marketing/components/ui/Heading';
 import type { SafetyContent } from '@/marketing/content/sections/safety';
-import { revealDelay, type StyleWithVars } from '@/marketing/lib/css';
+import { revealDelay } from '@/marketing/lib/css';
 import { TYPE } from '@/marketing/lib/typography';
-import { DRAWING, GRID_X, STOREYS, drawDelay, labelDelay } from './drawing';
+import { DrawingLabels, DrawingStrokes } from './DrawingParts';
+import { GRID_X, STOREYS } from './drawing';
 import { SafetyShell } from './SafetyShell';
 import './safety.css';
 
 const MAX_CHECKS = 5;
 const MAX_CERTS = 6;
-
-/** `--a`: the draw progress at which this part of the drawing appears. */
-const appearAt = (delay: string): StyleWithVars => ({ '--a': delay });
-
-/** Every line of the drawing, each drawn in (stroke-dashoffset) once `--dr` passes its `--a`. */
-function DrawingStrokes() {
-  return (
-    <g className="safety-ln">
-      {DRAWING.strokes.map((stroke, index) => (
-        <path key={index} d={stroke.d} pathLength={1} className={`k-${stroke.kind}`} style={appearAt(drawDelay(stroke.y))} />
-      ))}
-    </g>
-  );
-}
-
-/** Level names, the height dimension and the grid axis letters. */
-function DrawingLabels() {
-  return (
-    <g className="safety-tx">
-      {DRAWING.labels.map((label, index) => (
-        <text
-          key={index}
-          x={label.x}
-          y={label.y}
-          textAnchor={label.anchor}
-          transform={label.vertical ? `rotate(-90 ${label.x} ${label.y})` : undefined}
-          style={appearAt(labelDelay(label))}
-        >
-          {label.text}
-        </text>
-      ))}
-    </g>
-  );
-}
 
 /** The part of the building a check covers, highlighted while that check is active. */
 function ZoneShape({ check }: { check: number }) {

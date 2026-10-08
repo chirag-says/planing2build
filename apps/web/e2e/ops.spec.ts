@@ -14,6 +14,7 @@ import {
   staffReady,
   submitRequirement,
   totp,
+  openSection,
 } from "./support";
 
 /** Open a project from the queue, waiting for the worker to deliver it there. The queue is
@@ -108,9 +109,7 @@ test("accepting completes the initial review; the family sees stages and specifi
   await expect(page.getByRole("button", { name: /buy|pay/i })).toHaveCount(0);
   await axe(page);
 
-  const sections = page.getByRole("navigation", { name: "Project sections" });
-  await sections.getByRole("link", { name: "Construction stages" }).click();
-  await expect(sections.getByRole("link", { name: "Construction stages" })).toHaveAttribute("aria-current", "page");
+  await openSection(page, "Construction stages");
   // G+1 with a basement: 13 stages once, stages 5, 6 and 9 for basement, ground and first floor.
   // Slice 3.7A: the page shows what happened on each stage; no planned dates (EX-04, BP-07A).
   const stages = page.locator('[data-testid^="stage-"]').filter({ has: page.getByTestId("stage-state") });
@@ -119,7 +118,7 @@ test("accepting completes the initial review; the family sees stages and specifi
   await expect(page.getByTestId("stage-state").first()).toHaveText("Not started");
   await axe(page);
 
-  await sections.getByRole("link", { name: "Specification" }).click();
+  await openSection(page, "Specification");
   await expect(page.getByRole("heading", { name: "Group A: Structure" })).toBeVisible();
   await expect(page.getByText(/Package [ABC]/)).toHaveCount(0); // groups, never products (PD-09)
   await expect(page.getByText("Soil investigation")).toBeVisible();
@@ -159,7 +158,7 @@ test("asking for information lets the family revise and resubmit; cancelling is 
   await page.getByRole("link", { name: "Update your requirement" }).click();
   await expect(page.getByText("Please add the plot's survey number.")).toBeVisible();
   for (const step of ["Your plot", "Your house", "Budget and timing", "What matters most"]) {
-    await expect(page.getByRole("heading", { name: step })).toBeVisible();
+    await expect(page.getByRole("heading", { name: step, exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Save and continue" }).click();
   }
   await page.getByLabel("Anything else we should know?").fill("Survey number 12/4.");

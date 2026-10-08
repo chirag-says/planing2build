@@ -16,6 +16,7 @@ import {
   staffReady,
   submitRequirement,
   uniqueEmail,
+  openSection,
 } from "./support";
 
 const group = (page: Page, name: string) => page.getByRole("group", { name, exact: true });
@@ -44,11 +45,14 @@ test("a professional registers and is approved; anyone finds them; hide, show, s
   await expect(page).toHaveURL(/\/sign-in\?next=%2F$/);
   await axe(page);
   await signInByCode(page, request, email);
-  await expect(page.getByRole("heading", { level: 1, name: "Your professional profile" })).toBeVisible({
+  // A new professional lands on their work, with no requests or projects yet; finishing the
+  // profile is a slim notice above it, not the page.
+  await expect(page.getByRole("heading", { level: 1, name: "Welcome to Plan2Build" })).toBeVisible({
     timeout: 30_000,
   });
-  await expect(page.getByText("No categories yet")).toBeVisible();
-  await expect(page.getByText(/There are no fees for professionals\./)).toBeVisible(); // D-03
+  await expect(page.getByRole("heading", { level: 2, name: "No requests yet" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 3, name: "No active projects yet" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Your listing" })).toContainText("Families see your name, firm and base first.");
   await axe(page);
 
   // Profile.
@@ -69,7 +73,8 @@ test("a professional registers and is approved; anyone finds them; hide, show, s
   await expect(page.getByText("Profile saved.")).toBeVisible();
 
   // A category, its checklist and the evidence it asks for.
-  await page.goto(`${PRO}/`);
+  await page.goto(`${PRO}/services`);
+  await expect(page.getByText(/There are no fees for professionals\./)).toBeVisible(); // D-03
   await group(page, "Category").getByLabel("Architect", { exact: true }).check();
   await page.getByRole("button", { name: "Add category" }).click();
   await expect(page).toHaveURL(`${PRO}/categories/ARCHITECT`);
@@ -193,7 +198,12 @@ test("a professional registers and is approved; anyone finds them; hide, show, s
 
   // The professional's dashboard shows the outcome; the suspension reason is not shown to them
   // as an internal note, and nothing in the public profile changed.
+  // Their home no longer carries the setup notice once the listing is complete; the services
+  // page shows each service's outcome.
   await page.goto(`${PRO}/`);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Your listing" })).toHaveCount(0);
+  await page.goto(`${PRO}/services`);
   await expect(page.getByText("Shown in the public directory")).toBeVisible();
   await expect(page.getByText(/Re-verification due/)).toBeVisible();
   await axe(page);
@@ -208,8 +218,7 @@ test("a signed-in family narrows the directory to professionals covering a proje
 
   // The project dashboard's Professionals section (Slice 3.4) links to the directory for this plot.
   await page.goto(`${IHB}/projects/${project.id}`);
-  const sections = page.getByRole("navigation", { name: "Project sections" });
-  await sections.getByRole("link", { name: "Professionals" }).click();
+  await openSection(page, "Professionals");
   await expect(page).toHaveURL(`${IHB}/projects/${project.id}/services`);
   await page.getByRole("link", { name: "Browse professionals near this project" }).click();
   await expect(page).toHaveURL(`${IHB}/professionals?project=${project.id}`);

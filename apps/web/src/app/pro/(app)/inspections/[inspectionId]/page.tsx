@@ -8,7 +8,6 @@ import { DownloadLink } from "@/components/plan2build/rfq";
 import { Notice } from "@/components/plan2build/states";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
-import { requireOnboarded } from "@/lib/professional";
 
 export const metadata: Metadata = { title: getTranslator("Assurance")("proTitle") };
 
@@ -18,7 +17,6 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // criteria, the accepted drawings; readiness, results with findings, submission with a code.
 // Online only (EX-10). No supplier, brand, product, price or homeowner contact.
 export default async function AuditorInspectionPage({ params }: { params: Promise<{ inspectionId: string }> }) {
-  await requireOnboarded();
   const { inspectionId } = await params;
   if (!UUID.test(inspectionId)) notFound();
   const { data, response } = await (await serverApi()).GET("/api/v1/pro/inspections/{inspection_id}", {

@@ -19,6 +19,7 @@ import {
   submitRequirement,
   uniqueEmail,
   type Submitted,
+  openSection,
 } from "./support";
 
 async function openFromQueue(page: Page, code: string) {
@@ -64,7 +65,7 @@ async function listedProfessional(page: Page, request: APIRequestContext, name: 
   const email = uniqueEmail();
   await page.goto(`${PRO}/sign-in`);
   await signInByCode(page, request, email);
-  await expect(page.getByRole("heading", { level: 1, name: "Your professional profile" })).toBeVisible({
+  await expect(page.getByLabel("Your professional identity")).toBeVisible({
     timeout: 30_000,
   });
   const profileId = sql(`
@@ -90,7 +91,7 @@ test("a family connects with a listed contractor, records their own architect, a
 
   // Professionals for the project: one card per service.
   await page.goto(`${IHB}/projects/${project.id}`);
-  await page.getByRole("link", { name: "Professionals", exact: true }).click();
+  await openSection(page, "Professionals");
   await expect(page).toHaveURL(`${IHB}/projects/${project.id}/services`);
   await expect(page.getByRole("heading", { name: "Professionals for your project" })).toBeVisible();
   await axe(page);

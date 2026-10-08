@@ -6,7 +6,6 @@ import { PageContainer, PageHeader } from "@/components/plan2build/page-header";
 import { Notice } from "@/components/plan2build/states";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
-import { requireOnboarded } from "@/lib/professional";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -15,7 +14,6 @@ export const metadata: Metadata = { title: getTranslator("BuildPlan")("signTitle
 // Structural sign-off of one version (BP-04): the lines as entered, the drawings, the statement,
 // and signing with a one-time code.
 export default async function SignoffPage({ params }: { params: Promise<{ versionId: string }> }) {
-  await requireOnboarded();
   const { versionId } = await params;
   if (!UUID.test(versionId)) notFound();
   const { data, response } = await (await serverApi()).GET("/api/v1/pro/build-plan/signoffs/{version_id}", {

@@ -242,23 +242,39 @@
         "review": "{step}: in review"
       }
     },
-    "kpi": {
-      "title": "At a glance",
-      "listed": "Listed categories",
-      "listedCaption": "{total, plural, =0 {None added yet} one {of # added} other {of # added}}",
-      "requests": "New requests",
-      "requestsCaption": "Waiting for your reply",
-      "quotes": "Requests to quote",
-      "quotesCaption": "Open for your quote",
-      "inspections": "Inspections",
-      "inspectionsCaption": "Scheduled or in progress"
-    },
     "profileCard": {
       "title": "Profile",
       "complete": "Your profile is complete.",
       "missing": "{count, plural, one {# detail missing} other {# details missing}}",
       "edit": "Edit profile",
       "portfolio": "{count, plural, =0 {No portfolio photos yet} one {# portfolio photo} other {# portfolio photos}}"
+    },
+    "today": {
+      "eyebrow": "Your work today",
+      "board": "Needs you",
+      "needsYou": "{count, plural, one {# thing needs you} other {# things need you}}",
+      "needsYouBody": "Most urgent first, by the date each one is due.",
+      "nothing": "Nothing needs you right now",
+      "nothingBody": "New requests, requests to quote and inspections appear here as they arrive.",
+      "notListedBody": "Requests reach you once one of your categories is listed. Your way there is below.",
+      "kinds": {
+        "connection": "Request to connect",
+        "quote": "Request to quote",
+        "inspection": "Inspection"
+      },
+      "due": {
+        "respond": "Reply by {date}",
+        "quotes": "Quotes due {date}",
+        "scheduled": "Scheduled {date}"
+      },
+      "soon": "Due soon",
+      "more": "{count, plural, one {# more} other {# more}}",
+      "active": {
+        "title": "Active projects",
+        "empty": "No active projects yet.",
+        "emptyBody": "Requests you accept become projects here."
+      },
+      "listing": "Your listing"
     }
   },
   "Ops": {
@@ -736,23 +752,21 @@
     "needsInfoTitle": "Plan2Build needs more information",
     "cancelledTitle": "This project has been closed",
     "reason": "Reason: {reason}",
-    "kpi": {
-      "title": "At a glance",
-      "total": "Projects",
-      "totalCaption": "All your homes",
-      "review": "With Plan2Build",
-      "reviewCaption": "Being reviewed",
-      "active": "In progress",
-      "activeCaption": "Planning to handover",
-      "drafts": "Drafts",
-      "draftsCaption": "Requirement not sent"
-    },
     "delete": "Delete draft",
     "deleting": "Deleting…",
     "deleteTitle": "Delete this draft?",
     "deleteBody": "{code} and the answers you have given so far will be removed from your projects. This cannot be undone.",
     "deleteCancel": "Keep draft",
-    "deleteError": "The draft could not be deleted. Try again shortly."
+    "deleteError": "The draft could not be deleted. Try again shortly.",
+    "summary": "{total, plural, one {# project} other {# projects}} · {review} in review · {active} active · {drafts, plural, =0 {no drafts} one {# draft} other {# drafts}}",
+    "getStarted": {
+      "eyebrow": "Get started",
+      "title": "Tell us about your home",
+      "body": "Your plot, your house, your budget. With that, Plan2Build reviews your project and opens your dashboard.",
+      "cta": "Start my requirement",
+      "empty": "No projects yet",
+      "emptyBody": "Your projects will be here once you start one."
+    }
   },
   "Requirement": {
     "title": "Your requirement",
@@ -827,6 +841,15 @@
     "card": {
       "label": "Your requirement",
       "note": "Saved as you go"
+    },
+    "pageTitle": "Tell us about your house",
+    "rail": {
+      "plot": "Plot",
+      "house": "House",
+      "budget_timing": "Budget",
+      "priorities": "Priorities",
+      "more": "Extras",
+      "review": "Review"
     }
   },
   "Uploads": {
@@ -1021,7 +1044,10 @@
       "professionals": "Professionals",
       "package": "Package",
       "buildPlan": "Build Plan",
-      "quotes": "Contractor quotes"
+      "quotes": "Contractor quotes",
+      "journey": "Journey",
+      "notifications": "Notifications",
+      "messages": "Messages"
     },
     "draftTitle": "Finish your requirement",
     "draftBody": "Submit your requirement to open your project dashboard.",
@@ -1054,30 +1080,15 @@
     "packageView": "View the package",
     "packageActive": "Your Plan2Build package is active.",
     "packageEnded": "Your package is no longer active.",
-    "kpi": {
-      "title": "At a glance",
-      "phase": "Journey phase",
-      "phaseOf": "Phase {n} of 7",
-      "phaseNone": "Paused",
-      "estimate": "Estimate range",
-      "estimateCaption": "Indicative, before quotes",
-      "estimateNone": "Not yet",
-      "designs": "Concept designs",
-      "designsCaption": "{free} free left",
-      "package": "Package",
-      "packageValue": {
-        "ACTIVE": "Active",
-        "ENDED": "Ended",
-        "NOT_ACTIVE": "Not active"
-      },
-      "packageCaption": {
-        "ELIGIBLE": "Ready to buy",
-        "OTHER": "After the review",
-        "ACTIVE": "Services open"
-      },
-      "open": "Open {label}"
-    },
-    "journeyCard": "Your build journey"
+    "groups": {
+      "home": "Home",
+      "project": "My project",
+      "quotes": "Quotes",
+      "construction": "Construction",
+      "verify": "Verify",
+      "records": "Records",
+      "journey": "Journey"
+    }
   },
   "Designs": {
     "title": "Designs",
@@ -1904,56 +1915,6 @@
     "error": "That did not work. Try again.",
     "errorReason": "That did not work: {reason}"
   },
-  "Journey": {
-    "title": "Your build journey",
-    "phases": {
-      "plan": {
-        "name": "Plan",
-        "items": "Requirements · Estimate · Designs · Package · Build Plan"
-      },
-      "compare": {
-        "name": "Compare",
-        "items": "Requests to quote · Quotes on equal scope"
-      },
-      "select": {
-        "name": "Select",
-        "items": "Contractor · Scope confirmed"
-      },
-      "build": {
-        "name": "Build",
-        "items": "Stages · Decisions · Changes"
-      },
-      "verify": {
-        "name": "Verify",
-        "items": "Six independent checks · Evidence"
-      },
-      "handover": {
-        "name": "Handover",
-        "items": "Snags closed · Documents"
-      },
-      "record": {
-        "name": "Build Record",
-        "items": "Your home's permanent record"
-      }
-    },
-    "states": {
-      "done": "Done",
-      "current": "Now",
-      "next": "Next",
-      "alongside": "Alongside the build"
-    },
-    "sr": {
-      "done": "{phase}: done",
-      "current": "{phase}: current phase",
-      "next": "{phase}: not started",
-      "alongside": "{phase}: runs alongside the build"
-    },
-    "package": {
-      "active": "Package active",
-      "eligible": "Package ready to buy",
-      "waiting": "Package after acceptance"
-    }
-  },
   "Shell": {
     "sidebar": "Sidebar",
     "workspace": "Workspace",
@@ -1978,5 +1939,742 @@
     },
     "greeting": "Welcome back, {name}",
     "greetingNoName": "Welcome back"
+  },
+  "Overview": {
+    "eyebrow": "Your home",
+    "phaseOf": "Phase {n} of 7",
+    "paused": "Paused",
+    "phases": {
+      "plan": "Plan",
+      "compare": "Compare",
+      "select": "Select",
+      "build": "Build",
+      "verify": "Verify",
+      "handover": "Handover",
+      "record": "Build record"
+    },
+    "statement": {
+      "plan": "Planning your home",
+      "compare": "Comparing contractor quotes",
+      "select": "Choosing your contractor",
+      "build": "Your home is being built",
+      "verify": "Your home is being checked",
+      "handover": "Getting ready for handover",
+      "record": "Your home is built",
+      "none": "This project is paused"
+    },
+    "lead": {
+      "plan": "The requirement, estimate, designs and Build Plan come first. Quotes follow on an accepted Build Plan.",
+      "compare": "Contractors are quoting on the same scope, so the quotes can be compared line by line.",
+      "select": "The comparison is ready. Once you choose, the contract is between you and the contractor.",
+      "build": "Stages are reported by your contractor and confirmed by you. Inspections run alongside.",
+      "verify": "Independent inspections check the work at each gate.",
+      "handover": "The house is nearly yours. The handover collects what you need to keep.",
+      "record": "Everything about how your house was built stays in one record.",
+      "none": "Nothing moves while the project is paused or closed."
+    },
+    "facts": {
+      "title": "The house",
+      "built_up_area_sqft": "Built-up area",
+      "plot": "Plot",
+      "floors": "Floors",
+      "quality_tier": "Quality",
+      "bedrooms": "Bedrooms",
+      "facing": "Facing"
+    },
+    "drawing": {
+      "planned": "Drawn from your requirement",
+      "plannedNote": "Stages fill in once the build starts",
+      "alt": "Elevation drawing of the house as described in the requirement. The build has not started."
+    },
+    "next": {
+      "eyebrow": "Your next step",
+      "also": "Also waiting on you",
+      "watch": "Worth knowing"
+    },
+    "actions": {
+      "finishRequirement": {
+        "title": "Finish your requirement",
+        "body": "Submit it and your project dashboard opens. Plan2Build reviews it in the background."
+      },
+      "answerQuestions": {
+        "title": "Answer Plan2Build's questions",
+        "body": "Plan2Build needs more information before the review can finish. Their message is below."
+      },
+      "confirmStage": {
+        "title": "Confirm stage {number}: {stage}",
+        "body": "Your contractor says this stage is complete. Check it, then confirm it or send it back.",
+        "cta": "Review the stage"
+      },
+      "chooseContractor": {
+        "title": "Choose your contractor",
+        "body": "{count, plural, one {# quote is} other {# quotes are}} compared on the same scope. The contract is between you and the contractor you choose.",
+        "cta": "Compare the quotes"
+      },
+      "acceptBuildPlan": {
+        "title": "Review Build Plan version {version}",
+        "body": "Plan2Build has issued a Build Plan for your house. Quotes are requested on the version you accept.",
+        "cta": "Open the Build Plan"
+      },
+      "reviewDrawings": {
+        "title": "Review your architect's drawings",
+        "body": "{count, plural, one {# drawing set is} other {# drawing sets are}} waiting for your decision.",
+        "cta": "Review the drawings"
+      },
+      "buyPackage": {
+        "title": "Decide on the Plan2Build package",
+        "body": "It opens professionals, quote requests and inspections for this project. Nothing in it is compulsory.",
+        "cta": "See what it includes"
+      },
+      "chooseServices": {
+        "title": "Choose the services you need",
+        "body": "{count, plural, one {# category is} other {# categories are}} still undecided. Mark each one as needed, not needed or your own professional.",
+        "cta": "Choose services"
+      },
+      "requestQuotes": {
+        "title": "Ask contractors to quote",
+        "body": "Your Build Plan is accepted. Up to three contractors quote on the same scope.",
+        "cta": "Request quotes"
+      },
+      "followFindings": {
+        "title": "{count, plural, one {# inspection finding is} other {# inspection findings are}} open",
+        "body": "Your contractor corrects them and an inspector checks again.",
+        "cta": "See the findings"
+      },
+      "generateDesign": {
+        "title": "See your house as a concept design",
+        "body": "{count, plural, one {# free design is} other {# free designs are}} available. Concepts are illustrative, not drawings to build from.",
+        "cta": "Generate My Design"
+      }
+    },
+    "waiting": {
+      "quotes": {
+        "title": "Contractors are preparing quotes",
+        "body": "{invited, plural, one {# contractor was} other {# contractors were}} asked to quote. The comparison appears here when Plan2Build publishes it."
+      },
+      "build": {
+        "title": "Nothing needs you right now",
+        "body": "Your contractor reports each stage. You will be asked to confirm when one is complete."
+      },
+      "none": {
+        "title": "Nothing needs you right now",
+        "body": "The next step will appear here as soon as there is one."
+      }
+    },
+    "journey": {
+      "title": "Your build journey",
+      "intro": "Seven phases from the first answer to the build record.",
+      "states": {
+        "done": "Done",
+        "current": "You are here",
+        "next": "Later",
+        "alongside": "Running alongside"
+      },
+      "open": "Open {phase}"
+    },
+    "notes": {
+      "planAccepted": "Build Plan version {version} accepted.",
+      "planPackage": "Package active. The Build Plan is being prepared.",
+      "planReview": "Plan2Build is reviewing your requirement.",
+      "planDraft": "Your requirement is not submitted yet.",
+      "planFree": "Estimate and concept designs are open.",
+      "compareReady": "{count, plural, one {# quote} other {# quotes}} compared on the same scope.",
+      "compareWaiting": "{count, plural, one {# contractor} other {# contractors}} asked to quote.",
+      "selectDone": "{name} chosen.",
+      "buildNow": "Now: stage {number}, {name}.",
+      "buildCount": "{done} of {total} stages complete.",
+      "verifyGates": "{done} of {total} inspection gates cleared.",
+      "compare": "Quotes are requested on an accepted Build Plan.",
+      "select": "You choose from the comparison. The contract is yours.",
+      "build": "Your contractor reports stages; you confirm them.",
+      "verify": "Independent inspections at each gate.",
+      "handover": "Keys, documents and what to keep.",
+      "record": "How your house was built, in one place."
+    },
+    "nav": {
+      "overview": "Overview",
+      "select": "In quotes",
+      "handover": "At handover",
+      "inspections": "Inspections",
+      "build": "With the build",
+      "verify": "With the build"
+    },
+    "team": {
+      "title": "Meet your project team",
+      "empty": "No professionals engaged yet.",
+      "emptyBody": "Professionals you engage through Plan2Build appear here.",
+      "find": "Browse professionals",
+      "outside": "Your own professional",
+      "viewTeam": "View team",
+      "primary": "Primary contact",
+      "assurance": "Independent assurance",
+      "auditor": "Auditor {code}",
+      "auditorNone": "Independent auditor",
+      "auditorBody": "An independent engineer Plan2Build appoints. Reports go to Plan2Build and to you.",
+      "plan2build": "Plan2Build",
+      "plan2buildRole": "Your project team",
+      "plan2buildBody": "Questions about the project, the inspections or anyone on it.",
+      "call": "Call",
+      "callName": "Call {name}",
+      "message": "Message",
+      "messageName": "Message {name}",
+      "email": "Email {name}",
+      "noContact": "No phone shared yet",
+      "approved": "Plan2Build approved",
+      "own": "Your own professional",
+      "monogram": "{name}",
+      "auditorBodyNone": "Plan2Build appoints one before the first inspection. The reports come to you.",
+      "emailShort": "Email",
+      "noPhoneName": "No phone number shared yet for {name}"
+    },
+    "designs": {
+      "none": "No concept designs yet."
+    },
+    "quotes": {
+      "title": "Contractor quotes",
+      "intro": "Up to three contractors price the same scope. Plan2Build compares the quotes line by line; you choose.",
+      "steps": {
+        "request": "Request quotes",
+        "compare": "Compare quotes",
+        "choose": "Choose your contractor"
+      },
+      "request": {
+        "sent": "Sent to {count, plural, one {# contractor} other {# contractors}}.",
+        "ready": "Your Build Plan is accepted, so you can ask contractors to quote.",
+        "needsPackage": "Opens with the Plan2Build package.",
+        "needsPlan": "Opens once you accept a Build Plan.",
+        "unavailable": "Not available for this project yet."
+      },
+      "compare": {
+        "ready": "{count, plural, one {# quote} other {# quotes}} compared on the same scope.",
+        "waiting": "{received} of {invited} quotes in. The comparison appears here when Plan2Build publishes it.",
+        "notYet": "Once quotes are in, Plan2Build compares them line by line."
+      },
+      "choose": {
+        "done": "{name} chosen. The contract is between you and them.",
+        "ready": "Choose from the comparison. The contract is between you and the contractor.",
+        "notYet": "You choose from the comparison; Plan2Build never takes the contract."
+      },
+      "cta": {
+        "request": "Request quotes",
+        "sent": "See your request",
+        "package": "See the package",
+        "plan": "Open the Build Plan",
+        "compare": "Compare quotes",
+        "choose": "Choose a contractor"
+      },
+      "states": {
+        "done": "Done",
+        "ready": "Ready",
+        "waiting": "Waiting",
+        "locked": "Not yet"
+      }
+    },
+    "greeting": {
+      "plain": "Welcome home.",
+      "named": "Welcome home, {name}."
+    },
+    "sub": "Here is where your home stands.",
+    "home": {
+      "label": "Your home",
+      "place": "Your home in {place}",
+      "illustrative": "Illustrative concept",
+      "illustrativeNote": "A possible look, not a drawing to build from",
+      "drawing": "Elevation from your requirement",
+      "drawingBuild": "Filled in as stages complete",
+      "free": "{remaining} of {total} free designs left",
+      "seeDesigns": "See all designs"
+    },
+    "stage": {
+      "label": "Current stage",
+      "of": "{n} / 7",
+      "viewJourney": "View journey",
+      "paused": "Paused",
+      "pausedNote": "Nothing moves while the project is paused or closed.",
+      "aria": "Phase {n} of 7: {phase}",
+      "railLabel": "The seven phases"
+    },
+    "standing": {
+      "title": "Where things stand",
+      "intro": "Counted, never estimated: each mark is one step, stage, gate or decision.",
+      "planning": "Planning",
+      "construction": "Construction",
+      "verification": "Inspection gates",
+      "decisions": "Decisions",
+      "payments": "Payment milestones",
+      "count": "{done} of {total}",
+      "unit": {
+        "planning": "steps done",
+        "construction": "stages complete",
+        "verification": "gates cleared",
+        "decisions": "decisions made",
+        "payments": "marked paid"
+      },
+      "notYet": {
+        "construction": "Starts with your contractor",
+        "verification": "Checked during the build",
+        "decisions": "Once the specification is issued",
+        "payments": "Marked by you, with no amounts"
+      },
+      "steps": {
+        "requirement": "Requirement",
+        "review": "Review",
+        "package": "Package",
+        "buildPlan": "Build Plan",
+        "quotes": "Quotes",
+        "contractor": "Contractor"
+      },
+      "next": "Next: {step}",
+      "planningDone": "Planning complete",
+      "aria": "{label}: {done} of {total} {unit}"
+    },
+    "activity": {
+      "title": "Recent activity",
+      "all": "View all",
+      "empty": "Updates appear here as your project moves.",
+      "items": {
+        "submitted": "Requirement submitted",
+        "design": "Concept design {number} ready",
+        "planIssued": "Build Plan version {version} issued",
+        "planAccepted": "Build Plan version {version} accepted",
+        "quotesRequested": "Quotes requested from {count, plural, one {# contractor} other {# contractors}}",
+        "quotesCompared": "{count, plural, one {# quote} other {# quotes}} compared",
+        "contractorChosen": "{name} chosen as your contractor",
+        "teamJoined": "{name} joined as {role}",
+        "stageStarted": "Stage {number} started: {name}",
+        "stageDone": "Stage {number} complete: {name}",
+        "inspectionPassed": "Gate {gate} inspection passed: {name}",
+        "findingClosed": "Inspection finding closed: {name}"
+      },
+      "when": {
+        "today": "Today",
+        "yesterday": "Yesterday"
+      }
+    },
+    "snapshot": {
+      "title": "Your project",
+      "requirement": "Your requirement",
+      "estimate": "What it should cost",
+      "package": "Plan2Build package",
+      "packageState": {
+        "ACTIVE": "Active",
+        "NOT_ACTIVE": "Not purchased",
+        "ENDED": "Ended"
+      },
+      "packageWhy": {
+        "ELIGIBLE": "Ready when you are",
+        "OTHER": "Available once Plan2Build has reviewed your project"
+      },
+      "viewPackage": "View the package",
+      "code": "Project code"
+    },
+    "journeyPage": {
+      "title": "Your build journey",
+      "intro": "Seven phases from the first answer to the build record. You are in {phase}.",
+      "introNone": "Seven phases from the first answer to the build record.",
+      "open": "Go to {page}",
+      "whatHappens": "What happens here"
+    },
+    "phaseWhat": {
+      "plan": "Your requirement, an indicative estimate, concept designs, the package and the Build Plan.",
+      "compare": "Up to three contractors quote on the same scope, compared line by line.",
+      "select": "You choose a contractor from the comparison. The contract is yours.",
+      "build": "Your contractor reports each stage; you confirm it.",
+      "verify": "An independent auditor checks six gates, from the foundation to the snag list.",
+      "handover": "Defects closed, documents and warranties collected, and your acknowledgement.",
+      "record": "How your house was built: plan, drawings, specification, inspections and handover."
+    }
+  },
+  "Console": {
+    "title": "Today",
+    "greeting": {
+      "morning": "Good morning, {name}.",
+      "afternoon": "Good afternoon, {name}.",
+      "evening": "Good evening, {name}.",
+      "new": "Welcome to Plan2Build",
+      "noName": "Welcome back"
+    },
+    "lead": {
+      "setup": "Nothing needs you yet. Finish setting up and homeowner requests will reach you here.",
+      "review": "Plan2Build is reviewing your evidence. Requests reach you once you are listed.",
+      "listed": "Here's what needs your attention today.",
+      "working": "Here's what needs your attention today."
+    },
+    "date": "{date} · Your work today",
+    "identity": {
+      "label": "Your professional identity",
+      "years": "{count, plural, one {# year} other {# years}}",
+      "team": "Team of {count}",
+      "listing": {
+        "listed": "Listed",
+        "review": "In review",
+        "changes": "Changes asked",
+        "draft": "Not listed yet",
+        "none": "Not listed yet",
+        "suspended": "Suspended"
+      },
+      "firm": "Firm",
+      "trade": "Trade",
+      "base": "Base",
+      "status": "Status",
+      "practice": "Practice"
+    },
+    "attention": {
+      "eyebrow": "Needs your attention",
+      "lead": {
+        "connection": "{count, plural, one {homeowner request needs a reply} other {homeowner requests need a reply}}",
+        "quote": "{count, plural, one {RFQ needs a response} other {RFQs need a response}}",
+        "inspection": "{count, plural, one {inspection is due} other {inspections are due}}",
+        "finding": "{count, plural, one {inspection finding needs correcting} other {inspection findings need correcting}}"
+      },
+      "soonest": {
+        "connection": {
+          "today": "One is due today.",
+          "tomorrow": "One is due tomorrow.",
+          "later": "The first is due {date}."
+        },
+        "quote": {
+          "today": "One closes today.",
+          "tomorrow": "One closes tomorrow.",
+          "later": "The first closes {date}."
+        },
+        "inspection": {
+          "today": "The first is today.",
+          "tomorrow": "The first is tomorrow.",
+          "later": "The first is on {date}."
+        },
+        "finding": {
+          "today": "",
+          "tomorrow": "",
+          "later": ""
+        }
+      },
+      "cta": {
+        "connection": "Review requests",
+        "quote": "Review RFQs",
+        "inspection": "Open inspections",
+        "finding": "Open the project"
+      },
+      "queue": "Waiting on you, most urgent first",
+      "more": "{count, plural, one {# more waiting} other {# more waiting}}",
+      "seeAll": "See everything waiting",
+      "clear": "You're all caught up",
+      "clearBody": {
+        "listed": "No urgent actions right now. New requests and RFQs will appear here the moment they arrive.",
+        "working": "Nothing is waiting on you. Your projects are below."
+      },
+      "clearLink": "View your listing",
+      "none": "No requests yet",
+      "noneBody": "When your services are approved, homeowner requests that match them will appear here.",
+      "namesNote": "A family's name is shared once you accept their request.",
+      "title": "Requests to review"
+    },
+    "kinds": {
+      "connection": "Homeowner request",
+      "quote": "Request to quote",
+      "inspection": "Inspection",
+      "finding": "Inspection finding"
+    },
+    "due": {
+      "respond": "Reply by {date}",
+      "quotes": "Quote by {date}",
+      "scheduled": "{date}"
+    },
+    "soon": "Due soon",
+    "pipeline": {
+      "title": "Your opportunities",
+      "caption": "Where each opportunity stands now",
+      "dormant": "Opportunities appear here once one of your services is listed.",
+      "note": "Requests come straight from families. RFQs come from families comparing quotes. Both become projects.",
+      "nodes": {
+        "requests": {
+          "name": "Requests",
+          "text": "awaiting your reply"
+        },
+        "rfqs": {
+          "name": "RFQs",
+          "text": "to answer or quote"
+        },
+        "quoted": {
+          "name": "Quoted",
+          "text": "with families, awaiting a decision"
+        },
+        "projects": {
+          "name": "Projects",
+          "text": "active on Plan2Build"
+        }
+      },
+      "needsYou": "needs you",
+      "sr": "{name}: {count}, {text}"
+    },
+    "projects": {
+      "title": "Your active work",
+      "titleOne": "Active project",
+      "count": "{count, plural, one {# project} other {# projects}}",
+      "stage": "Stage {position} of {total}",
+      "service": "Service engagement",
+      "since": "Since {date}",
+      "next": "Next",
+      "nextAction": {
+        "rectify": "Correct the finding on {stage}",
+        "awaitSignoff": "{stage}: completion asked, awaiting the check",
+        "postUpdate": "Post an update for {stage}",
+        "start": "Start {stage}",
+        "onHold": "{stage} is on hold",
+        "complete": "Every stage is complete",
+        "openEngagement": "Open the project",
+        "contactFamily": "Family contact and shared files"
+      },
+      "open": "Open project",
+      "openLabel": "Open {name}",
+      "segments": "{done} of {total} stages complete",
+      "empty": "No active projects yet",
+      "emptyBody": {
+        "listed": "Your next project starts with a homeowner request or an RFQ. Reply quickly: families see who answered.",
+        "setup": "Your next project starts with a homeowner request. Requests reach you once a service is listed."
+      },
+      "emptyReady": "Your listing: {done} of 5 checkpoints",
+      "emptyCta": "Complete your listing",
+      "allProjects": "All projects",
+      "illustration": "Illustration",
+      "flag": {
+        "rectify": "Finding open",
+        "onHold": "On hold"
+      },
+      "family": "Client"
+    },
+    "presence": {
+      "eyebrow": "Build your Plan2Build presence",
+      "step": "Step {n} of 5",
+      "title": {
+        "profile": "Tell families who you are",
+        "services": "Add your first service",
+        "evidence": "Show Plan2Build your evidence",
+        "portfolio": "Add homes you've built",
+        "listed": "Submit for review",
+        "review": "Plan2Build is reviewing your evidence",
+        "attention": "Plan2Build asked for changes"
+      },
+      "body": {
+        "profile": "Your name, firm, base and the radius you cover. Families see this first.",
+        "services": "Tell Plan2Build what you do, so homeowners looking for that work can discover you.",
+        "evidence": "Each service asks for documents and references. Add them, then submit for review.",
+        "portfolio": "Photos of homes you've built or designed. Plan2Build approves each one before it's shown.",
+        "listed": "Everything is in. Submit your service and Plan2Build will review it.",
+        "review": "We check your documents and references, then list you. While you wait, you can add portfolio photos.",
+        "attention": "Read the note on {category}, change what's asked, then submit again."
+      },
+      "cta": {
+        "profile": "Complete your profile",
+        "services": "Add a service",
+        "evidence": "Add evidence",
+        "portfolio": "Add portfolio photos",
+        "listed": "Review and submit",
+        "review": "See what's being checked",
+        "attention": "See what to change"
+      },
+      "fees": "There are no fees for professionals.",
+      "remaining": "What remains",
+      "nothingRemaining": "Nothing remains on your side.",
+      "line": "Your listing, checkpoint by checkpoint"
+    },
+    "checkpoints": {
+      "profile": "Profile",
+      "services": "Services",
+      "evidence": "Evidence",
+      "portfolio": "Portfolio",
+      "listed": "Listed",
+      "states": {
+        "done": "Done",
+        "current": "Now",
+        "next": "Next",
+        "attention": "Changes asked",
+        "review": "In review"
+      },
+      "sr": "{name}: {state}"
+    },
+    "todos": {
+      "profileField": {
+        "display_name": "Add your name",
+        "base_locality": "Add the locality you work from",
+        "base_geom": "Set your base on the map",
+        "service_radius_km": "Set the radius you cover",
+        "other": "Fill in the rest of your profile",
+        "years_experience": "Add your years of experience",
+        "bio": "Describe your work"
+      },
+      "addService": "Add your first service",
+      "evidence": "{label}",
+      "submit": "{category}: submit for review",
+      "changes": "{category}: make the changes asked",
+      "portfolio": "Add at least one portfolio photo",
+      "review": "{category}: in review with Plan2Build",
+      "evidenceMore": "{remaining, plural, one {# more} other {# more}} · {category}"
+    },
+    "listing": {
+      "title": "Your Plan2Build listing",
+      "ready": "{done} of 5 checkpoints",
+      "discoverable": "Listed and discoverable",
+      "discoverableBody": "Families can find you in the Plan2Build directory for the services below.",
+      "services": "Your services",
+      "addService": "Add a service",
+      "manage": "Manage services",
+      "noServices": "Define your services",
+      "noServicesBody": "Tell Plan2Build what you do so homeowners can discover you."
+    },
+    "record": {
+      "title": "Your Plan2Build record",
+      "note": "Facts from your work on Plan2Build. Not a rating, and not a ranking.",
+      "empty": "Your record starts with your first reply to a family.",
+      "verified": {
+        "value": "{count}",
+        "label": "{count, plural, one {verified service} other {verified services}}"
+      },
+      "replies": {
+        "value": "{answered}/{received}",
+        "label": "requests answered before they expired"
+      },
+      "quotes": {
+        "value": "{selected}/{submitted}",
+        "label": "quotes selected by families"
+      },
+      "projects": {
+        "value": "{count}",
+        "label": "{count, plural, one {project on Plan2Build} other {projects on Plan2Build}}"
+      },
+      "inspections": {
+        "value": "{count}",
+        "label": "{count, plural, one {inspection submitted} other {inspections submitted}}"
+      },
+      "experience": "{years} in practice"
+    },
+    "inspections": {
+      "title": "Upcoming inspections",
+      "none": "No inspections due.",
+      "open": "Open"
+    },
+    "notifications": {
+      "label": "Notifications",
+      "count": "{count, plural, =0 {Notifications, nothing new} one {Notifications, # waiting} other {Notifications, # waiting}}",
+      "title": "Notifications",
+      "intro": "Everything waiting on you, most urgent first: homeowner requests, RFQs and inspections.",
+      "empty": "Nothing is waiting on you",
+      "emptyBody": "New homeowner requests, RFQs and inspections appear here as they arrive.",
+      "back": "Back to today"
+    },
+    "projectsPage": {
+      "title": "Projects",
+      "intro": "The work you are doing on Plan2Build: projects won through quotes, and services families engaged you for."
+    },
+    "servicesPage": {
+      "title": "Services",
+      "intro": "The work you do. Each service is checked and listed on its own, and approval alone lists it. There are no fees for professionals."
+    },
+    "nav": {
+      "today": "Today",
+      "requests": "Requests",
+      "rfqs": "RFQs & quotes",
+      "projects": "Projects",
+      "drawings": "Drawings & sign-offs",
+      "inspections": "Inspections",
+      "profile": "Profile",
+      "services": "Services",
+      "portfolio": "Portfolio",
+      "work": "Work",
+      "presence": "Your presence"
+    },
+    "preview": "Preview data: sample {state} state, not from the server",
+    "summary": {
+      "projects": "{count, plural, one {# active project} other {# active projects}}",
+      "requests": "{count, plural, one {# request to review} other {# requests to review}}",
+      "inspections": "{count, plural, one {# inspection due} other {# inspections due}}",
+      "none": "Nothing is waiting on you right now."
+    },
+    "notice": {
+      "label": "Your listing",
+      "progress": "{done} of 5 steps done",
+      "steps": {
+        "profile": "Complete your profile",
+        "services": "Add your first service",
+        "evidence": "Add your evidence",
+        "portfolio": "Add portfolio photos",
+        "listed": "Submit for review",
+        "review": "In review with Plan2Build",
+        "attention": "Plan2Build asked for changes"
+      },
+      "text": {
+        "profile": "Families see your name, firm and base first.",
+        "services": "Tell Plan2Build what you do so homeowners can find you.",
+        "evidence": "Each service needs documents and references before review.",
+        "portfolio": "Photos of homes you've built or designed.",
+        "listed": "Everything is in. Submit your service for review.",
+        "review": "Requests reach you once you are listed.",
+        "attention": "Read the note on your service and send it again."
+      },
+      "link": {
+        "review": "See status",
+        "attention": "See what to change"
+      },
+      "more": "What's left"
+    },
+    "brief": {
+      "floors": "{count, plural, one {# floor} other {# floors}}",
+      "area": "{value} sq ft",
+      "homeowner": "Homeowner"
+    },
+    "header": {
+      "account": "Account",
+      "bell": "Notifications"
+    }
+  },
+  "Inbox": {
+    "bell": "Notifications",
+    "bellCount": "Notifications, {count, plural, =0 {none new} one {# new} other {# new}}",
+    "preview": "Preview",
+    "previewNote": "Messages are a preview: nothing you write here is sent yet. To reach someone now, call them.",
+    "notifications": {
+      "title": "Notifications",
+      "intro": "What needs you and what changed on {code}.",
+      "empty": "Nothing yet. Updates appear here as your project moves.",
+      "groups": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "earlier": "Earlier"
+      },
+      "kinds": {
+        "action": "Action required",
+        "update": "Project update",
+        "quote": "Quote",
+        "inspection": "Inspection",
+        "payment": "Payment",
+        "message": "Message"
+      },
+      "new": "New",
+      "open": "Open"
+    },
+    "messages": {
+      "title": "Messages",
+      "intro": "Your conversations about {code}.",
+      "choose": "Choose a conversation",
+      "write": "Write a message",
+      "send": "Send",
+      "notSent": "Not sent: messaging is not connected yet. Call {name} instead.",
+      "notSentNoPhone": "Not sent: messaging is not connected yet.",
+      "you": "You",
+      "empty": "No conversations yet. Your team's threads appear here once professionals join your project."
+    }
+  },
+  "Welcome": {
+    "title": "Welcome to Plan2Build",
+    "intro": "Your account is ready. Tell us about your home now, or come back to it when you like.",
+    "card": {
+      "eyebrow": "You are in",
+      "label": "Your next step",
+      "note": "You can do this later"
+    },
+    "now": "Tell us about my home",
+    "nowHint": "A few questions about your plot and your house.",
+    "skip": "Skip for now",
+    "skipHint": "Go to your dashboard. We will remind you there."
   }
 }

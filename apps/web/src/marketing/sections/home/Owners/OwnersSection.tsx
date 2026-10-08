@@ -23,6 +23,8 @@ import { framerPhoto } from '@/marketing/lib/images';
 const MIN_PIN_VIEWPORT = 660;
 const MAX_REVIEWS = 8;
 const MAX_CHECKS = 6;
+/** Screens of scrolling each item gets while the stage is pinned (the section is one more). */
+const SCREENS_PER_ITEM = 0.8;
 /** Seconds the smooth scroller takes to bring a review into place when a button is pressed. */
 const BUTTON_SCROLL_DURATION = 0.9;
 
@@ -99,6 +101,12 @@ export function OwnersSection({ content, reviews }: OwnersProps) {
     show(index);
   };
 
+  /** Scrolls to the end of the pinned section, so the next one starts at the top of the viewport. */
+  const skip = () => {
+    const section = ref.current;
+    if (section) scrollPageTo(section.getBoundingClientRect().bottom + window.scrollY, { duration: BUTTON_SCROLL_DURATION });
+  };
+
   // The phone row reports which slide is snapped in, so the counter and bar follow a swipe.
   const onRailScroll = () => {
     const rail = railRef.current;
@@ -112,7 +120,7 @@ export function OwnersSection({ content, reviews }: OwnersProps) {
   const motion = hydrated && !reduced;
   const style: StyleWithVars = {
     ...TYPE.body,
-    ...(pinned ? { height: `calc(100svh * ${(2 + Math.max(0, count - 4) * 0.25).toFixed(2)})` } : {}),
+    ...(pinned ? { height: `calc(100svh * ${(1 + count * SCREENS_PER_ITEM).toFixed(2)})` } : {}),
   };
 
   const heading = (
@@ -155,6 +163,12 @@ export function OwnersSection({ content, reviews }: OwnersProps) {
       >
         <i />
       </span>
+      {pinned && content.skipLabel && (
+        <button type="button" className="gd-skip" style={{ ...TYPE.mono, fontWeight: 600 }} onClick={skip}>
+          {content.skipLabel}
+          <Arrow down />
+        </button>
+      )}
     </div>
   );
 
@@ -287,10 +301,14 @@ type HandoverSheetProps = {
   photos?: SheetPhotos;
 };
 
-/** The handover sheet: hazard edge, project photo, ticked checklist, result beam and stamp. */
+/**
+ * The handover sheet: hazard edge, project photo, ticked checklist, result beam and stamp. With
+ * no checklist, result or stamp it is the photo alone, which then takes the room they leave.
+ */
 function HandoverSheet({ content, checks, review, index, count, photos }: HandoverSheetProps) {
+  const photoOnly = checks.length === 0 && !review.result && !content.stampText;
   return (
-    <div className="owners-card gd-lt">
+    <div className={cx('owners-card gd-lt', photoOnly && 'is-photo')}>
       <span className="owners-haz" aria-hidden="true" />
       <p className="owners-top" style={TYPE.mono}>
         <span>
@@ -335,39 +353,41 @@ function HandoverSheet({ content, checks, review, index, count, photos }: Handov
         )}
       </div>
       {/* Keyed by review on desktop so the boxes tick again for every review that arrives. */}
-      <div key={photos ? index : 'static'} className="owners-body">
-        {checks.length > 0 && (
-          <ul className="owners-checks">
-            {checks.map((check, checkIndex) => (
-              <li key={checkIndex} style={{ '--i': checkIndex } as StyleWithVars}>
-                <span className="owners-box" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="square">
-                    <path d="M5 12.5l4.6 4.6L19 7.4" pathLength={1} />
-                  </svg>
-                </span>
-                <span className="owners-ct">{check}</span>
-                <i aria-hidden="true" />
-              </li>
-            ))}
-          </ul>
-        )}
-        {review.result && (
-          <p className="owners-res" style={{ '--i': checks.length } as StyleWithVars}>
-            <span style={TYPE.mono}>{content.resultLabel}</span>
-            <b style={TYPE.display}>{review.result}</b>
-          </p>
-        )}
-        {content.stampText && (
-          <span className="owners-stamp" aria-hidden="true" style={TYPE.display}>
-            {content.stampText}
-          </span>
-        )}
-      </div>
+      {!photoOnly && (
+        <div key={photos ? index : 'static'} className="owners-body">
+          {checks.length > 0 && (
+            <ul className="owners-checks">
+              {checks.map((check, checkIndex) => (
+                <li key={checkIndex} style={{ '--i': checkIndex } as StyleWithVars}>
+                  <span className="owners-box" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="square">
+                      <path d="M5 12.5l4.6 4.6L19 7.4" pathLength={1} />
+                    </svg>
+                  </span>
+                  <span className="owners-ct">{check}</span>
+                  <i aria-hidden="true" />
+                </li>
+              ))}
+            </ul>
+          )}
+          {review.result && (
+            <p className="owners-res" style={{ '--i': checks.length } as StyleWithVars}>
+              <span style={TYPE.mono}>{content.resultLabel}</span>
+              <b style={TYPE.display}>{review.result}</b>
+            </p>
+          )}
+          {content.stampText && (
+            <span className="owners-stamp" aria-hidden="true" style={TYPE.display}>
+              {content.stampText}
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-function Arrow({ back = false }: { back?: boolean }) {
+function Arrow({ back = false, down = false }: { back?: boolean; down?: boolean }) {
   return (
     <svg
       width="18"
@@ -378,7 +398,7 @@ function Arrow({ back = false }: { back?: boolean }) {
       strokeWidth="2.4"
       strokeLinecap="square"
       aria-hidden="true"
-      style={back ? { transform: 'scaleX(-1)' } : undefined}
+      style={back ? { transform: 'scaleX(-1)' } : down ? { transform: 'rotate(90deg)' } : undefined}
     >
       <path d="M4 12h15M13 5l7 7-7 7" />
     </svg>

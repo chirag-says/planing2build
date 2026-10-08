@@ -1,13 +1,13 @@
 "use client";
 
-// The signed-in app shell for homeowners and professionals (UI_DESIGN_SYSTEM.md section 9): a
-// night sidebar with the navigation in labelled groups, a sticky top bar with the page context, the
-// main action and the account avatar, and the website's blueprint ground under the content. Below
-// 1024 px the sidebar moves into a slide-out menu. Navigation data comes from the host's layout;
-// the icons are named, so a server layout can describe the items.
+// The signed-in product shell for homeowners and professionals (UI_DESIGN_SYSTEM.md section 9):
+// a light sidebar on wide screens with the places you go (on a project, its journey phases and
+// their sections; a professional's work queue with brass counts of what waits), and a top bar with
+// where you are, the main action and the account. Below 1024 px the sidebar becomes the slide-out
+// menu. Navigation data comes from the host's layout; icons are named, so a server layout can
+// describe the items.
 import { cn } from "cn";
 import {
-  ArrowRightIcon,
   CalculatorIcon,
   ChevronDownIcon,
   ClipboardCheckIcon,
@@ -58,8 +58,8 @@ import {
 } from "@/components/ui/sheet";
 import { browserApi } from "@/lib/api/browser";
 import { getTranslator } from "@/lib/i18n";
-import logoNight from "@/marketing/assets/plan2build-logo-dark.png";
 import logo from "@/marketing/assets/plan2build-logo.png";
+import "./sidebar-beam.css";
 
 const nav = getTranslator("Nav");
 const shell = getTranslator("Shell");
@@ -102,6 +102,10 @@ export interface ShellItem {
 export interface ShellGroup {
   label?: string;
   items: ShellItem[];
+  /** A journey phase: its state (a brass square where the project is) and, with no screen of its own, where it happens. */
+  phase?: { state: "done" | "current" | "next" | "alongside"; stateLabel: string; note?: string };
+  /** Secondary places (a professional's presence beside their work): smaller, quieter rows. */
+  quiet?: boolean;
 }
 
 /** One landmark: a named <nav> holding one or more labelled groups. */
@@ -142,98 +146,108 @@ function useSignOut(to: string) {
 /** The account mark: the website's brass square with an ink outline, initials in mono caps. */
 export function Avatar({
   initials,
+  photoUrl,
   className,
 }: {
   initials: string | null;
+  /** Their photo when the account has one; the brass monogram stands in until then. */
+  photoUrl?: string | null;
   className?: string;
 }) {
   return (
     <span
       aria-hidden="true"
+      style={photoUrl ? { backgroundImage: `url("${photoUrl}")` } : undefined}
       className={cn(
-        "inline-flex size-9 shrink-0 items-center justify-center rounded-md bg-brand font-mono text-xs font-semibold tracking-wider text-brand-foreground ring-1 ring-foreground",
+        "inline-flex size-9 shrink-0 items-center justify-center rounded-md bg-brand bg-cover bg-center font-mono text-xs font-semibold tracking-wider text-brand-foreground ring-1 ring-foreground",
         className,
       )}
     >
-      {initials ?? <UserRoundIcon className="size-4" />}
+      {!photoUrl && (initials ?? <UserRoundIcon className="size-4" />)}
     </span>
   );
 }
 
-function SidebarNav({
-  sections,
-  onNavigate,
-}: {
-  sections: ShellSection[];
-  onNavigate?: () => void;
-}) {
+function PhaseMarker({ state }: { state: NonNullable<ShellGroup["phase"]>["state"] }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        "size-2 shrink-0",
+        state === "done" && "bg-foreground",
+        state === "current" && "bg-brand ring-1 ring-foreground",
+        state === "alongside" && "bg-brand/60 ring-1 ring-foreground/60",
+        state === "next" && "ring-1 ring-foreground/40",
+      )}
+    />
+  );
+}
+
+/**
+ * The sidebar's places (and the phone menu's): named navigation landmarks of labelled groups. A
+ * project's groups are its journey phases, each with its state; the current one sits on a brass
+ * wash. The current page is an ink row; counts of what waits are brass.
+ */
+function SidebarNav({ sections, onNavigate }: { sections: ShellSection[]; onNavigate?: () => void }) {
   const pathname = usePathname();
   return (
     <div className="flex flex-col gap-6">
       {sections.map((section) => (
-        <nav
-          key={section.navLabel}
-          aria-label={section.navLabel}
-          className="flex flex-col gap-5"
-        >
+        <nav key={section.navLabel} aria-label={section.navLabel} className="flex flex-col gap-1">
           {section.groups.map((group, index) => (
-            <div key={group.label ?? index} className="flex flex-col gap-1">
+            <div
+              key={group.label ?? index}
+              className={cn(
+                "flex flex-col gap-0.5 rounded-md",
+                group.label && "pt-2",
+                group.phase?.state === "current" && "bg-brand/15 pb-1 ring-1 ring-brand/40",
+              )}
+            >
               {group.label && (
-                <p className="px-3 pb-1 font-mono text-xs tracking-widest text-muted-foreground uppercase">
+                <p className="flex items-center gap-2 px-3 pb-1 font-mono text-[0.6875rem] tracking-widest text-muted-foreground uppercase">
+                  {group.phase && <PhaseMarker state={group.phase.state} />}
                   {group.label}
+                  {group.phase && <span className="sr-only">, {group.phase.stateLabel}</span>}
                 </p>
               )}
-              <ul className="flex flex-col gap-0.5">
-                {group.items.map((item) => {
-                  const current = isCurrent(pathname, item);
-                  const Icon = ICONS[item.icon];
-                  return (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        onClick={onNavigate}
-                        aria-current={current ? "page" : undefined}
-                        className={cn(
-                          "group relative flex min-h-11 items-center gap-3 rounded-md px-3 text-base font-medium transition-colors",
-                          "outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
-                          current
-                            ? "bg-foreground/10 text-foreground"
-                            : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground",
-                        )}
-                      >
-                        {/* The brass bar of the current item; it grows in, like the website's beam. */}
-                        <span
-                          aria-hidden="true"
+              {group.items.length === 0 && group.phase?.note && (
+                <p className="px-3 pb-1.5 text-sm text-muted-foreground">{group.phase.note}</p>
+              )}
+              {group.items.length > 0 && (
+                <ul className="flex flex-col gap-0.5">
+                  {group.items.map((item) => {
+                    const current = isCurrent(pathname, item);
+                    const Icon = ICONS[item.icon];
+                    return (
+                      <li key={item.href}>
+                        <Link
+                          href={item.href}
+                          onClick={onNavigate}
+                          aria-current={current ? "page" : undefined}
                           className={cn(
-                            "absolute inset-y-2 left-0 w-1 rounded-r-sm bg-brand transition-transform duration-300 ease-out",
-                            current ? "scale-y-100" : "scale-y-0",
+                            "sb-beam flex min-h-9 items-center gap-3 rounded-md px-3 font-medium transition-colors",
+                            group.quiet ? "text-sm" : "text-[0.9375rem]",
+                            "outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                            current ? "bg-foreground text-background" : "text-foreground/80",
                           )}
-                        />
-                        <Icon
-                          aria-hidden="true"
-                          className={cn(
-                            "size-[1.125rem] shrink-0 transition-colors",
-                            current
-                              ? "text-brand"
-                              : "text-muted-foreground group-hover:text-foreground",
-                          )}
-                        />
-                        <span className="min-w-0 flex-1 truncate">
-                          {item.label}
-                        </span>
-                        {item.count ? (
-                          <span className="rounded-sm bg-brand px-1.5 py-1 font-mono text-xs leading-none font-semibold text-brand-foreground tabular-nums">
-                            <span aria-hidden="true">{item.count}</span>
-                            <span className="sr-only">
-                              {shell("newCount", { count: item.count })}
+                        >
+                          <Icon
+                            aria-hidden="true"
+                            className={cn("sb-beam-icon size-[1.0625rem] shrink-0", current ? "text-brand" : "text-muted-foreground")}
+                          />
+                          <span className="sb-beam-label min-w-0 flex-1 truncate">{item.label}</span>
+                          {item.count ? (
+                            <span className="rounded-sm bg-brand px-1.5 py-1 font-mono text-xs leading-none font-semibold text-brand-foreground tabular-nums ring-1 ring-foreground">
+                              <span aria-hidden="true">{item.count}</span>
+                              <span className="sr-only">{shell("newCount", { count: item.count })}</span>
                             </span>
-                          </span>
-                        ) : null}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+                          ) : null}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
           ))}
         </nav>
@@ -242,51 +256,21 @@ function SidebarNav({
   );
 }
 
-function HelpCard({ href }: { href: string }) {
-  return (
-    <Link
-      href={href}
-      className="group block overflow-hidden rounded-md bg-foreground/5 ring-1 ring-foreground/10 transition-colors outline-none hover:bg-foreground/10 focus-visible:ring-3 focus-visible:ring-ring/50"
-    >
-      <span
-        aria-hidden="true"
-        className="block h-1.5 bg-[repeating-linear-gradient(-45deg,var(--brand)_0_0.375rem,var(--background)_0.375rem_0.75rem)]"
-      />
-      <span className="flex items-center gap-3 px-3 py-2.5">
-        <LifeBuoyIcon
-          aria-hidden="true"
-          className="size-4 shrink-0 text-brand"
-        />
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="font-heading text-base leading-tight">
-            {shell("help")}
-          </span>
-          <span className="text-sm text-muted-foreground">
-            {shell("helpLink")}
-          </span>
-        </span>
-        <ArrowRightIcon
-          aria-hidden="true"
-          className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground"
-        />
-      </span>
-    </Link>
-  );
-}
-
 function Brand({
   brand,
   tag,
   homeHref,
+  onNavigate,
 }: {
   brand: string;
   tag: string;
   homeHref: string;
+  onNavigate?: () => void;
 }) {
   return (
-    <Link href={homeHref} className="flex flex-col gap-1 rounded-md">
+    <Link href={homeHref} onClick={onNavigate} className="flex flex-col gap-1 rounded-md">
       <Image
-        src={logoNight}
+        src={logo}
         alt=""
         className="h-7 w-auto self-start"
         priority
@@ -308,12 +292,15 @@ export function AppShell({
   homeHref = "/",
   userName,
   initials,
+  photoUrl,
   accountKind,
+  accountSubtitle,
   sections,
   sidebarTop,
   helpHref,
   context,
   primaryAction,
+  headerActions,
   accountLinks,
   signOutHref = "/sign-in",
   children,
@@ -324,15 +311,22 @@ export function AppShell({
   homeHref?: string;
   userName: string | null;
   initials: string | null;
+  /** Their photo for the account mark, when there is one. */
+  photoUrl?: string | null;
+  /** A line under their name beside the avatar (a firm); the name alone when absent. */
+  accountSubtitle?: string | null;
   /** "Homeowner account", shown under the name in the account menu. */
   accountKind: string;
+  /** The places in the bar, flattened in order; groups label them in the phone menu. */
   sections: ShellSection[];
-  /** Above the navigation: the project switcher on a project's pages. */
+  /** Where you are, as a control: the project switcher on a project's pages. */
   sidebarTop?: ReactNode;
   helpHref?: string;
-  /** The top bar's left side on wide screens: where you are. */
+  /** Where you are, as text, when there is no switcher (a greeting). */
   context?: ReactNode;
   primaryAction?: { href: string; label: string };
+  /** Controls beside the account button (a notifications bell). */
+  headerActions?: ReactNode;
   accountLinks: ShellLink[];
   /** Where a signed-out person lands. */
   signOutHref?: string;
@@ -342,11 +336,53 @@ export function AppShell({
   // Every link inside the menu closes it as it navigates.
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const sidebarBody = (onNavigate?: () => void) => (
-    <>
-      {sidebarTop}
-      <SidebarNav sections={sections} onNavigate={onNavigate} />
-    </>
+  const account = (
+    // Non-modal, as in the WAI-ARIA menu button pattern: a modal menu hides the page with
+    // aria-hidden while its links stay focusable (axe aria-hidden-focus).
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" aria-label={nav("account")} className="h-12 gap-2.5 px-1.5 hover:bg-accent">
+          <Avatar initials={initials} photoUrl={photoUrl} className="size-10" />
+          {userName && (
+            <span className="hidden min-w-0 flex-col items-start text-left md:flex">
+              <span className="max-w-44 truncate text-base leading-tight font-semibold">{userName}</span>
+              {accountSubtitle && (
+                <span className="max-w-44 truncate font-mono text-[0.6875rem] leading-tight tracking-widest text-muted-foreground uppercase">
+                  {accountSubtitle}
+                </span>
+              )}
+            </span>
+          )}
+          <ChevronDownIcon aria-hidden="true" className="hidden size-4 text-muted-foreground md:inline" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-64 min-w-64">
+        <DropdownMenuLabel className="flex items-center gap-3 px-2 py-2">
+          <Avatar initials={initials} photoUrl={photoUrl} className="size-10" />
+          <span className="flex min-w-0 flex-col">
+            <span className="truncate text-base font-semibold text-foreground">{userName ?? shell("you")}</span>
+            <span className="font-mono text-xs tracking-wider text-muted-foreground uppercase">{accountKind}</span>
+          </span>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {accountLinks.map((link) => {
+          const Icon = ICONS[link.icon];
+          return (
+            <DropdownMenuItem key={link.href} asChild className="py-2 text-base">
+              <Link href={link.href}>
+                <Icon aria-hidden="true" />
+                {link.label}
+              </Link>
+            </DropdownMenuItem>
+          );
+        })}
+        {accountLinks.length > 0 && <DropdownMenuSeparator />}
+        <DropdownMenuItem disabled={busy} onSelect={signOut} className="py-2 text-base">
+          <LogOutIcon aria-hidden="true" />
+          {busy ? nav("signingOut") : nav("signOut")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 
   return (
@@ -358,60 +394,48 @@ export function AppShell({
         {nav("skip")}
       </a>
 
-      {/* The night column runs the full page height; the sidebar itself stays in view. */}
-      <div className="surface-dark hidden w-64 shrink-0 bg-background text-foreground lg:block">
-        <aside
-          aria-label={shell("sidebar")}
-          className="sticky top-0 flex h-dvh flex-col"
-        >
-          <div className="flex h-18 shrink-0 items-center border-b border-border px-5">
-            <Brand brand={brand} tag={tag} homeHref={homeHref} />
+      {/* The sidebar: light, beside the content (never over it), and it stays as the page scrolls. */}
+      <aside className="sticky top-0 hidden h-svh w-72 shrink-0 flex-col border-r-2 border-foreground/10 bg-card lg:flex">
+        <div className="flex h-18 shrink-0 items-center border-b-2 border-foreground/10 px-5">
+          <Brand brand={brand} tag={tag} homeHref={homeHref} />
+        </div>
+        <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-3 py-4" data-lenis-prevent>
+          {sidebarTop}
+          <SidebarNav sections={sections} />
+        </div>
+        {helpHref && (
+          <div className="shrink-0 border-t-2 border-foreground/10 p-3">
+            <Link
+              href={helpHref}
+              className="flex min-h-10 items-center gap-3 rounded-md px-3 text-[0.9375rem] font-medium text-foreground/80 outline-none hover:bg-foreground/5 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              <LifeBuoyIcon aria-hidden="true" className="size-[1.0625rem] text-muted-foreground" />
+              {shell("help")}
+            </Link>
           </div>
-          <div
-            className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-3 py-5"
-            data-lenis-prevent
-          >
-            {sidebarBody()}
-          </div>
-          {helpHref && (
-            <div className="shrink-0 border-t border-border p-3">
-              <HelpCard href={helpHref} />
-            </div>
-          )}
-        </aside>
-      </div>
+        )}
+      </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 border-b-2 border-foreground/10 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+        {/* Not sticky: a pinned bar's links would cover the page's own targets as it scrolls (WCAG 2.5.8). */}
+        <header className="relative z-30 border-b-2 border-foreground/10 bg-background">
           <div className="flex h-16 items-center gap-3 px-4 sm:px-6 lg:h-18 lg:px-8">
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="lg:hidden"
-                  aria-label={nav("openMenu")}
-                >
+                <Button variant="outline" size="icon" className="lg:hidden" aria-label={nav("openMenu")}>
                   <MenuIcon aria-hidden="true" />
                 </Button>
               </SheetTrigger>
-              <SheetContent
-                side="left"
-                className="surface-dark w-72 gap-0 border-border bg-background p-0 text-foreground"
-              >
-                <SheetHeader className="h-18 justify-center border-b border-border px-5">
+              <SheetContent side="left" className="w-80 gap-0 border-border bg-card p-0 text-foreground">
+                <SheetHeader className="h-18 justify-center border-b-2 border-foreground/10 px-5">
                   <SheetTitle className="sr-only">{nav("menu")}</SheetTitle>
-                  <SheetDescription className="sr-only">
-                    {brand}
-                  </SheetDescription>
-                  <Brand brand={brand} tag={tag} homeHref={homeHref} />
+                  <SheetDescription className="sr-only">{brand}</SheetDescription>
+                  <Brand brand={brand} tag={tag} homeHref={homeHref} onNavigate={() => setMenuOpen(false)} />
                 </SheetHeader>
-                <div
-                  className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-3 py-5"
-                  data-lenis-prevent
-                >
-                  {sidebarBody(() => setMenuOpen(false))}
-                  <div className="flex flex-col gap-1 border-t border-border pt-4">
+                <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-3 py-4" data-lenis-prevent>
+                  {sidebarTop}
+                  <SidebarNav sections={sections} onNavigate={() => setMenuOpen(false)} />
+                  <div className="flex flex-col gap-1 border-t-2 border-foreground/10 pt-4">
                     <p className="px-3 pb-1 font-mono text-xs tracking-widest text-muted-foreground uppercase">
                       {userName ?? shell("you")}
                     </p>
@@ -431,15 +455,15 @@ export function AppShell({
               </SheetContent>
             </Sheet>
 
-            <Link href={homeHref} className="shrink-0 rounded-md lg:hidden">
-              <Image src={logo} alt="" className="h-6 w-auto sm:h-7" />
-              <span className="sr-only">{brand}</span>
-            </Link>
-
-            <div className="hidden min-w-0 flex-1 lg:block">{context}</div>
-            <div className="flex-1 lg:hidden" />
+            <div className="lg:hidden">
+              <Brand brand={brand} tag={tag} homeHref={homeHref} />
+            </div>
+            {/* Where you are, as text: the greeting, or the project. */}
+            <div className="hidden min-w-0 flex-1 md:block">{context}</div>
+            <div className="flex-1 md:hidden" />
 
             <div className="flex shrink-0 items-center gap-2">
+              {headerActions}
               {primaryAction && (
                 <Button asChild className="hidden sm:inline-flex">
                   <Link href={primaryAction.href}>
@@ -448,70 +472,7 @@ export function AppShell({
                   </Link>
                 </Button>
               )}
-              {helpHref && (
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="icon"
-                  className="hidden sm:inline-flex"
-                >
-                  <Link href={helpHref} aria-label={shell("help")}>
-                    <LifeBuoyIcon aria-hidden="true" />
-                  </Link>
-                </Button>
-              )}
-              {/* Non-modal, as in the WAI-ARIA menu button pattern: a modal menu hides the page
-                  with aria-hidden while its links stay focusable (axe aria-hidden-focus). */}
-              <DropdownMenu modal={false}>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    aria-label={nav("account")}
-                    className="h-11 gap-2 px-1.5 hover:bg-accent"
-                  >
-                    <Avatar initials={initials} />
-                    {userName && (
-                      <span className="hidden max-w-40 truncate text-base font-medium md:inline">
-                        {userName}
-                      </span>
-                    )}
-                    <ChevronDownIcon
-                      aria-hidden="true"
-                      className="hidden size-4 text-muted-foreground md:inline"
-                    />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64 min-w-64">
-                  <DropdownMenuLabel className="flex items-center gap-3 px-2 py-2">
-                    <Avatar initials={initials} className="size-10" />
-                    <span className="flex min-w-0 flex-col">
-                      <span className="truncate text-base font-semibold text-foreground">
-                        {userName ?? shell("you")}
-                      </span>
-                      <span className="font-mono text-xs tracking-wider text-muted-foreground uppercase">
-                        {accountKind}
-                      </span>
-                    </span>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {accountLinks.map((link) => {
-                    const Icon = ICONS[link.icon];
-                    return (
-                      <DropdownMenuItem key={link.href} asChild className="py-2 text-base">
-                        <Link href={link.href}>
-                          <Icon aria-hidden="true" />
-                          {link.label}
-                        </Link>
-                      </DropdownMenuItem>
-                    );
-                  })}
-                  {accountLinks.length > 0 && <DropdownMenuSeparator />}
-                  <DropdownMenuItem disabled={busy} onSelect={signOut} className="py-2 text-base">
-                    <LogOutIcon aria-hidden="true" />
-                    {busy ? nav("signingOut") : nav("signOut")}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {account}
             </div>
           </div>
         </header>

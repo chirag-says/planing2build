@@ -10,6 +10,7 @@ import { revealDelay, type StyleWithVars } from '@/marketing/lib/css';
 import { pad2 } from '@/marketing/lib/text';
 import { clamp01 } from '@/marketing/lib/ticker';
 import { TYPE } from '@/marketing/lib/typography';
+import { DrawingDefs } from './DrawingParts';
 import { CALLOUTS, DRAWING_HEIGHT, DRAWING_WIDTH, drawDelay } from './drawing';
 
 /**
@@ -142,15 +143,7 @@ export function SafetyShell({ id, checks, checkWord, header, strokes, labels, zo
           <div className="safety-grid" aria-hidden="true" />
           <div className="safety-fig">
             <svg className="safety-dw" viewBox={`0 0 ${DRAWING_WIDTH} ${DRAWING_HEIGHT}`} aria-hidden="true" focusable="false" style={TYPE.mono}>
-              <defs>
-                <pattern id="safety-hy" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                  <rect width="9" height="9" fill="var(--gd-brass)" opacity=".34" />
-                  <rect width="4" height="9" fill="var(--gd-brass)" />
-                </pattern>
-                <pattern id="safety-hc" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                  <rect width="1" height="5" fill="var(--gd-ink)" opacity=".55" />
-                </pattern>
-              </defs>
+              <DrawingDefs />
               {HATCHED_ZONES.map((index) => zone(index, 'hat'))}
               {strokes}
               {SOLID_ZONES.map((index) => zone(index, 'sol'))}

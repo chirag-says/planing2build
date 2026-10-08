@@ -312,6 +312,42 @@ button.gd-btn {
   transform: translate(var(--mx, 0px), var(--my, 0px)) scale(0.96) !important;
   transition-duration: 0.12s;
 }
+/*
+ * Skip: on a scroll-pinned section, jumps past the rest of it. Outlined in brass at the arrows'
+ * height so it reads at a glance beside them; fills on hover. Dark sections only (brass text).
+ * Scoped under .gd to outrank the app's global button font size.
+ */
+.gd .gd-skip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  height: 48px;
+  padding: 0 18px 0 20px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  box-shadow: inset 0 0 0 2px var(--gd-brass);
+  color: var(--gd-brass);
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    translate 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.gd .gd-skip:hover,
+.gd .gd-skip:focus-visible {
+  background: var(--gd-brass);
+  color: var(--gd-ink);
+  translate: 0 -2px;
+}
+.gd .gd-skip:active {
+  translate: 0 1px;
+}
 /* TEXT-SAFE accents: coral is a SURFACE colour on paper (chips, fills, rings) — accent text on paper is the deep mix; on night grounds the coral itself reads */
 .gd {
   --gd-acc: color-mix(in srgb, var(--gd-brass) 38%, var(--gd-ink));

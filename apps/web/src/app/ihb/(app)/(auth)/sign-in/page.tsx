@@ -34,7 +34,7 @@ export default async function SignInPage({
       label={t("card.label")}
       note={t("card.note")}
     >
-      <SignInForm framed home="/projects" next={target} />
+      <SignInForm framed home="/welcome" next={target} />
     </HangingCard>
   );
 }

@@ -74,7 +74,7 @@ test("an auditor's finding is approved, corrected by the contractor and closed b
   const auditorEmail = uniqueEmail();
   await auditor.goto(`${PRO}/sign-in`);
   await signInByCode(auditor, request, auditorEmail);
-  await expect(auditor.getByRole("heading", { level: 1, name: "Your professional profile" })).toBeVisible({ timeout: 30_000 });
+  await expect(auditor.getByLabel("Your professional identity")).toBeVisible({ timeout: 30_000 });
   const admin = await (await browser.newContext()).newPage();
   await staffReady(admin, request, false, "ADMIN");
   const appointment = await api(admin, OPS, "POST", "/api/v1/admin/auditor-appointments", {

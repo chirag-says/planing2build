@@ -5,13 +5,11 @@ import { redirect } from "next/navigation";
 import { PageContainer, PageHeader } from "@/components/plan2build/page-header";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
-import { requireOnboarded } from "@/lib/professional";
 
 export const metadata: Metadata = { title: getTranslator("Rfq")("proTitle") };
 
 // Requests to quote sent to the contractor (Slice 3.6, functional): the brief only until accepted.
 export default async function ProQuotesPage() {
-  await requireOnboarded();
   const { data, response } = await (await serverApi()).GET("/api/v1/pro/rfq-invitations");
   if (response.status === 401) redirect("/sign-in?next=%2Fquotes");
   if (response.status === 404) redirect("/profile");

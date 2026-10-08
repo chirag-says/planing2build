@@ -1,5 +1,6 @@
 import imgHeroHouse from '@/marketing/assets/hero-house.webp';
 import Image from 'next/image';
+import type { ReactNode } from 'react';
 import { Button } from '@/marketing/components/ui/Button';
 import { ARROW_UP_RIGHT } from '@/marketing/components/ui/glyphs';
 import type { HeroContent } from '@/marketing/content/sections/hero';
@@ -13,9 +14,10 @@ const HEADLINE = { ...TYPE.display, fontWeight: 900 };
 /**
  * Home page hero: the "Build with clarity" headline and pitch on the left, the half-built,
  * half-drawn house on the right with its four labelled pointers, and the six-step rail along the
- * bottom. Everything is server-rendered.
+ * bottom. Everything is server-rendered. `art` replaces the house and its pointers on pages that
+ * show something else there; `null` shows nothing there.
  */
-export function Hero({ content }: { content: HeroContent }) {
+export function Hero({ content, art }: { content: HeroContent; art?: ReactNode | null }) {
   const lines = parseHeadline(content.heading);
 
   return (
@@ -60,29 +62,33 @@ export function Hero({ content }: { content: HeroContent }) {
           </div>
         </div>
 
-        <div className="ph-art">
-          <div className="ph-pic">
-            <Image
-              src={imgHeroHouse.src}
-              alt={content.imageAlt}
-              width={1536}
-              height={1024}
-              sizes="(max-width: 1099px) 100vw, 70vw"
-              preload
-            />
-            <ul className="ph-tags">
-              {content.callouts.map((callout) => (
-                <li key={callout.title} className="ph-tag">
-                  <i className="ph-tag-mk" aria-hidden="true" />
-                  <b>{callout.title}</b>
-                  {callout.lines.map((line) => (
-                    <span key={line}>{line}</span>
-                  ))}
-                </li>
-              ))}
-            </ul>
+        {art === null ? null : art ? (
+          <div className="ph-art is-dw">{art}</div>
+        ) : (
+          <div className="ph-art">
+            <div className="ph-pic">
+              <Image
+                src={imgHeroHouse.src}
+                alt={content.imageAlt}
+                width={1536}
+                height={1024}
+                sizes="(max-width: 1099px) 100vw, 70vw"
+                preload
+              />
+              <ul className="ph-tags">
+                {content.callouts.map((callout) => (
+                  <li key={callout.title} className="ph-tag">
+                    <i className="ph-tag-mk" aria-hidden="true" />
+                    <b>{callout.title}</b>
+                    {callout.lines.map((line) => (
+                      <span key={line}>{line}</span>
+                    ))}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="ph-rail" id="how-it-works">

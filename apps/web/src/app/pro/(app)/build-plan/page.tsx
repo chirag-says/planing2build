@@ -7,14 +7,12 @@ import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2buil
 import { StatusBadge } from "@/components/plan2build/status-badge";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
-import { requireOnboarded } from "@/lib/professional";
 
 export const metadata: Metadata = { title: getTranslator("BuildPlan")("title") };
 
 // The professional's Build Plan work (Slice 3.5, functional): drawing requests addressed to an
 // active engagement, and versions waiting for a structural sign-off.
 export default async function ProBuildPlanPage() {
-  await requireOnboarded();
   const api = await serverApi();
   const [requests, signoffs] = await Promise.all([
     api.GET("/api/v1/pro/build-plan/design-requests"),

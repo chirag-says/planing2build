@@ -7,7 +7,6 @@ import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2buil
 import { DownloadLink } from "@/components/plan2build/rfq";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
-import { requireOnboarded } from "@/lib/professional";
 
 export const metadata: Metadata = { title: getTranslator("Rfq")("engagement") };
 
@@ -16,7 +15,6 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // An engagement the professional holds, whatever its origin (ADR-024): the family's contact, and
 // the plot pin and shared files while it is active (N-08).
 export default async function ProEngagementPage({ params }: { params: Promise<{ engagementId: string }> }) {
-  await requireOnboarded();
   const { engagementId } = await params;
   if (!UUID.test(engagementId)) notFound();
   const { data, response } = await (await serverApi()).GET("/api/v1/pro/engagements/{engagement_id}", {

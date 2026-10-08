@@ -30,6 +30,8 @@ type BuiltPinnedProps = {
   /** Whether the section is pinned and scroll-driven (the spec count-up only runs then). */
   pinned: boolean;
   onStep: (index: number) => void;
+  /** Scrolls past the pinned section to whatever follows it. */
+  onSkip: () => void;
 };
 
 /**
@@ -38,7 +40,7 @@ type BuiltPinnedProps = {
  * right. The per-frame variables (--c, --cw, --car) are written by the section; this renders
  * the active stage.
  */
-export function BuiltPinned({ content, projects, heading, projectsHref, active, pinned, onStep }: BuiltPinnedProps) {
+export function BuiltPinned({ content, projects, heading, projectsHref, active, pinned, onStep, onSkip }: BuiltPinnedProps) {
   const infoRef = useRef<HTMLDivElement>(null);
   const count = projects.length;
   const project = projects[active];
@@ -180,6 +182,10 @@ export function BuiltPinned({ content, projects, heading, projectsHref, active, 
                   <i key={item.slug} className={index <= active ? 'is-on' : undefined} />
                 ))}
               </div>
+              <button type="button" className="gd-skip" style={{ ...TYPE.mono, fontWeight: 600 }} onClick={onSkip}>
+                Skip
+                <ArrowIcon up={false} size={16} />
+              </button>
             </div>
           )}
         </div>
@@ -188,12 +194,12 @@ export function BuiltPinned({ content, projects, heading, projectsHref, active, 
   );
 }
 
-function ArrowIcon({ up }: { up: boolean }) {
+function ArrowIcon({ up, size = 20 }: { up: boolean; size?: number }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      width="20"
-      height="20"
+      width={size}
+      height={size}
       fill="none"
       stroke="currentColor"
       strokeWidth="2.4"

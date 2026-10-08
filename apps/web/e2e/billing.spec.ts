@@ -98,7 +98,7 @@ test("a family buys the package: a failed payment, then a verified one; the pack
 
   // The package is active; the project's status is unchanged (L-06).
   await page.goto(`${IHB}/projects/${project.id}`);
-  await expect(page.getByText("Your Plan2Build package is active.")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Your project" }).getByText("Active", { exact: true })).toBeVisible();
   await expect(page.getByText("Status: Accepted")).toBeVisible();
   await page.goto(`${IHB}/projects/${project.id}/package`);
   await expect(page.getByText("Status: Active")).toBeVisible();

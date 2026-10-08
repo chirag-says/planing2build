@@ -4,7 +4,9 @@
 // Needs the local stack (pnpm local:up, with the demo rate card) and `pnpm dev:web`.
 import { expect, test, type Page } from "@playwright/test";
 
-import { IHB, PNG, codeFor, expectAccessible as axe, uniqueEmail } from "./support";
+import { IHB, PNG, codeFor, expectAccessible as axe, uniqueEmail,
+  openSection,
+} from "./support";
 
 const group = (page: Page, name: string) => page.getByRole("group", { name, exact: true });
 
@@ -94,7 +96,7 @@ test("a homeowner signs up, answers the requirement, uploads a photo and submits
   await page.getByRole("button", { name: "Save and continue" }).click();
 
   // Step 2: the house. Style and quality tier are separate questions (R-11).
-  await expect(page.getByRole("heading", { name: "Your house" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Your house", exact: true })).toBeVisible();
   await page.getByRole("spinbutton", { name: "Total built-up area across all floors (sq ft)" }).fill("2650");
   await choose(page, "How many floors?", "Ground + 1");
   await choose(page, "Will the house have a basement?", "No");
@@ -152,31 +154,30 @@ test("a homeowner signs up, answers the requirement, uploads a photo and submits
   // The free dashboard opens at once; the review runs in the background (PD-21).
   await expect(page.getByText("Your project is being reviewed by Plan2Build.")).toBeVisible();
   const sections = page.getByRole("navigation", { name: "Project sections" });
-  for (const name of ["Overview", "Requirement", "Estimate", "Documents"]) {
-    await expect(sections.getByRole("link", { name })).toBeVisible();
+  for (const name of ["Overview", "Documents", "Journey"]) {
+    await expect(sections.getByRole("link", { name, exact: true })).toBeVisible();
   }
   await expect(sections.getByRole("link", { name: "Construction stages" })).toHaveCount(0);
   await expect(sections.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");
-  await expect(page.getByRole("heading", { name: "Indicative estimate" })).toBeVisible();
-  await expect(page.getByText(/not a quote/)).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Plan2Build package" })).toBeVisible();
-  await expect(page.getByText("You use only the services you need.", { exact: false })).toBeVisible();
-  await expect(page.getByText("Available once Plan2Build has reviewed your project.")).toBeVisible();
+  // The overview is a command center: the package as a state, the estimate on its own page.
+  await expect(page.getByText("Current stage")).toBeVisible();
+  await expect(page.getByText("Available once Plan2Build has reviewed your project")).toBeVisible();
   await axe(page);
 
-  await sections.getByRole("link", { name: "Estimate" }).click();
+  await openSection(page, "Estimate");
   await expect(page).toHaveURL(/\/projects\/[0-9a-f-]+\/estimate$/);
   await expect(page).toHaveTitle(/^Estimate · Project P2B-RPR-\d+ \| Plan2Build$/);
   await expect(page.getByText("Demo data")).toBeVisible();
   await expect(page.getByText(/Based on 2,650 sq ft, Ground \+ 1, Premium quality, in Raipur\./)).toBeVisible();
+  await expect(page.getByText(/not a quote/).first()).toBeVisible();
   await axe(page);
 
-  await sections.getByRole("link", { name: "Requirement" }).click();
+  await openSection(page, "Requirement");
   await expect(page.getByRole("heading", { name: "Your requirement" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Update your requirement" })).toHaveCount(0);
   await axe(page);
 
-  await sections.getByRole("link", { name: "Documents" }).click();
+  await openSection(page, "Documents");
   await expect(page.getByRole("button", { name: "Download: site.png" })).toBeVisible();
   await axe(page);
 

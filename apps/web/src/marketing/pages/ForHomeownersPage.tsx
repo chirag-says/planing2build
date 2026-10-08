@@ -23,7 +23,7 @@ export const forHomeownersMetadata = pageMetadata({ ...forHomeownersMeta, path: 
 export function ForHomeownersPage() {
   return (
     <main id="main">
-      <Hero content={homeownersHero} />
+      <Hero content={homeownersHero} art={null} />
       <Board content={homeownersProblem} />
       <Tiers content={homeownersTiers} />
       <Faq content={homeownersFaq} />

@@ -13,7 +13,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { serverApi } from "@/lib/api/server";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { getTranslator } from "@/lib/i18n";
-import { requireOnboarded } from "@/lib/professional";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -22,7 +21,6 @@ export const metadata: Metadata = { title: getTranslator("Pro")("connections.vie
 // One request (Slice 3.4): the brief; after acceptance the family's contact, the site pin and
 // the files they chose to share (N-08); accept, decline with a reason (N-06), or end.
 export default async function ProConnectionPage({ params }: { params: Promise<{ connectionId: string }> }) {
-  await requireOnboarded();
   const { connectionId } = await params;
   if (!UUID.test(connectionId)) notFound();
   const api = await serverApi();

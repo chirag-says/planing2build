@@ -28,7 +28,7 @@ export const footer: FooterContent = {
   reveal: true,
   layer: 8,
   officeTitle: 'Office',
-  address: 'Raipur, Chhattisgarh',
+  address: 'Mumbai, Maharashtra',
   hours: 'Mon–Sat 9:00 AM–6:00 PM',
   columns: [
     {

@@ -7,7 +7,6 @@ import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2buil
 import { DownloadLink, QuoteForm, RespondToInvitation, TextAction } from "@/components/plan2build/rfq";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
-import { requireOnboarded } from "@/lib/professional";
 
 export const metadata: Metadata = { title: getTranslator("Rfq")("proTitle") };
 
@@ -17,7 +16,6 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // the quote form, your versions and the questions you may see. Never another contractor's
 // information, Plan2Build's rates or its review of your quote (QD-08, QD-09).
 export default async function ProQuotePage({ params }: { params: Promise<{ invitationId: string }> }) {
-  await requireOnboarded();
   const { invitationId } = await params;
   if (!UUID.test(invitationId)) notFound();
   const { data, response } = await (await serverApi()).GET("/api/v1/pro/rfq-invitations/{invitation_id}", {

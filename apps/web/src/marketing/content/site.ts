@@ -11,7 +11,7 @@ export const site: SiteInfo = {
   "phone": "+91 98765 43210",
   "bidHref": "/request-a-bid",
   "projectsHref": "/projects",
-  "area": "Raipur",
+  "area": "Mumbai",
   "proof": "67 decisions · 16 stages · 6 independent inspections · 1 permanent build record",
   "socials": [
     {
@@ -29,7 +29,7 @@ export const site: SiteInfo = {
   ],
   "projectsBuilt": 0,
   "licence": "ConjunIQ Technologies Private Limited",
-  "office": "Raipur, Chhattisgarh",
+  "office": "Mumbai, Maharashtra",
   "hours": "Mon–Sat 9:00 AM–6:00 PM",
   "photo": {
     "src": imgHouseBlueprint.src,

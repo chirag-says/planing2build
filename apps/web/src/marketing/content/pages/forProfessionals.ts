@@ -9,7 +9,6 @@ import imgProEvidence from '@/marketing/assets/professionals/evidence.webp';
 import imgProListed from '@/marketing/assets/professionals/listed.webp';
 import imgProRecord from '@/marketing/assets/professionals/record.webp';
 import imgProQuote from '@/marketing/assets/professionals/quote.webp';
-import imgProProfile from '@/marketing/assets/professionals/profile.webp';
 import imgProRegister from '@/marketing/assets/professionals/register.webp';
 import type { BoardContent } from '@/marketing/content/sections/board';
 import type { BuiltContent } from '@/marketing/content/sections/built';
@@ -63,7 +62,6 @@ export const prosPledges: BoardContent = {
 /** The professionals' own screens, one per step. */
 const PRO_PHOTO = {
   register: imgProRegister.src,
-  profile: imgProProfile.src,
   evidence: imgProEvidence.src,
   listed: imgProListed.src,
   quote: imgProQuote.src,
@@ -73,7 +71,7 @@ const PRO_PHOTO = {
 
 export const prosHow: BuiltContent = {
   eyebrow: '02 · How it works',
-  title: 'How it works for professionals: register, profile, review, listed, quote, engage, record',
+  title: 'How it works for professionals: register, profile and evidence, listed, quote, engage, record',
   levelLetter: 'S',
   stageWord: 'Step',
   nextWord: 'Next',
@@ -88,29 +86,18 @@ export const prosHow: BuiltContent = {
         { label: 'You need', value: 'An email address' },
         { label: 'Fees', value: 'None to register' },
       ],
-      result: { label: 'Then', value: 'Choose your category' },
+      result: { label: 'Then', value: 'Your profile and evidence' },
       photo: PRO_PHOTO.register,
       cta: { label: 'Get started', href: PRO_GET_STARTED },
     },
     {
-      slug: 'profile',
-      name: 'Profile',
-      meta: 'Who you are and where you work',
-      summary: 'Your name, firm, base location and the radius you cover, then the category you work in.',
-      specs: [
-        { label: 'Categories', value: 'Contractor · Architect · Engineer' },
-        { label: 'Service area', value: 'Pin and radius' },
-      ],
-      result: { label: 'Then', value: 'Add your evidence' },
-      photo: PRO_PHOTO.profile,
-      cta: { label: '', href: '' },
-    },
-    {
       slug: 'evidence',
       name: 'Evidence',
-      meta: 'Proof, not claims',
-      summary: 'Registration documents, references and a portfolio of houses you have built or designed.',
+      meta: 'Your profile, then proof',
+      summary: 'Set up your profile: your name, firm, base location and the radius you cover, and the category you work in. Then add registration documents, references and a portfolio of houses you have built or designed.',
       specs: [
+        { label: 'Profile', value: 'Name · firm · service area' },
+        { label: 'Categories', value: 'Contractor · Architect · Engineer' },
         { label: 'Documents', value: 'Licence · registration' },
         { label: 'Portfolio', value: 'Your past work' },
       ],

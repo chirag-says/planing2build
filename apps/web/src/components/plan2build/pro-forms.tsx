@@ -94,7 +94,7 @@ export function AddCategoryForm({ options }: { options: CategoryOption[] }) {
   }
   return (
     <form onSubmit={add} className="flex flex-col gap-4">
-      <FormFieldset id="new-category" legend={t("dashboard.addLabel")} required>
+      <FormFieldset id="new-category" legend={t("dashboard.addLabel")} legendSize="label" required>
         {({ legendId }) => (
           <ChoiceGroup
             id="new-category"

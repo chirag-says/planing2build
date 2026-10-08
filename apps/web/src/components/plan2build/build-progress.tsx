@@ -26,12 +26,23 @@ function lookOf(stages: Stage[]): Look {
   return "todo";
 }
 
-export function BuildProgress({ stages, label }: { stages: Stage[]; label: (stage: Stage) => string }) {
+export function BuildProgress({
+  stages,
+  label,
+  floorsAbove = 0,
+}: {
+  stages: Stage[];
+  label: (stage: Stage) => string;
+  /** Before the build has stages: floors above ground from the requirement, drawn as the plan. */
+  floorsAbove?: number;
+}) {
   const t = getTranslator("Execution");
+  const o = getTranslator("Overview");
+  const planned = stages.length === 0;
   const of = (number: number, floor?: number | null) =>
     lookOf(stages.filter((s) => s.stage_number === number && (floor === undefined || (s.floor ?? null) === floor)));
   const floors = [...new Set(stages.filter((s) => s.stage_number === 5 && s.floor !== null && s.floor !== undefined).map((s) => s.floor as number))].sort((a, b) => a - b);
-  const above = floors.filter((f) => f >= 0);
+  const above = planned ? Array.from({ length: floorsAbove + 1 }, (_, floor) => floor) : floors.filter((f) => f >= 0);
   const basement = floors.includes(-1);
   const done = stages.filter((s) => s.state === "COMPLETED").length;
   const current = stages.find((s) => s.state === "IN_PROGRESS" || s.state === "COMPLETION_REQUESTED");
@@ -74,7 +85,7 @@ export function BuildProgress({ stages, label }: { stages: Stage[]; label: (stag
   parts.push(part(lookOf(stages.filter((s) => [11, 13, 14, 15].includes(s.stage_number))), <path pathLength={1} d={`M${LEFT - 14} ${GROUND - 10}V${roofY - 4}M${RIGHT + 14} ${GROUND - 10}V${roofY - 4}`} />, "finish"));
   parts.push(part(of(16), <path pathLength={1} d={`M50 ${GROUND}v-16h${LEFT - 110}M${W - 50} ${GROUND}v-16h-${W - RIGHT - 110}M${RIGHT + 64} ${GROUND}v-26h20v26`} />, "external"));
 
-  const summary = t("drawing.summary", { done, total: stages.length });
+  const summary = planned ? o("drawing.planned") : t("drawing.summary", { done, total: stages.length });
   return (
     <figure className="bp">
       <figcaption className="bp-cap">
@@ -82,10 +93,10 @@ export function BuildProgress({ stages, label }: { stages: Stage[]; label: (stag
         <span className="bp-sum font-mono">
           {summary}
           {" · "}
-          {current ? t("drawing.now", { stage: label(current) }) : t("drawing.none")}
+          {planned ? o("drawing.plannedNote") : current ? t("drawing.now", { stage: label(current) }) : t("drawing.none")}
         </span>
       </figcaption>
-      <svg viewBox={`0 ${roofY - 60} ${W} ${GROUND + (basement ? 110 : 70) - (roofY - 60)}`} role="img" aria-label={t("drawing.alt", { done, total: stages.length })} className="bp-svg">
+      <svg viewBox={`0 ${roofY - 60} ${W} ${GROUND + (basement ? 110 : 70) - (roofY - 60)}`} role="img" aria-label={planned ? o("drawing.alt") : t("drawing.alt", { done, total: stages.length })} className="bp-svg">
         <defs>
           <pattern id="bp-grid" width="24" height="24" patternUnits="userSpaceOnUse">
             <path d="M24 0H0V24" className="bp-gridline" />
@@ -94,14 +105,16 @@ export function BuildProgress({ stages, label }: { stages: Stage[]; label: (stag
         <rect y={roofY - 60} width={W} height={GROUND + (basement ? 110 : 70) - (roofY - 60)} fill="url(#bp-grid)" />
         {parts}
       </svg>
-      <ul className="bp-legend font-mono" aria-hidden="true">
-        {(["done", "active", "todo", "held"] as const).map((look) => (
-          <li key={look} className={`bp-key bp-${look}`}>
-            <i />
-            {t(`drawing.legend.${look}`)}
-          </li>
-        ))}
-      </ul>
+      {!planned && (
+        <ul className="bp-legend font-mono" aria-hidden="true">
+          {(["done", "active", "todo", "held"] as const).map((look) => (
+            <li key={look} className={`bp-key bp-${look}`}>
+              <i />
+              {t(`drawing.legend.${look}`)}
+            </li>
+          ))}
+        </ul>
+      )}
     </figure>
   );
 }

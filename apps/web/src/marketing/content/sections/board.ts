@@ -29,7 +29,7 @@ export const board: BoardContent = {
   subCopy:
     'A house is 16 stages and 67 material and system decisions. Your Build Plan gives each one a decide-by date, before the money is spent.',
   boardTitle: '',
-  boardNote: 'Pilot city · Raipur',
+  boardNote: 'Pilot city · Mumbai',
   stats: [
     { value: '67', label: 'decisions, each with a decide-by date' },
     { value: '16', label: 'construction stages tracked' },

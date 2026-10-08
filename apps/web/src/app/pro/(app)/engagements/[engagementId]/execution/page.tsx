@@ -9,7 +9,6 @@ import { DownloadLink } from "@/components/plan2build/rfq";
 import { serverApi } from "@/lib/api/server";
 import { formatDate } from "@/lib/format";
 import { getTranslator } from "@/lib/i18n";
-import { requireOnboarded } from "@/lib/professional";
 
 export const metadata: Metadata = { title: getTranslator("Execution")("proTitle") };
 
@@ -19,7 +18,6 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // drawings, the stages with its own update counts, the update form (EX-02) and the "received"
 // marks on payment milestones (EX-05). Only while the contractor engagement is active.
 export default async function ProExecutionPage({ params }: { params: Promise<{ engagementId: string }> }) {
-  await requireOnboarded();
   const { engagementId } = await params;
   if (!UUID.test(engagementId)) notFound();
   const api = await serverApi();

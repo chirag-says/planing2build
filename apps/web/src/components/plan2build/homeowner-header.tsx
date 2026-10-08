@@ -12,9 +12,11 @@ export async function HomeownerHeader() {
   const projects = user ? await ownProjects() : null;
   const t = getTranslator("Nav");
   const home =
-    user && (projects?.length ?? 0) === 0
-      ? { href: "/start", label: t("start") }
-      : { href: "/projects", label: t("projects") };
+    !user
+      ? { href: "/sign-in", label: t("start") }
+      : (projects?.length ?? 0) === 0
+        ? { href: "/start", label: t("start") }
+        : { href: "/projects", label: t("projects") };
   return (
     <HeaderNav
       brand={getTranslator("App")("name")}

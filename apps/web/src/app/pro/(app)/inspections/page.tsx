@@ -6,14 +6,12 @@ import { PageContainer, PageHeader } from "@/components/plan2build/page-header";
 import { serverApi } from "@/lib/api/server";
 import { formatDate } from "@/lib/format";
 import { getTranslator } from "@/lib/i18n";
-import { requireOnboarded } from "@/lib/professional";
 
 export const metadata: Metadata = { title: getTranslator("Assurance")("proTitle") };
 
 // The appointed auditor's inspections (Slice 3.7B, functional; EX-09). Someone without an active
 // appointment sees that nothing is assigned.
 export default async function AuditorInspectionsPage() {
-  await requireOnboarded();
   const { data, response } = await (await serverApi()).GET("/api/v1/pro/inspections");
   if (response.status === 401) redirect("/sign-in");
   const t = getTranslator("Assurance");

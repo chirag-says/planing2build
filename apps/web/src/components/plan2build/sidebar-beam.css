@@ -1,0 +1,63 @@
+/*
+ * Sidebar link hover: the "Who it is for" rows of the public site (marketing pages.css, .pg-row),
+ * at sidebar scale. A brass beam rises from the link's bottom edge with a small overshoot, with
+ * ink rules along its top and bottom, the icon steps in and the label lifts. The current page
+ * keeps its own look; keyboard focus shows the same beam as hover.
+ */
+.sb-beam {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.sb-beam::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--brand);
+  box-shadow:
+    inset 0 2px 0 color-mix(in oklch, var(--foreground) 18%, transparent),
+    inset 0 -2px 0 color-mix(in oklch, var(--foreground) 18%, transparent);
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition: transform 0.55s cubic-bezier(0.3, 1.2, 0.4, 1);
+}
+.sb-beam-icon,
+.sb-beam-label {
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 0.3s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .sb-beam:not([aria-current]):hover::before {
+    transform: none;
+  }
+  .sb-beam:not([aria-current]):hover {
+    color: var(--brand-foreground);
+  }
+  .sb-beam:not([aria-current]):hover .sb-beam-icon {
+    color: var(--brand-foreground);
+    transform: translate(4px, -1px);
+  }
+  .sb-beam:not([aria-current]):hover .sb-beam-label {
+    transform: translate(2px, -1px);
+  }
+}
+.sb-beam:not([aria-current]):focus-visible::before {
+  transform: none;
+}
+.sb-beam:not([aria-current]):focus-visible {
+  color: var(--brand-foreground);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sb-beam::before,
+  .sb-beam-icon,
+  .sb-beam-label {
+    transition: none;
+  }
+  .sb-beam:hover .sb-beam-icon,
+  .sb-beam:hover .sb-beam-label {
+    transform: none;
+  }
+}

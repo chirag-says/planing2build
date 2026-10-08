@@ -60,7 +60,7 @@ export const faqs: Faq[] = [
   {
     "slug": "cities",
     "question": "Which cities do you work in?",
-    "answer": "We are starting with families building in Raipur. Building somewhere else? Call us and we will tell you honestly whether we can help.",
+    "answer": "We are starting with families building in Mumbai. Building somewhere else? Call us and we will tell you honestly whether we can help.",
     "group": "Before you build"
   }
 ];

@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
 import { CardSheet } from "@/components/plan2build/hanging-card";
-import { PageContainer, PageHeader } from "@/components/plan2build/page-header";
-import { ProjectBreadcrumb } from "@/components/plan2build/project-breadcrumb";
+import { PageContainer } from "@/components/plan2build/page-header";
 import { Notice } from "@/components/plan2build/states";
 import { RequirementWizard } from "@/components/plan2build/requirement/wizard";
 import { serverApi } from "@/lib/api/server";
@@ -11,14 +10,11 @@ import { getTranslator } from "@/lib/i18n";
 import { mapTiles } from "@/lib/map";
 import { requireSignedIn } from "@/lib/session";
 
+export const metadata: Metadata = {
+  title: getTranslator("Requirement")("pageTitle"),
+};
 
-export const metadata: Metadata = { title: getTranslator("Requirement")("title") };
-
-export default async function RequirementPage({
-  params,
-}: {
-  params: Promise<{ projectId: string }>;
-}) {
+export default async function RequirementPage({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;
   await requireSignedIn(`/projects/${projectId}/requirement`);
   const api = await serverApi();
@@ -45,19 +41,15 @@ export default async function RequirementPage({
   const projects = getTranslator("Projects");
   const code = projects("code", { code: detail.data.project.code });
   return (
-    <PageContainer>
-      <div className="flex flex-col gap-4">
-        <ProjectBreadcrumb
-          trail={[{ label: code, href: `/projects/${projectId}` }, { label: t("title") }]}
-        />
-        <PageHeader eyebrow={code} title={t("title")} />
-      </div>
-      {message?.status === "NEEDS_INFO" && (
-        <Notice tone="warning" title={t("needsInfoTitle")}>
-          <p className="whitespace-pre-line">{message.message}</p>
-        </Notice>
-      )}
-      <CardSheet label={t("card.label")} note={t("card.note")}>
+    // The card starts at the top of the page and carries the title; the project code is its label.
+    <PageContainer width="wide" className="pt-6 sm:pt-8">
+      <CardSheet label={code} note={t("card.note")}>
+        <h1 className="mb-6 font-heading text-4xl leading-none sm:text-5xl">{t("pageTitle")}</h1>
+        {message?.status === "NEEDS_INFO" && (
+          <Notice tone="warning" title={t("needsInfoTitle")} className="mb-6">
+            <p className="whitespace-pre-line">{message.message}</p>
+          </Notice>
+        )}
         <RequirementWizard
           projectId={projectId}
           set={questions.data}

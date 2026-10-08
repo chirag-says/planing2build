@@ -99,3 +99,40 @@ export function PageContainer({
     </main>
   );
 }
+
+/** The website's eyebrow: a brass square and mono caps. */
+export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <p className={cn("flex items-center gap-2.5 font-mono text-xs tracking-widest text-muted-foreground uppercase", className)}>
+      <span aria-hidden="true" className="size-2 shrink-0 bg-brand ring-1 ring-foreground" />
+      {children}
+    </p>
+  );
+}
+
+/** A section of the story: an ink rule over it, its heading in the display face. */
+export function RuledSection({
+  id,
+  title,
+  aside,
+  children,
+  className,
+}: {
+  id: string;
+  title: ReactNode;
+  aside?: ReactNode;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section aria-labelledby={id} className={cn("flex flex-col gap-4 border-t-2 border-foreground pt-4", className)}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 id={id} className="font-heading text-2xl leading-none">
+          {title}
+        </h2>
+        {aside}
+      </div>
+      {children}
+    </section>
+  );
+}

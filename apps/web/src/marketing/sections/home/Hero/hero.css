@@ -199,6 +199,25 @@
 }
 
 /* Pointers: a yellow marker, a horizontal leader out to the left and a short drop below. */
+/*
+ * The elevation drawing in place of the photo (For homeowners). It is taller than wide, so it is
+ * sized off the band's height and kept in from the page edge. `--ph-dr` runs 0 -> 1 once on
+ * arrival and feeds the drawing's own `--dr`; it rests at 1, so with no animation (reduced
+ * motion) the drawing is simply complete.
+ */
+@property --ph-dr {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+.ph-art.is-dw {
+  right: var(--edge);
+  width: min(44cqw, (max(100svh, 860px) - var(--gd-hdh) - 230px) * 0.8372);
+}
+.ph-dw {
+  --dr: var(--ph-dr);
+}
+
 .ph-tags {
   position: absolute;
   inset: 0;
@@ -384,11 +403,14 @@
 .ph-tag:nth-child(4) {
   animation-delay: 1200ms;
 }
+.ph-dw {
+  animation: ph-draw 2.8s cubic-bezier(0.3, 0.1, 0.3, 1) 350ms both paused;
+}
 .ph-steps li .ph-bar {
   animation: ph-bar 0.8s var(--ease) both paused;
   animation-delay: inherit;
 }
-html:not([class*="gd-hold"]) .ph :is(.ph-lni, .ph-in, .ph-pic img, .ph-tag, .ph-steps li, .ph-bar) {
+html:not([class*="gd-hold"]) .ph :is(.ph-lni, .ph-in, .ph-pic img, .ph-tag, .ph-dw, .ph-steps li, .ph-bar) {
   animation-play-state: running;
 }
 
@@ -408,6 +430,14 @@ html:not([class*="gd-hold"]) .ph :is(.ph-lni, .ph-in, .ph-pic img, .ph-tag, .ph-
   }
   to {
     opacity: 1;
+  }
+}
+@keyframes ph-draw {
+  from {
+    --ph-dr: 0;
+  }
+  to {
+    --ph-dr: 1;
   }
 }
 @keyframes ph-bar {
@@ -471,6 +501,12 @@ html:not([class*="gd-hold"]) .ph :is(.ph-lni, .ph-in, .ph-pic img, .ph-tag, .ph-
     margin-top: 28px;
     align-self: flex-end;
     margin-right: calc(-1 * var(--edge));
+  }
+  .ph-art.is-dw {
+    right: auto;
+    width: min(100%, 520px);
+    align-self: center;
+    margin-inline: 0;
   }
   .ph-steps {
     grid-template-columns: repeat(3, minmax(0, 1fr));

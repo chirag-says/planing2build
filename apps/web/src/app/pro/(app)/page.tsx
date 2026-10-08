@@ -1,178 +1,64 @@
-import { ArrowRightIcon, CircleCheckIcon, LayersIcon, UserRoundPenIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 
-import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
-import { OnboardingRail } from "@/components/plan2build/onboarding-rail";
-import { AddCategoryForm } from "@/components/plan2build/pro-forms";
-import { EmptyState, Notice } from "@/components/plan2build/states";
-import { StatGrid } from "@/components/plan2build/stat-tile";
-import { StatusBadge } from "@/components/plan2build/status-badge";
-import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { formatDate } from "@/lib/format";
+  ActiveWork,
+  AttentionBoard,
+  Greeting,
+  InspectionsStrip,
+  Pipeline,
+  ProfileNotice,
+  RecordPanel,
+} from "@/components/plan2build/pro-console";
 import { getTranslator } from "@/lib/i18n";
-import { loadOwnProfile, loadProCounts, type ProDashboard } from "@/lib/professional";
+import { buildConsole, type Console } from "@/lib/pro-console";
+import { previewAllowed, previewInput } from "@/lib/pro-console-preview";
+import { loadConsole, loadOwnProfile } from "@/lib/professional";
 
-export const metadata: Metadata = { title: getTranslator("Pro")("dashboard.title") };
+export const metadata: Metadata = { title: getTranslator("Console")("title") };
 
-// The professional's dashboard: profile completeness and each category's listing state (listing
-// is per category, D-06). Approval alone lists a category; nothing here is paid (D-03).
-/** Profile completeness and the portfolio, beside the categories. */
-function ProfileCard({ data }: { data: ProDashboard }) {
-  const t = getTranslator("Pro");
-  const missing = data.profile.missing.length;
-  return (
-    <Card size="sm">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-xl group-data-[size=sm]/card:text-xl">
-          <UserRoundPenIcon aria-hidden="true" className="size-5 text-muted-foreground" />
-          <h2>{t("profileCard.title")}</h2>
-        </CardTitle>
-        <CardDescription className="text-base">{data.profile.firm_name ?? data.profile.display_name ?? undefined}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-2 text-base">
-        <p className="flex items-center gap-2 font-medium">
-          {missing === 0 && <CircleCheckIcon aria-hidden="true" className="size-4 text-success" />}
-          {missing === 0 ? t("profileCard.complete") : t("profileCard.missing", { count: missing })}
-        </p>
-        <p className="text-muted-foreground">{t("profileCard.portfolio", { count: data.portfolio.length })}</p>
-      </CardContent>
-      <CardFooter>
-        <Button asChild variant="outline">
-          <Link href="/profile">
-            {t("profileCard.edit")}
-            <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
-          </Link>
-        </Button>
-      </CardFooter>
-    </Card>
-  );
+// The professional's home: their work first. Projects on site and requests to review lead (the
+// projects first once there are any); the listing is a slim notice above them until it is done,
+// then it leaves the page. Listing is per category (D-06); approval alone lists a category and
+// nothing here is paid (D-03).
+
+async function consoleFor(preview: unknown): Promise<{ console: Console; preview: string | null }> {
+  if (previewAllowed(preview)) {
+    const dashboard = await loadOwnProfile("/");
+    return { console: buildConsole(previewInput(preview, dashboard, new Date())), preview };
+  }
+  return { console: await loadConsole("/"), preview: null };
 }
 
-export default async function ProDashboardPage() {
-  const data = await loadOwnProfile("/");
-  const counts = await loadProCounts();
-  const t = getTranslator("Pro");
-  const tops = data.available_categories.filter((c) => !c.parent_code);
-  const added = new Set(data.categories.map((c) => c.code));
-  const listed = data.categories.filter((c) => c.listing_state === "LISTED").length;
+export default async function ProDashboardPage({ searchParams }: { searchParams: Promise<{ preview?: string }> }) {
+  const { preview: asked } = await searchParams;
+  const { console: c, preview } = await consoleFor(asked);
+  const t = getTranslator("Console");
+  const now = new Date();
+  const working = c.state === "working";
+  const started = c.state === "working" || c.state === "listed";
   return (
-    <PageContainer width="wide">
-      <PageHeader size="compact" title={t("dashboard.title")} description={t("dashboard.intro")} />
-      <StatGrid
-        id="at-a-glance"
-        title={t("kpi.title")}
-        stats={[
-          {
-            label: t("kpi.listed"),
-            value: listed,
-            caption: t("kpi.listedCaption", { total: data.categories.length }),
-            tone: "lead",
-          },
-          {
-            label: t("kpi.requests"),
-            value: counts.requests,
-            caption: t("kpi.requestsCaption"),
-            href: "/connections",
-            tone: counts.requests > 0 ? "attention" : "default",
-          },
-          {
-            label: t("kpi.quotes"),
-            value: counts.quotes,
-            caption: t("kpi.quotesCaption"),
-            href: "/quotes",
-            tone: counts.quotes > 0 ? "attention" : "default",
-          },
-          {
-            label: t("kpi.inspections"),
-            value: counts.inspections,
-            caption: t("kpi.inspectionsCaption"),
-            href: "/inspections",
-          },
-        ]}
-      />
-      <Card size="sm">
-        <CardContent>
-          <OnboardingRail data={data} />
-        </CardContent>
-      </Card>
-      {data.profile.missing.length > 0 && (
-        <Notice tone="info" title={t("dashboard.profileIncomplete")}>
-          <Link href="/profile" className="font-medium underline underline-offset-4">
-            {t("dashboard.completeProfile")}
-          </Link>
-        </Notice>
+    <main id="main" className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-6 sm:px-6 sm:py-8 lg:gap-12 lg:px-8">
+      <ProfileNotice console={c} />
+      {preview && (
+        <p role="status" className="self-start bg-brand px-2 py-1 font-mono text-xs tracking-widest text-brand-foreground uppercase">
+          {t("preview", { state: preview })}
+        </p>
       )}
-      <div className="grid items-start gap-8 lg:grid-cols-3 lg:gap-6">
-        <div className="flex min-w-0 flex-col gap-8 lg:col-span-2">
-          <section aria-labelledby="categories" className="flex flex-col gap-4">
-            <SectionHeader id="categories" title={t("dashboard.categories")} />
-            {data.categories.length === 0 ? (
-              <EmptyState icon={LayersIcon} title={t("dashboard.none")} description={t("dashboard.noneBody")} />
-            ) : (
-              <ul className="grid gap-3 xl:grid-cols-2">
-                {data.categories.map((category) => (
-                  <li key={category.code} className="min-w-0">
-                    <Card size="sm" className="h-full">
-                      <CardHeader>
-                        <CardTitle className="text-xl group-data-[size=sm]/card:text-xl">
-                          <h3>{category.name}</h3>
-                        </CardTitle>
-                        <CardDescription className="text-base">
-                          {category.public
-                            ? t("dashboard.public")
-                            : category.hidden
-                              ? t("dashboard.hidden")
-                              : t("dashboard.notPublic")}
-                          {category.review_due_at &&
-                            ` · ${t("dashboard.reviewDue", { date: formatDate(category.review_due_at) })}`}
-                        </CardDescription>
-                        <CardAction>
-                          <StatusBadge kind="listing" status={category.listing_state} withLabel />
-                        </CardAction>
-                      </CardHeader>
-                      <CardContent className="flex flex-1 flex-col gap-3">
-                        {category.message && (
-                          <Notice
-                            tone={category.listing_state === "LISTED" ? "info" : "warning"}
-                            title={t("category.message")}
-                          >
-                            <p className="whitespace-pre-line">{category.message}</p>
-                          </Notice>
-                        )}
-                        <Button asChild variant="outline" className="mt-auto sm:self-start">
-                          <Link href={`/categories/${category.code}`}>
-                            {t("dashboard.open")}
-                            <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
-                          </Link>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-          <section id="add" aria-labelledby="add-title" className="flex scroll-mt-24 flex-col gap-4">
-            <SectionHeader id="add-title" title={t("dashboard.add")} />
-            {tops.every((c) => added.has(c.code)) ? (
-              <p className="text-sm text-muted-foreground">{t("dashboard.allAdded")}</p>
-            ) : (
-              <AddCategoryForm options={tops.filter((c) => !added.has(c.code))} />
-            )}
-          </section>
-        </div>
-        <ProfileCard data={data} />
-      </div>
-    </PageContainer>
+      <Greeting console={c} now={now} />
+      {working ? (
+        <>
+          <ActiveWork console={c} />
+          <AttentionBoard console={c} />
+        </>
+      ) : (
+        <>
+          <AttentionBoard console={c} />
+          <ActiveWork console={c} />
+        </>
+      )}
+      <InspectionsStrip console={c} />
+      {started && <Pipeline console={c} />}
+      {c.record.length > 0 && <RecordPanel console={c} />}
+    </main>
   );
 }

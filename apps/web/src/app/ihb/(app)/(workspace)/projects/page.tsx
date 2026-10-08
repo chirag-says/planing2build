@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 
-import { PlusIcon } from "lucide-react";
+import { ArrowRightIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
-import { PageContainer, PageHeader } from "@/components/plan2build/page-header";
+import { Eyebrow, PageContainer, PageHeader } from "@/components/plan2build/page-header";
 import { ProjectSummaryCard } from "@/components/plan2build/project-summary-card";
-import { StatGrid } from "@/components/plan2build/stat-tile";
 import { Button } from "@/components/ui/button";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
@@ -33,8 +31,31 @@ export default async function ProjectsPage() {
   const t = getTranslator("Projects");
   const { data: projects } = await (await serverApi()).GET("/api/v1/projects");
   if (!projects) throw new Error("projects could not be loaded");
-  // No project yet means onboarding is not done: the entry questions start the first one.
-  if (projects.length === 0) redirect("/start");
+  // No project yet: the dashboard asks for the requirement (signing up never waits on it).
+  if (projects.length === 0) {
+    return (
+      <PageContainer width="wide">
+        <PageHeader size="compact" title={t("title")} />
+        <section
+          aria-labelledby="get-started"
+          className="surface-dark flex flex-col gap-4 rounded-xl bg-background p-6 text-foreground ring-1 ring-foreground sm:p-8"
+        >
+          <Eyebrow>{t("getStarted.eyebrow")}</Eyebrow>
+          <span aria-hidden="true" className="p2b-beam" />
+          <h2 id="get-started" className="font-heading text-3xl leading-none sm:text-4xl">
+            {t("getStarted.title")}
+          </h2>
+          <p className="max-w-prose text-lg text-pretty text-muted-foreground">{t("getStarted.body")}</p>
+          <Button asChild size="lg" className="mt-2 bg-brand text-brand-foreground sm:self-start">
+            <Link href="/start">
+              {t("getStarted.cta")}
+              <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
+            </Link>
+          </Button>
+        </section>
+      </PageContainer>
+    );
+  }
   const count = (statuses: ProjectStatus[]) => projects.filter((p) => statuses.includes(p.status)).length;
   const startNew = (
     <Button asChild variant="outline">
@@ -46,21 +67,16 @@ export default async function ProjectsPage() {
   );
   return (
     <PageContainer width="wide">
-      <PageHeader size="compact" title={t("title")} actions={startNew} />
-      <StatGrid
-          id="at-a-glance"
-          title={t("kpi.title")}
-          stats={[
-            { label: t("kpi.total"), value: projects.length, caption: t("kpi.totalCaption"), tone: "lead" },
-            { label: t("kpi.review"), value: count(REVIEW), caption: t("kpi.reviewCaption") },
-            { label: t("kpi.active"), value: count(ACTIVE), caption: t("kpi.activeCaption") },
-            {
-              label: t("kpi.drafts"),
-              value: count(["DRAFT"]),
-              caption: t("kpi.draftsCaption"),
-              tone: count(["DRAFT"]) > 0 ? "attention" : "default",
-            },
-          ]}
+      <PageHeader
+        size="compact"
+        title={t("title")}
+        description={t("summary", {
+          total: projects.length,
+          review: count(REVIEW),
+          active: count(ACTIVE),
+          drafts: count(["DRAFT"]),
+        })}
+        actions={startNew}
       />
       <ul className="grid gap-4 md:grid-cols-2">
         {projects.map((project) => (

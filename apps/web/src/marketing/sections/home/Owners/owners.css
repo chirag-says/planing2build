@@ -378,6 +378,15 @@
   position: relative;
   padding: 8px 24px 24px;
 }
+/* photo only: the picture takes the room the checklist leaves, at a squarer ratio */
+.owners-card.is-photo {
+  padding-bottom: 24px;
+}
+.owners-card.is-photo .owners-ph {
+  aspect-ratio: 5/4;
+  max-height: 64vh;
+  max-height: 64svh;
+}
 .owners-checks {
   list-style: none;
   margin: 0;
@@ -596,6 +605,9 @@
   .owners-body {
     padding: 6px 18px 18px;
   }
+  .owners-card.is-photo {
+    padding-bottom: 18px;
+  }
   .owners-stamp {
     font-size: 24px;
     right: 20px;
@@ -642,6 +654,9 @@
   }
   .owners-body {
     padding: 6px 16px 16px;
+  }
+  .owners-card.is-photo {
+    padding-bottom: 16px;
   }
   .owners-checks li {
     padding: 10px 0;

@@ -452,6 +452,9 @@
 .built-pips i.is-on {
   background: var(--gd-brass);
 }
+.built-nav .gd-skip {
+  margin-left: 6px;
+}
 
 /*
  * Pinned only (never phone or reduced motion): the section is (n + 0.6) viewports tall, and on

@@ -36,7 +36,6 @@ export type HeaderContent = {
 export const header: HeaderContent = {
   links: [
     { label: 'Home', href: '/' },
-    { label: 'How it works', href: '/#how-it-works' },
     { label: 'For homeowners', href: '/for-homeowners' },
     { label: 'For professionals', href: '/for-professionals' },
     { label: 'About', href: '/about' },

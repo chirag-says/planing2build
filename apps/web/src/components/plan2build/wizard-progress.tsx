@@ -23,12 +23,15 @@ export function WizardProgress({
   furthest,
   onSelect,
   labels,
+  progress = 1,
 }: {
   steps: string[];
   current: number;
   furthest: number;
   onSelect: (index: number) => void;
   labels: WizardLabels;
+  /** How far through the current step the family has scrolled (0 to 1); its bar fills with it. */
+  progress?: number;
 }) {
   const total = steps.length;
   const counter = labels.step(current + 1, total);
@@ -57,13 +60,13 @@ export function WizardProgress({
             <>
               <Icon
                 aria-hidden="true"
-                className={cn("mt-0.5 size-4 shrink-0", isDone && "text-success")}
+                className={cn("size-4 shrink-0", isDone && "text-success")}
               />
-              <span aria-hidden="true">{title}</span>
+              <span aria-hidden="true" className="min-w-0 truncate">{title}</span>
               <span className="sr-only">{name}</span>
             </>
           );
-          const base = "flex items-start gap-1.5 rounded-sm text-left font-mono text-sm leading-snug tracking-wide uppercase";
+          const base = "flex min-w-0 items-center gap-1.5 rounded-sm text-left font-mono text-sm leading-snug tracking-wide whitespace-nowrap uppercase";
           return (
             <li
               key={title}
@@ -73,10 +76,18 @@ export function WizardProgress({
               <span
                 aria-hidden="true"
                 className={cn(
-                  "h-1.5",
-                  isCurrent ? "bg-brand ring-1 ring-foreground" : isDone ? "bg-foreground" : "bg-foreground/15",
+                  "relative h-1.5 overflow-hidden",
+                  isCurrent ? "bg-foreground/15 ring-1 ring-foreground" : isDone ? "bg-foreground" : "bg-foreground/15",
                 )}
-              />
+              >
+                {isCurrent && (
+                  // Always a sliver, so the current step shows before any scrolling.
+                  <span
+                    className="absolute inset-0 origin-left bg-brand transition-transform duration-150 ease-out motion-reduce:transition-none"
+                    style={{ transform: `scaleX(${Math.max(0.06, Math.min(1, progress))})` }}
+                  />
+                )}
+              </span>
               {reachable ? (
                 <button
                   type="button"

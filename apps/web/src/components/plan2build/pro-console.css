@@ -1,0 +1,689 @@
+/*
+ * The professional's command center (pro-console.tsx). One motion per section, in reading order:
+ * the greeting rises (p2b-rise), the attention board wipes open like a sheet laid on the table,
+ * the opportunity line draws and the brass marker travels to the node that needs you, the project
+ * images unmask, the listing's brass line extends to the current checkpoint, the record's figures
+ * count up. Transform, opacity, clip-path and custom properties only; nothing moves for people who
+ * ask for less motion (globals.css).
+ */
+
+/* Figures that count up from zero: the number lives in a custom property, shown as a counter. */
+@property --pc-n {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+.pc-num {
+  --pc-n: var(--to);
+  counter-reset: pcn var(--pc-n);
+  animation: pc-count 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) calc(0.35s + var(--d, 0) * 0.08s) both;
+  font-variant-numeric: tabular-nums;
+}
+.pc-num::after {
+  content: counter(pcn, decimal-leading-zero);
+}
+.pc-num.is-plain::after {
+  content: counter(pcn);
+}
+@keyframes pc-count {
+  from {
+    --pc-n: 0;
+  }
+}
+
+/* ---------------------------------------------------------------- the title block */
+
+/* The identity as a drawing's title block: hairline cells, mono field labels. */
+.pc-title {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-width: min(100%, 24rem);
+  border: 1.5px solid var(--foreground);
+  background: var(--card);
+}
+.pc-title > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  padding: 0.625rem 0.875rem;
+}
+/* The firm spans the top row, so the left column holds the even cells. */
+.pc-title > div:nth-child(even):not(.pc-title-wide) {
+  border-right: 1px solid color-mix(in oklch, var(--foreground) 25%, transparent);
+}
+.pc-title > div + div {
+  border-top: 1px solid color-mix(in oklch, var(--foreground) 25%, transparent);
+}
+.pc-title dt {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.pc-title dd {
+  margin: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pc-title .pc-title-wide {
+  grid-column: 1 / -1;
+  border-right: 0 !important;
+}
+
+.pc-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.pc-status i {
+  display: inline-block;
+  width: 0.625rem;
+  height: 0.625rem;
+  box-shadow: inset 0 0 0 1.5px var(--foreground);
+}
+.pc-status.is-listed i {
+  background: var(--foreground);
+}
+.pc-status.is-review i,
+.pc-status.is-changes i {
+  background: repeating-linear-gradient(-45deg, var(--brand) 0 2px, var(--foreground) 2px 4px);
+}
+
+/* ---------------------------------------------------------------- the attention board */
+
+.pc-board {
+  animation: pc-wipe 0.95s cubic-bezier(0.7, 0, 0.2, 1) 0.2s both;
+}
+.pc-board-in {
+  animation: p2b-fade 0.6s ease 0.85s both;
+}
+.pc-hazard {
+  display: block;
+  height: 0.375rem;
+  background: repeating-linear-gradient(-45deg, var(--brand) 0 0.5rem, var(--foreground) 0.5rem 1rem);
+}
+.surface-dark .pc-hazard {
+  background: repeating-linear-gradient(-45deg, var(--brand) 0 0.5rem, oklch(0.171 0.006 237) 0.5rem 1rem);
+}
+@keyframes pc-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+.pc-row {
+  display: grid;
+  grid-template-columns: 4.25rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  min-height: 2.75rem;
+  padding: 0.875rem 0.25rem;
+  border-radius: calc(var(--radius) * 0.5);
+  transition: background-color 0.2s ease;
+}
+.pc-row:hover {
+  background: color-mix(in oklch, var(--foreground) 6%, transparent);
+}
+.pc-row .pc-row-arrow {
+  transition: translate 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.pc-row:hover .pc-row-arrow {
+  translate: 0.25rem 0;
+}
+/* The date as a calendar tab: day over month. */
+.pc-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem 0.25rem;
+  border: 1px solid color-mix(in oklch, var(--foreground) 30%, transparent);
+  font-family: var(--font-mono);
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+.pc-date b {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+.pc-date span {
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+}
+.pc-date.is-soon {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: var(--brand-foreground);
+}
+.pc-date.is-none b {
+  font-size: 1rem;
+}
+
+/* ---------------------------------------------------------------- the opportunity pipeline */
+
+.pc-pipe {
+  --rail-y: 0.4375rem;
+  position: relative;
+  /* The travelling marker is as wide as the line; clip what its move pushes past the edge. */
+  overflow-x: clip;
+  overflow-clip-margin: 1rem;
+}
+.pc-nodes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pc-rail,
+.pc-runner {
+  position: absolute;
+  top: var(--rail-y);
+  left: 0;
+  pointer-events: none;
+}
+.pc-rail {
+  right: 25%;
+  height: 2px;
+  margin-top: -1px;
+  background: color-mix(in oklch, var(--foreground) 16%, transparent);
+}
+/* Dimension ticks along the rail, as on a drawing's dimension line. */
+.pc-rail::before {
+  content: "";
+  position: absolute;
+  inset: -4px 0;
+  background: repeating-linear-gradient(90deg, color-mix(in oklch, var(--foreground) 22%, transparent) 0 1px, transparent 1px 2.5rem);
+  mask: linear-gradient(transparent 0 3px, #000 3px 7px, transparent 7px);
+}
+.pc-rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--foreground);
+  transform-origin: 0 50%;
+  scale: var(--fill, 0) 1;
+  animation: pc-draw 1.2s cubic-bezier(0.65, 0, 0.25, 1) 0.35s both;
+}
+@keyframes pc-draw {
+  from {
+    scale: 0 1;
+  }
+}
+/* The brass marker, travelling from the first node to the one that needs you. */
+.pc-runner {
+  right: 0;
+  height: 0;
+  translate: calc(var(--f, 0) * 25%) 0;
+  animation: pc-run 1.2s cubic-bezier(0.65, 0, 0.25, 1) 0.35s both;
+  z-index: 2;
+}
+.pc-runner::before {
+  content: "";
+  position: absolute;
+  top: -0.5rem;
+  left: -0.0625rem;
+  width: 1rem;
+  height: 1rem;
+  background: var(--brand);
+  box-shadow:
+    inset 0 0 0 2px var(--foreground),
+    0 0 0 3px var(--background);
+}
+@keyframes pc-run {
+  from {
+    translate: 0 0;
+  }
+}
+
+.pc-node {
+  position: relative;
+  min-width: 0;
+}
+.pc-node > a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  height: 100%;
+  padding: 1.75rem 1rem 1rem 0;
+  border-radius: calc(var(--radius) * 0.5);
+  outline: none;
+}
+.pc-node > a:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.pc-mark {
+  position: absolute;
+  top: calc(var(--rail-y) - 0.4375rem);
+  left: 0;
+  width: 0.875rem;
+  height: 0.875rem;
+  background: var(--background);
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--foreground) 40%, transparent);
+  animation: p2b-fade 0.4s ease calc(0.4s + var(--i) * 0.3s) both;
+}
+.pc-node.has-count .pc-mark {
+  background: var(--foreground);
+  box-shadow: none;
+}
+.pc-node.is-hot .pc-mark {
+  background: var(--brand);
+  box-shadow: inset 0 0 0 1.5px var(--foreground);
+}
+/* The node the marker lands on wakes once it arrives: a ring opens out, twice. */
+.pc-node.is-focus .pc-mark::after {
+  content: "";
+  position: absolute;
+  inset: -0.375rem;
+  border: 1.5px solid var(--brand);
+  opacity: 0;
+  animation: pc-ping 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) 1.55s 2;
+}
+@keyframes pc-ping {
+  0% {
+    opacity: 1;
+    scale: 0.6;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.6;
+  }
+}
+.pc-node-name {
+  transition: translate 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.pc-node > a:hover .pc-node-name {
+  translate: 0.25rem 0;
+}
+.pc-node.is-zero .pc-node-count {
+  color: color-mix(in oklch, var(--foreground) 35%, transparent);
+}
+.pc-pipe.is-dormant .pc-mark,
+.pc-pipe.is-dormant .pc-node-count {
+  opacity: 0.55;
+}
+
+@media (max-width: 767px) {
+  .pc-nodes {
+    grid-template-columns: minmax(0, 1fr);
+    padding-left: 1.75rem;
+  }
+  .pc-rail {
+    top: 0.5rem;
+    bottom: 2.5rem;
+    left: 0.4375rem;
+    right: auto;
+    width: 2px;
+    height: auto;
+    margin: 0 0 0 -1px;
+  }
+  .pc-rail::before,
+  .pc-rail-fill,
+  .pc-runner {
+    display: none;
+  }
+  .pc-mark {
+    top: 1.15rem;
+    left: -1.75rem;
+  }
+  .pc-node.is-focus .pc-mark::after {
+    animation-delay: 0.6s;
+  }
+  .pc-node > a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid color-mix(in oklch, var(--foreground) 12%, transparent);
+  }
+  .pc-node > a > :not(.pc-node-count) {
+    grid-column: 1;
+    justify-self: start;
+  }
+  .pc-node-count {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+  }
+}
+
+/* ---------------------------------------------------------------- project sheets */
+
+.pc-rail-scroll {
+  display: grid;
+  grid-auto-columns: minmax(17.5rem, 1fr);
+  grid-auto-flow: column;
+  gap: 1.25rem;
+  margin-inline: -1rem;
+  padding: 0.25rem 1rem 0.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 1rem;
+}
+.pc-rail-scroll > * {
+  scroll-snap-align: start;
+}
+@media (min-width: 1024px) {
+  .pc-rail-scroll {
+    grid-auto-columns: minmax(0, 1fr);
+    margin-inline: 0;
+    padding-inline: 0;
+    overflow: visible;
+  }
+}
+
+.pc-sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--card);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--foreground) 22%, transparent);
+}
+.pc-sheet:has(a:focus-visible) {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.pc-sheet a:focus-visible {
+  outline: none;
+}
+/* The whole sheet opens the project; the link's box covers it. */
+.pc-sheet .pc-stretch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
+.pc-fig {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--muted);
+}
+@media (min-width: 768px) {
+  .pc-sheet.is-wide {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+  .pc-sheet.is-wide .pc-fig {
+    aspect-ratio: auto;
+    min-height: 17rem;
+  }
+}
+.pc-fig img {
+  object-fit: cover;
+  scale: 1.06;
+  transition: translate 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.pc-sheet:hover .pc-fig img {
+  translate: 0 -2.5%;
+}
+/* The blueprint laid over the photograph on hover: the site's 24px drawing grid. */
+.pc-fig::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: color-mix(in oklch, oklch(0.302 0.025 241.7) 55%, transparent);
+  background-image:
+    linear-gradient(color-mix(in oklch, white 22%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, white 22%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+.pc-sheet:hover .pc-fig::after {
+  opacity: 1;
+}
+.pc-plate {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 2;
+  padding: 0.25rem 0.5rem;
+  background: var(--foreground);
+  color: var(--background);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+/* Work that waits on the professional, on a project sheet: a hazard-taped tag. */
+.pc-flag {
+  padding: 0.125rem 0.375rem;
+  background: var(--brand);
+  color: var(--brand-foreground);
+  box-shadow: inset 0 -3px 0 0 var(--foreground);
+}
+.pc-arrow {
+  transition: translate 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.pc-sheet:hover /* Work that waits on the professional, on a project sheet: a hazard-taped tag. */
+.pc-flag {
+  padding: 0.125rem 0.375rem;
+  background: var(--brand);
+  color: var(--brand-foreground);
+  box-shadow: inset 0 -3px 0 0 var(--foreground);
+}
+.pc-arrow {
+  translate: 0.3rem 0;
+}
+
+/* The stage line: one bar per stage, ink when complete, brass where work is, stripes when held. */
+.pc-seg {
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  gap: 3px;
+}
+.pc-seg i {
+  display: block;
+  height: 0.375rem;
+  background: color-mix(in oklch, var(--foreground) 14%, transparent);
+  transform-origin: 0 100%;
+  animation: pc-grow 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) calc(0.6s + var(--i) * 0.035s) both;
+  transition: scale 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.pc-seg i.is-done {
+  background: var(--foreground);
+}
+.pc-seg i.is-active {
+  background: var(--brand);
+  box-shadow: inset 0 0 0 1px var(--foreground);
+}
+.pc-seg i.is-held {
+  background: repeating-linear-gradient(-45deg, var(--brand) 0 3px, var(--foreground) 3px 6px);
+}
+.pc-sheet:hover .pc-seg i:is(.is-active, .is-held) {
+  scale: 1 2;
+}
+@keyframes pc-grow {
+  from {
+    scale: 0 1;
+  }
+}
+
+/* ---------------------------------------------------------------- the construction line */
+
+/* A listing's five checkpoints on one line; the brass line extends to the one to do now. */
+.pc-line {
+  --rail-y: 0.5rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pc-line::before,
+.pc-line::after {
+  content: "";
+  position: absolute;
+  top: var(--rail-y);
+  left: 0;
+  right: 20%;
+  height: 2px;
+  margin-top: -1px;
+  background: color-mix(in oklch, var(--foreground) 16%, transparent);
+}
+.pc-line::after {
+  background: var(--brand);
+  box-shadow: 0 0 0 1px var(--foreground);
+  transform-origin: 0 50%;
+  scale: var(--p, 0) 1;
+  animation: pc-draw 1s cubic-bezier(0.65, 0, 0.25, 1) 0.45s both;
+}
+.pc-cp {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 0;
+  padding: 1.5rem 0.75rem 0 0;
+}
+.pc-cp-mark {
+  position: absolute;
+  top: calc(var(--rail-y) - 0.5rem);
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+  background: var(--background);
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--foreground) 40%, transparent);
+  color: var(--background);
+  animation: p2b-fade 0.35s ease calc(0.5s + var(--i) * 0.2s) both;
+}
+.pc-cp.is-done .pc-cp-mark {
+  background: var(--foreground);
+  box-shadow: none;
+}
+.pc-cp.is-current .pc-cp-mark {
+  background: var(--brand);
+  box-shadow: inset 0 0 0 1.5px var(--foreground);
+}
+.pc-cp:is(.is-attention, .is-review) .pc-cp-mark {
+  background: repeating-linear-gradient(-45deg, var(--brand) 0 3px, var(--foreground) 3px 6px);
+  box-shadow: inset 0 0 0 1.5px var(--foreground);
+}
+.pc-cp.is-next .pc-cp-name {
+  color: var(--muted-foreground);
+}
+.pc-cp-state {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.pc-cp:is(.is-current, .is-attention, .is-review) .pc-cp-state {
+  padding: 0.0625rem 0.375rem;
+  background: var(--brand);
+  color: var(--brand-foreground);
+}
+
+/* The compact, vertical line beside the work. */
+.pc-line.is-v {
+  --rail-y: 0;
+  grid-template-columns: minmax(0, 1fr);
+  padding-left: 1.75rem;
+}
+.pc-line.is-v::before,
+.pc-line.is-v::after {
+  top: 0.75rem;
+  bottom: 0.75rem;
+  left: 0.5rem;
+  right: auto;
+  width: 2px;
+  height: auto;
+  margin: 0 0 0 -1px;
+  transform-origin: 50% 0;
+  scale: 1 var(--p, 0);
+}
+.pc-line.is-v::after {
+  animation-name: pc-draw-v;
+}
+@keyframes pc-draw-v {
+  from {
+    scale: 1 0;
+  }
+}
+.pc-line.is-v .pc-cp {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+.pc-line.is-v .pc-cp-mark {
+  top: 50%;
+  left: -1.75rem;
+  margin-top: -0.5rem;
+}
+
+@media (max-width: 767px) {
+  .pc-line:not(.is-v) {
+    grid-template-columns: minmax(0, 1fr);
+    padding-left: 1.75rem;
+  }
+  .pc-line:not(.is-v)::before,
+  .pc-line:not(.is-v)::after {
+    top: 0.75rem;
+    bottom: 0.75rem;
+    left: 0.5rem;
+    right: auto;
+    width: 2px;
+    height: auto;
+    margin: 0 0 0 -1px;
+    transform-origin: 50% 0;
+    scale: 1 var(--p, 0);
+  }
+  .pc-line:not(.is-v)::after {
+    animation-name: pc-draw-v;
+  }
+  .pc-line:not(.is-v) .pc-cp {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    padding: 0.5rem 0;
+  }
+  .pc-line:not(.is-v) .pc-cp-mark {
+    top: 0.75rem;
+    left: -1.75rem;
+  }
+  .pc-line:not(.is-v) .pc-cp-text {
+    flex-basis: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------- the slim listing notice */
+
+/* Five short bars, ink for each step done, like the stage line on a project. */
+.pc-notice-line {
+  display: inline-grid;
+  grid-template-columns: repeat(5, 0.875rem);
+  gap: 3px;
+}
+.pc-notice-line i {
+  display: block;
+  height: 0.375rem;
+  background: color-mix(in oklch, var(--foreground) 16%, transparent);
+  transform-origin: 0 50%;
+}
+.pc-notice-line i.is-done {
+  background: var(--foreground);
+  animation: pc-grow 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) calc(0.3s + var(--i, 0) * 0.06s) both;
+}
