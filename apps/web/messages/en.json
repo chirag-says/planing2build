@@ -1038,6 +1038,13 @@
       "APPROVED": "Approved",
       "REJECTED": "Rejected",
       "SUPERSEDED": "Superseded"
+    },
+    "plan": {
+      "QUEUED": "Waiting",
+      "RUNNING": "Being laid out",
+      "VALID": "Ready",
+      "INFEASIBLE": "Does not fit",
+      "FAILED": "Could not be made"
     }
   },
   "Workspace": {
@@ -3122,7 +3129,43 @@
         "VALID": "Ready",
         "INFEASIBLE": "Does not fit",
         "FAILED": "Could not be made"
-      }
+      },
+      "working": "Being laid out. This list updates by itself.",
+      "refreshFailed": "The list could not be updated. It will try again shortly.",
+      "why": "Why it does not fit",
+      "whyHide": "Hide the reasons",
+      "whyLoading": "Loading the reasons…",
+      "whyError": "The reasons could not be loaded. Try again.",
+      "infeasible": {
+        "PROVEN": "This home cannot fit on your plot under the current planning rules.",
+        "NO_SUPPORTED_LAYOUT": "None of the layouts the engine makes today fits this home on your plot. That does not mean it cannot be designed.",
+        "default": "This home did not fit on your plot under the planning rules.",
+        "reasonsTitle": "What stopped it",
+        "explanationTitle": "Details",
+        "reasons": {
+          "ENVELOPE_EMPTY": "After the setbacks, no buildable area is left on the plot.",
+          "AREA_BUDGET": "The rooms need more floor area than the buildable area has.",
+          "WIDTH_TOO_NARROW": "The buildable area is too narrow for one of the rooms.",
+          "DEPTH_EXCEEDED": "The rooms need more depth than the buildable area has.",
+          "PARKING_TOO_WIDE": "The parking does not fit in the buildable area.",
+          "ACCESS_SPAN": "A room would not share enough wall with the room it opens from to fit a door.",
+          "FIXTURE_FIT": "A room is too small for its fittings, such as a toilet or a kitchen counter.",
+          "OPENING_FIT": "A door or window does not fit on its wall.",
+          "RULESET_INCOMPLETE": "The planning rules are missing something the engine needs.",
+          "other": "The rooms could not be arranged within the planning rules."
+        },
+        "next": "You can change the design details and generate again, or change your requirement."
+      },
+      "failure": {
+        "ENGINE_ERROR": "The layout engine ran into an error.",
+        "ENGINE_INVALID_OUTPUT": "The engine made a plan that did not pass its own checks, so it was not kept.",
+        "ENGINE_TIMEOUT": "Laying out the plan took too long and was stopped.",
+        "STALE": "The request was not picked up in time.",
+        "default": "The floor plan could not be made.",
+        "next": "You can generate a new plan."
+      },
+      "finished": "Floor plan {number}: {state}",
+      "requestedOn": "Requested {date}"
     },
     "joined": "{a} · {b}",
     "selectedOpeningBetween": "{kind} between {a} and {b}",
@@ -3391,6 +3434,234 @@
         "ENGINE_TIMEOUT": "The layout engine took too long.",
         "STALE": "The layout stopped and was given up.",
         "UNKNOWN": "No reason was recorded."
+      }
+    },
+    "generate": {
+      "title": "Generate a floor plan",
+      "intro": "The layout engine lays out a ground-floor concept plan from your submitted requirement and checks it against the planning rules. If it needs details the requirement does not give, it asks for them here.",
+      "submit": "Generate floor plan",
+      "requesting": "Requesting…",
+      "requested": "Floor plan {number} requested. It is listed below and opens when it is ready.",
+      "showDetails": "Add design details",
+      "hideDetails": "Hide design details",
+      "detailsIntro": "Fill in only what your requirement does not already answer. Your submitted requirement always comes first.",
+      "notSet": "Not set",
+      "yes": "Yes",
+      "no": "No",
+      "line": "{label}: {value}",
+      "feet": "{value} ft",
+      "setbackLine": "Setback, {side}",
+      "setbacksLegend": "Setbacks in feet",
+      "setbacksHelp": "Open space to keep on each side of the plot, seen from the road. Only for sides your requirement does not give.",
+      "setbackSides": {
+        "FRONT": "Front (road side)",
+        "BACK": "Back",
+        "LEFT": "Left",
+        "RIGHT": "Right"
+      },
+      "setbackSideNouns": {
+        "FRONT": "front",
+        "BACK": "back",
+        "LEFT": "left",
+        "RIGHT": "right"
+      },
+      "fields": {
+        "facing_override": {
+          "label": "Road and main entrance side",
+          "help": "Only if the facing in your requirement is wrong or was not sure."
+        },
+        "bedrooms_exact": {
+          "label": "Exact number of bedrooms",
+          "help": "Only when your requirement says 5 or more."
+        },
+        "bathrooms_exact": {
+          "label": "Exact number of bathrooms",
+          "help": "Only when your requirement says 5 or more."
+        },
+        "attached_bathrooms": {
+          "label": "Attached bathrooms",
+          "help": "Bathrooms that open from a bedroom. Not more than the bedrooms or the bathrooms."
+        },
+        "parking_spaces": {
+          "label": "Parking spaces",
+          "help": "Only when your requirement includes parking."
+        },
+        "parking_kind": {
+          "label": "Parking for",
+          "help": "Only when your requirement includes parking."
+        },
+        "dining": {
+          "label": "Dining"
+        },
+        "kitchen": {
+          "label": "Kitchen"
+        },
+        "stair": {
+          "label": "Stair",
+          "help": "Floor plans are ground floor only for now."
+        },
+        "utility": {
+          "label": "Utility room"
+        }
+      },
+      "facing": {
+        "N": "North",
+        "NE": "North-east",
+        "E": "East",
+        "SE": "South-east",
+        "S": "South",
+        "SW": "South-west",
+        "W": "West",
+        "NW": "North-west"
+      },
+      "parkingKind": {
+        "CAR": "Cars",
+        "TWO_WHEELER": "Two-wheelers"
+      },
+      "dining": {
+        "SEPARATE": "Separate dining room",
+        "IN_LIVING": "Dining in the living room"
+      },
+      "kitchen": {
+        "CLOSED": "Closed kitchen",
+        "OPEN": "Open kitchen"
+      },
+      "stair": {
+        "NONE": "No stair",
+        "INTERNAL": "Stair inside the house",
+        "EXTERNAL": "Stair outside the house"
+      },
+      "problem": {
+        "range": "Enter a whole number from {min} to {max}.",
+        "setback": "Enter feet from 0 to {max}, with at most two decimals.",
+        "conflict": "Your submitted requirement already answers this differently. Leave it empty, or change the requirement.",
+        "invalid": "This value cannot be used."
+      },
+      "missing": {
+        "NOT_ANSWERED": "Needed: your requirement does not answer this.",
+        "NOT_SURE": "Needed: your requirement says not sure.",
+        "OUT_OF_RANGE": "Needed: this does not fit the bedrooms and bathrooms in your requirement."
+      },
+      "fixFirst": "Correct the marked fields first.",
+      "errors": {
+        "DESIGN_INPUT_REQUIRED": "A few more details are needed before a floor plan can be generated. They are marked in the form.",
+        "VALIDATION_ERROR": "Some details could not be used. They are marked in the form.",
+        "PLAN_UNSUPPORTED": "A floor plan cannot be generated for this requirement yet.",
+        "GENERATION_IN_PROGRESS": "A floor plan is already being laid out for this project. It is listed below.",
+        "RATE_LIMITED": "Too many requests just now. Try again in a few minutes.",
+        "default": "The floor plan could not be requested. Check your connection and try again."
+      },
+      "unsupported": {
+        "QUESTION_SET_NOT_SUPPORTED": "Your requirement was answered with a set of questions the engine does not read.",
+        "ANSWER_INVALID": "An answer in your requirement cannot be used, such as the plot size or a room count.",
+        "PLOT_NOT_RECTANGULAR": "Only rectangular plots are supported.",
+        "FLOORS_NOT_SUPPORTED": "Only a ground-floor home is supported.",
+        "BASEMENT_NOT_SUPPORTED": "A basement is not supported.",
+        "STAIR_NOT_YET_SUPPORTED": "Stairs are not supported yet. Choose no stair."
+      },
+      "locks": {
+        "title": "Generating is not available",
+        "OWNER_ONLY": "Only the project owner can generate floor plans. You can open the plans that are ready.",
+        "NOT_SUBMITTED": "Floor plans are laid out from the submitted requirement. Submit it first.",
+        "NEEDS_INFO": "Your requirement is being updated. You can generate again once it is submitted.",
+        "ON_HOLD": "The project is on hold, so no new floor plans can be generated.",
+        "CLOSED": "This project is closed, so no new floor plans can be generated.",
+        "RULESET_NOT_PUBLISHED": "The planning rules that floor plans are checked against are not available yet, so none can be generated right now.",
+        "IN_PROGRESS": "A floor plan is being laid out. You can ask for another when it is finished."
+      },
+      "words": {
+        "title": "Describe it in words",
+        "note": "AI-assisted design interpretation: suggested details based on your words. Nothing is saved, and your submitted requirement stays the authority.",
+        "label": "Describe the home you want",
+        "placeholder": "For example: three bedrooms, two with attached bathrooms, an open kitchen and parking for one car",
+        "ask": "Suggest details",
+        "asking": "Reading your description…",
+        "failed": "I could not read that as a description of a home. Try saying it another way.",
+        "proposal": "Suggested details",
+        "noInputs": "Your description does not fill in any design detail.",
+        "missingTitle": "Not in your description",
+        "missingNote": "Your submitted requirement may already answer these. Anything still needed is asked when you generate.",
+        "assumedTitle": "Left out because you did not mention them",
+        "conflictsTitle": "Different from your submitted requirement",
+        "conflictsNote": "The submitted requirement is what the plan uses. Change the requirement to use your new answer.",
+        "conflict": "{field}: the requirement says {requirement}, you said {said}",
+        "unsupportedTitle": "Not something these floor plans do",
+        "clarificationsTitle": "Questions from the assistant",
+        "preferencesTitle": "Preferences noted",
+        "preferencesNote": "The layout engine does not use these yet.",
+        "use": "Use these details",
+        "dismiss": "Dismiss",
+        "used": "The suggested details are in the form. Check them, then generate.",
+        "fivePlus": "5 or more",
+        "errorUnavailable": "The assistant is not available right now.",
+        "errorBusy": "Too many requests just now. Try again in a few minutes.",
+        "errorFailed": "The suggestion could not be made. Check your connection and try again.",
+        "off": "Describing the home in words is not available for this project.",
+        "facts": {
+          "plot_size": "Plot size",
+          "facing": "Road and main entrance side",
+          "setbacks": "Setbacks",
+          "bedrooms": "Bedrooms",
+          "bathrooms": "Bathrooms",
+          "attached_bathrooms": "Attached bathrooms",
+          "dining": "Dining",
+          "kitchen": "Kitchen",
+          "parking": "Parking",
+          "pooja_room": "Puja room",
+          "utility": "Utility room"
+        },
+        "conflictKeys": {
+          "plot_width_ft": "Plot width",
+          "plot_depth_ft": "Plot depth",
+          "facing": "Facing",
+          "bedrooms": "Bedrooms",
+          "bathrooms": "Bathrooms",
+          "car_parking": "Parking",
+          "pooja_room": "Puja room"
+        },
+        "unsupported": {
+          "ADD_FLOOR": "More than one floor: these concept plans are ground floor only for now.",
+          "FREE_SHAPE": "Curved or angled shapes: rooms here are rectangles with straight walls.",
+          "STRUCTURAL_ENGINEERING": "Structural questions: these need a qualified structural engineer.",
+          "PERMIT_COMPLIANCE": "Approvals and permits: these need the authority and a qualified professional.",
+          "VASTU_CERTIFICATION": "Vastu certification: the assistant cannot certify Vastu compliance.",
+          "PRIVACY_REDESIGN": "Arranging the home for privacy: not supported yet.",
+          "UNSUPPORTED_ROOM_TYPE": "A kind of room the planning rules do not offer.",
+          "IMAGES_OR_3D": "Pictures and 3D views: these are not part of floor plans.",
+          "CONSTRUCTION_DRAWINGS": "Construction drawings: a concept floor plan is not a drawing to build from.",
+          "OTHER": "Something outside what floor plans here can do."
+        },
+        "rooms": {
+          "LIVING": "Living room",
+          "DINING": "Dining",
+          "KITCHEN": "Kitchen",
+          "BEDROOM": "Bedroom",
+          "MASTER_BEDROOM": "Main bedroom",
+          "BATHROOM": "Bathroom",
+          "PUJA": "Puja room",
+          "UTILITY": "Utility room",
+          "STUDY": "Study",
+          "STORE": "Store",
+          "PARKING": "Parking"
+        },
+        "preference": {
+          "living": {
+            "LARGE": "A large living room",
+            "STANDARD": "A standard living room",
+            "COMPACT": "A compact living room"
+          },
+          "nextTo": "{a} next to {b}",
+          "nextToRequired": "{a} next to {b} (a must)",
+          "private": "{room} kept private",
+          "circulation": {
+            "COMPACT": "Compact passages",
+            "GENEROUS": "Generous passages"
+          },
+          "entrance": {
+            "FRONT": "Entrance at the front",
+            "SIDE": "Entrance at the side"
+          }
+        }
       }
     }
   }
