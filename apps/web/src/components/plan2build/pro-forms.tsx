@@ -14,6 +14,7 @@ import { ChoiceGroup, FormField, FormFieldset } from "@/components/plan2build/fo
 import { FileRow } from "@/components/plan2build/file-row";
 import type { MapTiles, Point } from "@/components/plan2build/requirement/plot-map";
 import { LocationField } from "@/components/plan2build/requirement/location-field";
+import { DownloadLink } from "@/components/plan2build/rfq";
 import { Notice } from "@/components/plan2build/states";
 import { StatusBadge } from "@/components/plan2build/status-badge";
 import { Badge } from "@/components/ui/badge";
@@ -72,6 +73,12 @@ async function uploadFile(file: File, purpose: Purpose): Promise<string | null> 
     params: { path: { file_id: ticket.file.file_id } },
   });
   return data ? data.file_id : null;
+}
+
+/** Open one of your own uploaded files (verification evidence, portfolio) on a short-lived, logged
+ * link. Only an AVAILABLE file has a link; the API answers STATE_CONFLICT otherwise. */
+function OwnFileLink({ fileId }: { fileId: string }) {
+  return <DownloadLink label={t("category.openFile")} url={`/api/v1/pro/files/${fileId}/url`} />;
 }
 
 export function AddCategoryForm({ options }: { options: CategoryOption[] }) {
@@ -395,11 +402,16 @@ function DocumentsSection({ documents, categoryCode, locked }: {
                   mime={d.file?.content_type ?? "application/octet-stream"}
                   size={d.file?.size_bytes ?? 0}
                   state={d.file?.state ?? "FAILED"}
-                  actions={!locked && (
-                    <Button type="button" variant="ghost" size="sm" disabled={busy !== null}
-                      onClick={() => run("remove", () => browserApi.DELETE("/api/v1/pro/documents/{item_id}", { params: { path: { item_id: d.document_id } } }))}>
-                      <Trash2Icon aria-hidden="true" />{t("category.remove")}
-                    </Button>
+                  actions={(
+                    <>
+                      {d.file?.state === "AVAILABLE" && <OwnFileLink fileId={d.file.file_id} />}
+                      {!locked && (
+                        <Button type="button" variant="ghost" size="sm" disabled={busy !== null}
+                          onClick={() => run("remove", () => browserApi.DELETE("/api/v1/pro/documents/{item_id}", { params: { path: { item_id: d.document_id } } }))}>
+                          <Trash2Icon aria-hidden="true" />{t("category.remove")}
+                        </Button>
+                      )}
+                    </>
                   )}
                 />
               </li>
@@ -531,11 +543,16 @@ export function PortfolioManager({ data }: { data: Dashboard }) {
                   mime={p.file?.content_type ?? "image/jpeg"}
                   size={p.file?.size_bytes ?? 0}
                   state={p.file?.state ?? "FAILED"}
-                  actions={!locked && (
-                    <Button type="button" variant="ghost" size="sm" disabled={busy !== null}
-                      onClick={() => run("remove", () => browserApi.DELETE("/api/v1/pro/portfolio/{item_id}", { params: { path: { item_id: p.item_id } } }))}>
-                      <Trash2Icon aria-hidden="true" />{t("category.remove")}
-                    </Button>
+                  actions={(
+                    <>
+                      {p.file?.state === "AVAILABLE" && <OwnFileLink fileId={p.file.file_id} />}
+                      {!locked && (
+                        <Button type="button" variant="ghost" size="sm" disabled={busy !== null}
+                          onClick={() => run("remove", () => browserApi.DELETE("/api/v1/pro/portfolio/{item_id}", { params: { path: { item_id: p.item_id } } }))}>
+                          <Trash2Icon aria-hidden="true" />{t("category.remove")}
+                        </Button>
+                      )}
+                    </>
                   )}
                 />
               </li>

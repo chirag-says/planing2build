@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { JsonForm, ReasonAction } from "@/components/plan2build/build-plan";
 import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
-import { DownloadLink, QuoteForm, RespondToInvitation, TextAction } from "@/components/plan2build/rfq";
+import { DownloadLink, QuoteAttachmentList, QuoteForm, RespondToInvitation, TextAction } from "@/components/plan2build/rfq";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
 
@@ -64,13 +64,18 @@ export default async function ProQuotePage({ params }: { params: Promise<{ invit
           </details>
         </section>
       )}
-      {data.can_submit && data.pack && <QuoteForm invitationId={invitationId} lines={data.pack.quantities} />}
+      {data.can_submit && data.pack && (
+        <QuoteForm invitationId={invitationId} lines={data.pack.quantities} draft={data.draft} attachmentsMax={data.attachments_max} />
+      )}
       {data.versions.length > 0 && (
         <section aria-labelledby="versions" className="flex flex-col gap-2 text-sm">
           <SectionHeader id="versions" title={t("yourVersions")} />
           <ul className="flex flex-col gap-1">
             {data.versions.map((v) => (
-              <li key={v.quote.id}>v{v.quote.version_no} · {v.quote.kind} · {v.state} · {v.quote.comparable_total} · {v.quote.valid_to}</li>
+              <li key={v.quote.id} className="flex flex-col gap-2">
+                <span>v{v.quote.version_no} · {v.quote.kind} · {v.state} · {v.quote.comparable_total} · {v.quote.valid_to}</span>
+                <QuoteAttachmentList invitationId={invitationId} files={v.quote.attachments} />
+              </li>
             ))}
           </ul>
           {data.can_withdraw && <ReasonAction label={t("withdraw")} url={`${base}/quote/withdraw`} />}

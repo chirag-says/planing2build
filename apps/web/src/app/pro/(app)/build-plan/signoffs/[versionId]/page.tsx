@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
-import { DownloadButton, SignPanel } from "@/components/plan2build/build-plan";
-import { PageContainer, PageHeader } from "@/components/plan2build/page-header";
+import { DownloadButton, RevokeSignoff, SignPanel } from "@/components/plan2build/build-plan";
+import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
 import { Notice } from "@/components/plan2build/states";
 import { serverApi } from "@/lib/api/server";
+import { formatDateTime } from "@/lib/format";
 import { getTranslator } from "@/lib/i18n";
+import { revokeEffect } from "@/lib/signoff";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const metadata: Metadata = { title: getTranslator("BuildPlan")("signTitle") };
 
 // Structural sign-off of one version (BP-04): the lines as entered, the drawings, the statement,
-// and signing with a one-time code.
+// signing with a one-time code, and your sign-offs on this version with revoking where the API
+// allows it (BP-20).
 export default async function SignoffPage({ params }: { params: Promise<{ versionId: string }> }) {
   const { versionId } = await params;
   if (!UUID.test(versionId)) notFound();
@@ -55,6 +58,28 @@ export default async function SignoffPage({ params }: { params: Promise<{ versio
       {data.verified && data.state === "IN_REVIEW" && unsigned.length > 0 && (
         <SignPanel versionId={versionId} codes={unsigned} />
       )}
+      <section aria-labelledby="my-signoffs" className="flex flex-col gap-3">
+        <SectionHeader id="my-signoffs" title={t("revoke.mine")} description={t("revoke.intro")} />
+        {data.my_signoffs.length === 0 && <p className="text-sm text-muted-foreground">{t("revoke.none")}</p>}
+        <ul className="flex flex-col gap-2">
+          {data.my_signoffs.map((s) => {
+            const effect = revokeEffect(s, data.state);
+            return (
+              <li key={s.id} className="flex flex-col gap-2 rounded-md border border-border p-3 text-sm" data-testid="my-signoff">
+                <span className="font-medium">
+                  {s.line_code} · {s.state === "SIGNED" ? t("revoke.stateSigned") : t("revoke.stateVoid")}
+                </span>
+                <span className="text-muted-foreground">
+                  {s.engineer_name}{s.engineer_firm ? `, ${s.engineer_firm}` : ""}
+                  {s.signed_at ? ` · ${t("revoke.signedAt", { when: formatDateTime(s.signed_at) })}` : ""}
+                </span>
+                {s.void_reason && <span>{t("revoke.voidReason", { reason: s.void_reason })}</span>}
+                {effect && <RevokeSignoff signoffId={s.id} lineCode={s.line_code} afterIssue={effect === "afterIssue"} />}
+              </li>
+            );
+          })}
+        </ul>
+      </section>
     </PageContainer>
   );
 }
