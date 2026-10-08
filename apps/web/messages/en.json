@@ -2833,7 +2833,9 @@
       "ROOMS_NOT_MERGEABLE": "{item} can only be joined to a room that shares one whole side with it.",
       "ROOM_TYPE_NOT_ALLOWED": "This plan's rules do not allow that kind of room here.",
       "REVERT_NOT_ALONE": "A restore has to be made on its own.",
-      "UNKNOWN_REVISION": "That earlier state of the plan was not found."
+      "UNKNOWN_REVISION": "That earlier state of the plan was not found.",
+      "LAST_KITCHEN_REQUIRED": "{item} is the only kitchen. A home needs one, so it cannot be removed or changed to another type.",
+      "LAST_BATHROOM_REQUIRED": "{item} is the only bathroom or toilet. A home needs one, so it cannot be removed or changed to a room that is not a bathroom or toilet."
     },
     "units": {
       "metres": "{value} m",
@@ -3002,6 +3004,96 @@
     "unitSymbol": {
       "m": "m",
       "ft": "ft"
+    },
+    "insert": {
+      "help": "Add a room in this open space, against an outside wall of the house. It gets a door from the room it stands against, and a window if it needs one.",
+      "where": "Against which wall",
+      "slot": "Beside {room}, {side}: up to {depth} deep and {length} long inside",
+      "type": "Room type",
+      "depth": "Depth from the wall ({unit})",
+      "length": "Length along the wall ({unit})",
+      "align": "Place it",
+      "alignStart": "At the start of the wall",
+      "alignEnd": "At the end of the wall",
+      "sizesNote": "Sizes are measured to the wall centres; the space inside is slightly smaller.",
+      "shallow": "This {area} is {available} deep here, but a {type} needs at least {needed}.",
+      "narrow": "This wall gives {available} inside, but a {type} needs at least {needed}.",
+      "small": "That would give {area} inside, but a {type} needs at least {needed}.",
+      "tooDeep": "The open space reaches only {available} from this wall.",
+      "tooLong": "This stretch of wall is only {available} long.",
+      "preview": "Show on the plan",
+      "add": "Add room",
+      "noSlot": "No wall of the house faces this {area} with enough free space for a room.",
+      "canAdd": "A room can be added here",
+      "cannotAdd": "No room can be added here"
+    },
+    "assistant": {
+      "title": "Ask about your plan",
+      "note": "AI-assisted design interpretation: a suggested change based on your words. The plan's own rules decide whether it can be made, and nothing changes until you apply it.",
+      "label": "What would you like to change?",
+      "placeholder": "For example: make the kitchen a little bigger",
+      "ask": "Suggest a change",
+      "asking": "Working it out…",
+      "proposal": "Suggested change",
+      "apply": "Apply",
+      "cancel": "Cancel",
+      "dismiss": "Dismiss",
+      "stale": "The plan changed since this suggestion. Ask again.",
+      "clarify": "Could you say a little more? {question}",
+      "failedUnclear": "I could not turn that into a change to the plan. Try saying it another way.",
+      "status": {
+        "FAILED": "Not possible in this plan",
+        "UNSUPPORTED": "Not something the assistant does",
+        "CLARIFY": "A question first",
+        "UNAVAILABLE": "Assistant unavailable"
+      },
+      "refusal": {
+        "noPlace": "No open area of this plan has space for this room ({type}) at its smallest allowed size.",
+        "noPlaceIn": "The open area ({area}) has no space for this room ({type}) at its smallest allowed size.",
+        "noNeighbour": "{room} has no neighbouring room of the same width or depth to join, so it cannot be removed.",
+        "noOpening": "{room} has no {opening} to change.",
+        "nothingToChange": "There is nothing in the plan this change could apply to.",
+        "alreadyThere": "{room} already touches {target}.",
+        "rulesNotMet": "No version of this change keeps the plan within its rules. What stopped it:"
+      },
+      "errorConflict": "The plan changed meanwhile. Reload the page and ask again.",
+      "errorUnavailable": "The assistant is not available right now.",
+      "errorBusy": "Too many requests just now. Try again in a few minutes.",
+      "errorFailed": "The suggestion could not be made. Check your connection and try again.",
+      "intent": {
+        "larger": "Make {room} larger.",
+        "smaller": "Make {room} smaller.",
+        "toward": "Bring {room} closer to {target}.",
+        "add": "Add a room: {type}.",
+        "retype": "Change {room} to {type}.",
+        "remove": "Remove {room}.",
+        "rename": "Rename {room} to {name}.",
+        "moveDoor": "Move the door of {room}.",
+        "moveWindow": "Move the window of {room}.",
+        "wider": "Make the {opening} of {room} wider.",
+        "narrower": "Make the {opening} of {room} narrower."
+      },
+      "change": {
+        "area": "{room}: {before} to {after}",
+        "added": "New room {room}: {area}",
+        "removed": "{room} is removed; its space joins its neighbour",
+        "retyped": "{room} becomes a {type}",
+        "renamed": "{room} gets its new name",
+        "resized": "{opening}: {before} to {after} wide",
+        "moved": "{opening} moves along its wall"
+      },
+      "unsupported": {
+        "ADD_FLOOR": "This concept plan is a single storey for now, so another floor cannot be added.",
+        "FREE_SHAPE": "Rooms here are rectangles with straight walls; curved or angled shapes are not supported.",
+        "STRUCTURAL_ENGINEERING": "Structural questions need a qualified structural engineer; the assistant does not answer them.",
+        "PERMIT_COMPLIANCE": "Approvals and permits need the authority and a qualified professional; the assistant cannot confirm them.",
+        "VASTU_CERTIFICATION": "The assistant cannot certify Vastu compliance.",
+        "PRIVACY_REDESIGN": "Rearranging the plan for privacy is not supported yet. You can move a room, a door or a window yourself.",
+        "UNSUPPORTED_ROOM_TYPE": "That kind of room is not one this plan's rules offer.",
+        "IMAGES_OR_3D": "Pictures and 3D views are not part of this editor.",
+        "OTHER": "That is outside what the assistant can do with this plan.",
+        "CONSTRUCTION_DRAWINGS": "This is a concept floor plan, not a construction, structural or approval drawing. A qualified architect and structural engineer must prepare and check the drawings you build from."
+      }
     }
   }
 }

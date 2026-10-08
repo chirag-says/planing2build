@@ -30,7 +30,16 @@ import {
 import type { EditorAction, EditorState, Units } from "@/lib/plan/editor";
 import { changeText, labelOf, roomTypeLabel } from "@/lib/plan/messages";
 import type { PlanOp, RoomType } from "@/lib/plan/types";
-import { formatLength } from "@/lib/plan/units";
+import {
+  addOutsideOp,
+  fitProblems,
+  previewRect,
+  slotsFacing,
+  smallestSize,
+  type Align,
+  type FitProblem,
+} from "@/lib/plan/insert";
+import { formatArea, formatLength } from "@/lib/plan/units";
 
 const t = getTranslator("Plan");
 
@@ -344,5 +353,184 @@ export function ChangesPanel({ state }: { state: EditorState }) {
         ))}
       </ul>
     </section>
+  );
+}
+
+/** Adding a room in an open area (Checkpoint 3.2): the slots facing the area, a room type and a
+ * size; the reasons a size cannot fit are shown before anything is sent, and the room is
+ * previewed on the drawing. The server checks again and the validator decides. */
+export function OpenAreaPanel({ state, dispatch, onCommit, areaId }: PanelProps & { areaId: string }) {
+  const doc = state.plan.document;
+  const editing = state.plan.editing;
+  const area = state.plan.geometry.floors[0]?.open_areas?.find((a) => a.id === areaId);
+  const slots = slotsFacing(editing, areaId);
+  const ids = useId();
+  const grid = editing.grid_mm;
+  const firstType = editing.room_types[0];
+  const [slotIndex, setSlotIndex] = useState(0);
+  const [typeName, setTypeName] = useState<string>(firstType?.type ?? "");
+  const [align, setAlign] = useState<Align>("start");
+  const initial = slots[0] && firstType ? smallestSize(slots[0], firstType, grid) : { depth: 0, length: 0 };
+  const [depth, setDepth] = useState(() => inputFromLength(initial.depth, state.units));
+  const [length, setLength] = useState(() => inputFromLength(initial.length, state.units));
+  if (!area) return null;
+  const areaName = t(`openArea.${area.kind}`);
+  if (slots.length === 0) {
+    return <p className="text-sm text-muted-foreground">{t("insert.noSlot", { area: areaName })}</p>;
+  }
+  const slot = slots[Math.min(slotIndex, slots.length - 1)];
+  const type = editing.room_types.find((r) => r.type === typeName) ?? firstType;
+  const unit = t(`unitSymbol.${state.units}`);
+  const size = {
+    depth: lengthFromInput(depth, state.units, grid) ?? 0,
+    length: lengthFromInput(length, state.units, grid) ?? 0,
+  };
+  const problems = type ? fitProblems(slot, type, size) : [];
+  const op = type && problems.length === 0 ? addOutsideOp(slot, type.type as RoomType, size, align) : null;
+  const typeLabel = type ? roomTypeLabel(type.type).toLocaleLowerCase() : "";
+
+  function show(next: { slot?: number; depth?: string; length?: string; align?: Align }) {
+    const s = slots[Math.min(next.slot ?? slotIndex, slots.length - 1)];
+    const d = lengthFromInput(next.depth ?? depth, state.units, grid) ?? 0;
+    const l = lengthFromInput(next.length ?? length, state.units, grid) ?? 0;
+    dispatch({ type: "preview", rect: previewRect(doc, s, { depth: d, length: l }, next.align ?? align) });
+  }
+
+  function choose(nextSlot: number, nextType: string) {
+    const s = slots[nextSlot];
+    const info = editing.room_types.find((r) => r.type === nextType);
+    if (!s || !info) return;
+    const smallest = smallestSize(s, info, grid);
+    const d = inputFromLength(Math.min(smallest.depth, s.max_depth_mm), state.units);
+    const l = inputFromLength(Math.min(smallest.length, s.length_mm), state.units);
+    setSlotIndex(nextSlot);
+    setTypeName(nextType);
+    setDepth(d);
+    setLength(l);
+    show({ slot: nextSlot, depth: d, length: l });
+  }
+
+  function problemText(p: FitProblem): string {
+    const f = (mm: number) => formatLength(mm, state.units);
+    switch (p.kind) {
+      case "shallow":
+        return t("insert.shallow", { area: areaName, available: f(p.available), type: typeLabel, needed: f(p.needed) });
+      case "narrow":
+        return t("insert.narrow", { available: f(p.available), type: typeLabel, needed: f(p.needed) });
+      case "small":
+        return t("insert.small", {
+          area: formatArea(p.area, state.units),
+          type: typeLabel,
+          needed: formatArea(p.needed, state.units),
+        });
+      case "tooDeep":
+        return t("insert.tooDeep", { available: f(p.available) });
+      case "tooLong":
+        return t("insert.tooLong", { available: f(p.available) });
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-sm text-muted-foreground">{t("insert.help")}</p>
+      <fieldset className="flex flex-col gap-1">
+        <legend className="text-sm font-medium">{t("insert.where")}</legend>
+        {slots.map((s, i) => (
+          <label key={`${s.host_room}-${s.side}-${s.offset_mm}-${s.max_depth_mm}`} className="flex items-start gap-2 text-sm">
+            <input
+              type="radio"
+              name={`${ids}-slot`}
+              checked={i === Math.min(slotIndex, slots.length - 1)}
+              onChange={() => choose(i, typeName)}
+              className="mt-1"
+            />
+            <span>
+              {t("insert.slot", {
+                room: labelOf(s.host_room, doc, null),
+                side: t(`sides.${s.side.toLowerCase() as Side}`).toLocaleLowerCase(),
+                depth: formatLength(s.max_depth_mm - s.depth_allowance_mm, state.units),
+                length: formatLength(s.length_mm - s.length_allowance_mm, state.units),
+              })}
+            </span>
+          </label>
+        ))}
+      </fieldset>
+      <Label htmlFor={`${ids}-type`}>{t("insert.type")}</Label>
+      <Select value={typeName} onValueChange={(value) => choose(Math.min(slotIndex, slots.length - 1), value)}>
+        <SelectTrigger id={`${ids}-type`} className="w-full">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {editing.room_types.map((r) => (
+            <SelectItem key={r.type} value={r.type}>
+              {roomTypeLabel(r.type)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <div className="grid grid-cols-2 gap-2">
+        <div className="flex flex-col gap-1">
+          <Label htmlFor={`${ids}-depth`}>{t("insert.depth", { unit })}</Label>
+          <Input
+            id={`${ids}-depth`}
+            inputMode="decimal"
+            value={depth}
+            onChange={(e) => {
+              setDepth(e.target.value);
+              show({ depth: e.target.value });
+            }}
+            className="tabular-nums"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label htmlFor={`${ids}-length`}>{t("insert.length", { unit })}</Label>
+          <Input
+            id={`${ids}-length`}
+            inputMode="decimal"
+            value={length}
+            onChange={(e) => {
+              setLength(e.target.value);
+              show({ length: e.target.value });
+            }}
+            className="tabular-nums"
+          />
+        </div>
+      </div>
+      <Label htmlFor={`${ids}-align`}>{t("insert.align")}</Label>
+      <Select
+        value={align}
+        onValueChange={(value) => {
+          setAlign(value as Align);
+          show({ align: value as Align });
+        }}
+      >
+        <SelectTrigger id={`${ids}-align`} className="w-full">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="start">{t("insert.alignStart")}</SelectItem>
+          <SelectItem value="end">{t("insert.alignEnd")}</SelectItem>
+        </SelectContent>
+      </Select>
+      <p className="text-xs text-muted-foreground">{t("insert.sizesNote")}</p>
+      <div aria-live="polite">
+        {problems.length > 0 && (
+          <ul className="list-disc pl-5 text-sm text-destructive">
+            {problems.map((p) => (
+              <li key={p.kind}>{problemText(p)}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Button variant="outline" disabled={state.busy} onClick={() => show({})}>
+          {t("insert.preview")}
+        </Button>
+        <Button disabled={!op || state.busy} onClick={() => op && onCommit([op])}>
+          <PlusIcon aria-hidden="true" data-icon="inline-start" />
+          {t("insert.add")}
+        </Button>
+      </div>
+    </div>
   );
 }

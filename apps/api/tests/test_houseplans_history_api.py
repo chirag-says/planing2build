@@ -409,3 +409,39 @@ async def test_a_restore_replays_at_most_the_limit_and_a_named_version_shortens_
     )
     assert near.status_code == 200, near.text
     assert near.json()["document"]["meta"]["body_sha256"] == target
+
+
+async def test_the_last_kitchen_and_bathroom_are_kept_with_a_reason(
+    database: Database,
+    client_for: ClientFactory,
+    make_user: UserFactory,
+    sign_in: SignIn,
+    worker: Any,  # noqa: F811
+) -> None:
+    family, project_id, plan_id, detail = await valid_plan(
+        database, client_for, make_user, sign_in, worker
+    )
+    rooms = detail["document"]["floors"][0]["rooms"]
+    wet = {"BATH_ATTACHED", "BATH_COMMON", "WC"}
+    for kinds, code in (({"KITCHEN"}, "LAST_KITCHEN_REQUIRED"), (wet, "LAST_BATHROOM_REQUIRED")):
+        matching = [r for r in rooms if r["type"] in kinds]
+        if len(matching) != 1:
+            continue  # the generated plan has more than one: nothing is the last
+        only = matching[0]["id"]
+        refused = await edit_plan(
+            family,
+            project_id,
+            plan_id,
+            0,
+            [{"op": "SET_ROOM_TYPE", "room": only, "type": "BEDROOM"}],
+        )
+        assert refused.status_code == 422, refused.text
+        assert refused.json()["error"]["details"] == {
+            "index": 0,
+            "op": "SET_ROOM_TYPE",
+            "code": code,
+            "entities": [only],
+        }
+    kitchens = [r for r in rooms if r["type"] == "KITCHEN"]
+    assert len(kitchens) == 1  # the API plan has one kitchen, so the kitchen case ran
+    assert (await family.get(f"{url(project_id, plan_id)}")).json()["editing"]["revision_no"] == 0

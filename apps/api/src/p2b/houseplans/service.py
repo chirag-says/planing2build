@@ -469,6 +469,7 @@ class PlanView:
     # the caller owns the project and the plan has a document to edit (AD-12). The API decides
     # it; the web app only shows or hides the editing tools accordingly.
     can_edit: bool = False
+    assistant: bool = False  # Checkpoint 4: the owner may ask the AI assistant
 
 
 async def _member(
@@ -522,7 +523,13 @@ async def get_plan(
         raise NotFound
     view = (await _views(session, [row]))[0]
     editable = role == MembershipRole.OWNER and row.head_document is not None
-    return PlanView(view.row, view.ruleset, can_edit=editable)
+    return PlanView(
+        view.row, view.ruleset, can_edit=editable, assistant=editable and assistant_on(settings)
+    )
+
+
+def assistant_on(settings: Settings) -> bool:
+    return settings.houseplans_ai_enabled and settings.ai_text_provider != "none"
 
 
 async def get_any(session: AsyncSession, settings: Settings, plan_id: uuid.UUID) -> PlanView:
@@ -681,7 +688,7 @@ async def apply_operations(
         revision=row.head_revision_no,
         ops=[o.op.value for o in ops],
     )
-    return PlanView(row, ruleset, can_edit=True), inverse
+    return PlanView(row, ruleset, can_edit=True, assistant=assistant_on(settings)), inverse
 
 
 async def _restored(

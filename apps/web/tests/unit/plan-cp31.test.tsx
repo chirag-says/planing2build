@@ -220,6 +220,11 @@ describe("messages", () => {
       `${labelOf("living", document, null)} would overlap ${labelOf("kitchen", document, null)}.`,
     );
     expect(rejectionText("SOMETHING_NEW", [], document, geometry)).toBe("This kind of change is not available.");
+    // E-5: the last kitchen and the last bathroom stay, with the room named
+    expect(rejectionText("LAST_KITCHEN_REQUIRED", ["kitchen"], document, geometry)).toBe(
+      `${labelOf("kitchen", document, null)} is the only kitchen. A home needs one, so it cannot be removed or changed to another type.`,
+    );
+    expect(rejectionText("LAST_BATHROOM_REQUIRED", ["living"], document, geometry)).toContain("only bathroom or toilet");
   });
 
   it("lists the owner's room changes and nothing else", () => {

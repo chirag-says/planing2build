@@ -33,6 +33,7 @@ from p2b.houseplans.ops_router import router as houseplans_ops_router
 from p2b.houseplans.router import router as houseplans_router
 from p2b.identity.router import router as identity_router
 from p2b.integrations.ai_images import build_image_provider
+from p2b.integrations.ai_text import build_text_provider
 from p2b.integrations.nominatim import build_geocoder
 from p2b.integrations.razorpay import build_payment_gateway
 from p2b.integrations.storage import build_storage
@@ -76,6 +77,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.migration_head = health.expected_migration_head()
     app.state.storage = build_storage(settings)
     app.state.image_provider = build_image_provider(settings)
+    app.state.text_provider = build_text_provider(settings)
     app.state.geocoder = build_geocoder(settings)
     app.state.payment_gateway = build_payment_gateway(settings, database)
 

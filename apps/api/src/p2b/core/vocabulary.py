@@ -1216,6 +1216,7 @@ class PlanOpKind(StrEnum):
     ADD_ROOM = "ADD_ROOM"
     DELETE_ROOM = "DELETE_ROOM"
     MOVE_EDGE = "MOVE_EDGE"
+    ADD_ROOM_OUTSIDE = "ADD_ROOM_OUTSIDE"
     REVERT_TO_REVISION = "REVERT_TO_REVISION"
     REVERT_TO_VERSION = "REVERT_TO_VERSION"
 
@@ -1240,6 +1241,12 @@ class PlanOpRejection(StrEnum):
     ROOM_TYPE_NOT_ALLOWED = "ROOM_TYPE_NOT_ALLOWED"
     REVERT_NOT_ALONE = "REVERT_NOT_ALONE"
     UNKNOWN_REVISION = "UNKNOWN_REVISION"
+    # Checkpoint 3.1, E-5: a home keeps at least one kitchen and one bathroom or toilet
+    LAST_KITCHEN_REQUIRED = "LAST_KITCHEN_REQUIRED"
+    LAST_BATHROOM_REQUIRED = "LAST_BATHROOM_REQUIRED"
+    # Checkpoint 3.2: a room added in open space against an outside wall
+    NOT_ON_OUTSIDE_WALL = "NOT_ON_OUTSIDE_WALL"
+    OUTSIDE_BUILDABLE_AREA = "OUTSIDE_BUILDABLE_AREA"
 
 
 class RoomSide(StrEnum):

@@ -568,3 +568,79 @@ def test_a_move_wall_still_moves_the_whole_run() -> None:
     _, inverse = apply(plan, MoveWall(wall=wall.id, delta_mm=100))
     assert inverse == MoveWall(wall=wall.id, delta_mm=-100)
     assert run_walls
+
+
+# ---------- E-5: a home keeps a kitchen and a bathroom ----------
+
+
+def _without_others(plan: HousePlan, keep: str, types: set[RoomType]) -> HousePlan:
+    """The plan with every other room of `types` retyped away through recorded changes, so `keep`
+    is the last one."""
+    rules = ruleset()
+    for room in plan.floors[0].rooms:
+        if room.type in types and room.id != keep:
+            plan, _ = apply(plan, SetRoomType(room=room.id, type=RoomType.UTILITY), rules)
+    return plan
+
+
+@pytest.mark.parametrize(
+    ("kinds", "code"),
+    [
+        ({RoomType.KITCHEN}, PlanOpRejection.LAST_KITCHEN_REQUIRED),
+        (
+            {RoomType.BATH_ATTACHED, RoomType.BATH_COMMON, RoomType.WC},
+            PlanOpRejection.LAST_BATHROOM_REQUIRED,
+        ),
+    ],
+)
+def test_the_last_kitchen_or_bathroom_cannot_be_removed_or_retyped(
+    kinds: set[RoomType], code: PlanOpRejection
+) -> None:
+    rules = ruleset()
+    plan = golden("4bhk_50x80_large_two_cars")
+    last = next(r for r in plan.floors[0].rooms if r.type in kinds)
+    plan = _without_others(plan, last.id, kinds)
+    assert [r.id for r in plan.floors[0].rooms if r.type in kinds] == [last.id]
+    with pytest.raises(OperationRejected) as retyped:
+        apply(plan, SetRoomType(room=last.id, type=RoomType.STORE), rules)
+    assert retyped.value.code == code
+    assert retyped.value.entities == (last.id,)
+    rects = rects_of(plan)
+    neighbours = [
+        k
+        for k in rects
+        if k != last.id
+        and (
+            (
+                (rects[k].y0, rects[k].y1) == (rects[last.id].y0, rects[last.id].y1)
+                and (rects[k].x1 == rects[last.id].x0 or rects[last.id].x1 == rects[k].x0)
+            )
+            or (
+                (rects[k].x0, rects[k].x1) == (rects[last.id].x0, rects[last.id].x1)
+                and (rects[k].y1 == rects[last.id].y0 or rects[last.id].y1 == rects[k].y0)
+            )
+        )
+    ]
+    for target in neighbours or ["living"]:
+        with pytest.raises(OperationRejected) as removed:
+            apply(plan, DeleteRoom(room=last.id, merge_into=target), rules)
+        assert removed.value.code in (code, PlanOpRejection.ROOMS_NOT_MERGEABLE)
+        if neighbours:
+            assert removed.value.code == code
+
+
+def test_other_kitchens_and_bathrooms_stay_removable_and_retypable_within_their_function() -> None:
+    rules = ruleset()
+    plan = golden("4bhk_50x80_large_two_cars")
+    baths = [
+        r for r in plan.floors[0].rooms if r.type in (RoomType.BATH_ATTACHED, RoomType.BATH_COMMON)
+    ]
+    assert len(baths) >= 2
+    changed, _ = apply(plan, SetRoomType(room=baths[0].id, type=RoomType.UTILITY), rules)
+    assert next(r for r in changed.floors[0].rooms if r.id == baths[0].id).type == RoomType.UTILITY
+    # within the function, even the last one may change: a bathroom becoming a toilet keeps it
+    last_plan = _without_others(
+        plan, baths[0].id, {RoomType.BATH_ATTACHED, RoomType.BATH_COMMON, RoomType.WC}
+    )
+    toilet, _ = apply(last_plan, SetRoomType(room=baths[0].id, type=RoomType.WC), rules)
+    assert next(r for r in toilet.floors[0].rooms if r.id == baths[0].id).type == RoomType.WC

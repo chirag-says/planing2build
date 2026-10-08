@@ -265,3 +265,125 @@ test("rooms, doors and windows, versions and restore work from the keyboard and 
   expect(versions.body.items.map((v: { name: string }) => v.name)).toEqual(["Generated", "Renamed living room"]);
   await expectAccessible(page);
 });
+
+test("a room is added in an open area after a size check and a preview, and can be undone", async ({ page, request }) => {
+  const planned = await plannedProject(page, request);
+  test.skip(planned === null, "the houseplans feature is off on this stack");
+  if (!planned) return;
+  test.skip((page.viewportSize()?.width ?? 0) < 768, "editing is for tablets and computers (AD-14)");
+  const { id, planId, call, detail } = planned;
+  const url = `/api/v1/projects/${id}/house-plans/${planId}`;
+  const slots = detail.editing.insertion_slots as { open_area: string }[];
+  test.skip(slots.length === 0, "this plan has no open space against its walls");
+  await page.goto(`${IHB}/projects/${id}/designs/plans/${planId}`);
+  const idle = page.locator("[data-plan-canvas]:not([data-busy])");
+
+  await page.getByRole("button", { name: /A room can be added here/ }).first().click();
+  // a type that is too large for the space is explained before anything is sent
+  await page.getByLabel("Room type").click();
+  await page.getByRole("option", { name: "Bedroom" }).click();
+  await page.getByLabel(/Depth from the wall/).fill("1");
+  await expect(page.getByText(/but a bedroom needs at least/).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "Add room" })).toBeDisabled();
+
+  // a utility room at its smallest size, tried against each offered wall until the server accepts
+  await page.getByLabel("Room type").click();
+  await page.getByRole("option", { name: "Utility" }).click();
+  await page.getByRole("button", { name: "Show on the plan" }).click();
+  // the preview is drawn on the plan only; nothing was sent
+  await expect(page.locator("[data-layer='preview'] rect")).toHaveCount(1);
+  expect((await call(url, "GET")).body.editing.revision_no).toBe(0);
+  const walls = page.getByRole("radio");
+  const count = await walls.count();
+  let revision = 0;
+  for (let i = 0; i < count && revision === 0; i++) {
+    await walls.nth(i).check();
+    const add = page.getByRole("button", { name: "Add room" });
+    if (await add.isDisabled()) continue;
+    await add.click();
+    await expect(idle).toBeVisible({ timeout: 15_000 });
+    revision = (await call(url, "GET")).body.editing.revision_no;
+    if (revision === 0) await page.getByRole("button", { name: "Dismiss" }).click();
+  }
+  expect(revision, "no wall took a utility room").toBe(1);
+  const after = (await call(url, "GET")).body;
+  expect(after.validation.valid).toBe(true);
+  expect(after.document.floors[0].rooms.length).toBe(detail.document.floors[0].rooms.length + 1);
+  await expect(page.getByText(/You added .*\(Utility\)/)).toBeVisible();
+  await expectAccessible(page);
+
+  await page.getByRole("button", { name: "Undo" }).click();
+  await expect(async () => {
+    const undone = (await call(url, "GET")).body;
+    expect(undone.editing.revision_no).toBe(2);
+    expect(undone.document.meta.body_sha256).toBe(detail.document.meta.body_sha256);
+  }).toPass({ timeout: 15_000 });
+});
+
+test("the assistant proposes a change in words, the owner applies it, and it can be undone", async ({ page, request }) => {
+  const planned = await plannedProject(page, request);
+  test.skip(planned === null, "the houseplans feature is off on this stack");
+  if (!planned) return;
+  test.skip((page.viewportSize()?.width ?? 0) < 768, "editing is for tablets and computers (AD-14)");
+  const { id, planId, call, detail } = planned;
+  test.skip(!detail.editing.assistant, "the AI assistant is off on this stack");
+  const url = `/api/v1/projects/${id}/house-plans/${planId}`;
+  await page.goto(`${IHB}/projects/${id}/designs/plans/${planId}`);
+  const panel = page.getByRole("region", { name: "Ask about your plan" });
+  await expect(panel.getByText(/AI-assisted design interpretation/)).toBeVisible();
+  const words = panel.getByLabel("What would you like to change?");
+  const suggest = panel.getByRole("button", { name: "Suggest a change" });
+  const apply = panel.getByRole("button", { name: "Apply" });
+  const dismiss = panel.getByRole("button", { name: "Dismiss" });
+
+  // a request outside the product is declined in words, nothing stored
+  await words.fill("Add a first floor with two more bedrooms");
+  await suggest.click();
+  await expect(panel.getByText(/single storey/)).toBeVisible({ timeout: 15_000 });
+  expect((await call(url, "GET")).body.editing.revision_no).toBe(0);
+  await dismiss.click();
+
+  // when the engine refuses, the owner reads the engine's own rule (CP4.1), nothing stored
+  await words.fill("Remove the kitchen");
+  await suggest.click();
+  await expect(panel.getByText("Not possible in this plan", { exact: true })).toBeVisible({ timeout: 15_000 });
+  await expect(panel.getByText(/is the only kitchen\. A home needs one/)).toBeVisible();
+  expect((await call(url, "GET")).body.editing.revision_no).toBe(0);
+  await dismiss.click();
+
+  // a supported request becomes a proposal with the engine's numbers, not stored yet. Which
+  // change the plan's rules allow depends on the plan, so a few plain requests are tried.
+  const living = detail.document.floors[0].rooms.find((r: { type: string }) => r.type === "LIVING");
+  for (const text of [
+    `Make the ${living.name} bigger`,
+    `Make the window of the ${living.name} wider`,
+    `Rename the ${living.name} to Family room`,
+  ]) {
+    await words.fill(text);
+    await suggest.click();
+    await expect(apply.or(dismiss)).toBeVisible({ timeout: 15_000 });
+    if (await apply.isVisible()) break;
+    await dismiss.click();
+  }
+  await expect(panel.getByText("Suggested change", { exact: true })).toBeVisible();
+  expect((await call(url, "GET")).body.editing.revision_no).toBe(0);
+  await expectAccessible(page);
+
+  // the owner applies: the server validates and stores it as a revision
+  await apply.click();
+  await expect(async () => {
+    const after = (await call(url, "GET")).body;
+    expect(after.editing.revision_no).toBe(1);
+    expect(after.validation.valid).toBe(true);
+  }).toPass({ timeout: 15_000 });
+  const revisions = (await call(`${url}/revisions`, "GET")).body;
+  expect(revisions.items.map((r: { revision_no: number }) => r.revision_no)).toEqual([1]);
+
+  // undo restores the generated plan
+  await page.getByRole("button", { name: "Undo" }).click();
+  await expect(async () => {
+    const undone = (await call(url, "GET")).body;
+    expect(undone.editing.revision_no).toBe(2);
+    expect(undone.document.meta.body_sha256).toBe(detail.document.meta.body_sha256);
+  }).toPass({ timeout: 15_000 });
+});

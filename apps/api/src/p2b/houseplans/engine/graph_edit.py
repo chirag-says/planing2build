@@ -30,6 +30,7 @@ from p2b.core.vocabulary import (
 )
 from p2b.houseplans.engine import programme
 from p2b.houseplans.engine.build import ROOM_NAMES, room_name
+from p2b.houseplans.engine.derive import half, plot_and_envelope
 from p2b.houseplans.engine.geom import Pt, Rect, rect_or_none, signed_area2
 from p2b.houseplans.engine.graph import build_graph
 from p2b.houseplans.engine.model import (
@@ -43,7 +44,7 @@ from p2b.houseplans.engine.model import (
     SizeSpec,
     Wall,
 )
-from p2b.houseplans.engine.ruleset import RulesetContent
+from p2b.houseplans.engine.ruleset import RoomRule, RulesetContent
 
 ADDED_ROOM_ORIGIN = Origin(kind=OriginKind.USER_EDIT, ref="editor:add_room")
 
@@ -449,11 +450,21 @@ def add_room(
     else:
         piece, rest = Rect(h.x0, h.y1 - depth, h.x1, h.y1), Rect(h.x0, h.y0, h.x1, h.y1 - depth)
 
+    room = _new_room(plan, room_type, rule, ADDED_ROOM_ORIGIN)
+    new_rects = {**rects, host_room: rest, room.id: piece}
+    change = Change(rects=new_rects, rooms=[*floor.rooms, room], window_alias={host_room: room.id})
+    edited = _rebuild(floor, rects, change, ruleset)
+    return _connect(plan, fi, edited, new_rects, host_room, room, rule, ruleset)
+
+
+def _new_room(plan: HousePlan, room_type: RoomType, rule: RoomRule, origin: Origin) -> Room:
+    """A new room of `room_type` with the next free id and the engine's default name; its
+    boundary is filled by the rebuild."""
     room_ids = {r.id for f in plan.floors for r in f.rooms}
     key = room_type.value.lower()
     same = [r for f in plan.floors for r in f.rooms if r.type == room_type]
     new_id = _unique(f"{key}_{len(same) + 1}", room_ids)
-    room = Room(
+    return Room(
         id=new_id,
         type=room_type,
         name=room_name(new_id, room_type) if same else ROOM_NAMES[room_type],
@@ -467,12 +478,26 @@ def add_room(
             pref_area_mm2=rule.pref_area_mm2,
             max_area_mm2=rule.max_area_mm2,
         ),
-        origin=ADDED_ROOM_ORIGIN,
+        origin=origin,
     )
-    new_rects = {**rects, host_room: rest, new_id: piece}
-    change = Change(rects=new_rects, rooms=[*floor.rooms, room], window_alias={host_room: new_id})
-    edited = _rebuild(floor, rects, change, ruleset)
 
+
+def _connect(
+    plan: HousePlan,
+    fi: int,
+    edited: Floor,
+    new_rects: dict[str, Rect],
+    host_room: str,
+    room: Room,
+    rule: RoomRule,
+    ruleset: RulesetContent,
+) -> HousePlan:
+    """The rebuilt floor with one door from the host into the new room (ruleset size, centred
+    on the longest shared wall, else the first free grid step) and, when the room type needs
+    one and the room has none, a window centred on its longest outside wall; recorded as the
+    owner's addition (`programme.room_added`). DOOR_DOES_NOT_FIT when no shared wall holds a
+    door; a missing window is left for the validator to report."""
+    new_id = room.id
     points = {n.id: (n.x, n.y) for n in edited.nodes}
     segs = {w.id: _seg_of(points[w.a], points[w.b])[0] for w in edited.walls}
     o_rules, used = ruleset.openings, {o.id for f in plan.floors for o in f.openings}
@@ -581,6 +606,9 @@ def delete_room(plan: HousePlan, room: str, merge_into: str, ruleset: RulesetCon
         )
     gone = next(r for r in floor.rooms if r.id == room)
     keep = next(r for r in floor.rooms if r.id == merge_into)
+    lost = programme.essential_loss(plan, gone, None)
+    if lost is not None:
+        raise GraphEditRejected(f"{room} is the last room of its kind", lost, room)
     a, b = rects[room], rects[merge_into]
     union = None
     if (a.y0, a.y1) == (b.y0, b.y1) and (a.x1 == b.x0 or b.x1 == a.x0):
@@ -616,3 +644,122 @@ def delete_room(plan: HousePlan, room: str, merge_into: str, ruleset: RulesetCon
     )
     edited = _rebuild(floor, rects, change, ruleset)
     return programme.room_removed(_with_floor(plan, fi, edited), gone)
+
+
+# ---------- ADD_ROOM_OUTSIDE (Checkpoint 3.2) ----------
+
+ADDED_OUTSIDE_ORIGIN = Origin(kind=OriginKind.USER_EDIT, ref="editor:add_room_outside")
+
+
+def buildable_region(plan: HousePlan, ruleset: RulesetContent) -> Rect | None:
+    """Where room centrelines may lie: the buildable envelope inset by half an outside wall, the
+    same region the open areas are derived in (`derive.plan_geometry`)."""
+    _, envelope = plot_and_envelope(plan)
+    if envelope is None:
+        return None
+    return envelope.inset(*(half(ruleset.walls.exterior_mm),) * 4)
+
+
+def side_line(rect: Rect, side: RoomSide) -> tuple[int, int, int]:
+    """(line, low, high): the side's coordinate across and its extent along."""
+    if side == RoomSide.LEFT:
+        return rect.x0, rect.y0, rect.y1
+    if side == RoomSide.RIGHT:
+        return rect.x1, rect.y0, rect.y1
+    if side == RoomSide.FRONT:
+        return rect.y0, rect.x0, rect.x1
+    return rect.y1, rect.x0, rect.x1
+
+
+def outside_rect(rect: Rect, side: RoomSide, start: int, end: int, depth: int) -> Rect | None:
+    """The rectangle `depth` deep beyond `side` of `rect`, from `start` to `end` along it."""
+    line, _, _ = side_line(rect, side)
+    if side == RoomSide.LEFT:
+        return rect_or_none(line - depth, start, line, end)
+    if side == RoomSide.RIGHT:
+        return rect_or_none(line, start, line + depth, end)
+    if side == RoomSide.FRONT:
+        return rect_or_none(start, line - depth, end, line)
+    return rect_or_none(start, line, end, line + depth)
+
+
+def touching(rects: dict[str, Rect], host: str, side: RoomSide) -> list[tuple[int, int]]:
+    """The intervals along a side of `host` where another room meets it from outside."""
+    h = rects[host]
+    line, lo, hi = side_line(h, side)
+    out = []
+    for key, r in rects.items():
+        if key == host:
+            continue
+        if side in (RoomSide.LEFT, RoomSide.RIGHT):
+            meets = r.x1 == line if side == RoomSide.LEFT else r.x0 == line
+            a, b = max(lo, r.y0), min(hi, r.y1)
+        else:
+            meets = r.y1 == line if side == RoomSide.FRONT else r.y0 == line
+            a, b = max(lo, r.x0), min(hi, r.x1)
+        if meets and a < b:
+            out.append((a, b))
+    return sorted(out)
+
+
+def add_room_outside(
+    plan: HousePlan,
+    host_room: str,
+    room_type: RoomType,
+    side: RoomSide,
+    offset: int,
+    length: int,
+    depth: int,
+    ruleset: RulesetContent,
+) -> HousePlan:
+    """Adds a room of `room_type` in open space against an outside wall of the host: the
+    rectangle `depth` deep beyond the host's `side`, `length` long from `offset` along that side
+    (from its left or front end). It must stay inside the buildable area, touch no room along
+    the host's side and overlap none. One door joins it to the host and a window goes on its
+    longest outside wall when the type needs one (`_connect`); doors, windows and fixtures keep
+    their place as in every structural edit. Recorded as the owner's addition."""
+    rule = ruleset.rooms.get(room_type)
+    if rule is None or not rule.enclosed:
+        raise GraphEditRejected(
+            f"{room_type.value} cannot be added here", PlanOpRejection.ROOM_TYPE_NOT_ALLOWED
+        )
+    fi = _floor_of(plan, host_room)
+    floor = plan.floors[fi]
+    rects = room_rects(floor)
+    host = next(r for r in floor.rooms if r.id == host_room)
+    if not host.enclosed:
+        raise GraphEditRejected(
+            f"{host_room} is not an enclosed room", PlanOpRejection.NOT_ON_OUTSIDE_WALL, host_room
+        )
+    _, lo, hi = side_line(rects[host_room], side)
+    start, end = lo + offset, lo + offset + length
+    if end > hi:
+        raise GraphEditRejected(
+            f"the new room runs past the end of {host_room}'s side",
+            PlanOpRejection.NOT_ON_OUTSIDE_WALL,
+            host_room,
+        )
+    blocked = [(a, b) for a, b in touching(rects, host_room, side) if a < end and b > start]
+    if blocked:
+        raise GraphEditRejected(
+            f"another room meets {host_room} on that side",
+            PlanOpRejection.NOT_ON_OUTSIDE_WALL,
+            host_room,
+        )
+    piece = outside_rect(rects[host_room], side, start, end, depth)
+    region = buildable_region(plan, ruleset)
+    if piece is None or region is None or not region.contains(piece):
+        raise GraphEditRejected(
+            "the new room would leave the buildable area",
+            PlanOpRejection.OUTSIDE_BUILDABLE_AREA,
+            host_room,
+        )
+    clash = next((k for k, r in rects.items() if r.overlap_area(piece) > 0), None)
+    if clash is not None:
+        raise GraphEditRejected(
+            f"the new room would overlap {clash}", PlanOpRejection.ROOMS_WOULD_OVERLAP, clash
+        )
+    room = _new_room(plan, room_type, rule, ADDED_OUTSIDE_ORIGIN)
+    new_rects = {**rects, room.id: piece}
+    edited = _rebuild(floor, rects, Change(rects=new_rects, rooms=[*floor.rooms, room]), ruleset)
+    return _connect(plan, fi, edited, new_rects, host_room, room, rule, ruleset)

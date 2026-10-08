@@ -22,6 +22,7 @@ from p2b.core.vocabulary import (
     PlanValidity,
     RulesetStatus,
 )
+from p2b.houseplans.assistant import Call, Refusal, interpret_requirement, propose_edit
 from p2b.houseplans.engine import (
     ArchitecturalIntent,
     DesignInputs,
@@ -31,10 +32,18 @@ from p2b.houseplans.engine import (
     score_plan,
 )
 from p2b.houseplans.engine.build import ROOM_NAMES
+from p2b.houseplans.engine.insertion import insertion_slots
 from p2b.houseplans.engine.ops import PLAN_OP, RevertToRevision, RevertToVersion
 from p2b.houseplans.engine.validate import ValidationReport
 from p2b.houseplans.models import HousePlanOp, HousePlanVersion
 from p2b.houseplans.schemas import (
+    AssistantCallOut,
+    AssistantEditOut,
+    AssistantEditRequest,
+    AssistantRefusalOut,
+    AssistantRejectionOut,
+    AssistantRequirementOut,
+    AssistantRequirementRequest,
     EditHousePlanOut,
     EditHousePlanRequest,
     EditingOut,
@@ -48,10 +57,14 @@ from p2b.houseplans.schemas import (
     HousePlanVersionOut,
     InfeasibilityOut,
     InfeasibleReasonOut,
+    InsertionSlotOut,
     InvolvedConstraintOut,
+    OpeningChangeOut,
     OpeningSizesOut,
     QualityOut,
     QualityTermOut,
+    RequirementConflictOut,
+    RoomChangeOut,
     RoomQualityOut,
     RoomTypeOut,
     SaveHousePlanVersionRequest,
@@ -135,11 +148,17 @@ def detail_fields(view: PlanView) -> dict[str, object]:
 
 
 def editing_of(view: PlanView) -> EditingOut:
-    return editing_block(view.ruleset.content, view.can_edit, view.row.head_revision_no)
+    block = editing_block(
+        view.ruleset.content, view.can_edit, view.row.head_revision_no, document_of(view)
+    )
+    return block.model_copy(update={"assistant": view.assistant})
 
 
-def editing_block(content: RulesetContent, can_edit: bool, revision_no: int) -> EditingOut:
+def editing_block(
+    content: RulesetContent, can_edit: bool, revision_no: int, document: HousePlan | None = None
+) -> EditingOut:
     o = content.openings
+    slots = insertion_slots(document, content) if document is not None and can_edit else []
     return EditingOut(
         can_edit=can_edit,
         revision_no=revision_no,
@@ -150,6 +169,7 @@ def editing_block(content: RulesetContent, can_edit: bool, revision_no: int) -> 
                 name=ROOM_NAMES[t],
                 needs_window=rule.needs_window,
                 min_short_mm=rule.min_short_mm,
+                min_area_mm2=rule.min_area_mm2,
             )
             for t, rule in content.rooms.items()
             if rule.enclosed
@@ -166,6 +186,20 @@ def editing_block(content: RulesetContent, can_edit: bool, revision_no: int) -> 
         ),
         interior_wall_mm=content.walls.interior_mm,
         exterior_wall_mm=content.walls.exterior_mm,
+        insertion_slots=[
+            InsertionSlotOut(
+                host_room=s.host_room,
+                side=s.side,
+                offset_mm=s.offset_mm,
+                length_mm=s.length_mm,
+                max_depth_mm=s.max_depth_mm,
+                open_area=s.open_area,
+                open_area_kind=s.open_area_kind,
+                depth_allowance_mm=s.depth_allowance_mm,
+                length_allowance_mm=s.length_allowance_mm,
+            )
+            for s in slots
+        ],
     )
 
 
@@ -404,4 +438,114 @@ async def get_house_plan_revisions(
         head_revision_no=row.head_revision_no,
         items=items,
         next_before=oldest if len(items) == limit and oldest and oldest > 1 else None,
+    )
+
+
+# ---------- AI-assisted design interpretation (Checkpoint 4) ----------
+
+ASSISTANT_LIMIT = Limit("houseplan_assistant_session", 30, 600)
+
+
+def call_out(call: Call) -> AssistantCallOut:
+    return AssistantCallOut(
+        provider=call.provider,
+        model=call.model,
+        request_id=call.request_id,
+        duration_ms=call.duration_ms,
+        model_calls=call.attempts,
+        input_tokens=call.input_tokens,
+        output_tokens=call.output_tokens,
+    )
+
+
+def refusal_out(refusal: Refusal | None) -> AssistantRefusalOut | None:
+    if refusal is None:
+        return None
+    return AssistantRefusalOut(
+        reason=refusal.reason,
+        rejections=[
+            AssistantRejectionOut(op=r.op, code=r.code, entities=list(r.entities))
+            for r in refusal.refused.rejections
+        ],
+        issues=list(refusal.refused.issues),
+    )
+
+
+@router.post(
+    "/projects/{project_id}/house-plans/{plan_id}/assistant/edit",
+    response_model=AssistantEditOut,
+)
+async def post_house_plan_assistant_edit(
+    project_id: uuid.UUID,
+    plan_id: uuid.UUID,
+    body: AssistantEditRequest,
+    request: Request,
+    db: DbSession,
+    actor: Annotated[Actor, HOMEOWNER],
+) -> AssistantEditOut:
+    """Interpret one sentence into a proposed edit (owner only; off unless enabled). Nothing is
+    stored: a PROPOSED answer's `ops` go through the operations route when the owner applies
+    them, where the server applies and validates them again. 404 when off, 403 for a member,
+    409 STATE_CONFLICT or REVISION_CONFLICT, 503 PROVIDER_UNAVAILABLE."""
+    settings: Settings = request.app.state.settings
+    database: Database = request.app.state.database
+    await enforce(database, ASSISTANT_LIMIT, str(actor.session_id))
+    outcome = await propose_edit(
+        db,
+        settings,
+        request.app.state.text_provider,
+        actor,
+        project_id,
+        plan_id,
+        text=body.text,
+        expected_revision=body.expected_revision,
+    )
+    view = await get_plan(db, settings, actor, project_id, plan_id)
+    return AssistantEditOut(
+        status=outcome.status,
+        intent=outcome.intent,
+        ops=list(outcome.ops),
+        expected_revision=outcome.expected_revision,
+        preview=plan_geometry(outcome.plan, view.ruleset.content) if outcome.plan else None,
+        rooms=[RoomChangeOut(**vars(r)) for r in outcome.rooms],
+        openings=[OpeningChangeOut(**vars(o)) for o in outcome.openings],
+        detail=outcome.detail,
+        refusal=refusal_out(outcome.refusal),
+        call=call_out(outcome.call),
+    )
+
+
+@router.post(
+    "/projects/{project_id}/house-plans/assistant/requirement",
+    response_model=AssistantRequirementOut,
+)
+async def post_house_plan_assistant_requirement(
+    project_id: uuid.UUID,
+    body: AssistantRequirementRequest,
+    request: Request,
+    db: DbSession,
+    actor: Annotated[Actor, HOMEOWNER],
+) -> AssistantRequirementOut:
+    """Interpret the owner's description of the home into requirement facts and provisional
+    design inputs, with the differences from the submitted requirement. Nothing is stored;
+    generation uses `POST /projects/{id}/house-plans` with `design_inputs` and the existing
+    deterministic solver. 404 when off, 403 for a member, 503 PROVIDER_UNAVAILABLE."""
+    settings: Settings = request.app.state.settings
+    database: Database = request.app.state.database
+    await enforce(database, ASSISTANT_LIMIT, str(actor.session_id))
+    outcome = await interpret_requirement(
+        db, settings, request.app.state.text_provider, actor, project_id, text=body.text
+    )
+    bridge = outcome.bridge
+    return AssistantRequirementOut(
+        status=outcome.status,
+        intent=outcome.intent.model_dump(mode="json") if outcome.intent else None,
+        design_inputs=bridge.design_inputs if bridge else None,
+        missing=list(bridge.missing) if bridge else [],
+        assumed=list(bridge.assumed) if bridge else [],
+        unsupported=list(bridge.unsupported) if bridge else [],
+        preferences=list(bridge.preferences) if bridge else [],
+        clarifications=list(outcome.intent.clarifications) if outcome.intent else [],
+        conflicts=[RequirementConflictOut(**c) for c in outcome.conflicts],
+        call=call_out(outcome.call),
     )

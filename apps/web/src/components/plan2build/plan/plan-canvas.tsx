@@ -280,7 +280,7 @@ export function PlanCanvas({
       const along = side?.axis === "x" ? dir[0] : dir[1];
       const op = side && along ? moveSideOp(doc, sel.room, side, along * step, state.moveMode) : null;
       ops = op ? [op] : [];
-    } else {
+    } else if (sel.kind === "opening") {
       const host = hostedOpening(doc, sel.id);
       if (host) {
         // along the wall: the arrow whose direction is closest to the wall's
@@ -293,7 +293,16 @@ export function PlanCanvas({
     if (ops.length > 0) onCommit(ops);
   }
 
-  const overlay = overlayFor(state.drag, model.flip, model.bounds, sides, doc);
+  const preview = state.preview;
+  const overlay =
+    overlayFor(state.drag, model.flip, model.bounds, sides, doc) ??
+    (preview
+      ? {
+          boxes: [{ x: preview.x0, y: model.flip - preview.y1, w: preview.x1 - preview.x0, h: preview.y1 - preview.y0 }],
+          lines: [],
+          guides: [],
+        }
+      : null);
 
   return (
     <div

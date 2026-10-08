@@ -16,6 +16,7 @@ import { fitViewBox } from "@/lib/plan/viewport";
 const IN = process.env.PLAN_EDIT_REVIEW_IN;
 const OUT = process.env.PLAN_EDIT_REVIEW_OUT;
 const CSS = process.env.PLAN_MONTAGE_CSS;
+const TITLE = process.env.PLAN_EDIT_REVIEW_TITLE ?? "Checkpoint 3.1: real CP2.2.1 plans, first accepted edit of each kind";
 
 const CASES = [
   "1bhk_25x40_south_small",
@@ -72,12 +73,12 @@ describe.runIf(Boolean(IN && OUT))("editing review montage", () => {
       });
       return `<section><h2>${name}</h2><div class="row">${figures.join("\n")}</div></section>`;
     });
-    const html = `<!doctype html><meta charset="utf-8"><title>Checkpoint 3.1 editing: visual review</title>
+    const html = `<!doctype html><meta charset="utf-8"><title>${escape(TITLE)}</title>
 <style>${css}
 body{font-family:system-ui,sans-serif;margin:24px;color:var(--foreground)}section{margin-bottom:40px}
 .row{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}.frame{border:1px solid var(--border)}figure{margin:0;max-width:340px}
 figcaption{font-size:11px;color:var(--muted-foreground);word-break:break-all}</style>
-<h1>Checkpoint 3.1: real CP2.2.1 plans, first accepted edit of each kind</h1>
+<h1>${escape(TITLE)}</h1>
 <p>Rendered by the production PlanDrawing component from PlanGeometry after each edit the validator passed (synthetic test ruleset). Concept floor plan. Not a construction, structural or approval drawing.</p>
 ${sections.join("\n")}`;
     writeFileSync(OUT as string, html, "utf-8");
