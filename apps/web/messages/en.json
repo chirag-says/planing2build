@@ -624,7 +624,8 @@
     "myProjects": "My projects",
     "mainNav": "Main",
     "required": "Required",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "packageUnlock": "Unlock with the Plan2Build package"
   },
   "Home": {
     "title": "The cheapest quote is almost never the cheapest house.",
@@ -1450,7 +1451,8 @@
       "sent": "Sent to Plan2Build for review.",
       "list": "Quotes sent for review",
       "received": "Received {date}",
-      "uploadFailed": "The file could not be uploaded."
+      "uploadFailed": "The file could not be uploaded.",
+      "locked": "Recording a quote for Plan2Build to review needs an active Plan2Build package."
     },
     "browse": "Browse professionals near this project"
   },
@@ -1595,7 +1597,9 @@
       "acceptanceStatements": "Acceptance statements",
       "newStatement": "New statement version (ADMIN, JSON with text and note)",
       "activate": "Activate (ADMIN)"
-    }
+    },
+    "packageLocked": "Asking for drawings and reviewing drawing sets need an active Plan2Build package. You can still read everything here.",
+    "acceptLocked": "Accepting this Build Plan or asking for changes needs an active Plan2Build package."
   },
   "Rfq": {
     "title": "Contractor quotes",
@@ -1708,7 +1712,11 @@
     "sharedFiles": "Shared files",
     "end": "End engagement",
     "searchLabel": "Find listed contractors by name",
-    "search": "Search"
+    "search": "Search",
+    "attachments": "Attachments",
+    "attachmentUnavailable": "{name} (not available yet)",
+    "requestLocked": "Requesting contractor quotes needs an active Plan2Build package.",
+    "selectLocked": "Choosing a quote needs an active Plan2Build package."
   },
   "Execution": {
     "title": "Construction progress",
@@ -2630,8 +2638,6 @@
   "Inbox": {
     "bell": "Notifications",
     "bellCount": "Notifications, {count, plural, =0 {none new} one {# new} other {# new}}",
-    "preview": "Preview",
-    "previewNote": "Messages are a preview: nothing you write here is sent yet. To reach someone now, call them.",
     "notifications": {
       "title": "Notifications",
       "intro": "What needs you and what changed on {code}.",
@@ -2645,23 +2651,20 @@
         "action": "Action required",
         "update": "Project update",
         "quote": "Quote",
-        "inspection": "Inspection",
-        "payment": "Payment",
-        "message": "Message"
+        "inspection": "Inspection"
       },
       "new": "New",
       "open": "Open"
     },
     "messages": {
       "title": "Messages",
-      "intro": "Your conversations about {code}.",
-      "choose": "Choose a conversation",
-      "write": "Write a message",
-      "send": "Send",
-      "notSent": "Not sent: messaging is not connected yet. Call {name} instead.",
-      "notSentNoPhone": "Not sent: messaging is not connected yet.",
-      "you": "You",
-      "empty": "No conversations yet. Your team's threads appear here once professionals join your project."
+      "intro": "The people on {code} and how to reach them.",
+      "notAvailable": "In-app messaging is not available yet. Call or email the people below.",
+      "team": "Your project team",
+      "empty": "No professionals engaged yet. They appear here, with the contact details they share, once engaged.",
+      "noContact": "No phone or email shared yet.",
+      "callName": "Call {name}",
+      "emailName": "Email {name}"
     }
   },
   "Welcome": {
@@ -2743,7 +2746,66 @@
     "openHandover": "Handover and Build Record",
     "send": "Send",
     "error": "That did not work. Try again.",
-    "errorReason": "That did not work: {reason}"
+    "errorReason": "That did not work: {reason}",
+    "viewVersion": "Read version {version}",
+    "ownerAcknowledges": "Only the project owner can acknowledge the handover.",
+    "acknowledgeHelp": "We email you a code and show the statement you are acknowledging. Read it before you enter the code.",
+    "statementTitle": "Statement to acknowledge (version {version})",
+    "codeExpires": "It expires {when}.",
+    "newCode": "Send a new code",
+    "snapshot": {
+      "title": "Build Record version {version}",
+      "intro": "The record as issued. It does not change; a correction is issued as a new version.",
+      "back": "Back to construction",
+      "loadFailed": "This version could not be loaded.",
+      "state": "State",
+      "issued": "Issued",
+      "basisLabel": "Basis",
+      "basis": {
+        "ACKNOWLEDGED": "Handover acknowledged by the owner",
+        "ISSUED_BY_OPERATIONS": "Handover issued by Plan2Build without the owner's acknowledgement"
+      },
+      "project": "Project",
+      "correctionLabel": "Corrects an earlier version",
+      "noPrices": "The Build Record holds no prices or amounts. Product, purchase and installation details are not recorded.",
+      "none": "not recorded",
+      "noneRecorded": "Nothing recorded.",
+      "notRecorded": "not recorded",
+      "floor": "floor {floor}",
+      "plan": "Plan",
+      "noPlan": "No accepted Build Plan is recorded.",
+      "planLine": "Accepted Build Plan version {version}, accepted {accepted}",
+      "drawings": "Drawings",
+      "contractors": "Contractors",
+      "contractor": "Contractor",
+      "chosenByFamily": "chosen by the family",
+      "period": "{from} to {to}",
+      "now": "now",
+      "execution": "Execution",
+      "stageDates": "started {start}, completed {end}",
+      "updates": "{count, plural, =0 {no updates} one {# update} other {# updates}}",
+      "assurance": "Assurance",
+      "gate": "Gate {gate}",
+      "approved": "Approved {when}, auditor {auditor}",
+      "report": "Report version {version}",
+      "findings": "Findings",
+      "severities": {
+        "MINOR": "Minor",
+        "MAJOR": "Major",
+        "CRITICAL": "Critical"
+      },
+      "marks": "Payment marks",
+      "marksNote": "For information only: what was marked paid and received, with no amounts.",
+      "stage": "Stage {stage}",
+      "specification": "Specification",
+      "accepted": "Accepted value",
+      "verified": "Verified",
+      "notInspected": "not inspected",
+      "product": "Product",
+      "purchase": "Purchase",
+      "installation": "Installation",
+      "notApplicable": "Not applicable"
+    }
   },
   "Plan": {
     "title": "Floor plan",
