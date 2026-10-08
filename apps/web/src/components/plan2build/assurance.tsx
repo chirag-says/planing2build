@@ -271,7 +271,9 @@ export function RectifyForm({ engagementId, ncId }: { engagementId: string; ncId
   );
 }
 
-export function OpsFileUpload({ url, id }: { url: string; id: string }) {
+export function OpsFileUpload({ url, id, label, onUploaded }: {
+  url: string; id: string; label?: string; onUploaded?: (fileId: string) => void;
+}) {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
@@ -284,17 +286,70 @@ export function OpsFileUpload({ url, id }: { url: string; id: string }) {
       body: file,
     }).catch(() => null);
     setBusy(false);
-    if (response?.ok) setDone(((await response.json()) as { file_id: string }).file_id);
-    else setFailed(true);
+    if (response?.ok) {
+      const fileId = ((await response.json()) as { file_id: string }).file_id;
+      setDone(fileId);
+      onUploaded?.(fileId);
+    } else setFailed(true);
   }
   return (
     <div className="flex flex-col gap-2">
-      <FormField id={id} label={t("evidence")}>
+      <FormField id={id} label={label ?? t("evidence")}>
         {(c) => <Input {...c} type="file" accept="application/pdf,image/jpeg,image/png" disabled={busy}
           onChange={(e) => { const f = e.target.files?.[0]; if (f) void upload(f); }} />}
       </FormField>
       {done && <p role="status" className="font-mono text-xs" data-testid="uploaded-file-id">{t("uploaded", { id: done })}</p>}
       {failed && <Notice tone="error" live="assertive">{t("error")}</Notice>}
     </div>
+  );
+}
+
+/** A later test result (a cube test at 7 or 28 days) on one checkpoint result of an approved
+ * inspection: a new record, never an edit. The optional document is uploaded first through the
+ * inspection-evidence route; saving waits for its scan, as the other evidence forms do. */
+export function OpsTestResultForm({ projectId, resultId }: { projectId: string; resultId: string }) {
+  const router = useRouter();
+  const [testKind, setTestKind] = useState("");
+  const [value, setValue] = useState("");
+  const [fileId, setFileId] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    setError(null);
+    setSaved(false);
+    const result = await postWhenChecked(`/api/v1/ops/results/${resultId}/test-results`, {
+      test_kind: testKind.trim(), value: value.trim(), file_id: fileId,
+    });
+    setBusy(false);
+    if (!result.ok) {
+      setError(problem(result));
+      return;
+    }
+    setSaved(true);
+    setTestKind("");
+    setValue("");
+    router.refresh();
+  }
+  return (
+    <form onSubmit={submit} className="flex flex-col gap-2" data-testid="test-result-form">
+      <FormField id={`test-kind-${resultId}`} label={t("testKind")} required>
+        {(f) => <Input {...f} maxLength={300} value={testKind} onChange={(e) => setTestKind(e.target.value)} />}
+      </FormField>
+      <FormField id={`test-value-${resultId}`} label={t("testValue")} required>
+        {(f) => <Textarea {...f} rows={2} maxLength={2000} value={value} onChange={(e) => setValue(e.target.value)} />}
+      </FormField>
+      <OpsFileUpload id={`test-file-${resultId}`} label={t("testFile")} url={`/api/v1/ops/projects/${projectId}/inspection-evidence`}
+        onUploaded={setFileId} />
+      <Button type="submit" variant="outline" className="self-start" disabled={busy || !testKind.trim() || !value.trim()}>
+        {busy && <Spinner />}
+        {t("testSave")}
+      </Button>
+      {busy && <p role="status" className="text-sm text-muted-foreground">{t("testWaiting")}</p>}
+      {saved && <Notice tone="success" live="polite">{t("testSaved")}</Notice>}
+      {error && <Notice tone="error" live="assertive">{error}</Notice>}
+    </form>
   );
 }

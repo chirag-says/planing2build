@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AnswerSummary } from "@/components/plan2build/answer-summary";
@@ -8,6 +9,7 @@ import { DownloadButton } from "@/components/plan2build/download-button";
 import { FileRow } from "@/components/plan2build/file-row";
 import { OpsEngagements } from "@/components/plan2build/ops-engagements";
 import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
+import { OpsPlanList } from "@/components/plan2build/plan/ops-plan-list";
 import { ProjectBreadcrumb } from "@/components/plan2build/project-breadcrumb";
 import { Notice } from "@/components/plan2build/states";
 import { ReviewFlagBadge, StatusBadge } from "@/components/plan2build/status-badge";
@@ -65,6 +67,14 @@ export default async function OpsProjectPage({
             .join(" · ")}
           actions={<StatusBadge kind="project" status={project.status} withLabel />}
         />
+        {/* Project-level operations areas (ops-flow): one block, kept together for easy merges. */}
+        <nav aria-label={t("detail.areas")} className="flex flex-wrap gap-4 text-sm">
+          <Link href={`/projects/${projectId}/build-plan`} className="underline underline-offset-4">{t("nav.buildPlan")}</Link>
+          <Link href={`/rfqs/project/${projectId}`} className="underline underline-offset-4">{t("nav.rfqs")}</Link>
+          <Link href={`/execution/${projectId}`} className="underline underline-offset-4">{t("nav.execution")}</Link>
+          <Link href={`/assurance/${projectId}`} className="underline underline-offset-4">{t("nav.assurance")}</Link>
+          <Link href={`/handover/${projectId}`} className="underline underline-offset-4">{getTranslator("Records")("openHandover")}</Link>
+        </nav>
       </div>
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
@@ -102,6 +112,7 @@ export default async function OpsProjectPage({
               names={Object.fromEntries((categories.data ?? []).map((c) => [c.code, c.name]))}
             />
           )}
+          <OpsPlanList projectId={projectId} />
         </div>
 
         {/* Phones: the review and decision first, the long requirement after. */}

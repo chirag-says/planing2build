@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { JsonForm } from "@/components/plan2build/build-plan";
-import { OpsEvidenceUpload } from "@/components/plan2build/execution";
+import { OpsEvidenceUpload, OpsStageUpdates } from "@/components/plan2build/execution";
 import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
 import { TextAction } from "@/components/plan2build/rfq";
 import { serverApi } from "@/lib/api/server";
@@ -39,6 +39,7 @@ export default async function OpsProjectExecutionPage({ params }: { params: Prom
       <span className="flex flex-wrap gap-4 text-sm">
         <Link href={`/assurance/${projectId}`} className="underline underline-offset-4">{getTranslator("Ops")("nav.assurance")}</Link>
         <Link href={`/handover/${projectId}`} className="underline underline-offset-4">{getTranslator("Records")("openHandover")}</Link>
+        <Link href={`/rfqs/project/${projectId}`} className="underline underline-offset-4">{getTranslator("Rfq")("opsProjectLink")}</Link>
       </span>
       <ol className="flex flex-col gap-2">
         {data.stages.map((s) => (
@@ -49,6 +50,7 @@ export default async function OpsProjectExecutionPage({ params }: { params: Prom
               {` · ${t("updateCount", { count: s.update_count })}`}
             </span>
             <span className="font-mono text-xs text-muted-foreground">{s.id}</span>
+            <OpsStageUpdates stageId={s.id} />
             {outside && s.state !== "COMPLETED" && (
               <details>
                 <summary className="cursor-pointer">{t("onBehalf")}</summary>

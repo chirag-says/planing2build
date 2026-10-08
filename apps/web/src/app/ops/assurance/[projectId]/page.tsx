@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { OpsFileUpload } from "@/components/plan2build/assurance";
+import { OpsFileUpload, OpsTestResultForm } from "@/components/plan2build/assurance";
 import { ActionButton, JsonForm } from "@/components/plan2build/build-plan";
 import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
 import { DownloadLink, TextAction } from "@/components/plan2build/rfq";
 import { serverApi } from "@/lib/api/server";
 import { formatDate } from "@/lib/format";
 import { getTranslator } from "@/lib/i18n";
+import { acceptsTestResults } from "@/lib/ops-flow";
 import { requireVerifiedStaff } from "@/lib/staff";
 
 export const metadata: Metadata = { title: getTranslator("Ops")("nav.assurance") };
@@ -51,6 +52,21 @@ export default async function OpsProjectAssurancePage({ params }: { params: Prom
                     <li key={c.id}>
                       <span className="font-mono text-xs">{c.id}</span> {c.code} {c.text}: {r ? t(`results.${r.result}`) : "-"}
                       {r?.severity && ` · ${r.severity}: ${r.description}`}
+                      {r && r.file_ids.length > 0 && (
+                        <span className="mt-1 flex flex-wrap gap-2">
+                          {r.file_ids.map((f, n) => (
+                            <DownloadLink key={f} label={t("file", { n: n + 1 })} url={`/api/v1/ops/inspection-files/${f}/url`} />
+                          ))}
+                        </span>
+                      )}
+                      {r && acceptsTestResults(i) && (
+                        <details className="mt-1">
+                          <summary className="cursor-pointer">{t("addTestResult")}</summary>
+                          <div className="mt-2">
+                            <OpsTestResultForm projectId={projectId} resultId={r.id} />
+                          </div>
+                        </details>
+                      )}
                     </li>
                   );
                 })}
