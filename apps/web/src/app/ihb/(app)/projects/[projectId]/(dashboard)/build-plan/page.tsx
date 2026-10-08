@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { DesignRequestCard, DesignRequestForm } from "@/components/plan2build/build-plan";
+import { PackageLock } from "@/components/plan2build/package-lock";
 import { SectionHeader } from "@/components/plan2build/page-header";
 import { Notice } from "@/components/plan2build/states";
 import { StatusBadge } from "@/components/plan2build/status-badge";
@@ -34,6 +35,8 @@ export default async function BuildPlanPage({ params }: { params: Promise<{ proj
       label: `${c.name}: ${c.engagement!.name ?? ""}`,
     }));
   const view = plan.data;
+  // Package-gated work (BP-09) shows locked, with the way to the package; reading never needs it.
+  const locked = view.can_act && view.package_state !== "ACTIVE" && view.availability === "ELIGIBLE";
   return (
     <section aria-labelledby="build-plan" className="flex flex-col gap-6">
       <SectionHeader id="build-plan" title={t("title")} description={t("intro")} />
@@ -41,9 +44,10 @@ export default async function BuildPlanPage({ params }: { params: Promise<{ proj
         <h3 id="drawings" className="font-heading text-base font-medium">{t("drawings")}</h3>
         {view.design_requests.length === 0 && <p className="text-sm text-muted-foreground">{t("noRequests")}</p>}
         {view.design_requests.map((request) => (
-          <DesignRequestCard key={request.id} audience="family" projectId={projectId} request={request} />
+          <DesignRequestCard key={request.id} audience="family" projectId={projectId} request={request} locked={locked} />
         ))}
-        {view.can_act && (
+        {locked && <PackageLock projectId={projectId} reason={t("packageLocked")} />}
+        {view.can_act && !locked && (
           <details>
             <summary className="cursor-pointer text-sm font-medium">{t("newRequest")}</summary>
             <DesignRequestForm audience="family" projectId={projectId} engagements={engagements} />

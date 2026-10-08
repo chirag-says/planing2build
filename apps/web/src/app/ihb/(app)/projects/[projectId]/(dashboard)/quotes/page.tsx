@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { ActionButton } from "@/components/plan2build/build-plan";
+import { PackageLock } from "@/components/plan2build/package-lock";
 import { SectionHeader } from "@/components/plan2build/page-header";
 import { DownloadLink, RequestQuotes, SelectQuote } from "@/components/plan2build/rfq";
 import { Notice } from "@/components/plan2build/states";
@@ -29,7 +30,7 @@ export default async function QuotesPage({
 }) {
   const { projectId } = await params;
   const q = ((await searchParams).q ?? "").slice(0, 80) || undefined;
-  const { project } = await loadProject(projectId);
+  const { project, package: pkg } = await loadProject(projectId);
   if (!dashboardOpen(project.status)) redirect(`/projects/${projectId}`);
   const api = await serverApi();
   const [view, directory] = await Promise.all([
@@ -39,6 +40,9 @@ export default async function QuotesPage({
   if (!view.data) throw new Error("the quotes could not be loaded");
   const t = getTranslator("Rfq");
   const data = view.data;
+  // Requesting and choosing need an active package (QD-01, QD-12): shown locked, never hidden.
+  const locked = data.package_state !== "ACTIVE" && pkg.availability === "ELIGIBLE";
+  const openRequest = data.rfqs.some((r) => r.state === "DRAFT" || r.state === "ISSUED");
   const candidates = (directory.data?.items ?? []).map((c) => ({
     id: c.profile_id,
     name: [c.display_name, c.firm_name].filter(Boolean).join(", ") || c.profile_id,
@@ -60,6 +64,9 @@ export default async function QuotesPage({
           </label>
           <Button type="submit" variant="outline">{t("search")}</Button>
         </form>
+      )}
+      {locked && data.accepted_build_plan_version_no != null && !openRequest && (
+        <PackageLock projectId={projectId} reason={t("requestLocked")} />
       )}
       {data.can_request && (
         <RequestQuotes projectId={projectId} candidates={candidates} max={data.max_recipients}
@@ -139,7 +146,27 @@ export default async function QuotesPage({
                     </ul>
                   </details>
                   {q.quote.payment_terms && <p className="text-sm">{t("paymentTerms")}: {q.quote.payment_terms}</p>}
+                  {q.quote.attachments.length > 0 && (
+                    <div className="flex flex-col gap-1" data-testid="quote-attachments">
+                      <p className="font-mono text-xs tracking-widest uppercase">{t("attachments")}</p>
+                      <span className="flex flex-wrap gap-2">
+                        {q.quote.attachments.map((f) =>
+                          f.state === "AVAILABLE" ? (
+                            <DownloadLink key={f.file_id} label={f.file_name}
+                              url={`/api/v1/projects/${projectId}/rfqs/${rfq.id}/files/${f.file_id}/url`} />
+                          ) : (
+                            <span key={f.file_id} className="text-sm text-muted-foreground">
+                              {t("attachmentUnavailable", { name: f.file_name })}
+                            </span>
+                          ),
+                        )}
+                      </span>
+                    </div>
+                  )}
                   {rfq.can_select && <SelectQuote projectId={projectId} rfqId={rfq.id} quoteVersionId={q.quote_version_id} />}
+                  {!rfq.can_select && locked && rfq.state === "ISSUED" && rfq.comparison?.state === "PUBLISHED" && (
+                    <PackageLock projectId={projectId} reason={t("selectLocked")} />
+                  )}
                 </div>
               ))}
               </div>

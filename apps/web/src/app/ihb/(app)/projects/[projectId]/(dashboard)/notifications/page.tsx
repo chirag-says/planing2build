@@ -3,9 +3,7 @@ import {
   ArrowRightIcon,
   BellRingIcon,
   ClipboardCheckIcon,
-  MessageSquareTextIcon,
   RefreshCwIcon,
-  ReceiptIcon,
   ScaleIcon,
   type LucideIcon,
 } from "lucide-react";
@@ -15,7 +13,6 @@ import Link from "next/link";
 import { actionCopy, activityText, whenText } from "@/components/plan2build/overview";
 import { SectionHeader } from "@/components/plan2build/page-header";
 import { EmptyState } from "@/components/plan2build/states";
-import { Badge } from "@/components/ui/badge";
 import { getTranslator } from "@/lib/i18n";
 import { dayGroup, type InboxNotification, type NotificationKind } from "@/lib/inbox";
 import { getInbox } from "@/lib/inbox-server";
@@ -32,19 +29,15 @@ const KIND_ICON: Record<NotificationKind, LucideIcon> = {
   update: RefreshCwIcon,
   quote: ScaleIcon,
   inspection: ClipboardCheckIcon,
-  payment: ReceiptIcon,
-  message: MessageSquareTextIcon,
 };
 
 function text(item: InboxNotification): string {
-  if (item.source.type === "action") return actionCopy(item.source.action).title;
-  if (item.source.type === "activity") return activityText(item.source.item);
-  return `${item.source.from}: ${item.source.text}`;
+  return item.source.type === "action" ? actionCopy(item.source.action).title : activityText(item.source.item);
 }
 
-// The bell's page (lib/inbox.ts, a preview until the API has notifications): what needs the family
-// and what changed, by day. Action notifications come from the next actions and updates from the
-// dates the API records; only message notifications are samples, and they say so.
+// The bell's page (lib/inbox.ts): what needs the family and what changed, by day. Action
+// notifications come from the next actions and updates from the dates the API records; there is
+// no sample data.
 export default async function NotificationsPage({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;
   const [detail, inbox] = await Promise.all([loadProject(projectId), getInbox(projectId)]);
@@ -103,7 +96,6 @@ export default async function NotificationsPage({ params }: { params: Promise<{ 
                               {t("notifications.new")}
                             </span>
                           )}
-                          {item.preview && <Badge variant="outline">{t("preview")}</Badge>}
                         </span>
                         <span className="text-base font-medium text-pretty">{text(item)}</span>
                         <span className="font-mono text-xs tracking-widest text-muted-foreground uppercase">

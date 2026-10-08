@@ -1,8 +1,10 @@
 // The handover and the Build Record as the homeowner sees them (Slice 3.7C): whether the owner
 // acknowledged the handover or Plan2Build issued it without acknowledgement (EX-15, never shown
 // as an acknowledgement), the documents and warranties, and the Build Record versions with their
-// PDF and data file behind logged links (EX-17). Household members read.
+// PDF and data file behind logged links (EX-17), and a link to read each version's contents.
+// Household members read.
 import type { components } from "@p2b/contracts";
+import Link from "next/link";
 
 import { SectionHeader } from "@/components/plan2build/page-header";
 import { AcknowledgeHandover } from "@/components/plan2build/records";
@@ -42,6 +44,7 @@ export function HandoverSection({ projectId, view }: { projectId: string; view: 
             ))}
           </ul>
           {view.is_owner && h.state === "READY" && <AcknowledgeHandover projectId={projectId} />}
+          {!view.is_owner && h.state === "READY" && <p className="text-muted-foreground">{t("ownerAcknowledges")}</p>}
         </div>
       )}
     </section>
@@ -62,7 +65,11 @@ export function BuildRecordSection({ projectId, records }: { projectId: string; 
               {v.issued_at ? ` · ${formatDate(v.issued_at)}` : ""}</span>
             {v.correction_reason && <span>{t("correction", { reason: v.correction_reason })}</span>}
             <span className="font-mono text-xs break-all">sha256 {v.snapshot_sha256}</span>
-            <span className="flex flex-wrap gap-2">
+            <span className="flex flex-wrap items-center gap-2">
+              <Link href={`/projects/${projectId}/construction/build-record/${v.version_no}`}
+                className="text-sm font-medium underline underline-offset-4">
+                {t("viewVersion", { version: v.version_no })}
+              </Link>
               <DownloadLink label={t("pdf", { version: v.version_no })} url={`${base}/${v.version_no}/pdf/url`} />
               <DownloadLink label={t("json", { version: v.version_no })} url={`${base}/${v.version_no}/json/url`} />
             </span>
