@@ -6,8 +6,9 @@
 // issue versions. The API decides every rule; these controls send and show its answer.
 import { CSRF_HEADERS, type components } from "@p2b/contracts";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
+import { ConfirmationDialog } from "@/components/plan2build/confirmation-dialog";
 import { FormField } from "@/components/plan2build/form-field";
 import { PackageLock } from "@/components/plan2build/package-lock";
 import { Notice } from "@/components/plan2build/states";
@@ -16,9 +17,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
+import { isScanPending, SCAN_POLL_MS, shouldPollScan } from "@/lib/file-scan";
 import { getTranslator } from "@/lib/i18n";
 
 type Request = components["schemas"]["DesignRequestOut"];
+type FileState = components["schemas"]["FileState"];
 type Audience = "family" | "pro" | "ops";
 
 const t = getTranslator("BuildPlan");
@@ -361,6 +364,79 @@ function AddDrawingForm({
   );
 }
 
+/** A drawing the family uploaded, still being checked: its state, read again until the check settles
+ * (GET build-plan/files/{id}, the owner's own uploads only); the page then refreshes. */
+function FamilyFileState({ projectId, fileId, initial }: { projectId: string; fileId: string; initial: FileState }) {
+  const router = useRouter();
+  const [state, setState] = useState<FileState>(initial);
+  useEffect(() => {
+    let attempt = 0;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    async function read() {
+      const result = await call("GET", `/api/v1/projects/${projectId}/build-plan/files/${fileId}`);
+      attempt += 1;
+      if (cancelled || !result.ok) return;
+      const next = (result.body as components["schemas"]["FileOut"]).state;
+      setState(next);
+      if (shouldPollScan(next, attempt)) timer = setTimeout(() => void read(), SCAN_POLL_MS);
+      else if (!isScanPending(next)) router.refresh();
+    }
+    if (shouldPollScan(initial, 0)) timer = setTimeout(() => void read(), SCAN_POLL_MS);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [projectId, fileId, initial, router]);
+  return <StatusBadge kind="file" status={state} />;
+}
+
+/** Remove a drawing from the family's own DRAFT set, after a confirmation (no package needed). */
+function RemoveDrawingFile({ projectId, setId, drawingFileId, title }: {
+  projectId: string;
+  setId: string;
+  drawingFileId: string;
+  title: string;
+}) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  async function remove() {
+    setOpen(false);
+    setBusy(true);
+    setError(null);
+    const result = await call("DELETE", `/api/v1/projects/${projectId}/drawing-sets/${setId}/files/${drawingFileId}`);
+    setBusy(false);
+    if (result.ok) {
+      router.refresh();
+      return;
+    }
+    setError(problem(result));
+    // The set moved on or the drawing is already gone: show the current state.
+    if (result.status === 404 || result.status === 409) router.refresh();
+  }
+  return (
+    <>
+      <Button type="button" size="sm" variant="outline" disabled={busy} onClick={() => setOpen(true)}
+        aria-label={t("removeDrawingName", { title })}>
+        {busy && <Spinner />}
+        {t("removeDrawing")}
+      </Button>
+      <ConfirmationDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={t("removeDrawingTitle")}
+        description={t("removeDrawingBody", { title })}
+        confirmLabel={t("removeDrawing")}
+        cancelLabel={t("keepDrawing")}
+        onConfirm={() => void remove()}
+      />
+      {error && <span role="alert" className="basis-full text-xs text-destructive">{error}</span>}
+    </>
+  );
+}
+
 function FamilyDecision({ projectId, setId }: { projectId: string; setId: string }) {
   const action = useCall();
   const [note, setNote] = useState("");
@@ -461,6 +537,8 @@ export function DesignRequestCard({
 }) {
   const action = useCall();
   const familyLocked = locked && audience === "family";
+  // The family's own drawings, while the set is still a draft: the API lets the owner remove them.
+  const familyDraft = (state: string) => audience === "family" && request.can_provide && state === "DRAFT";
   const open = request.sets.find((s) => ["DRAFT", "SUBMITTED", "IN_CHECK"].includes(s.state));
   return (
     <article aria-label={t(`kinds.${request.kind}`)} className="flex flex-col gap-3 rounded-md border border-border p-3">
@@ -480,9 +558,16 @@ export function DesignRequestCard({
             {set.files.map((f) => (
               <li key={f.id} className="flex flex-wrap items-center gap-2">
                 <span>{t(`classes.${f.drawing_class}`)}{f.floor !== null ? ` (${t("floor")} ${f.floor})` : ""}: {f.title}</span>
-                <span className="text-xs text-muted-foreground">{f.file_state}</span>
+                {familyDraft(set.state) ? (
+                  <FamilyFileState key={f.file_state} projectId={projectId} fileId={f.file_id} initial={f.file_state} />
+                ) : (
+                  <StatusBadge kind="file" status={f.file_state} />
+                )}
                 {f.file_state === "AVAILABLE" && (
                   <DownloadButton audience={audience} projectId={projectId} fileId={f.file_id} label={t("download")} />
+                )}
+                {familyDraft(set.state) && (
+                  <RemoveDrawingFile projectId={projectId} setId={set.id} drawingFileId={f.id} title={f.title} />
                 )}
               </li>
             ))}

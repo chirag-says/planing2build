@@ -1599,7 +1599,12 @@
       "activate": "Activate (ADMIN)"
     },
     "packageLocked": "Asking for drawings and reviewing drawing sets need an active Plan2Build package. You can still read everything here.",
-    "acceptLocked": "Accepting this Build Plan or asking for changes needs an active Plan2Build package."
+    "acceptLocked": "Accepting this Build Plan or asking for changes needs an active Plan2Build package.",
+    "removeDrawing": "Remove",
+    "removeDrawingName": "Remove {title}",
+    "removeDrawingTitle": "Remove this drawing from the set?",
+    "removeDrawingBody": "{title} is taken out of this draft set. You can add a drawing again until you submit the set.",
+    "keepDrawing": "Keep it"
   },
   "Rfq": {
     "title": "Contractor quotes",
