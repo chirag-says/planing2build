@@ -23,7 +23,14 @@ export default async function OpsLayout({ children }: { children: React.ReactNod
     ...(ops || admin ? [{ href: "/rfqs", label: t("nav.rfqs") }] : []),
     ...(ops || admin ? [{ href: "/execution", label: t("nav.execution") }] : []),
     ...(ops || admin ? [{ href: "/assurance", label: t("nav.assurance") }] : []),
-    ...(admin ? [{ href: "/admin/billing", label: t("nav.configuration") }] : []),
+    // ADMIN configuration and accounts (one block).
+    ...(admin
+      ? [
+          { href: "/admin/billing", label: t("nav.configuration") },
+          { href: "/admin/acknowledgement-statements", label: t("nav.acknowledgementStatements") },
+          { href: "/admin/staff", label: t("nav.staff") },
+        ]
+      : []),
   ];
   return (
     <>

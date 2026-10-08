@@ -87,6 +87,18 @@ export async function uploadEvidence(base: string, file: File, withCaptureClaim 
   return done.ok ? info.file_id : null;
 }
 
+/** Upload one file from the admin host: the raw body to an operations route with `?file_name=`
+ * (the admin host never writes to storage directly). Returns the file id. */
+export async function uploadOpsFile(url: string, file: File): Promise<string | null> {
+  const response = await fetch(`${url}?file_name=${encodeURIComponent(file.name.slice(0, 200))}`, {
+    method: "POST",
+    headers: { ...CSRF_HEADERS, "Content-Type": file.type, "Idempotency-Key": crypto.randomUUID() },
+    body: file,
+  }).catch(() => null);
+  if (!response?.ok) return null;
+  return ((await response.json()) as { file_id: string }).file_id;
+}
+
 type StageOption = { id: string; label: string };
 
 export function UpdateForm({ engagementId, stages }: { engagementId: string; stages: StageOption[] }) {
@@ -182,12 +194,9 @@ export function OpsEvidenceUpload({ projectId }: { projectId: string }) {
   async function upload(file: File) {
     setBusy(true);
     setFailed(false);
-    const response = await fetch(
-      `/api/v1/ops/projects/${projectId}/stage-evidence?file_name=${encodeURIComponent(file.name)}`,
-      { method: "POST", headers: { ...CSRF_HEADERS, "Content-Type": file.type, "Idempotency-Key": crypto.randomUUID() }, body: file },
-    ).catch(() => null);
+    const fileId = await uploadOpsFile(`/api/v1/ops/projects/${projectId}/stage-evidence`, file);
     setBusy(false);
-    if (response?.ok) setDone(((await response.json()) as { file_id: string }).file_id);
+    if (fileId) setDone(fileId);
     else setFailed(true);
   }
   return (

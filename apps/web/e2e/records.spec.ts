@@ -76,7 +76,8 @@ test("the owner acknowledges the handover with a code and receives the issued Bu
 
   // Operations issue the Build Record; the owner sees version 1 with its PDF and data file.
   await page.goto(`${OPS}/handover/${project.id}`);
-  await expect(page.getByTestId("ops-build-record")).toContainText("Version 1 · draft · ACKNOWLEDGED");
+  await expect(page.getByTestId("ops-build-record")).toContainText("Version 1 · draft");
+  await expect(page.getByTestId("ops-build-record")).toContainText("Basis: acknowledged by the owner");
   await page.getByRole("button", { name: "Issue version 1" }).click();
   await expect(page.getByTestId("ops-build-record")).toContainText("Version 1 · current");
   await axe(page);

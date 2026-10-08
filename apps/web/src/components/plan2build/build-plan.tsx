@@ -8,6 +8,7 @@ import { CSRF_HEADERS, type components } from "@p2b/contracts";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
+import { ConfirmationDialog } from "@/components/plan2build/confirmation-dialog";
 import { FormField } from "@/components/plan2build/form-field";
 import { Notice } from "@/components/plan2build/states";
 import { StatusBadge } from "@/components/plan2build/status-badge";
@@ -823,6 +824,65 @@ export function ManifestButton({ projectId }: { projectId: string }) {
       <Button type="button" variant="outline" className="self-start" onClick={() => void load()}>{t("ops.showManifest")}</Button>
       <ErrorNotice error={error} />
       {text && <pre tabIndex={0} data-testid="rfq-manifest" className="max-h-96 overflow-auto rounded-md bg-muted p-2 text-xs">{text}</pre>}
+    </div>
+  );
+}
+
+// --- operations: confirmed actions -------------------------------------------------------------
+
+/** An action that cannot be undone from this screen: optionally a reason first, then a
+ * confirmation dialog, then one call. Shows the API's answer (error or `done`). */
+export function ConfirmAction({
+  id,
+  label,
+  title,
+  description,
+  url,
+  once = true,
+  reason = false,
+  done,
+  variant = "outline",
+}: {
+  id: string;
+  label: string;
+  title: string;
+  description: string;
+  url: string;
+  once?: boolean;
+  /** Ask for a reason and send it as `{reason}`. */
+  reason?: boolean;
+  done?: string;
+  variant?: "default" | "outline" | "destructive";
+}) {
+  const action = useCall();
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+  const [finished, setFinished] = useState(false);
+  async function confirm() {
+    setOpen(false);
+    setFinished(false);
+    const result = await action.run("POST", url, reason ? { reason: text.trim() } : undefined, once);
+    if (result) {
+      setFinished(true);
+      setText("");
+    }
+  }
+  return (
+    <div className="flex flex-col gap-2">
+      {reason && (
+        <FormField id={id} label={`${label}: ${t("ops.reason")}`} required>
+          {(c) => <Input {...c} maxLength={2000} value={text} onChange={(e) => setText(e.target.value)} />}
+        </FormField>
+      )}
+      <Button type="button" variant={variant} size="sm" className="self-start"
+        disabled={action.busy || (reason && !text.trim())} onClick={() => setOpen(true)}>
+        {action.busy && <Spinner />}
+        {label}
+      </Button>
+      <ConfirmationDialog open={open} onOpenChange={setOpen} title={title} description={description}
+        confirmLabel={label} cancelLabel={t("ops.cancel")} onConfirm={() => void confirm()} />
+      <ErrorNotice error={action.error} />
+      {finished && done && <Notice tone="success" live="polite">{done}</Notice>}
     </div>
   );
 }
