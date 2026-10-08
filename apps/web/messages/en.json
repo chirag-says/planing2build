@@ -365,7 +365,8 @@
       "notQueued": "This project is not in the review queue.",
       "submittedOn": "Submitted {date}",
       "breadcrumb": "Breadcrumb",
-      "versionMismatch": "These answers were given against question set version {version}, which is no longer active. Labels cannot be shown."
+      "versionMismatch": "These answers were given against question set version {version}, which is no longer active. Labels cannot be shown.",
+      "areas": "Project areas"
     },
     "decision": {
       "title": "Decision",
@@ -1708,7 +1709,25 @@
     "sharedFiles": "Shared files",
     "end": "End engagement",
     "searchLabel": "Find listed contractors by name",
-    "search": "Search"
+    "search": "Search",
+    "opsProjectTitle": "Requests for quotation: {code}",
+    "opsProjectTitleNoCode": "Requests for quotation for this project",
+    "opsProjectIntro": "This project's requests for contractor quotes, newest first.",
+    "opsProjectList": "Requests",
+    "opsProjectEmpty": "No request for quotation on this project yet.",
+    "opsProjectLink": "This project's requests",
+    "created": "Created {when}",
+    "states": {
+      "DRAFT": "Draft",
+      "ISSUED": "Issued",
+      "CLOSED": "Closed",
+      "CANCELLED": "Cancelled"
+    },
+    "opsNew": "New request",
+    "opsOpenExists": "A request is already open on this project. Cancel or close it before creating another.",
+    "opsChoose": "Listed contractors to nominate (optional)",
+    "opsChooseHint": "Create a request only at the owner's direction. It starts as a draft; contractors can also be introduced on it afterwards.",
+    "opsCreate": "Create a draft request"
   },
   "Execution": {
     "title": "Construction progress",
@@ -1811,7 +1830,9 @@
         "todo": "Not started",
         "held": "On hold or blocked"
       }
-    }
+    },
+    "loadingUpdates": "Loading the updates…",
+    "retry": "Try again"
   },
   "Assurance": {
     "title": "Inspections",
@@ -1913,7 +1934,15 @@
     "publish": "Publish",
     "send": "Send",
     "error": "That did not work. Try again.",
-    "errorReason": "That did not work: {reason}"
+    "errorReason": "That did not work: {reason}",
+    "file": "File {n}",
+    "addTestResult": "Add a later test result",
+    "testKind": "Test (for example, cube test at 28 days)",
+    "testValue": "Result",
+    "testFile": "Result document or photo (optional)",
+    "testSave": "Save the test result",
+    "testWaiting": "Saving and waiting for the file check…",
+    "testSaved": "Test result saved."
   },
   "Shell": {
     "sidebar": "Sidebar",
@@ -3093,6 +3122,37 @@
         "IMAGES_OR_3D": "Pictures and 3D views are not part of this editor.",
         "OTHER": "That is outside what the assistant can do with this plan.",
         "CONSTRUCTION_DRAWINGS": "This is a concept floor plan, not a construction, structural or approval drawing. A qualified architect and structural engineer must prepare and check the drawings you build from."
+      }
+    },
+    "ops": {
+      "title": "Floor plans",
+      "intro": "Concept floor plans laid out for this project, newest first. View only.",
+      "empty": "No floor plan for this project yet.",
+      "open": "View plan",
+      "back": "Back to the project",
+      "error": "The floor plans could not be loaded. Try again.",
+      "errorReason": "The floor plans could not be loaded: {reason}",
+      "viewOnly": "View only. Operations cannot change a floor plan; only the project owner can.",
+      "notDrawable": "This plan has no drawing to show.",
+      "ruleset": "Ruleset version {version}, {status}",
+      "synthetic": "test rules",
+      "completed": "finished {date}",
+      "rulesetStatus": {
+        "DRAFT": "draft",
+        "APPROVED": "approved",
+        "PUBLISHED": "published",
+        "RETIRED": "retired"
+      },
+      "validity": {
+        "VALID": "passed the checks",
+        "INVALID": "failed the checks"
+      },
+      "failure": {
+        "ENGINE_ERROR": "The layout engine reported an error.",
+        "ENGINE_INVALID_OUTPUT": "The layout engine returned a plan the validator rejected.",
+        "ENGINE_TIMEOUT": "The layout engine took too long.",
+        "STALE": "The layout stopped and was given up.",
+        "UNKNOWN": "No reason was recorded."
       }
     }
   }

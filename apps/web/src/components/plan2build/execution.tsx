@@ -9,12 +9,15 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
 import { FormField } from "@/components/plan2build/form-field";
-import { Notice } from "@/components/plan2build/states";
+import { DownloadLink } from "@/components/plan2build/rfq";
+import { LoadingState, Notice } from "@/components/plan2build/states";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
+import { formatDate } from "@/lib/format";
 import { getTranslator } from "@/lib/i18n";
+import { updatesView, type UpdatesView } from "@/lib/ops-flow";
 
 const t = getTranslator("Execution");
 const SELECT =
@@ -199,5 +202,60 @@ export function OpsEvidenceUpload({ projectId }: { projectId: string }) {
       {done && <p role="status" className="font-mono text-xs" data-testid="uploaded-photo">{t("uploaded", { id: done })}</p>}
       {failed && <Notice tone="error" live="assertive">{t("error")}</Notice>}
     </div>
+  );
+}
+
+/** Every update on one stage for operations, loaded when the panel is first opened, with its
+ * photos openable through the staff file route (logged by the API). */
+export function OpsStageUpdates({ stageId }: { stageId: string }) {
+  const [view, setView] = useState<UpdatesView | null>(null);
+  const [loading, setLoading] = useState(false);
+  async function load() {
+    setLoading(true);
+    setView(updatesView(await call("GET", `/api/v1/ops/stages/${stageId}/updates`)));
+    setLoading(false);
+  }
+  return (
+    <details
+      onToggle={(e) => { if ((e.currentTarget as HTMLDetailsElement).open && !view && !loading) void load(); }}
+      data-testid={`ops-stage-updates-${stageId}`}
+    >
+      <summary className="cursor-pointer">{t("viewUpdates")}</summary>
+      <div className="mt-2 flex flex-col gap-2">
+        {loading && <LoadingState label={t("loadingUpdates")} />}
+        {view?.kind === "error" && (
+          <Notice tone="error" live="assertive">
+            {view.message ? t("errorReason", { reason: view.message }) : t("error")}
+            <Button type="button" size="sm" variant="outline" className="mt-2 block" onClick={() => void load()}>{t("retry")}</Button>
+          </Notice>
+        )}
+        {view?.kind === "empty" && <p className="text-muted-foreground">{t("noUpdates")}</p>}
+        {view?.kind === "list" && (
+          <ol className="flex flex-col gap-2">
+            {view.updates.map((u) => (
+              <li key={u.id} className="flex flex-col gap-1 rounded-md border border-border p-2">
+                <span className="font-medium">
+                  {t(`kinds.${u.kind}`)} · {formatDate(u.posted_at)}
+                  {u.contractor_name && ` · ${u.contractor_name}`}
+                  {u.entered_by_operations && ` · ${t("enteredByOps")}`}
+                  {u.corrects_update_id && ` · ${t("corrects")}`}
+                </span>
+                <p className="whitespace-pre-line">{u.note}</p>
+                {u.materials && <p>{t("materials", { text: u.materials })}</p>}
+                {u.open_problems && <p>{t("openProblems", { text: u.open_problems })}</p>}
+                {u.photos.length > 0 && (
+                  <span className="flex flex-wrap gap-2">
+                    {u.photos.map((p, n) => (
+                      <DownloadLink key={p.file_id} url={`/api/v1/ops/stage-files/${p.file_id}/url`}
+                        label={`${t("photo", { n: n + 1 })}: ${p.file_name}`} />
+                    ))}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </details>
   );
 }

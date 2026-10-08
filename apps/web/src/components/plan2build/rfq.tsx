@@ -356,3 +356,39 @@ export function OpsUpload({ projectId }: { projectId: string }) {
     </div>
   );
 }
+
+/** Operations create a DRAFT request for a project at the owner's direction (QD-03), nominating
+ * listed contractors or none (they can be introduced on the RFQ afterwards). The API decides every
+ * rule (OPEN_RFQ, NO_ACCEPTED_VERSION, NOT_NEEDED, ENGAGED, PACKAGE_REQUIRED) and says why. */
+export function OpsRequestQuotes({ projectId, candidates }: { projectId: string; candidates: { id: string; name: string }[] }) {
+  const router = useRouter();
+  const action = useCall();
+  const [chosen, setChosen] = useState<string[]>([]);
+  async function send(event: FormEvent) {
+    event.preventDefault();
+    const result = await action.run("POST", `/api/v1/ops/projects/${projectId}/rfqs`, { profile_ids: chosen }, true);
+    const id = (result?.body as { id?: string } | null)?.id;
+    if (id) router.push(`/rfqs/${id}`);
+  }
+  return (
+    <form onSubmit={send} className="flex flex-col gap-3 rounded-md border border-border p-3" data-testid="ops-request-quotes">
+      <fieldset className="flex flex-col gap-1">
+        <legend className="text-sm font-medium">{t("opsChoose")}</legend>
+        {candidates.length === 0 && <p className="text-sm text-muted-foreground">{t("noCandidates")}</p>}
+        {candidates.map((c) => (
+          <label key={c.id} className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={chosen.includes(c.id)}
+              onChange={(e) => setChosen(e.target.checked ? [...chosen, c.id] : chosen.filter((x) => x !== c.id))} />
+            {c.name}
+          </label>
+        ))}
+      </fieldset>
+      <p className="text-sm text-muted-foreground">{t("opsChooseHint")}</p>
+      <ErrorNotice error={action.error} />
+      <Button type="submit" className="self-start" disabled={action.busy}>
+        {action.busy && <Spinner />}
+        {t("opsCreate")}
+      </Button>
+    </form>
+  );
+}

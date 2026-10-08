@@ -28,7 +28,10 @@ export default async function OpsRfqsPage() {
           <li key={r.id} className="flex flex-col gap-1 rounded-md border border-border p-3 text-sm">
             <span>{t("project", { code: r.project_code })} · {r.state} · {r.invitations} / {r.quotes} / {r.pending_reviews}</span>
             <span>{t("deadline", { when: r.quotes_due_at ?? t("notSet") })}</span>
-            <Link href={`/rfqs/${r.id}`} className="font-medium underline underline-offset-4">{t("open")}</Link>
+            <span className="flex flex-wrap gap-4">
+              <Link href={`/rfqs/${r.id}`} className="font-medium underline underline-offset-4">{t("open")}</Link>
+              <Link href={`/rfqs/project/${r.project_id}`} className="underline underline-offset-4">{t("opsProjectLink")}</Link>
+            </span>
           </li>
         ))}
       </ul>
