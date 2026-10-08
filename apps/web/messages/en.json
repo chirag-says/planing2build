@@ -2794,7 +2794,8 @@
     "messages": {
       "title": "Messages",
       "intro": "The people on {code} and how to reach them.",
-      "empty": "No professionals engaged yet. They appear here, with the contact details they share, once engaged.",
+      "empty": "No one engaged yet",
+      "emptyDetail": "Professionals appear here, with the contact details they share, once they are engaged.",
       "notAvailable": "In-app messaging is not available yet. Call or email the people below.",
       "team": "Your project team",
       "noContact": "No phone or email shared yet.",

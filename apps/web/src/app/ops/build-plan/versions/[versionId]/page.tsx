@@ -147,7 +147,8 @@ export default async function OpsVersionPage({ params }: { params: Promise<{ ver
           <ul className="flex flex-col gap-3 text-sm">
             {snap.signoffs.filter((s) => canRevokeSignoff(state, s.state)).map((s) => (
               <li key={s.id} className="flex flex-col gap-2 rounded-md border border-border p-3" data-testid={`signoff-${s.id}`}>
-                <span className="font-medium">{s.line_code}: {s.engineer_name} ({s.registration_number ?? "-"})</span>
+                {/* The full sign-off (registration, document) is in the snapshot below; this names the line. */}
+                <span className="font-medium">{s.line_code} · {s.engineer_name}</span>
                 <ConfirmAction id={`revoke-${s.id}`} reason label={t("ops.revoke")} url={`/api/v1/ops/signoffs/${s.id}/revoke`}
                   title={t("ops.revokeTitle", { line: s.line_code })}
                   description={state === "IN_REVIEW" ? t("ops.revokeBeforeIssue") : t("ops.revokeAfterIssue")}

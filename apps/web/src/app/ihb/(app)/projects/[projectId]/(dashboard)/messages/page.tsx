@@ -122,6 +122,7 @@ export default async function MessagesPage({
           <EmptyState
             icon={UsersIcon}
             title={t("messages.empty")}
+            description={t("messages.emptyDetail")}
             action={
               <Button asChild variant="outline">
                 <Link href={`/projects/${projectId}/services`}>{o("team.find")}</Link>
