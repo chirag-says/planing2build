@@ -4,9 +4,11 @@ import { notFound, redirect } from "next/navigation";
 import { AssuranceSection } from "@/components/plan2build/assurance-view";
 import { ActionButton } from "@/components/plan2build/build-plan";
 import { UpdateForm } from "@/components/plan2build/execution";
-import { HandoverDocumentForm, WarrantyForm } from "@/components/plan2build/records";
 import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
+import { ContractorHandoverSection } from "@/components/plan2build/records-view";
 import { DownloadLink } from "@/components/plan2build/rfq";
+import { StageUpdateHistory } from "@/components/plan2build/stage-updates";
+import { Notice } from "@/components/plan2build/states";
 import { serverApi } from "@/lib/api/server";
 import { formatDate } from "@/lib/format";
 import { getTranslator } from "@/lib/i18n";
@@ -17,7 +19,8 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // The engaged contractor's execution page (Slice 3.7A, functional): the accepted Build Plan's
 // drawings, the stages with its own update counts, the update form (EX-02) and the "received"
-// marks on payment milestones (EX-05). Only while the contractor engagement is active.
+// marks on payment milestones (EX-05), your own updates per stage, and the handover documents and
+// warranties while the handover is open. Only while the contractor engagement is active.
 export default async function ProExecutionPage({ params }: { params: Promise<{ engagementId: string }> }) {
   const { engagementId } = await params;
   if (!UUID.test(engagementId)) notFound();
@@ -70,28 +73,16 @@ export default async function ProExecutionPage({ params }: { params: Promise<{ e
                 {s.is_gate && s.gate_status && <span>{t("gate", { status: t(`gates.${s.gate_status}`) })}</span>}
                 <span>{t("updateCount", { count: s.update_count })}</span>
               </span>
+              {s.update_count > 0 && <StageUpdateHistory engagementId={engagementId} stageId={s.id} count={s.update_count} />}
             </li>
           ))}
         </ol>
       </section>
       <AssuranceSection data={assurance.data} engagementId={engagementId} />
-      {handover.data && (
-        <section aria-labelledby="handover" className="flex flex-col gap-2 text-sm">
-          <SectionHeader id="handover" title={r("handover")} />
-          <p data-testid="handover-state">{r(`states.${handover.data.state}`)}</p>
-          <ul className="flex flex-col gap-1">
-            {handover.data.documents.map((d) => <li key={d.id}>{r(`kinds.${d.kind}`)}: {d.title}</li>)}
-            {handover.data.warranties.map((w) => (
-              <li key={w.id}>{r("warranty", { item: w.item, term: w.term, expiry: w.expiry_date, installer: w.installer })}</li>
-            ))}
-          </ul>
-          {handover.data.state === "OPEN" && (
-            <>
-              <HandoverDocumentForm engagementId={engagementId} />
-              <WarrantyForm engagementId={engagementId} documents={handover.data.documents} />
-            </>
-          )}
-        </section>
+      {handover.response.ok ? (
+        <ContractorHandoverSection engagementId={engagementId} handover={handover.data ?? null} />
+      ) : (
+        <Notice tone="error">{handover.error?.error?.message ?? r("error")}</Notice>
       )}
       <section aria-labelledby="marks" className="flex flex-col gap-2">
         <SectionHeader id="marks" title={t("marks")} description={t("marksIntro")} />

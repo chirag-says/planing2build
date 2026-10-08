@@ -148,7 +148,7 @@ export default async function QuotesPage({
                   {q.quote.payment_terms && <p className="text-sm">{t("paymentTerms")}: {q.quote.payment_terms}</p>}
                   {q.quote.attachments.length > 0 && (
                     <div className="flex flex-col gap-1" data-testid="quote-attachments">
-                      <p className="font-mono text-xs tracking-widest uppercase">{t("attachments")}</p>
+                      <p className="font-mono text-xs tracking-widest uppercase">{t("attachmentsHeading")}</p>
                       <span className="flex flex-wrap gap-2">
                         {q.quote.attachments.map((f) =>
                           f.state === "AVAILABLE" ? (

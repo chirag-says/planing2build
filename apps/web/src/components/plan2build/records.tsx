@@ -9,7 +9,7 @@ import type { components } from "@p2b/contracts";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
-import { call, postWhenChecked, problem, uploadEvidence, uploadOpsFile } from "@/components/plan2build/execution";
+import { call, postWhenChecked, problem, uploadOpsFile, uploadTo } from "@/components/plan2build/execution";
 import { FormField } from "@/components/plan2build/form-field";
 import { Notice } from "@/components/plan2build/states";
 import { Button } from "@/components/ui/button";
@@ -119,18 +119,32 @@ export function AcknowledgeHandover({ projectId }: { projectId: string }) {
 export function HandoverDocumentForm({ engagementId }: { engagementId: string }) {
   const base = `/api/v1/pro/engagements/${engagementId}/handover`;
   return (
-    <DocumentForm idPrefix="handover" documentsUrl={`${base}/documents`}
-      upload={(file) => uploadEvidence(`${base}/uploads`, file, false)} />
+    <DocumentForm
+      idPrefix="handover"
+      documentsUrl={`${base}/documents`}
+      upload={async (file) => {
+        const uploaded = await uploadTo(`${base}/uploads`, file, false);
+        return uploaded.ok ? { fileId: uploaded.fileId } : { error: uploaded.result ? problem(uploaded.result) : t("error") };
+      }}
+    />
   );
 }
 
 /** Operations add a document received outside the portal: the raw upload, then the document. */
 export function OpsHandoverDocumentForm({ projectId }: { projectId: string }) {
   return (
-    <DocumentForm idPrefix="ops-handover" documentsUrl={`/api/v1/ops/projects/${projectId}/handover/documents`}
-      upload={(file) => uploadOpsFile(`/api/v1/ops/projects/${projectId}/handover-files`, file)} />
+    <DocumentForm
+      idPrefix="ops-handover"
+      documentsUrl={`/api/v1/ops/projects/${projectId}/handover/documents`}
+      upload={async (file) => {
+        const fileId = await uploadOpsFile(`/api/v1/ops/projects/${projectId}/handover-files`, file);
+        return fileId ? { fileId } : { error: t("error") };
+      }}
+    />
   );
 }
+
+type UploadOutcome = { fileId: string } | { error: string };
 
 function DocumentForm({
   idPrefix,
@@ -139,7 +153,7 @@ function DocumentForm({
 }: {
   idPrefix: string;
   documentsUrl: string;
-  upload: (file: File) => Promise<string | null>;
+  upload: (file: File) => Promise<UploadOutcome>;
 }) {
   const router = useRouter();
   const [kind, setKind] = useState<string>("MANUAL");
@@ -148,6 +162,8 @@ function DocumentForm({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
+  // A new key clears the file input after a document is added.
+  const [inputKey, setInputKey] = useState(0);
 
   async function add(event: FormEvent) {
     event.preventDefault();
@@ -155,13 +171,13 @@ function DocumentForm({
     setBusy(true);
     setError(null);
     setAdded(false);
-    const fileId = await upload(file);
-    if (!fileId) {
+    const uploaded = await upload(file);
+    if ("error" in uploaded) {
       setBusy(false);
-      setError(t("error"));
+      setError(uploaded.error);
       return;
     }
-    const result = await postWhenChecked(documentsUrl, { kind, title, file_id: fileId });
+    const result = await postWhenChecked(documentsUrl, { kind, title: title.trim(), file_id: uploaded.fileId });
     setBusy(false);
     if (!result.ok) {
       setError(problem(result));
@@ -170,6 +186,7 @@ function DocumentForm({
     setAdded(true);
     setTitle("");
     setFile(null);
+    setInputKey((k) => k + 1);
     router.refresh();
   }
   return (
@@ -185,18 +202,25 @@ function DocumentForm({
         {(f) => <Input {...f} maxLength={200} value={title} onChange={(e) => setTitle(e.target.value)} />}
       </FormField>
       <FormField id={`${idPrefix}-file`} label={t("file")} required>
-        {(f) => <Input {...f} type="file" accept="application/pdf,image/jpeg,image/png" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />}
+        {(f) => (
+          <Input key={inputKey} {...f} type="file" accept="application/pdf,image/jpeg,image/png"
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+        )}
       </FormField>
       <Button type="submit" variant="outline" className="self-start" disabled={busy || !title.trim() || !file}>
         {busy && <Spinner />}
         {t("add")}
       </Button>
-      {busy && <p role="status" className="text-sm text-muted-foreground">{t("ops.checking")}</p>}
+      {busy && <p role="status" className="text-sm text-muted-foreground">{t("checking")}</p>}
       {added && <Notice tone="success" live="polite">{t("added")}</Notice>}
       {error && <Notice tone="error" live="assertive">{error}</Notice>}
     </form>
   );
 }
+
+const NO_DOCUMENT = "none";
+const EMPTY_WARRANTY = { item: "", term: "", expiry_date: "", installer: "", document_id: "" };
+const WARRANTY_MAX = { item: 200, term: 120, installer: 200 } as const;
 
 export function WarrantyForm({ engagementId, documents }: { engagementId: string; documents: Document[] }) {
   return (
@@ -214,28 +238,37 @@ function WarrantyFields({ idPrefix, url, documents }: { idPrefix: string; url: s
   const router = useRouter();
   const warrantyDocs = documents.filter((d) => d.kind === "WARRANTY");
   // The document is chosen when submitting, so one added after this form rendered is offered.
-  const [values, setValues] = useState({ item: "", term: "", expiry_date: "", installer: "", document_id: "" });
+  const [values, setValues] = useState(EMPTY_WARRANTY);
   const documentId = values.document_id || warrantyDocs[0]?.id || "";
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [added, setAdded] = useState(false);
   const set = (key: keyof typeof values, value: string) => setValues((v) => ({ ...v, [key]: value }));
+  const complete = Boolean(values.item.trim() && values.term.trim() && values.installer.trim() && values.expiry_date);
 
   async function add(event: FormEvent) {
     event.preventDefault();
     setBusy(true);
     setError(null);
+    setAdded(false);
     const result = await call("POST", url, {
-      ...values, document_id: documentId || null,
+      item: values.item.trim(), term: values.term.trim(), installer: values.installer.trim(),
+      expiry_date: values.expiry_date, document_id: documentId && documentId !== NO_DOCUMENT ? documentId : null,
     }, true);
     setBusy(false);
-    if (result.ok) router.refresh();
-    else setError(problem(result));
+    if (!result.ok) {
+      setError(problem(result));
+      return;
+    }
+    setAdded(true);
+    setValues(EMPTY_WARRANTY);
+    router.refresh();
   }
   return (
     <form onSubmit={add} className="flex flex-col gap-2" data-testid={`${idPrefix}-form`}>
       {(["item", "term", "installer"] as const).map((key) => (
         <FormField key={key} id={`${idPrefix}-${key}`} label={t(key)} required>
-          {(f) => <Input {...f} value={values[key]} onChange={(e) => set(key, e.target.value)} />}
+          {(f) => <Input {...f} maxLength={WARRANTY_MAX[key]} value={values[key]} onChange={(e) => set(key, e.target.value)} />}
         </FormField>
       ))}
       <FormField id={`${idPrefix}-expiry`} label={t("expiry")} required>
@@ -246,14 +279,16 @@ function WarrantyFields({ idPrefix, url, documents }: { idPrefix: string; url: s
           {(f) => (
             <select {...f} className={SELECT} value={documentId} onChange={(e) => set("document_id", e.target.value)}>
               {warrantyDocs.map((d) => <option key={d.id} value={d.id}>{d.title}</option>)}
+              <option value={NO_DOCUMENT}>{t("noDocumentLink")}</option>
             </select>
           )}
         </FormField>
       )}
-      <Button type="submit" variant="outline" className="self-start" disabled={busy}>
+      <Button type="submit" variant="outline" className="self-start" disabled={busy || !complete}>
         {busy && <Spinner />}
         {t("addWarranty")}
       </Button>
+      {added && <Notice tone="success" live="polite">{t("warrantyAdded")}</Notice>}
       {error && <Notice tone="error" live="assertive">{error}</Notice>}
     </form>
   );

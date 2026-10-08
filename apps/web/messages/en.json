@@ -120,7 +120,8 @@
       "hiddenNote": "Hidden by you. Your approval is kept; show it again at any time.",
       "dueNote": "Re-verification is due. Submit this category for review to keep it listed.",
       "error": "This could not be saved. Try again shortly.",
-      "uploading": "Uploading…"
+      "uploading": "Uploading…",
+      "openFile": "Open"
     },
     "portfolio": {
       "title": "Your portfolio",
@@ -1655,7 +1656,24 @@
     "removeDrawingName": "Remove {title}",
     "removeDrawingTitle": "Remove this drawing from the set?",
     "removeDrawingBody": "{title} is taken out of this draft set. You can add a drawing again until you submit the set.",
-    "keepDrawing": "Keep it"
+    "keepDrawing": "Keep it",
+    "revoke": {
+      "mine": "Sign-offs by listed engineers",
+      "intro": "You can revoke a sign-off you gave while this version is in review, issued or accepted.",
+      "none": "No listed engineer has signed a line of this version.",
+      "stateSigned": "signed",
+      "stateVoid": "void",
+      "signedAt": "signed {when}",
+      "voidReason": "Voided: {reason}",
+      "open": "Revoke",
+      "reason": "Why you are revoking this sign-off",
+      "submit": "Revoke sign-off",
+      "cancel": "Cancel",
+      "keep": "Keep the sign-off",
+      "title": "Revoke your sign-off of line {line}?",
+      "bodyInReview": "The sign-off is voided. The line must be signed again before this version can be issued.",
+      "bodyAfterIssue": "This version is already issued. The revocation is recorded, and the homeowner can no longer accept this version. Plan2Build withdraws or replaces it."
+    }
   },
   "Rfq": {
     "title": "Contractor quotes",
@@ -1787,10 +1805,34 @@
     "opsChoose": "Listed contractors to nominate (optional)",
     "opsChooseHint": "Create a request only at the owner's direction. It starts as a draft; contractors can also be introduced on it afterwards.",
     "opsCreate": "Create a draft request",
-    "attachments": "Attachments",
+    "attachmentsHeading": "Attachments",
     "attachmentUnavailable": "{name} (not available yet)",
     "requestLocked": "Requesting contractor quotes needs an active Plan2Build package.",
-    "selectLocked": "Choosing a quote needs an active Plan2Build package."
+    "selectLocked": "Choosing a quote needs an active Plan2Build package.",
+    "draft": {
+      "saving": "Saving the draft…",
+      "saved": "Draft saved {when}",
+      "restored": "Your saved draft is shown.",
+      "none": "Your changes are saved as a private draft as you type.",
+      "save": "Save draft",
+      "discard": "Discard draft",
+      "discardTitle": "Discard this draft?",
+      "discardBody": "The saved working copy of this quote is deleted and the form is cleared. Quote versions you submitted do not change.",
+      "keep": "Keep the draft",
+      "closed": "The draft can no longer be saved",
+      "failed": "The draft was not saved"
+    },
+    "attachments": {
+      "title": "Attachments (up to {max})",
+      "none": "No files attached.",
+      "saved": "Attached file {n}",
+      "remove": "Remove",
+      "limit": "You have attached the most files allowed ({max}).",
+      "add": "Attach a file (PDF, JPG or PNG, up to 10 MB)",
+      "uploading": "Uploading the file",
+      "checkNote": "Files are checked before they can be sent. Submitting waits for the check.",
+      "waiting": "Waiting for the attached files to be checked…"
+    }
   },
   "Execution": {
     "title": "Construction progress",
@@ -1895,7 +1937,9 @@
       }
     },
     "loadingUpdates": "Loading the updates…",
-    "retry": "Try again"
+    "retry": "Try again",
+    "showOwnUpdates": "Show your updates ({count})",
+    "hideOwnUpdates": "Hide your updates"
   },
   "Assurance": {
     "title": "Inspections",
@@ -2957,7 +3001,16 @@
       "purchase": "Purchase",
       "installation": "Installation",
       "notApplicable": "Not applicable"
-    }
+    },
+    "contractorIntro": "Add the handover documents and warranties while the handover is open. Plan2Build confirms they are recorded, then the owner acknowledges the handover.",
+    "openedAt": "Opened {when}",
+    "readyAt": "ready {when}",
+    "addedAt": "Added {when}",
+    "noWarranties": "No warranties yet.",
+    "closedForChanges": "The handover is no longer open, so documents and warranties cannot be added.",
+    "checking": "Uploading and checking the file…",
+    "noDocumentLink": "No document",
+    "warrantyAdded": "Warranty added."
   },
   "Plan": {
     "title": "Floor plan",

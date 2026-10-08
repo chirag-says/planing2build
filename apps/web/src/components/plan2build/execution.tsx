@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDate } from "@/lib/format";
+import { FILE_FIELDS, filesStillChecking } from "@/lib/file-check";
 import { getTranslator } from "@/lib/i18n";
 import { updatesView, type UpdatesView } from "@/lib/ops-flow";
 
@@ -46,18 +47,18 @@ export function problem(result: Result): string {
   return t("errorReason", { reason: `${error.message ?? ""} ${JSON.stringify(detail)}`.trim() });
 }
 
-function isPhotoCheckPending(result: Result): boolean {
-  const fields = (result.body as { error?: { details?: { fields?: Record<string, string[]> } } })?.error?.details?.fields;
-  return result.status === 422 && Boolean(fields?.file_ids ?? fields?.file_id);
-}
-
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** Post once the files have passed the scan: a 422 on `file_ids` or `file_id` means "not checked yet". */
-export async function postWhenChecked(url: string, body: unknown, method = "POST"): Promise<Result> {
+/** Post once the files have passed the scan: a 422 only on a file field (`file_ids`, `file_id`, or
+ * the ones given) means "not checked yet", so the same request is retried with the same key, up
+ * to `tries` times `waitMs` apart (fewer where each attempt counts against a rate limit). */
+export async function postWhenChecked(
+  url: string, body: unknown, method = "POST",
+  { fileFields = FILE_FIELDS, tries = CHECK_TRIES, waitMs = CHECK_WAIT_MS }: { fileFields?: readonly string[]; tries?: number; waitMs?: number } = {},
+): Promise<Result> {
   const key = crypto.randomUUID();
   let result: Result = { ok: false, status: 0, body: null };
-  for (let attempt = 0; attempt < CHECK_TRIES; attempt += 1) {
+  for (let attempt = 0; attempt < tries; attempt += 1) {
     try {
       const response = await fetch(url, {
         method,
@@ -69,25 +70,35 @@ export async function postWhenChecked(url: string, body: unknown, method = "POST
     } catch {
       result = { ok: false, status: 0, body: null };
     }
-    if (!isPhotoCheckPending(result)) return result;
-    await wait(CHECK_WAIT_MS);
+    if (!filesStillChecking(result, fileFields) || attempt === tries - 1) return result;
+    await wait(waitMs);
   }
   return result;
 }
 
-/** Upload one file through an upload route (`base`, then `base/{id}/complete`). Photos carry the
- * device's capture time as a claim (EX-22); documents do not. */
-export async function uploadEvidence(base: string, file: File, withCaptureClaim = true): Promise<string | null> {
+export type Uploaded = { ok: true; fileId: string; state: string } | { ok: false; result: Result | null };
+
+/** Upload one file through an upload route (`base`, then `base/{id}/complete`), keeping the API's
+ * answer when a step is refused. Photos carry the device's capture time as a claim (EX-22);
+ * documents do not. */
+export async function uploadTo(base: string, file: File, withCaptureClaim = true): Promise<Uploaded> {
   const claim = withCaptureClaim ? { captured_at: new Date(file.lastModified).toISOString() } : {};
   const ticket = await call("POST", base, {
     file_name: file.name.slice(0, 200), content_type: file.type, size_bytes: file.size, ...claim,
   });
-  if (!ticket.ok) return null;
+  if (!ticket.ok) return { ok: false, result: ticket };
   const { file: info, upload_url, headers } = ticket.body as { file: { file_id: string }; upload_url: string; headers: Record<string, string> };
   const put = await fetch(upload_url, { method: "PUT", headers, body: file }).then((r) => r.ok, () => false);
-  if (!put) return null;
+  if (!put) return { ok: false, result: null };
   const done = await call("POST", `${base}/${info.file_id}/complete`);
-  return done.ok ? info.file_id : null;
+  if (!done.ok) return { ok: false, result: done };
+  return { ok: true, fileId: info.file_id, state: (done.body as { state?: string } | null)?.state ?? "UPLOADED" };
+}
+
+/** {@link uploadTo}, reduced to the file id (null when any step fails). */
+export async function uploadEvidence(base: string, file: File, withCaptureClaim = true): Promise<string | null> {
+  const uploaded = await uploadTo(base, file, withCaptureClaim);
+  return uploaded.ok ? uploaded.fileId : null;
 }
 
 /** Upload one file from the admin host: the raw body to an operations route with `?file_name=`

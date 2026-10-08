@@ -704,6 +704,56 @@ export function SignPanel({ versionId, codes }: { versionId: string; codes: stri
   );
 }
 
+/** Revoke one of your structural sign-offs with a reason (BP-20), confirmed first. In review the
+ * sign-off is voided; after issue the revocation is recorded and blocks acceptance. */
+export function RevokeSignoff({ signoffId, lineCode, afterIssue }: { signoffId: string; lineCode: string; afterIssue: boolean }) {
+  const action = useCall();
+  const [editing, setEditing] = useState(false);
+  const [reason, setReason] = useState("");
+  const [confirming, setConfirming] = useState(false);
+  const id = `revoke-${signoffId.slice(-8)}`;
+  async function revoke() {
+    const done = await action.run("POST", `/api/v1/pro/build-plan/signoffs/${signoffId}/revoke`, { reason: reason.trim() }, true);
+    if (done) {
+      setEditing(false);
+      setReason("");
+    }
+  }
+  if (!editing) {
+    return (
+      <Button type="button" variant="outline" size="sm" className="self-start" onClick={() => setEditing(true)}>
+        {t("revoke.open")}
+      </Button>
+    );
+  }
+  return (
+    <form className="flex flex-col gap-2" onSubmit={(e) => { e.preventDefault(); if (reason.trim()) setConfirming(true); }}>
+      <FormField id={id} label={t("revoke.reason")} required>
+        {(c) => <Textarea {...c} rows={2} maxLength={2000} value={reason} onChange={(e) => setReason(e.target.value)} />}
+      </FormField>
+      <span className="flex flex-wrap gap-2">
+        <Button type="submit" variant="destructive" size="sm" disabled={!reason.trim() || action.busy}>
+          {action.busy && <Spinner />}
+          {t("revoke.submit")}
+        </Button>
+        <Button type="button" variant="ghost" size="sm" disabled={action.busy} onClick={() => { setEditing(false); setReason(""); }}>
+          {t("revoke.cancel")}
+        </Button>
+      </span>
+      <ErrorNotice error={action.error} />
+      <ConfirmationDialog
+        open={confirming}
+        onOpenChange={setConfirming}
+        title={t("revoke.title", { line: lineCode })}
+        description={afterIssue ? t("revoke.bodyAfterIssue") : t("revoke.bodyInReview")}
+        confirmLabel={t("revoke.submit")}
+        cancelLabel={t("revoke.keep")}
+        onConfirm={() => void revoke()}
+      />
+    </form>
+  );
+}
+
 // --- operations ------------------------------------------------------------------------------
 
 export function JsonForm({
