@@ -33,7 +33,7 @@ export default async function ProjectDesignsPage({
   const t = getTranslator("Designs");
   return (
     <>
-      <PlanList projectId={project.project_id} />
+      <PlanList projectId={project.project_id} status={project.status} />
       <section aria-labelledby="designs" className="flex flex-col gap-4">
         <SectionHeader id="designs" title={t("title")} description={t("intro")} />
         <DesignGallery projectId={project.project_id} initial={data} />

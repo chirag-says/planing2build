@@ -12,6 +12,7 @@ import type {
   NeedState,
   OrderState,
   PackageState,
+  PlanGenerationState,
   ProjectStatus,
   RefundRequestState,
   ReviewFlag,
@@ -106,6 +107,15 @@ const DESIGN: Record<DesignGenerationState, Look> = {
   QUEUED: { tone: "neutral", icon: CircleDashedIcon },
   RUNNING: { tone: "info", icon: "spinner" },
   SUCCEEDED: { tone: "success", icon: CircleCheckIcon },
+  FAILED: { tone: "danger", icon: CircleXIcon },
+};
+
+// Concept floor plans (Checkpoint 1): INFEASIBLE is an answer, not a fault, so it warns.
+const PLAN: Record<PlanGenerationState, Look> = {
+  QUEUED: { tone: "neutral", icon: CircleDashedIcon },
+  RUNNING: { tone: "info", icon: "spinner" },
+  VALID: { tone: "success", icon: CircleCheckIcon },
+  INFEASIBLE: { tone: "warning", icon: TriangleAlertIcon },
   FAILED: { tone: "danger", icon: CircleXIcon },
 };
 
@@ -210,7 +220,8 @@ type Props =
   | { kind: "engagement"; status: EngagementState; withLabel?: boolean }
   | { kind: "need"; status: NeedState; withLabel?: boolean }
   | { kind: "buildPlan"; status: BuildPlanState; withLabel?: boolean }
-  | { kind: "drawingSet"; status: DrawingSetState; withLabel?: boolean };
+  | { kind: "drawingSet"; status: DrawingSetState; withLabel?: boolean }
+  | { kind: "plan"; status: PlanGenerationState; withLabel?: boolean };
 
 /** `withLabel` prefixes a visually hidden "Status:" for places where the badge stands alone. */
 export function StatusBadge(props: Props) {
@@ -244,7 +255,9 @@ export function StatusBadge(props: Props) {
                               ? [NEED[props.status], t(`need.${props.status}`)]
                               : props.kind === "buildPlan"
                                 ? [BUILD_PLAN[props.status], t(`buildPlan.${props.status}`)]
-                                : [DRAWING_SET[props.status], t(`drawingSet.${props.status}`)];
+                                : props.kind === "drawingSet"
+                                  ? [DRAWING_SET[props.status], t(`drawingSet.${props.status}`)]
+                                  : [PLAN[props.status], t(`plan.${props.status}`)];
   const Icon = look.icon;
   return (
     <Badge variant={VARIANT[look.tone]} data-status={props.status}>
