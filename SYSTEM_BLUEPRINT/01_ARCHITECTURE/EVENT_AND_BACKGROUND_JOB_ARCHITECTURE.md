@@ -116,6 +116,8 @@ Each event: emitter, payload (beyond `aggregate_id`), consumers, and the jobs th
 | `design.architect_requested` | project id, request id | recommendation: `recommendation.requested` for architects (use = architect shortlist, once CQ-25 is settled; until then an ops queue item) |
 | `design.architect_pack_attached` | request id, artefact ids | rfq: new pack version if an RFQ is open; notifications: N homeowner and ops |
 | `design.generation_failed` | request id, provider, error class | design: retry per section 3; after the last attempt, ops exception; N nobody external |
+| `houseplan.generation_requested` | plan id, project id | houseplans: J `houseplans:generate_plan` on `engine` (concurrency 1, `queueing_lock` per plan); proposed, ADR-025 |
+| `houseplan.generation_finished` | plan id, project id, state | no consumer at Checkpoint 1; notifications later |
 
 ### 4.4 Professionals, Club, leads
 
@@ -179,9 +181,9 @@ Each event: emitter, payload (beyond `aggregate_id`), consumers, and the jobs th
 | `variation.escalated` (scheduled) | variation id | ops: exception; notifications: N both parties (PNOT-35) |
 | `variation.discussion_opened` | variation id | messaging: thread; notifications: N ops |
 | `variation.closed` | variation id, outcome | notifications: N both parties; professionals: evidence event |
-| `milestone.due` | milestone id | notifications: N homeowner (payment due with amount from the contract, PNOT-21), N contractor |
+| `milestone.due` | milestone id | notifications: N homeowner (payment due with amount from the contract, PNOT-21), N contractor. [SUPERSEDED] H-10, CD-09, EX-05: no amount anywhere; as built (3.7A) the stage's confirmation publishes `construction.family_notice` PAYMENT_DUE with ids only, and the email names the stage, never an amount |
 | `milestone.paid_marked`, `milestone.received_marked` | milestone id, by | notifications: N the other party (asks for their mark) |
-| `milestone.settled` | milestone id | records: retention tracking; notifications: N both |
+| `milestone.settled` | milestone id | records: retention tracking; notifications: N both. [SUPERSEDED] EX-05: no settled state; payment marks are append-only YES or NO entries (`payment_marks`), the latest per side is current |
 | `milestone.mismatch` (scheduled) | milestone id, days | ops: exception; notifications: N both parties |
 | `contract_value.changed` | project id, old, new, cause | analytics |
 

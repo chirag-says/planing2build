@@ -1,0 +1,55 @@
+{
+  "_note": "Example homeowner inputs for Checkpoint 1 tests. Plot sizes and setbacks are example inputs, not rules. Answers use the RQ v1 keys exactly as stored; design_inputs are PROVISIONAL (CP1-03).",
+  "cases": {
+    "3bhk_40x65_east": {
+      "purpose": "Prototype 1: 3 bedrooms (1 attached bath), 2 baths, living, kitchen, separate dining, puja, 1 car",
+      "answers": {"plot_is_rectangular": true, "plot_width_ft": 40, "plot_depth_ft": 65, "facing": "E",
+                  "setbacks": {"FRONT": 6, "BACK": 4, "LEFT": 3, "RIGHT": 3}, "built_up_area_sqft": "NOT_SURE",
+                  "floors": "G", "basement": false, "bedrooms": "3", "bathrooms": "2", "pooja_room": true,
+                  "car_parking": true, "vastu": "WHERE_POSSIBLE"},
+      "design_inputs": {"attached_bathrooms": 1, "parking_spaces": 1, "parking_kind": "CAR", "dining": "SEPARATE",
+                        "kitchen": "CLOSED", "stair": "NONE", "utility": false},
+      "expect": "VALID", "topology": "two_columns_centre_spine"
+    },
+    "2bhk_30x50_north": {
+      "purpose": "Prototype 2: 2 bedrooms, 1 common bath, open kitchen, dining in living, utility, two-wheeler parking",
+      "answers": {"plot_is_rectangular": true, "plot_width_ft": 30, "plot_depth_ft": 50, "facing": "N",
+                  "setbacks": {"FRONT": 5, "BACK": 3, "LEFT": 2, "RIGHT": 2}, "built_up_area_sqft": 1000,
+                  "floors": "G", "basement": false, "bedrooms": "2", "bathrooms": "1", "pooja_room": false,
+                  "car_parking": true, "vastu": "NOT_NEEDED"},
+      "design_inputs": {"attached_bathrooms": 0, "parking_spaces": 1, "parking_kind": "TWO_WHEELER",
+                        "dining": "IN_LIVING", "kitchen": "OPEN", "stair": "NONE", "utility": true},
+      "expect": "VALID", "topology": "two_columns_centre_spine"
+    },
+    "2bhk_40x80_west_two_cars": {
+      "purpose": "Two cars push the entry room off the centre: the single-column layout",
+      "answers": {"plot_is_rectangular": true, "plot_width_ft": 40, "plot_depth_ft": 80, "facing": "W",
+                  "setbacks": {"FRONT": 5, "BACK": 3, "LEFT": 3, "RIGHT": 3}, "built_up_area_sqft": "NOT_SURE",
+                  "floors": "G", "basement": false, "bedrooms": "2", "bathrooms": "2", "pooja_room": false,
+                  "car_parking": true, "vastu": "MUST_FOLLOW"},
+      "design_inputs": {"attached_bathrooms": 1, "parking_spaces": 2, "parking_kind": "CAR", "dining": "SEPARATE",
+                        "kitchen": "CLOSED", "stair": "NONE", "utility": false},
+      "expect": "VALID", "topology": "one_column_spine_right"
+    },
+    "3bhk_20x30_too_small": {
+      "purpose": "Impossible programme for the plot",
+      "answers": {"plot_is_rectangular": true, "plot_width_ft": 20, "plot_depth_ft": 30, "facing": "S",
+                  "setbacks": {"FRONT": 5, "BACK": 3, "LEFT": 2, "RIGHT": 2}, "built_up_area_sqft": "NOT_SURE",
+                  "floors": "G", "basement": false, "bedrooms": "3", "bathrooms": "2", "pooja_room": false,
+                  "car_parking": true, "vastu": "NOT_NEEDED"},
+      "design_inputs": {"attached_bathrooms": 1, "parking_spaces": 1, "parking_kind": "CAR", "dining": "SEPARATE",
+                        "kitchen": "CLOSED", "stair": "NONE", "utility": false},
+      "expect": "INFEASIBLE", "reason": "AREA_BUDGET"
+    },
+    "2bhk_30x60_two_cars_too_wide": {
+      "purpose": "Parking for two cars leaves the living room too narrow",
+      "answers": {"plot_is_rectangular": true, "plot_width_ft": 30, "plot_depth_ft": 60, "facing": "E",
+                  "setbacks": {"FRONT": 5, "BACK": 3, "LEFT": 2, "RIGHT": 2}, "built_up_area_sqft": "NOT_SURE",
+                  "floors": "G", "basement": false, "bedrooms": "2", "bathrooms": "2", "pooja_room": false,
+                  "car_parking": true, "vastu": "NOT_NEEDED"},
+      "design_inputs": {"attached_bathrooms": 1, "parking_spaces": 2, "parking_kind": "CAR", "dining": "SEPARATE",
+                        "kitchen": "CLOSED", "stair": "NONE", "utility": false},
+      "expect": "INFEASIBLE", "reason": "PARKING_TOO_WIDE"
+    }
+  }
+}

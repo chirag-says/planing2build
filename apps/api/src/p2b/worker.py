@@ -25,6 +25,8 @@ from p2b.documents import handlers as documents_handlers
 from p2b.documents import jobs as documents_jobs
 from p2b.engagements import handlers as engagements_handlers
 from p2b.engagements import jobs as engagements_jobs
+from p2b.houseplans import handlers as houseplans_handlers
+from p2b.houseplans import jobs as houseplans_jobs
 from p2b.identity import handlers as identity_handlers
 from p2b.identity import jobs as identity_jobs
 from p2b.integrations.ai_images import build_image_provider
@@ -52,6 +54,7 @@ def build_registry(job_app: App) -> HandlerRegistry:
     operations_handlers.register(registry, job_app)
     notifications_handlers.register(registry, job_app)
     designs_handlers.register(registry, job_app)
+    houseplans_handlers.register(registry, job_app)
     billing_handlers.register(registry, job_app)
     engagements_handlers.register(registry, job_app)
     rfq_handlers.register(registry, job_app)
@@ -65,6 +68,7 @@ def job_blueprints() -> list[tuple[str, Blueprint]]:
         (documents_handlers.JOB_NAMESPACE, documents_jobs.blueprint),
         (notifications_handlers.JOB_NAMESPACE, notifications_jobs.blueprint),
         (designs_handlers.JOB_NAMESPACE, designs_jobs.blueprint),
+        (houseplans_handlers.JOB_NAMESPACE, houseplans_jobs.blueprint),
         (billing_handlers.JOB_NAMESPACE, billing_jobs.blueprint),
         (engagements_handlers.JOB_NAMESPACE, engagements_jobs.blueprint),
         (rfq_handlers.JOB_NAMESPACE, rfq_jobs.blueprint),

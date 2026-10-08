@@ -19,12 +19,15 @@ Two subsystems share one principle: a model produces a candidate, a person or a 
 |---|---|---|---|---|
 | Drawings | `SITE_PLAN`, `FLOOR_PLAN` (one per floor), `ELEVATION`, `SECTION`, `STRUCTURAL` (engineer's), `ARCHITECT_PACK` | Yes: the BOQ, estimate, RFQ and quotes are measured from them | Plan2Build's team in CAD (POC), the layout engine (later), the architect (on request), the structural engineer (always, for structure) | none; `is_authoritative = true` |
 | Views | `VIEW_3D` (exterior; main interiors optional) | Never | Image-generation provider through the adapter | "Illustrative; the drawings govern" burned into the image and stored in metadata; `is_authoritative = false` |
+| Concept plans (PD-28, ADR-025) | HousePlan document (one floor in the MVP) with derived 2D, 3D and PDF | Never: not a drawing, not a BOQ, RFQ, permit or structural source; may be named as an illustrative reference on a design request | The deterministic `houseplans` engine (zoning, CP-SAT, rule-based derivation, independent validation); no language model | Concept plan label on screen and on every PDF page (wording pending AD-16); `is_authoritative = false` by CHECK |
 
 `design_artefacts` carries `type`, `is_authoritative`, `source` (TEAM, LIBRARY, ENGINE, PROVIDER, ARCHITECT, ENGINEER), `provider`, `model`, `prompt_version`, `seed`, `input_artefact_ids`, `review_state`, `file_id` (R2), `version`. A view always points at the drawings it was generated from, so a changed plan invalidates its views (`stale = true` until regenerated).
 
 The rule that keeps the two classes apart is structural, not procedural: the Build Plan's BOQ measurement reads only artefacts with `is_authoritative = true`; the RFQ pack composes drawings and views into separate sections; the comparison and quotes reference drawing versions only. A view cannot be attached where a drawing is required because the attachment points are typed.
 
 ### A2. Pipeline by stage
+
+> **Amended 2026-10-06 (PD-28, ADR-025).** The stage 2 layout engine below is brought forward as the homeowner-facing concept plan generator in module `houseplans`. Its output is a non-authoritative concept plan (A1), not the stage 2 DXF drawings; drawings still come from people and are checked (CQ-26). Design: `02_IMPLEMENTATION/AI_DESIGN_ENGINE_HAIRLINE_READINESS.md`.
 
 The §33.6 flow assumed depth and line images exported from a 3D model guide generation. Hosted image APIs today accept reference images and text, not ControlNet-style depth or edge control (that control exists for self-hosted open models). The pipeline therefore has two stages; the second arrives with the in-house 3D model.
 

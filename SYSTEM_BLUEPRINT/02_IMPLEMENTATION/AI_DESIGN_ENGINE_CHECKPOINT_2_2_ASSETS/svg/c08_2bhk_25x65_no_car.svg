@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-600 -600 8820 21812" width="441" height="1091" font-family="sans-serif">
+<text x="0" y="-200" font-size="220">c08_2bhk_25x65_no_car: debug render, FRONT_PUBLIC_REAR_PRIVATE, ZONED_LOCAL_SEARCH 1.1.0</text>
+<text x="0" y="20312" font-size="150" fill="#444">25x65 ft N, setbacks F5 B3 L2 R2; 2 bed, 1 bath (0 attached); pooja False; parking none</text>
+<text x="0" y="20512" font-size="150" fill="#444">topology FRONT_PUBLIC_REAR_PRIVATE_pL_m1_o1_x_bedroom_2_open; quality 4102 (lower is better); rooms over aspect limit 1; circulation 10.1%</text>
+<text x="0" y="20712" font-size="150" fill="#444">terms (milli): area_deviation 145, dimension_deviation 182, aspect_excess 108, circulation_share 1, room_size_outlier 266, wet_cluster 1000, privacy 500, zone_order 272, bedroom_grouping 1000</text>
+<text x="0" y="20912" font-size="150" fill="#444">body sha256 0c20d5e04bdded04; synthetic test ruleset; not a drawing</text>
+<polygon points="0,19812 7620,19812 7620,0 0,0" fill="none" stroke="#999" stroke-width="20"/>
+<polygon points="610,18288 7010,18288 7010,914 610,914" fill="none" stroke="#c55" stroke-width="15" stroke-dasharray="120 80"/>
+<polygon points="3760,18188 6910,18188 6910,13988 3760,13988" fill="#eef4fb"/>
+<polygon points="710,13988 3360,13988 3360,10888 710,10888" fill="#eef8f1"/>
+<polygon points="3360,13988 3760,13988 6910,13988 6910,10888 3360,10888" fill="#eef4fb"/>
+<polygon points="710,9688 5160,9688 5160,6688 710,6688" fill="#f3f0fa"/>
+<polygon points="710,18188 3760,18188 3760,13988 3360,13988 710,13988" fill="#f3f0fa"/>
+<polygon points="5160,9688 6910,9688 6910,6688 5160,6688" fill="#eef8f1"/>
+<polygon points="710,10888 3360,10888 6910,10888 6910,9688 5160,9688 710,9688" fill="#f7f7f7"/>
+<polygon points="610,18288 810,18288 810,16688 610,16688" fill="#333"/>
+<polygon points="610,15488 810,15488 810,13938 610,13938" fill="#333"/>
+<polygon points="610,18288 3810,18288 3810,18088 610,18088" fill="#333"/>
+<polygon points="610,14038 810,14038 810,13038 610,13038" fill="#333"/>
+<polygon points="610,11838 810,11838 810,10838 610,10838" fill="#333"/>
+<polygon points="610,14038 3410,14038 3410,13938 610,13938" fill="#333"/>
+<polygon points="610,10938 810,10938 810,9638 610,9638" fill="#333"/>
+<polygon points="610,10938 3410,10938 3410,10838 610,10838" fill="#333"/>
+<polygon points="610,9738 810,9738 810,6588 610,6588" fill="#333"/>
+<polygon points="610,9738 810,9738 810,9638 610,9638" fill="#333"/>
+<polygon points="1710,9738 5210,9738 5210,9638 1710,9638" fill="#333"/>
+<polygon points="610,6788 2335,6788 2335,6588 610,6588" fill="#333"/>
+<polygon points="3535,6788 5210,6788 5210,6588 3535,6588" fill="#333"/>
+<polygon points="3310,14038 3410,14038 3410,13888 3310,13888" fill="#333"/>
+<polygon points="3310,12988 3410,12988 3410,10838 3310,10838" fill="#333"/>
+<polygon points="3310,14038 3810,14038 3810,13938 3310,13938" fill="#333"/>
+<polygon points="3310,10938 4635,10938 4635,10838 3310,10838" fill="#333"/>
+<polygon points="5635,10938 7010,10938 7010,10838 5635,10838" fill="#333"/>
+<polygon points="3710,18288 3810,18288 3810,18088 3710,18088" fill="#333"/>
+<polygon points="3710,17188 3810,17188 3810,13938 3710,13938" fill="#333"/>
+<polygon points="3710,18288 4835,18288 4835,18088 3710,18088" fill="#333"/>
+<polygon points="5835,18288 7010,18288 7010,18088 5835,18088" fill="#333"/>
+<polygon points="3710,14038 4835,14038 4835,13938 3710,13938" fill="#333"/>
+<polygon points="5835,14038 7010,14038 7010,13938 5835,13938" fill="#333"/>
+<polygon points="5110,9738 5210,9738 5210,6588 5110,6588" fill="#333"/>
+<polygon points="5110,9738 5260,9738 5260,9638 5110,9638" fill="#333"/>
+<polygon points="6160,9738 7010,9738 7010,9638 6160,9638" fill="#333"/>
+<polygon points="5110,6788 7010,6788 7010,6588 5110,6588" fill="#333"/>
+<polygon points="6810,18288 7010,18288 7010,16688 6810,16688" fill="#333"/>
+<polygon points="6810,15488 7010,15488 7010,13938 6810,13938" fill="#333"/>
+<polygon points="6810,14038 7010,14038 7010,13038 6810,13038" fill="#333"/>
+<polygon points="6810,11838 7010,11838 7010,10838 6810,10838" fill="#333"/>
+<polygon points="6810,10938 7010,10938 7010,9638 6810,9638" fill="#333"/>
+<polygon points="6810,9738 7010,9738 7010,8788 6810,8788" fill="#333"/>
+<polygon points="6810,7588 7010,7588 7010,6588 6810,6588" fill="#333"/>
+<polygon points="2710,12988 3310,12988 3310,11188 2710,11188" fill="#fff" stroke="#2a6" stroke-width="15"/>
+<polygon points="5210,8738 5910,8738 5910,8288 5210,8288" fill="#fff" stroke="#2a6" stroke-width="15"/>
+<polygon points="5210,8288 5660,8288 5660,7788 5210,7788" fill="#fff" stroke="#2a6" stroke-width="15"/>
+<polygon points="5210,7788 6110,7788 6110,6888 5210,6888" fill="#fff" stroke="#2a6" stroke-width="15"/>
+<line x1="4835" y1="18188" x2="5835" y2="18188" stroke="#c80" stroke-width="40"/>
+<polyline points="4835,18188 5835,18188 5823,18032 5786,17879 5726,17734 5644,17600 5542,17481 5423,17379 5289,17297 5144,17237 4991,17200 4835,17188" fill="none" stroke="#c80" stroke-width="12"/>
+<line x1="4835" y1="13988" x2="5835" y2="13988" stroke="#c80" stroke-width="40"/>
+<line x1="3360" y1="13888" x2="3360" y2="12988" stroke="#c80" stroke-width="40"/>
+<polyline points="3360,13888 3360,12988 3219,12999 3082,13032 2951,13086 2831,13160 2724,13252 2632,13359 2558,13479 2504,13610 2471,13747 2460,13888" fill="none" stroke="#c80" stroke-width="12"/>
+<line x1="4635" y1="10888" x2="5635" y2="10888" stroke="#c80" stroke-width="40"/>
+<line x1="5260" y1="9688" x2="6160" y2="9688" stroke="#c80" stroke-width="40"/>
+<polyline points="5260,9688 6160,9688 6149,9547 6116,9410 6062,9279 5988,9159 5896,9052 5789,8960 5669,8886 5538,8832 5401,8799 5260,8788" fill="none" stroke="#c80" stroke-width="12"/>
+<line x1="810" y1="9688" x2="1710" y2="9688" stroke="#c80" stroke-width="40"/>
+<polyline points="810,9688 1710,9688 1699,9547 1666,9410 1612,9279 1538,9159 1446,9052 1339,8960 1219,8886 1088,8832 951,8799 810,8788" fill="none" stroke="#c80" stroke-width="12"/>
+<line x1="3760" y1="18088" x2="3760" y2="17188" stroke="#c80" stroke-width="40"/>
+<polyline points="3760,18088 3760,17188 3619,17199 3482,17232 3351,17286 3231,17360 3124,17452 3032,17559 2958,17679 2904,17810 2871,17947 2860,18088" fill="none" stroke="#c80" stroke-width="12"/>
+<line x1="6910" y1="16688" x2="6910" y2="15488" stroke="#36c" stroke-width="40"/>
+<line x1="710" y1="13038" x2="710" y2="11838" stroke="#36c" stroke-width="40"/>
+<line x1="6910" y1="13038" x2="6910" y2="11838" stroke="#36c" stroke-width="40"/>
+<line x1="2335" y1="6688" x2="3535" y2="6688" stroke="#36c" stroke-width="40"/>
+<line x1="710" y1="16688" x2="710" y2="15488" stroke="#36c" stroke-width="40"/>
+<line x1="6910" y1="8788" x2="6910" y2="7588" stroke="#36c" stroke-width="40"/>
+<text x="5335" y="16088" font-size="200" text-anchor="middle">Living room</text>
+<text x="5335" y="16318" font-size="150" text-anchor="middle" fill="#555">3000 x 4050 mm</text>
+<text x="2035" y="12438" font-size="200" text-anchor="middle">Kitchen</text>
+<text x="2035" y="12668" font-size="150" text-anchor="middle" fill="#555">2500 x 3000 mm</text>
+<text x="5135" y="12438" font-size="200" text-anchor="middle">Dining</text>
+<text x="5135" y="12668" font-size="150" text-anchor="middle" fill="#555">3400 x 3000 mm</text>
+<text x="2935" y="8188" font-size="200" text-anchor="middle">Bedroom 1</text>
+<text x="2935" y="8418" font-size="150" text-anchor="middle" fill="#555">4300 x 2850 mm</text>
+<text x="2235" y="16088" font-size="200" text-anchor="middle">Bedroom 2</text>
+<text x="2235" y="16318" font-size="150" text-anchor="middle" fill="#555">2900 x 4050 mm</text>
+<text x="6035" y="8188" font-size="200" text-anchor="middle">Common bathroom 1</text>
+<text x="6035" y="8418" font-size="150" text-anchor="middle" fill="#555">1600 x 2850 mm</text>
+<text x="3810" y="10288" font-size="200" text-anchor="middle">Passage</text>
+<text x="3810" y="10518" font-size="150" text-anchor="middle" fill="#555">6000 x 1100 mm</text>
+</svg>

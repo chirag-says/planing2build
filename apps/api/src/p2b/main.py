@@ -29,6 +29,8 @@ from p2b.designs.router import router as designs_router
 from p2b.documents.router import router as documents_router
 from p2b.engagements.ops_router import router as engagements_ops_router
 from p2b.engagements.router import router as engagements_router
+from p2b.houseplans.ops_router import router as houseplans_ops_router
+from p2b.houseplans.router import router as houseplans_router
 from p2b.identity.router import router as identity_router
 from p2b.integrations.ai_images import build_image_provider
 from p2b.integrations.nominatim import build_geocoder
@@ -39,6 +41,8 @@ from p2b.operations.professionals_router import router as professional_review_ro
 from p2b.operations.router import router as operations_router
 from p2b.professionals.router import router as professionals_router
 from p2b.projects.router import router as projects_router
+from p2b.records.ops_router import router as records_ops_router
+from p2b.records.router import router as records_router
 from p2b.rfq.ops_router import router as rfq_ops_router
 from p2b.rfq.router import router as rfq_router
 
@@ -94,6 +98,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     api.include_router(projects_router)
     api.include_router(documents_router)
     api.include_router(designs_router)
+    api.include_router(houseplans_router)
+    api.include_router(houseplans_ops_router)
     api.include_router(professionals_router)
     api.include_router(professional_review_router)
     api.include_router(operations_router)
@@ -110,6 +116,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     api.include_router(money_router)
     api.include_router(assurance_router)
     api.include_router(assurance_ops_router)
+    api.include_router(records_router)
+    api.include_router(records_ops_router)
     if settings.payment_provider == "fake":  # local development and tests only (Settings)
         api.include_router(billing_dev_router)
     app.include_router(api)

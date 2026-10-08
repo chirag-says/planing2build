@@ -16,7 +16,7 @@ export type SecuritySeverity = (typeof SecuritySeverityValues)[number];
 export const ContactKindValues = ["EMAIL", "PHONE"] as const;
 export type ContactKind = (typeof ContactKindValues)[number];
 
-export const OtpPurposeValues = ["LOGIN", "ACCEPT_BUILD_PLAN", "SIGN_STRUCTURAL", "SELECT_QUOTE", "SUBMIT_INSPECTION"] as const;
+export const OtpPurposeValues = ["LOGIN", "ACCEPT_BUILD_PLAN", "SIGN_STRUCTURAL", "SELECT_QUOTE", "SUBMIT_INSPECTION", "ACKNOWLEDGE_HANDOVER"] as const;
 export type OtpPurpose = (typeof OtpPurposeValues)[number];
 
 export const OtpStateValues = ["ISSUED", "VERIFIED", "EXPIRED", "LOCKED"] as const;
@@ -46,7 +46,7 @@ export type ComingSoonWork = (typeof ComingSoonWorkValues)[number];
 export const FileStateValues = ["PENDING_UPLOAD", "UPLOADED", "SCANNING", "AVAILABLE", "QUARANTINED", "FAILED", "DELETED"] as const;
 export type FileState = (typeof FileStateValues)[number];
 
-export const FilePurposeValues = ["REQUIREMENT_UPLOAD", "AI_CONCEPT", "VERIFICATION_EVIDENCE", "PORTFOLIO", "INVOICE", "QUOTE_DOCUMENT", "DRAWING", "BUILD_PLAN_EVIDENCE", "BUILD_PLAN_DOCUMENT", "QUOTE_ATTACHMENT", "COMPARISON_DOCUMENT", "STAGE_EVIDENCE", "INSPECTION_EVIDENCE", "INSPECTION_REPORT"] as const;
+export const FilePurposeValues = ["REQUIREMENT_UPLOAD", "AI_CONCEPT", "VERIFICATION_EVIDENCE", "PORTFOLIO", "INVOICE", "QUOTE_DOCUMENT", "DRAWING", "BUILD_PLAN_EVIDENCE", "BUILD_PLAN_DOCUMENT", "QUOTE_ATTACHMENT", "COMPARISON_DOCUMENT", "STAGE_EVIDENCE", "INSPECTION_EVIDENCE", "INSPECTION_REPORT", "HANDOVER_DOCUMENT", "BUILD_RECORD_DOCUMENT", "BUILD_RECORD_EXPORT"] as const;
 export type FilePurpose = (typeof FilePurposeValues)[number];
 
 export const ConfigStatusValues = ["DRAFT", "ACTIVE", "RETIRED"] as const;
@@ -300,3 +300,153 @@ export type Severity = (typeof SeverityValues)[number];
 
 export const NcStateValues = ["OPEN", "RECTIFICATION_SUBMITTED", "REINSPECTION_SCHEDULED", "CLOSED"] as const;
 export type NcState = (typeof NcStateValues)[number];
+
+export const HandoverStateValues = ["OPEN", "READY", "ACKNOWLEDGED", "ISSUED_BY_OPERATIONS"] as const;
+export type HandoverState = (typeof HandoverStateValues)[number];
+
+export const HandoverDocumentKindValues = ["WARRANTY", "MANUAL", "DRAWING", "CERTIFICATE", "PHOTO", "OTHER"] as const;
+export type HandoverDocumentKind = (typeof HandoverDocumentKindValues)[number];
+
+export const BuildRecordStateValues = ["DRAFT", "ISSUED", "SUPERSEDED"] as const;
+export type BuildRecordState = (typeof BuildRecordStateValues)[number];
+
+export const BuildRecordBasisValues = ["ACKNOWLEDGED", "ISSUED_BY_OPERATIONS"] as const;
+export type BuildRecordBasis = (typeof BuildRecordBasisValues)[number];
+
+export const FacingValues = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"] as const;
+export type Facing = (typeof FacingValues)[number];
+
+export const SetbackSideValues = ["FRONT", "BACK", "LEFT", "RIGHT"] as const;
+export type SetbackSide = (typeof SetbackSideValues)[number];
+
+export const PlotEdgeKindValues = ["ROAD", "NEIGHBOUR"] as const;
+export type PlotEdgeKind = (typeof PlotEdgeKindValues)[number];
+
+export const SetbackSourceValues = ["REQUIREMENT", "DESIGN_INPUT"] as const;
+export type SetbackSource = (typeof SetbackSourceValues)[number];
+
+export const ParkingKindValues = ["CAR", "TWO_WHEELER"] as const;
+export type ParkingKind = (typeof ParkingKindValues)[number];
+
+export const ParkingPlacementValues = ["INSIDE_FOOTPRINT"] as const;
+export type ParkingPlacement = (typeof ParkingPlacementValues)[number];
+
+export const OriginKindValues = ["REQUIREMENT", "DESIGN_INPUT", "RULESET", "SOLVER", "USER_EDIT"] as const;
+export type OriginKind = (typeof OriginKindValues)[number];
+
+export const RoomTypeValues = ["LIVING", "DINING", "KITCHEN", "BEDROOM", "BATH_ATTACHED", "BATH_COMMON", "WC", "PUJA", "UTILITY", "STORE", "PASSAGE", "FOYER", "STAIR_HALL", "PARKING"] as const;
+export type RoomType = (typeof RoomTypeValues)[number];
+
+export const ZoneValues = ["PUBLIC", "PRIVATE", "SERVICE", "CIRCULATION", "OUTDOOR"] as const;
+export type Zone = (typeof ZoneValues)[number];
+
+export const WallKindValues = ["EXTERIOR", "INTERIOR"] as const;
+export type WallKind = (typeof WallKindValues)[number];
+
+export const OpeningKindValues = ["MAIN_ENTRANCE", "DOOR", "VOID", "WINDOW"] as const;
+export type OpeningKind = (typeof OpeningKindValues)[number];
+
+export const DoorLeafValues = ["SINGLE", "DOUBLE", "SLIDING"] as const;
+export type DoorLeaf = (typeof DoorLeafValues)[number];
+
+export const HingeSideValues = ["A_SIDE", "B_SIDE"] as const;
+export type HingeSide = (typeof HingeSideValues)[number];
+
+export const WallSideValues = ["LEFT", "RIGHT"] as const;
+export type WallSide = (typeof WallSideValues)[number];
+
+export const FixtureTypeValues = ["WC_WESTERN", "WC_INDIAN", "WASH_BASIN", "SHOWER_AREA", "KITCHEN_COUNTER", "KITCHEN_SINK"] as const;
+export type FixtureType = (typeof FixtureTypeValues)[number];
+
+export const ConstraintKindValues = ["ROOM_PRESENT", "ROOM_MIN_SIZE", "RELATION", "INSIDE_ENVELOPE", "ENTRANCE_ON_EDGE", "PARKING_PROVIDED", "AREA_DEVIATION", "DIMENSION_DEVIATION", "ASPECT_EXCESS", "CIRCULATION_SHARE", "OVERSIZE", "ADJACENCY", "WET_CLUSTER", "EXTERIOR_EXPOSURE", "PRIVACY", "PARKING_CONVENIENCE", "ZONE_ORDER", "ROOM_SIZE_OUTLIER", "BEDROOM_GROUPING", "ORIENTATION"] as const;
+export type ConstraintKind = (typeof ConstraintKindValues)[number];
+
+export const ConstraintStrengthValues = ["HARD", "SOFT"] as const;
+export type ConstraintStrength = (typeof ConstraintStrengthValues)[number];
+
+export const ConstraintOutcomeValues = ["MET", "PARTIAL", "RELAXED", "UNMET", "NOT_EVALUATED"] as const;
+export type ConstraintOutcome = (typeof ConstraintOutcomeValues)[number];
+
+export const RelationKindValues = ["ADJACENT_WITH_DOOR", "ADJACENT_OPEN"] as const;
+export type RelationKind = (typeof RelationKindValues)[number];
+
+export const OrientationModeValues = ["OFF", "SOFT", "SOFT_HIGH"] as const;
+export type OrientationMode = (typeof OrientationModeValues)[number];
+
+export const DiningArrangementValues = ["SEPARATE", "IN_LIVING"] as const;
+export type DiningArrangement = (typeof DiningArrangementValues)[number];
+
+export const KitchenArrangementValues = ["CLOSED", "OPEN"] as const;
+export type KitchenArrangement = (typeof KitchenArrangementValues)[number];
+
+export const StairChoiceValues = ["NONE", "INTERNAL", "EXTERNAL"] as const;
+export type StairChoice = (typeof StairChoiceValues)[number];
+
+export const DesignInputKeyValues = ["FACING", "SETBACK_FRONT", "SETBACK_BACK", "SETBACK_LEFT", "SETBACK_RIGHT", "BEDROOMS_EXACT", "BATHROOMS_EXACT", "ATTACHED_BATHROOMS", "PARKING_SPACES", "PARKING_KIND", "DINING", "KITCHEN", "STAIR", "UTILITY"] as const;
+export type DesignInputKey = (typeof DesignInputKeyValues)[number];
+
+export const MissingInputReasonValues = ["NOT_ANSWERED", "NOT_SURE", "OUT_OF_RANGE"] as const;
+export type MissingInputReason = (typeof MissingInputReasonValues)[number];
+
+export const UnsupportedReasonValues = ["QUESTION_SET_NOT_SUPPORTED", "ANSWER_INVALID", "PLOT_NOT_RECTANGULAR", "FLOORS_NOT_SUPPORTED", "BASEMENT_NOT_SUPPORTED", "STAIR_NOT_YET_SUPPORTED"] as const;
+export type UnsupportedReason = (typeof UnsupportedReasonValues)[number];
+
+export const InfeasibleReasonValues = ["ENVELOPE_EMPTY", "AREA_BUDGET", "WIDTH_TOO_NARROW", "DEPTH_EXCEEDED", "PARKING_TOO_WIDE", "ACCESS_SPAN", "FIXTURE_FIT", "OPENING_FIT", "RULESET_INCOMPLETE"] as const;
+export type InfeasibleReason = (typeof InfeasibleReasonValues)[number];
+
+export const PlanSourceValues = ["GENERATED", "EDITED", "REGENERATED"] as const;
+export type PlanSource = (typeof PlanSourceValues)[number];
+
+export const SolverKindValues = ["DETERMINISTIC_MVP", "ZONED_LOCAL_SEARCH", "CP_SAT"] as const;
+export type SolverKind = (typeof SolverKindValues)[number];
+
+export const RulesetStatusValues = ["DRAFT", "APPROVED", "PUBLISHED", "RETIRED"] as const;
+export type RulesetStatus = (typeof RulesetStatusValues)[number];
+
+export const PlanGenerationStateValues = ["QUEUED", "RUNNING", "VALID", "INFEASIBLE", "FAILED"] as const;
+export type PlanGenerationState = (typeof PlanGenerationStateValues)[number];
+
+export const PlanFailureReasonValues = ["ENGINE_ERROR", "ENGINE_INVALID_OUTPUT", "ENGINE_TIMEOUT", "STALE"] as const;
+export type PlanFailureReason = (typeof PlanFailureReasonValues)[number];
+
+export const PlanValidityValues = ["VALID", "INVALID"] as const;
+export type PlanValidity = (typeof PlanValidityValues)[number];
+
+export const ValidationCategoryValues = ["SCHEMA", "REFERENCES", "GEOMETRY", "OPENINGS", "FIXTURES", "CIRCULATION", "DIMENSIONS", "REQUIREMENTS"] as const;
+export type ValidationCategory = (typeof ValidationCategoryValues)[number];
+
+export const ValidationSeverityValues = ["ERROR", "WARNING"] as const;
+export type ValidationSeverity = (typeof ValidationSeverityValues)[number];
+
+export const RepairHintValues = ["AUTO", "USER", "NONE"] as const;
+export type RepairHint = (typeof RepairHintValues)[number];
+
+export const EntityKindValues = ["DOCUMENT", "PLOT", "ENVELOPE", "NODE", "WALL", "ROOM", "OPENING", "FIXTURE"] as const;
+export type EntityKind = (typeof EntityKindValues)[number];
+
+export const ValidationCodeValues = ["SCHEMA_INVALID", "SCHEMA_VERSION_UNSUPPORTED", "ID_DUPLICATE", "REF_MISSING", "PLOT_INVALID", "GEOMETRY_UNSUPPORTED_V1", "ROOM_POLYGON_INVALID", "ROOM_OVERLAP", "ROOM_OUTSIDE_ENVELOPE", "BUILDING_OUTSIDE_PLOT", "ROOM_EDGE_NOT_ON_WALL", "WALL_ZERO_LENGTH", "WALL_NOT_ORTHOGONAL", "WALL_OVERLAP", "WALL_DANGLING_END", "WALL_THICKNESS_INVALID", "OPENING_HOST_MISSING", "OPENING_OUTSIDE_HOST", "OPENING_OVERLAP", "OPENING_DIMENSION_INVALID", "WINDOW_ON_INTERIOR_WALL", "FIXTURE_HOST_MISSING", "FIXTURE_NOT_ON_ROOM_WALL", "FIXTURE_OUTSIDE_ROOM", "FIXTURE_NOT_PERMITTED_IN_ROOM", "FIXTURE_COUNT_EXCEEDS_SPEC", "FIXTURE_OVERLAP", "FIXTURE_CLEARANCE_BLOCKED", "FIXTURE_BLOCKS_OPENING", "ENTRANCE_MISSING", "ROOM_UNREACHABLE", "ROOM_BELOW_MIN_SHORT_SIDE", "ROOM_BELOW_MIN_AREA", "PASSAGE_TOO_NARROW", "HABITABLE_ROOM_NO_WINDOW", "ROOM_COUNT_MISMATCH", "PARKING_MISSING", "PARKING_TOO_SMALL", "RELATION_UNMET"] as const;
+export type ValidationCode = (typeof ValidationCodeValues)[number];
+
+export const PlanOpKindValues = ["MOVE_OPENING", "SET_OPENING", "ADD_OPENING", "DELETE_OPENING", "MOVE_FIXTURE", "ADD_FIXTURE", "DELETE_FIXTURE", "RENAME_ROOM", "SET_ROOM_TYPE", "MOVE_WALL", "ADD_ROOM", "DELETE_ROOM", "MOVE_EDGE", "REVERT_TO_REVISION", "REVERT_TO_VERSION"] as const;
+export type PlanOpKind = (typeof PlanOpKindValues)[number];
+
+export const TopologyFamilyValues = ["SPINE", "FRONT_EXTENSION", "SIDE_WING", "FRONT_LIVING_REAR_BEDROOM", "FRONT_PUBLIC_REAR_PRIVATE", "L_CIRCULATION", "CENTRAL_LIVING_BEDROOM_WINGS", "LINEAR_REAR_CORRIDOR"] as const;
+export type TopologyFamily = (typeof TopologyFamilyValues)[number];
+
+export const FeasibilityClassValues = ["PROVEN", "NO_SUPPORTED_LAYOUT"] as const;
+export type FeasibilityClass = (typeof FeasibilityClassValues)[number];
+
+export const RepairReasonValues = ["VALIDATION_ERROR", "OBJECTIVE"] as const;
+export type RepairReason = (typeof RepairReasonValues)[number];
+
+export const PlanOpRejectionValues = ["UNKNOWN_ENTITY", "ENTITY_EXISTS", "NOT_SUPPORTED", "NO_MOVEMENT", "NOT_AXIS_ALIGNED", "WALL_WOULD_COLLAPSE", "HOSTED_ITEM_LEAVES_WALL", "NOT_RECTANGULAR", "HOSTED_ITEM_CHANGES_ROOMS", "DOOR_DOES_NOT_FIT", "ROOMS_WOULD_OVERLAP", "NOT_A_SLICE", "ROOMS_NOT_MERGEABLE", "ROOM_TYPE_NOT_ALLOWED", "REVERT_NOT_ALONE", "UNKNOWN_REVISION"] as const;
+export type PlanOpRejection = (typeof PlanOpRejectionValues)[number];
+
+export const PlanOpReasonValues = ["USER", "AUTO_REPAIR", "REVERT"] as const;
+export type PlanOpReason = (typeof PlanOpReasonValues)[number];
+
+export const RoomSideValues = ["LEFT", "RIGHT", "FRONT", "BACK"] as const;
+export type RoomSide = (typeof RoomSideValues)[number];
+
+export const ProgrammeChangeValues = ["ROOM_ADDED_BY_OWNER", "ROOM_REMOVED_BY_OWNER", "ROOM_TYPE_CHANGED_BY_OWNER"] as const;
+export type ProgrammeChange = (typeof ProgrammeChangeValues)[number];

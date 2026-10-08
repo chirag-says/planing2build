@@ -26,8 +26,8 @@ class FileObject(Timestamps, Base):
             "purpose IN ('REQUIREMENT_UPLOAD', 'AI_CONCEPT', 'VERIFICATION_EVIDENCE', "
             "'PORTFOLIO', 'INVOICE', 'QUOTE_DOCUMENT', 'DRAWING', 'BUILD_PLAN_EVIDENCE', "
             "'BUILD_PLAN_DOCUMENT', 'QUOTE_ATTACHMENT', 'COMPARISON_DOCUMENT', 'STAGE_EVIDENCE', "
-            "'INSPECTION_EVIDENCE', 'INSPECTION_REPORT', 'HANDOVER_DOCUMENT', 'BUILD_RECORD_DOCUMENT', "
-            "'BUILD_RECORD_EXPORT')",
+            "'INSPECTION_EVIDENCE', 'INSPECTION_REPORT', 'HANDOVER_DOCUMENT', "
+            "'BUILD_RECORD_DOCUMENT', 'BUILD_RECORD_EXPORT')",
             name="purpose",
         ),
         CheckConstraint("size_bytes > 0", name="size_positive"),

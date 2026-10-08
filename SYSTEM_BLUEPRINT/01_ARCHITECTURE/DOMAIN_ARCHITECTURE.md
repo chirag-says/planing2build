@@ -118,6 +118,8 @@ Each module lists: responsibility; owned entities (tables are detailed in DATA_A
 
 ### 3.7 design
 
+**As built (ADR-025, 2026-10-06):** this module was built as three parts: `designs` (illustrative images, Slice 3.1), `buildplan` (design requests, drawing sets, checking, Slice 3.5) and `houseplans` (concept floor plans, section 3.25). The text below is the original design.
+
 - Responsibility: the concept design pipeline (IHB 33.6): intake (sanctioned plan upload or plan-library fit), the approved vector plan, the 3D model reference, depth and line exports, image generation requests to the provider adapter, generated views with review states, replacement by an architect's design pack (CD-25), and the "illustrative" labelling. Structural design never passes through this module (BR-055).
 - Owns: `design_requests`, `design_artefacts` (plans, elevations, views, model references, each versioned), `generation_jobs`, `design_reviews`.
 - Interface: `start_concept_design(project, inputs)`, `attach_sanctioned_plan(file)`, `select_library_layout(layout)`, `approve_plan(version, checker)`, `request_views(plan_version, style, cameras)`, `review_view(view, decision, reason)`, `attach_architect_pack(files, architect)`, `current_design(project)`.
@@ -180,7 +182,7 @@ Each module lists: responsibility; owned entities (tables are detailed in DATA_A
 
 ### 3.12 construction
 
-- Responsibility: stage instances with planned and actual dates and progress, the standard update (CD-19) with photos, notes and documents against a stage or milestone, completion requests and approvals (authority default in STATE_MODEL.md section 7, PC-023 open), the exception feed (overdue decisions, unacknowledged changes, open defects, stages behind plan), and the planned-versus-actual schedule.
+- Responsibility: stage instances with planned and actual dates and progress, the standard update (CD-19) with photos, notes and documents against a stage or milestone, completion requests and approvals (authority default in STATE_MODEL.md section 6, corrected under H-10; decided by EX-03: the owner, or operations with a reason), the exception feed (overdue decisions, unacknowledged changes, open defects, stages behind plan), and the planned-versus-actual schedule. [SUPERSEDED] as built (3.7A): no planned dates, progress percentage, behind-plan flag or delay attribution until BP-07A (EX-04).
 - Owns: `stage_instances`, `stage_updates`, `exception_feed_items` (materialised).
 - Interface: `instantiate_stages(project, floors)`, `post_update(stage, payload, files)`, `request_completion(stage, evidence)`, `approve_completion(stage, actor)`, `raise_block(stage, issue)`, `reschedule(stage, dates, reason)`, `schedule_position(project)`, `exceptions(project | all)`.
 - Dependencies: projects, catalog, documents, specification (deadlines), money (milestone due), assurance (gate clearance), issues, audit, notifications.
@@ -193,7 +195,7 @@ Each module lists: responsibility; owned entities (tables are detailed in DATA_A
 ### 3.13 variations
 
 - Responsibility: change control (CD-08): raise with reason, stage, line, cost and time impact, evidence; Plan2Build's qualification and quantification; OTP acknowledgement by the other party; escalation after the configured window; the discussion step; closure with an outcome; the numbered register per project; delay-day attribution.
-- Owns: `variations`, `variation_events`, `variation_discussions`.
+- Owns: `variations`, `variation_events`, `variation_discussions`. [OPEN] H-10: none of these exists; variations are out of 3.7 (EX-24) and DATA has no `variation_discussions`.
 - Interface: `raise(project, by, payload)`, `assess(variation, valid, cost, time, notes)`, `acknowledge(variation, otp)`, `escalate_due()` (scheduled), `open_discussion`, `add_discussion_note`, `close(variation, outcome, decider)`, `register(project)`.
 - Dependencies: projects, specification (affected line), construction (affected stage, completion date), money (contract value), identity (OTP), documents, audit, notifications.
 - Events emitted: `variation.raised`, `variation.assessed`, `variation.acknowledged`, `variation.activated`, `variation.escalated`, `variation.discussion_opened`, `variation.closed`.
@@ -205,7 +207,7 @@ Each module lists: responsibility; owned entities (tables are detailed in DATA_A
 ### 3.14 money
 
 - Responsibility: the money position without payment amounts (CD-09): contract value at award, approved change costs, current contract value and projected final cost, payment milestones derived from stage flags and the schedule, due state (stage complete and gate cleared), paid and received marks, retention at stage 16, mismatch detection (CQ-13 default: flag after a configured number of days), and what each party may see (contractor sees marks and approved changes; amounts of payments never exist).
-- Owns: `contract_values`, `payment_milestones`, `payment_marks`.
+- Owns: `contract_values`, `payment_milestones`, `payment_marks`. [SUPERSEDED] H-10, EX-05: as built (3.7A) the module owns only `payment_marks` (DATA 4.21); milestones are the stage masters' flags and no contract value is stored.
 - Interface: `record_award(project, contract_value, dates)`, `apply_change(variation, cost)`, `milestones(project)`, `mark_paid(milestone, otp?)`, `mark_received(milestone)`, `money_position(project, viewer_role)`.
 - Dependencies: projects, construction, assurance (gate cleared), variations, buildplan (schedule), audit, notifications.
 - Events emitted: `milestone.due`, `milestone.paid_marked`, `milestone.received_marked`, `milestone.settled`, `milestone.mismatch`, `contract_value.changed`.
@@ -332,6 +334,18 @@ Each module lists: responsibility; owned entities (tables are detailed in DATA_A
 - Ownership: system.
 - Scalability: append-only, aggregated nightly; moves to a warehouse at scale.
 
+### 3.25 houseplans (ADR-025, PD-28)
+
+- Responsibility: the non-authoritative concept floor plan: requirement normalisation, architectural intent, layout rulesets (versioned, PUBLISHED only in production), deterministic layout generation, independent validation, deterministic repair, typed editing operations, revisions and named versions, derived `PlanGeometry` for 2D, 3D and PDF, and naming a VALID version as an illustrative reference.
+- Owns: `layout_rulesets`, `house_plans`, `house_plan_versions` (Checkpoint 1); `house_plan_ops` (editing checkpoint); design brief storage after AD-03.
+- Interface: `plan_reference_facts(project, version_ids)` for `buildplan` (checks a named plan version belongs to the project and is VALID). Nothing else.
+- Dependencies: projects (requirement answers through `projects.interface`), billing (credits, after AD-06), documents (PDF files, later), audit, identity.
+- Events emitted: `houseplan.generation_requested`, `houseplan.generation_finished`.
+- Events consumed: its own `houseplan.generation_requested` (queues the job on `engine`).
+- Ownership: owner edits; members view; operations read only; professionals later.
+- Scalability: CPU-bound solve on the worker, one at a time; `houseplans.engine` is pure and can move to its own worker image.
+- Detail: `02_IMPLEMENTATION/AI_DESIGN_ENGINE_CHECKPOINT_1.md`.
+
 ## 4. Dependency layers
 
 ```mermaid
@@ -434,7 +448,7 @@ Each workflow names the transaction boundaries. Inside one boundary, all writes 
 2. Operations add adjustments; Transaction B: `rfq.adjustments_complete` when every live quote is adjusted.
 3. Handler: recommendation computes the quote recommendation; operations review; `recommendation.approved`.
 4. Transaction C (rfq): comparison finalised with a frozen snapshot that includes the recommendation; `rfq.comparison_finalised`; documents renders the comparison PDF.
-5. Transaction D (rfq): selection recorded with contract value and dates; `rfq.selection_recorded`. Handlers: money records the award and creates payment milestones; projects adds the contractor membership and moves to CONTRACTED; leads marks selected and not selected; notifications to all parties.
+5. Transaction D (rfq): selection recorded with contract value and dates; `rfq.selection_recorded`. Handlers: money records the award and creates payment milestones; projects adds the contractor membership and moves to CONTRACTED; leads marks selected and not selected; notifications to all parties. [SUPERSEDED] H-10: as built (3.6, ADR-024) the selection engages the contractor with no contract value, no payment milestones and no project status move.
 
 ### 6.5 Variation to money (J18, J19)
 

@@ -108,6 +108,64 @@ class QuotaExhausted(AppError):
     default_message = "No more design generations are available right now."
 
 
+class DesignInputRequired(AppError):
+    """A concept plan needs facts the requirement does not give (`details.missing`)."""
+
+    code, status = "DESIGN_INPUT_REQUIRED", 422
+    default_message = "A few more details are needed before a floor plan can be generated."
+
+
+class PlanUnsupported(AppError):
+    """The requirement describes a case the concept plan engine does not support yet."""
+
+    code, status = "PLAN_UNSUPPORTED", 422
+    default_message = "A floor plan cannot be generated for this requirement yet."
+
+
+class RevisionConflict(AppError):
+    """The plan changed since the editor loaded it (`details.current_revision`)."""
+
+    code, status = "REVISION_CONFLICT", 409
+    default_message = "This floor plan was changed meanwhile. Reload it to continue."
+
+
+class PlanOperationRejected(AppError):
+    """An edit operation cannot apply (`details`: index, op, code); nothing was applied."""
+
+    code, status = "PLAN_OPERATION_REJECTED", 422
+    default_message = "That change cannot be made to this floor plan."
+
+
+class PlanEditInvalid(AppError):
+    """The edit applies but the validator rejects the result (`details.report`); nothing was
+    stored (IC 18.7)."""
+
+    code, status = "PLAN_EDIT_INVALID", 422
+    default_message = "That change would break the floor plan's rules, so it was not saved."
+
+
+class PlanHistoryUnavailable(AppError):
+    """An earlier state of the plan cannot be rebuilt exactly from its operation log (the
+    replayed result does not match the recorded hash), so it is not restored (Checkpoint 3.1)."""
+
+    code, status = "PLAN_HISTORY_UNAVAILABLE", 409
+    default_message = "That earlier state of the floor plan cannot be restored."
+
+
+class RulesetNotPublished(AppError):
+    """No layout ruleset may be used here (production needs a PUBLISHED one; AD-05)."""
+
+    code, status = "RULESET_NOT_PUBLISHED", 409
+    default_message = "Floor plan rules are not available yet."
+
+
+class GenerationInProgress(AppError):
+    """A concept plan generation is already queued or running for this project."""
+
+    code, status = "GENERATION_IN_PROGRESS", 409
+    default_message = "A floor plan is already being generated for this project."
+
+
 class ProviderUnavailable(AppError):
     code, status = "PROVIDER_UNAVAILABLE", 503
     default_message = "A service we depend on is unavailable. Try again shortly."

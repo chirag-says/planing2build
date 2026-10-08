@@ -41,6 +41,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/acknowledgement-statements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Statement
+         * @description A DRAFT statement version; `$project_code` is the only placeholder.
+         */
+        post: operations["post_statement_api_v1_admin_acknowledgement_statements_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/acknowledgement-statements/{statement_id}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Activate Statement
+         * @description The DRAFT becomes ACTIVE; the previous ACTIVE one is RETIRED.
+         */
+        post: operations["post_activate_statement_api_v1_admin_acknowledgement_statements__statement_id__activate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/auditor-appointments": {
         parameters: {
             query?: never;
@@ -736,6 +776,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ops/acknowledgement-statements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Statements */
+        get: operations["get_statements_api_v1_ops_acknowledgement_statements_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ops/assurance": {
         parameters: {
             query?: never;
@@ -1211,6 +1268,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ops/build-records/{record_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Record */
+        get: operations["get_record_api_v1_ops_build_records__record_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/build-records/{record_id}/issue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Issue
+         * @description Issue the DRAFT: snapshot hash, PDF and JSON; the previous version is SUPERSEDED. 409
+         *     NOT_DRAFT; or PACKAGE_REQUIRED.
+         */
+        post: operations["post_issue_api_v1_ops_build_records__record_id__issue_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ops/checklists": {
         parameters: {
             query?: never;
@@ -1405,6 +1500,23 @@ export interface paths {
         };
         /** Get Ops File Url */
         get: operations["get_ops_file_url_api_v1_ops_files__file_id__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/house-plans/{plan_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Ops House Plan */
+        get: operations["ops_house_plan_api_v1_ops_house_plans__plan_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1960,6 +2072,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ops/projects/{project_id}/build-record/assemble": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Assemble
+         * @description Re-assemble the DRAFT from the records, or start a corrected version after an issued one
+         *     (a reason is required). 409 NO_HANDOVER, REASON_REQUIRED.
+         */
+        post: operations["post_assemble_api_v1_ops_projects__project_id__build_record_assemble_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/ops/projects/{project_id}/cancel": {
         parameters: {
             query?: never;
@@ -2027,6 +2160,173 @@ export interface paths {
         };
         /** Get Project Execution */
         get: operations["get_project_execution_api_v1_ops_projects__project_id__execution_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Handover */
+        get: operations["get_handover_api_v1_ops_projects__project_id__handover_get"];
+        put?: never;
+        /**
+         * Post Open
+         * @description Open the handover (EX-15). 409 GATE6_NOT_CLEARED, OPEN_FINDINGS, ALREADY_OPEN.
+         */
+        post: operations["post_open_api_v1_ops_projects__project_id__handover_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover-files": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Handover File
+         * @description A handover document received outside the portal (raw body), scanned before use.
+         */
+        post: operations["post_handover_file_api_v1_ops_projects__project_id__handover_files_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Document */
+        post: operations["post_document_api_v1_ops_projects__project_id__handover_documents_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover/documents/{document_id}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Remove Document */
+        post: operations["post_remove_document_api_v1_ops_projects__project_id__handover_documents__document_id__remove_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover/issue-without-acknowledgement": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Issue Without Acknowledgement
+         * @description The owner did not respond: issue with a reason, recorded as an operations issue and never
+         *     as the owner's acknowledgement (EX-15). 409 NOT_READY.
+         */
+        post: operations["post_issue_without_acknowledgement_api_v1_ops_projects__project_id__handover_issue_without_acknowledgement_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover/ready": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Ready
+         * @description Confirm the required documents are recorded. 409 NO_DOCUMENTS, WARRANTY_MISSING.
+         */
+        post: operations["post_ready_api_v1_ops_projects__project_id__handover_ready_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover/reopen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Reopen */
+        post: operations["post_reopen_api_v1_ops_projects__project_id__handover_reopen_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/handover/warranties": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Warranty */
+        post: operations["post_warranty_api_v1_ops_projects__project_id__handover_warranties_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/projects/{project_id}/house-plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Ops House Plans */
+        get: operations["ops_house_plans_api_v1_ops_projects__project_id__house_plans_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3484,6 +3784,97 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pro/engagements/{engagement_id}/handover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Pro Handover */
+        get: operations["get_pro_handover_api_v1_pro_engagements__engagement_id__handover_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/handover/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Pro Document
+         * @description Add a handover document while the handover is open. 409 NOT_OPEN, DUPLICATE.
+         */
+        post: operations["post_pro_document_api_v1_pro_engagements__engagement_id__handover_documents_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/handover/uploads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Handover Upload
+         * @description A presigned upload of a handover document (PDF, JPG or PNG), scanned before use.
+         */
+        post: operations["post_handover_upload_api_v1_pro_engagements__engagement_id__handover_uploads_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/handover/uploads/{file_id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Handover Upload Complete */
+        post: operations["post_handover_upload_complete_api_v1_pro_engagements__engagement_id__handover_uploads__file_id__complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pro/engagements/{engagement_id}/handover/warranties": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Pro Warranty */
+        post: operations["post_pro_warranty_api_v1_pro_engagements__engagement_id__handover_warranties_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/pro/engagements/{engagement_id}/non-conformances/{nc_id}/rectification": {
         parameters: {
             query?: never;
@@ -4397,6 +4788,63 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{project_id}/build-record": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Build Record
+         * @description Issued versions, newest last; superseded ones stay readable (EX-17).
+         */
+        get: operations["get_build_record_api_v1_projects__project_id__build_record_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/build-record/versions/{version_no}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Build Record Version */
+        get: operations["get_build_record_version_api_v1_projects__project_id__build_record_versions__version_no__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/build-record/versions/{version_no}/{form}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Build Record File
+         * @description `form` is pdf or json (logged).
+         */
+        get: operations["get_build_record_file_api_v1_projects__project_id__build_record_versions__version_no___form__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{project_id}/connection-target": {
         parameters: {
             query?: never;
@@ -4764,6 +5212,197 @@ export interface paths {
         get: operations["get_project_files_api_v1_projects__project_id__files_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/handover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Handover
+         * @description The handover: documents, warranties, and whether the owner acknowledged it or Plan2Build
+         *     issued it without acknowledgement.
+         */
+        get: operations["get_handover_api_v1_projects__project_id__handover_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/handover/acknowledge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Acknowledge
+         * @description Acknowledge with the code (EX-15). Free of the package (EX-18). 409 NOT_READY,
+         *     STATEMENT_CHANGED.
+         */
+        post: operations["post_acknowledge_api_v1_projects__project_id__handover_acknowledge_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/handover/acknowledgement-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post Acknowledgement Code
+         * @description Send a one-time code to the owner's email; the response carries the statement.
+         */
+        post: operations["post_acknowledgement_code_api_v1_projects__project_id__handover_acknowledgement_code_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/handover/documents/{document_id}/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Handover Document */
+        get: operations["get_handover_document_api_v1_projects__project_id__handover_documents__document_id__url_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/house-plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get House Plans */
+        get: operations["get_house_plans_api_v1_projects__project_id__house_plans_get"];
+        put?: never;
+        /**
+         * Post House Plan
+         * @description Generate a concept floor plan. 202 with the QUEUED plan; the job lays it out and validates
+         *     it. 409 GENERATION_IN_PROGRESS, RULESET_NOT_PUBLISHED or STATE_CONFLICT; 422
+         *     DESIGN_INPUT_REQUIRED (with the missing keys), PLAN_UNSUPPORTED or VALIDATION_ERROR.
+         */
+        post: operations["post_house_plan_api_v1_projects__project_id__house_plans_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get House Plan */
+        get: operations["get_house_plan_api_v1_projects__project_id__house_plans__plan_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}/ops": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post House Plan Ops
+         * @description Edit the plan with one batch of typed operations (owner only, AD-12). The server applies
+         *     the batch, validates the result and stores it as the next revision only when the validator
+         *     reports no errors. No Idempotency-Key: `expected_revision` already makes a replay fail with
+         *     409 REVISION_CONFLICT instead of applying twice. 403 for a member who is not the owner; 409
+         *     STATE_CONFLICT or REVISION_CONFLICT; 422 PLAN_OPERATION_REJECTED or PLAN_EDIT_INVALID (with
+         *     the validation report).
+         */
+        post: operations["post_house_plan_ops_api_v1_projects__project_id__house_plans__plan_id__ops_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get House Plan Revisions
+         * @description The plan's logged revisions, newest first, `limit` at a time below `before` (members
+         *     read). Revision 0 is the generated plan and has no entry.
+         */
+        get: operations["get_house_plan_revisions_api_v1_projects__project_id__house_plans__plan_id__revisions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/house-plans/{plan_id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get House Plan Versions
+         * @description The plan's named versions, oldest first; version 1 is the generated plan (members read).
+         */
+        get: operations["get_house_plan_versions_api_v1_projects__project_id__house_plans__plan_id__versions_get"];
+        put?: never;
+        /**
+         * Post House Plan Version
+         * @description Keep the plan as it is now as a named, immutable version (owner only). Restore it later
+         *     with REVERT_TO_VERSION through the operations route. 403 for a member who is not the owner;
+         *     409 STATE_CONFLICT (also at the version limit) or REVISION_CONFLICT.
+         */
+        post: operations["post_house_plan_version_api_v1_projects__project_id__house_plans__plan_id__versions_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5496,12 +6135,64 @@ export interface components {
             /** Checks */
             checks: components["schemas"]["EligibilityCheckIn"][];
         };
+        /** AcknowledgeIn */
+        AcknowledgeIn: {
+            /**
+             * Challenge Id
+             * Format: uuid
+             */
+            challenge_id: string;
+            /** Code */
+            code: string;
+            /**
+             * Statement Id
+             * Format: uuid
+             */
+            statement_id: string;
+        };
         /** AddCategoryIn */
         AddCategoryIn: {
             /** Category */
             category: string;
             /** Subtypes */
             subtypes?: string[];
+        };
+        /** AddFixture */
+        AddFixture: {
+            fixture: components["schemas"]["Fixture"];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "ADD_FIXTURE";
+        };
+        /** AddOpening */
+        AddOpening: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "ADD_OPENING";
+            opening: components["schemas"]["Opening"];
+        };
+        /**
+         * AddRoom
+         * @description A new room split off one side of the host across its full width, `depth_mm` deep, with a
+         *     door from the host (`graph_edit.add_room`). Checkpoint 3.1 replaced the never-applied
+         *     free-rectangle form (x0, y0, x1, y1): the browser sends no coordinates.
+         */
+        AddRoom: {
+            /** Depth Mm */
+            depth_mm: number;
+            /** Host Room */
+            host_room: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "ADD_ROOM";
+            side: components["schemas"]["RoomSide"];
+            type: components["schemas"]["RoomType"];
         };
         /** AdditionalItemIn */
         AdditionalItemIn: {
@@ -5618,6 +6309,40 @@ export interface components {
             ends_package: boolean;
             /** Reason */
             reason: string;
+        };
+        /** ArchitecturalIntent */
+        ArchitecturalIntent: {
+            /**
+             * Floors
+             * @default 1
+             * @constant
+             */
+            floors: 1;
+            /**
+             * Intent Version
+             * @default 1.0.0
+             * @constant
+             */
+            intent_version: "1.0.0";
+            orientation: components["schemas"]["OrientationMode"];
+            parking: components["schemas"]["ParkingIntent"] | null;
+            /** Programme */
+            programme: components["schemas"]["ProgrammeItem"][];
+            /** Relations */
+            relations: components["schemas"]["Relation"][];
+            site: components["schemas"]["SiteIntent"];
+            sources: components["schemas"]["IntentSources"];
+            stair: components["schemas"]["StairChoice"];
+            /** Target Built Up Mm2 */
+            target_built_up_mm2: number | null;
+        };
+        /** AssembleIn */
+        AssembleIn: {
+            /**
+             * Reason
+             * @description Required for a new version after an issued one
+             */
+            reason?: string | null;
         };
         /** AssuranceOut */
         AssuranceOut: {
@@ -5806,6 +6531,17 @@ export interface components {
             /** Items */
             items: components["schemas"]["AuditorInspectionSummary"][];
         };
+        /** BBox */
+        BBox: {
+            /** Max X */
+            max_x: number;
+            /** Max Y */
+            max_y: number;
+            /** Min X */
+            min_x: number;
+            /** Min Y */
+            min_y: number;
+        };
         /**
          * BillingExceptionKind
          * @description A payment Plan2Build cannot apply automatically; operations decide (never applied).
@@ -5873,6 +6609,74 @@ export interface components {
          * @enum {string}
          */
         BuildPlanState: "DRAFT" | "IN_REVIEW" | "ISSUED" | "ACCEPTED" | "CHANGES_REQUESTED" | "SUPERSEDED" | "WITHDRAWN";
+        /**
+         * BuildRecordBasis
+         * @enum {string}
+         */
+        BuildRecordBasis: "ACKNOWLEDGED" | "ISSUED_BY_OPERATIONS";
+        /** BuildRecordSnapshotOut */
+        BuildRecordSnapshotOut: {
+            basis: components["schemas"]["BuildRecordBasis"];
+            /** Correction Reason */
+            correction_reason: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Issued At */
+            issued_at: string | null;
+            /** Json Sha256 */
+            json_sha256: string | null;
+            /** Pdf Sha256 */
+            pdf_sha256: string | null;
+            /** Snapshot */
+            snapshot: {
+                [key: string]: unknown;
+            };
+            /** Snapshot Sha256 */
+            snapshot_sha256: string | null;
+            state: components["schemas"]["BuildRecordState"];
+            /** Version No */
+            version_no: number;
+        };
+        /**
+         * BuildRecordState
+         * @enum {string}
+         */
+        BuildRecordState: "DRAFT" | "ISSUED" | "SUPERSEDED";
+        /** BuildRecordVersionOut */
+        BuildRecordVersionOut: {
+            basis: components["schemas"]["BuildRecordBasis"];
+            /** Correction Reason */
+            correction_reason: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Issued At */
+            issued_at: string | null;
+            /** Json Sha256 */
+            json_sha256: string | null;
+            /** Pdf Sha256 */
+            pdf_sha256: string | null;
+            /** Snapshot Sha256 */
+            snapshot_sha256: string | null;
+            state: components["schemas"]["BuildRecordState"];
+            /** Version No */
+            version_no: number;
+        };
+        /** BuildRecordsOut */
+        BuildRecordsOut: {
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+            /** Versions */
+            versions: components["schemas"]["BuildRecordVersionOut"][];
+        };
         /** BuyerIn */
         BuyerIn: {
             /** Address */
@@ -6242,6 +7046,21 @@ export interface components {
          * @enum {string}
          */
         ComparisonState: "PUBLISHED" | "SUPERSEDED" | "DECIDED";
+        /** Compromise */
+        Compromise: {
+            /** Accepted By User */
+            accepted_by_user?: boolean | null;
+            /** Change Key */
+            change_key: string;
+            /** Constraint */
+            constraint: string;
+            /** Id */
+            id: string;
+            /** Params */
+            params: {
+                [key: string]: number | string | boolean | string[];
+            };
+        };
         /** Condition */
         Condition: {
             /** Equals */
@@ -6348,6 +7167,24 @@ export interface components {
             /** Response Hours */
             response_hours: number;
         };
+        Constraint: {
+            [key: string]: unknown;
+        };
+        /**
+         * ConstraintKind
+         * @enum {string}
+         */
+        ConstraintKind: "ROOM_PRESENT" | "ROOM_MIN_SIZE" | "RELATION" | "INSIDE_ENVELOPE" | "ENTRANCE_ON_EDGE" | "PARKING_PROVIDED" | "AREA_DEVIATION" | "DIMENSION_DEVIATION" | "ASPECT_EXCESS" | "CIRCULATION_SHARE" | "OVERSIZE" | "ADJACENCY" | "WET_CLUSTER" | "EXTERIOR_EXPOSURE" | "PRIVACY" | "PARKING_CONVENIENCE" | "ZONE_ORDER" | "ROOM_SIZE_OUTLIER" | "BEDROOM_GROUPING" | "ORIENTATION";
+        /**
+         * ConstraintOutcome
+         * @enum {string}
+         */
+        ConstraintOutcome: "MET" | "PARTIAL" | "RELAXED" | "UNMET" | "NOT_EVALUATED";
+        /**
+         * ConstraintStrength
+         * @enum {string}
+         */
+        ConstraintStrength: "HARD" | "SOFT";
         /** ContractorOut */
         ContractorOut: {
             /**
@@ -6440,6 +7277,38 @@ export interface components {
          * @enum {string}
          */
         DeclineReason: "UNAVAILABLE" | "OUTSIDE_SERVICE_AREA" | "SCOPE_MISMATCH" | "SCHEDULE_MISMATCH" | "COMPLIANCE" | "ALREADY_ENGAGED" | "OTHER";
+        /** DeleteFixture */
+        DeleteFixture: {
+            /** Fixture */
+            fixture: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "DELETE_FIXTURE";
+        };
+        /** DeleteOpening */
+        DeleteOpening: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "DELETE_OPENING";
+            /** Opening */
+            opening: string;
+        };
+        /** DeleteRoom */
+        DeleteRoom: {
+            /** Merge Into */
+            merge_into: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "DELETE_ROOM";
+            /** Room */
+            room: string;
+        };
         /**
          * DesignBlock
          * @description Why a project cannot generate now; computed by the server, never by the client.
@@ -6462,6 +7331,82 @@ export interface components {
          * @enum {string}
          */
         DesignGenerationState: "QUEUED" | "RUNNING" | "SUCCEEDED" | "FAILED";
+        /**
+         * DesignInputs
+         * @description PROVISIONAL (CP1-03): stands in for the design brief until AD-03 is decided. Versioned,
+         *     stored apart from the requirement, accepted only where houseplans are enabled.
+         */
+        "DesignInputs-Input": {
+            /** Attached Bathrooms */
+            attached_bathrooms?: number | null;
+            /** Bathrooms Exact */
+            bathrooms_exact?: number | null;
+            /** Bedrooms Exact */
+            bedrooms_exact?: number | null;
+            dining?: components["schemas"]["DiningArrangement"] | null;
+            facing_override?: components["schemas"]["Facing"] | null;
+            /**
+             * Kind
+             * @default PROVISIONAL_DESIGN_INPUTS
+             * @constant
+             */
+            kind: "PROVISIONAL_DESIGN_INPUTS";
+            kitchen?: components["schemas"]["KitchenArrangement"] | null;
+            parking_kind?: components["schemas"]["ParkingKind"] | null;
+            /** Parking Spaces */
+            parking_spaces?: number | null;
+            /** Setbacks Ft */
+            setbacks_ft?: {
+                [key: string]: number | string;
+            } | null;
+            stair?: components["schemas"]["StairChoice"] | null;
+            /** Utility */
+            utility?: boolean | null;
+            /**
+             * Version
+             * @default 1
+             * @constant
+             */
+            version: 1;
+        };
+        /**
+         * DesignInputs
+         * @description PROVISIONAL (CP1-03): stands in for the design brief until AD-03 is decided. Versioned,
+         *     stored apart from the requirement, accepted only where houseplans are enabled.
+         */
+        "DesignInputs-Output": {
+            /** Attached Bathrooms */
+            attached_bathrooms?: number | null;
+            /** Bathrooms Exact */
+            bathrooms_exact?: number | null;
+            /** Bedrooms Exact */
+            bedrooms_exact?: number | null;
+            dining?: components["schemas"]["DiningArrangement"] | null;
+            facing_override?: components["schemas"]["Facing"] | null;
+            /**
+             * Kind
+             * @default PROVISIONAL_DESIGN_INPUTS
+             * @constant
+             */
+            kind: "PROVISIONAL_DESIGN_INPUTS";
+            kitchen?: components["schemas"]["KitchenArrangement"] | null;
+            parking_kind?: components["schemas"]["ParkingKind"] | null;
+            /** Parking Spaces */
+            parking_spaces?: number | null;
+            /** Setbacks Ft */
+            setbacks_ft?: {
+                [key: string]: string;
+            } | null;
+            stair?: components["schemas"]["StairChoice"] | null;
+            /** Utility */
+            utility?: boolean | null;
+            /**
+             * Version
+             * @default 1
+             * @constant
+             */
+            version: 1;
+        };
         /** DesignListOut */
         DesignListOut: {
             /** Items */
@@ -6619,6 +7564,25 @@ export interface components {
          * @enum {string}
          */
         DeviationType: "EXCLUDED" | "GRADE" | "QUANTITY" | "ADDITIONAL" | "OTHER";
+        /** DimensionChain */
+        DimensionChain: {
+            end: components["schemas"]["GPoint"];
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "PLOT" | "ENVELOPE" | "ROOM_CLEAR";
+            start: components["schemas"]["GPoint"];
+            /** Value Mm */
+            value_mm: number;
+        };
+        /**
+         * DiningArrangement
+         * @enum {string}
+         */
+        DiningArrangement: "SEPARATE" | "IN_LIVING";
         /** DirectoryCardOut */
         DirectoryCardOut: {
             /** Base Locality */
@@ -6657,35 +7621,6 @@ export interface components {
              */
             order: "daily_shuffle";
         };
-        /** DocumentIn */
-        DocumentIn: {
-            /** Category Code */
-            category_code?: string | null;
-            /**
-             * File Id
-             * Format: uuid
-             */
-            file_id: string;
-            /**
-             * Gstin
-             * @description GSTIN (business), where registered
-             * @default
-             */
-            gstin: string;
-            /**
-             * Issuer
-             * @description Issuing body (registration)
-             * @default
-             */
-            issuer: string;
-            kind: components["schemas"]["ProfessionalDocumentKind"];
-            /**
-             * Number
-             * @description Registration or licence number
-             * @default
-             */
-            number: string;
-        };
         /** DocumentOut */
         DocumentOut: {
             /** Category Code */
@@ -6701,6 +7636,17 @@ export interface components {
             document_id: string;
             file: components["schemas"]["FileOut"] | null;
             kind: components["schemas"]["ProfessionalDocumentKind"];
+        };
+        /**
+         * DoorLeaf
+         * @enum {string}
+         */
+        DoorLeaf: "SINGLE" | "DOUBLE" | "SLIDING";
+        /** DoorSpec */
+        DoorSpec: {
+            hinge: components["schemas"]["HingeSide"];
+            leaf: components["schemas"]["DoorLeaf"];
+            opens_to: components["schemas"]["WallSide"];
         };
         /** DownloadLink */
         DownloadLink: {
@@ -6877,6 +7823,84 @@ export interface components {
          * @enum {string}
          */
         DueState: "DUE" | "PAID" | "CANCELLED";
+        /**
+         * EditHousePlanOut
+         * @description The plan after the batch, and the batch that undoes it (send it as a new edit to undo).
+         */
+        EditHousePlanOut: {
+            /** Completed At */
+            completed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            design_inputs: components["schemas"]["DesignInputs-Output"] | null;
+            document: components["schemas"]["HousePlan"] | null;
+            editing?: components["schemas"]["EditingOut"] | null;
+            failure_reason: components["schemas"]["PlanFailureReason"] | null;
+            geometry: components["schemas"]["PlanGeometry"] | null;
+            infeasibility: components["schemas"]["InfeasibilityOut"] | null;
+            intent: components["schemas"]["ArchitecturalIntent"];
+            /** Inverse */
+            inverse: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["MoveEdge"] | components["schemas"]["AddRoom"] | components["schemas"]["DeleteRoom"] | components["schemas"]["RevertToRevision"] | components["schemas"]["RevertToVersion"])[];
+            /**
+             * Is Authoritative
+             * @default false
+             * @constant
+             */
+            is_authoritative: false;
+            /** Plan Id */
+            plan_id: string;
+            quality?: components["schemas"]["QualityOut"] | null;
+            /** Ruleset Is Synthetic */
+            ruleset_is_synthetic: boolean;
+            ruleset_status: components["schemas"]["RulesetStatus"];
+            /** Ruleset Version */
+            ruleset_version: number;
+            /** Sequence */
+            sequence: number;
+            state: components["schemas"]["PlanGenerationState"];
+            validation: components["schemas"]["ValidationReport"] | null;
+            validity: components["schemas"]["PlanValidity"] | null;
+        };
+        /**
+         * EditHousePlanRequest
+         * @description One batch of typed operations against the head revision the editor last saw. Applied
+         *     whole or not at all; never stored unless the validator passes.
+         */
+        EditHousePlanRequest: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Ops */
+            ops: (components["schemas"]["MoveOpening"] | components["schemas"]["SetOpening"] | components["schemas"]["AddOpening"] | components["schemas"]["DeleteOpening"] | components["schemas"]["MoveFixture"] | components["schemas"]["AddFixture"] | components["schemas"]["DeleteFixture"] | components["schemas"]["RenameRoom"] | components["schemas"]["SetRoomType"] | components["schemas"]["MoveWall"] | components["schemas"]["MoveEdge"] | components["schemas"]["AddRoom"] | components["schemas"]["DeleteRoom"] | components["schemas"]["RevertToRevision"] | components["schemas"]["RevertToVersion"])[];
+        };
+        /**
+         * EditingOut
+         * @description What the editor needs besides the document (Checkpoint 3). `can_edit` is the API's answer
+         *     for this caller (owner of the project, plan with a document); the server checks it again on
+         *     every edit. `grid_mm` is the ruleset's planning grid, the editor's snap step. Checkpoint 3.1
+         *     adds the room types and opening sizes the editor offers, and the wall thicknesses it needs to
+         *     show clear sizes; the server checks every value again.
+         */
+        EditingOut: {
+            /** Can Edit */
+            can_edit: boolean;
+            /** Exterior Wall Mm */
+            exterior_wall_mm?: number | null;
+            /** Grid Mm */
+            grid_mm: number;
+            /** Interior Wall Mm */
+            interior_wall_mm?: number | null;
+            openings?: components["schemas"]["OpeningSizesOut"] | null;
+            /** Revision No */
+            revision_no: number;
+            /**
+             * Room Types
+             * @default []
+             */
+            room_types: components["schemas"]["RoomTypeOut"][];
+        };
         /** EligibilityCheckIn */
         EligibilityCheckIn: {
             /** Item Id */
@@ -7000,6 +8024,17 @@ export interface components {
             /** Ended At */
             ended_at: string | null;
             state: components["schemas"]["PackageState"];
+        };
+        /**
+         * EntityKind
+         * @enum {string}
+         */
+        EntityKind: "DOCUMENT" | "PLOT" | "ENVELOPE" | "NODE" | "WALL" | "ROOM" | "OPENING" | "FIXTURE";
+        /** EntityRef */
+        EntityRef: {
+            /** Id */
+            id: string;
+            kind: components["schemas"]["EntityKind"];
         };
         /** ErrorBody */
         ErrorBody: {
@@ -7211,6 +8246,12 @@ export interface components {
             /** Reason */
             reason: string;
         };
+        /**
+         * Facing
+         * @description The side of the road and main entrance (AD-15), one of eight compass directions.
+         * @enum {string}
+         */
+        Facing: "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
         /** FakePayIn */
         FakePayIn: {
             /**
@@ -7438,6 +8479,13 @@ export interface components {
             /** Rfqs */
             rfqs: components["schemas"]["FamilyRfqOut"][];
         };
+        /**
+         * FeasibilityClass
+         * @description PROVEN: no rectangle arrangement can satisfy the hard rules. NO_SUPPORTED_LAYOUT: none of
+         *     the layouts this engine version can produce fits (CP2-U4); never presented as impossible.
+         * @enum {string}
+         */
+        FeasibilityClass: "PROVEN" | "NO_SUPPORTED_LAYOUT";
         /** FileOut */
         FileOut: {
             /** Content Type */
@@ -7527,11 +8575,107 @@ export interface components {
          * @enum {string}
          */
         FinishLevel: "STANDARD" | "PREMIUM" | "LUXURY";
+        /** Fixture */
+        Fixture: {
+            /** D Mm */
+            d_mm: number;
+            /** Id */
+            id: string;
+            /** Offset Mm */
+            offset_mm: number;
+            origin: components["schemas"]["Origin"];
+            /** Room */
+            room: string;
+            side: components["schemas"]["WallSide"];
+            type: components["schemas"]["FixtureType"];
+            /** W Mm */
+            w_mm: number;
+            /** Wall */
+            wall: string;
+        };
+        /** FixtureGeom */
+        FixtureGeom: {
+            /** Clearance */
+            clearance: components["schemas"]["GPoint"][] | null;
+            /** Footprint */
+            footprint: components["schemas"]["GPoint"][] | null;
+            /** Id */
+            id: string;
+            /** Room */
+            room: string;
+            type: components["schemas"]["FixtureType"];
+        };
+        /**
+         * FixtureType
+         * @enum {string}
+         */
+        FixtureType: "WC_WESTERN" | "WC_INDIAN" | "WASH_BASIN" | "SHOWER_AREA" | "KITCHEN_COUNTER" | "KITCHEN_SINK";
         /** FlagRule */
         FlagRule: {
             /** Flag */
             flag: string;
             when: components["schemas"]["Condition"];
+        };
+        /** Floor */
+        Floor: {
+            /** Clear Height Mm */
+            clear_height_mm: number;
+            /** Ffl Mm */
+            ffl_mm: number;
+            /** Fixtures */
+            fixtures: components["schemas"]["Fixture"][];
+            /** Floor To Floor Mm */
+            floor_to_floor_mm: number;
+            /** Id */
+            id: string;
+            /** Level */
+            level: number;
+            /** Name */
+            name: string;
+            /** Nodes */
+            nodes: components["schemas"]["Node"][];
+            /** Openings */
+            openings: components["schemas"]["Opening"][];
+            /** Plinth Mm */
+            plinth_mm: number;
+            /** Rooms */
+            rooms: components["schemas"]["Room"][];
+            /** Slab Mm */
+            slab_mm: number;
+            /**
+             * Stairs
+             * @default []
+             */
+            stairs: components["schemas"]["Stair"][];
+            /** Walls */
+            walls: components["schemas"]["Wall"][];
+        };
+        /** FloorGeometry */
+        FloorGeometry: {
+            /** Dimensions */
+            dimensions: components["schemas"]["DimensionChain"][];
+            /** Fixtures */
+            fixtures: components["schemas"]["FixtureGeom"][];
+            /** Level */
+            level: number;
+            /**
+             * Open Areas
+             * @default []
+             */
+            open_areas: components["schemas"]["OpenArea"][];
+            /** Openings */
+            openings: components["schemas"]["OpeningGeom"][];
+            /** Rooms */
+            rooms: components["schemas"]["RoomGeom"][];
+            /** Walls */
+            walls: components["schemas"]["WallGeom"][];
+        };
+        /** GPoint */
+        GPoint: {
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
         };
         /**
          * GateStatus
@@ -7539,6 +8683,292 @@ export interface components {
          * @enum {string}
          */
         GateStatus: "NOT_INSPECTED" | "SCHEDULED" | "OPEN_NC" | "CLEARED";
+        /**
+         * GenerateHousePlanRequest
+         * @description `design_inputs` is PROVISIONAL (CP1-03): it stands in for the design brief until AD-03, is
+         *     stored apart from the requirement and never changes an answer the requirement gives.
+         */
+        GenerateHousePlanRequest: {
+            design_inputs?: components["schemas"]["DesignInputs-Input"] | null;
+        };
+        /** GeneratorInfo */
+        GeneratorInfo: {
+            /**
+             * Engine
+             * @constant
+             */
+            engine: "p2b-houseplans";
+            /** Engine Version */
+            engine_version: string;
+            /** Intent Sha256 */
+            intent_sha256: string;
+            /** Ruleset Sha256 */
+            ruleset_sha256: string;
+            /** Ruleset Version */
+            ruleset_version: number;
+            /** Seed */
+            seed: number;
+            solver: components["schemas"]["SolverKind"];
+            /** Solver Version */
+            solver_version: string;
+        };
+        /**
+         * HandoverDocumentKind
+         * @enum {string}
+         */
+        HandoverDocumentKind: "WARRANTY" | "MANUAL" | "DRAWING" | "CERTIFICATE" | "PHOTO" | "OTHER";
+        /** HandoverDocumentOut */
+        HandoverDocumentOut: {
+            /**
+             * Added At
+             * Format: date-time
+             */
+            added_at: string;
+            /** Added Role */
+            added_role: string;
+            /**
+             * File Id
+             * Format: uuid
+             */
+            file_id: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["HandoverDocumentKind"];
+            /** Title */
+            title: string;
+        };
+        /** HandoverOut */
+        HandoverOut: {
+            /**
+             * Acknowledged At
+             * @description Set only by the owner's code
+             */
+            acknowledged_at: string | null;
+            /** Documents */
+            documents: components["schemas"]["HandoverDocumentOut"][];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Issue Reason */
+            issue_reason: string | null;
+            /** Issued At */
+            issued_at: string | null;
+            /** Issued Without Acknowledgement */
+            issued_without_acknowledgement: boolean;
+            /**
+             * Opened At
+             * Format: date-time
+             */
+            opened_at: string;
+            /** Ready At */
+            ready_at: string | null;
+            state: components["schemas"]["HandoverState"];
+            /** Statement Text */
+            statement_text: string | null;
+            /** Warranties */
+            warranties: components["schemas"]["WarrantyOut"][];
+        };
+        /**
+         * HandoverState
+         * @description EX-15: an operations issue is never an acknowledgement.
+         * @enum {string}
+         */
+        HandoverState: "OPEN" | "READY" | "ACKNOWLEDGED" | "ISSUED_BY_OPERATIONS";
+        /** HandoverViewOut */
+        HandoverViewOut: {
+            handover: components["schemas"]["HandoverOut"] | null;
+            /** Is Owner */
+            is_owner: boolean;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+        };
+        /**
+         * HingeSide
+         * @description The jamb a door hangs on, relative to its host wall's a-to-b direction.
+         * @enum {string}
+         */
+        HingeSide: "A_SIDE" | "B_SIDE";
+        /** HousePlan */
+        HousePlan: {
+            /** Compromises */
+            compromises: components["schemas"]["Compromise"][];
+            /** Constraints */
+            constraints: components["schemas"]["Constraint"][];
+            /** Floors */
+            floors: components["schemas"]["Floor"][];
+            meta: components["schemas"]["Meta"];
+            site: components["schemas"]["Site"];
+        };
+        /** HousePlanDetailOut */
+        HousePlanDetailOut: {
+            /** Completed At */
+            completed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            design_inputs: components["schemas"]["DesignInputs-Output"] | null;
+            document: components["schemas"]["HousePlan"] | null;
+            editing?: components["schemas"]["EditingOut"] | null;
+            failure_reason: components["schemas"]["PlanFailureReason"] | null;
+            geometry: components["schemas"]["PlanGeometry"] | null;
+            infeasibility: components["schemas"]["InfeasibilityOut"] | null;
+            intent: components["schemas"]["ArchitecturalIntent"];
+            /**
+             * Is Authoritative
+             * @default false
+             * @constant
+             */
+            is_authoritative: false;
+            /** Plan Id */
+            plan_id: string;
+            quality?: components["schemas"]["QualityOut"] | null;
+            /** Ruleset Is Synthetic */
+            ruleset_is_synthetic: boolean;
+            ruleset_status: components["schemas"]["RulesetStatus"];
+            /** Ruleset Version */
+            ruleset_version: number;
+            /** Sequence */
+            sequence: number;
+            state: components["schemas"]["PlanGenerationState"];
+            validation: components["schemas"]["ValidationReport"] | null;
+            validity: components["schemas"]["PlanValidity"] | null;
+        };
+        /** HousePlanListOut */
+        HousePlanListOut: {
+            /** Items */
+            items: components["schemas"]["HousePlanSummaryOut"][];
+        };
+        /** HousePlanRevisionListOut */
+        HousePlanRevisionListOut: {
+            /** Head Revision No */
+            head_revision_no: number;
+            /** Items */
+            items: components["schemas"]["HousePlanRevisionOut"][];
+            /** Next Before */
+            next_before: number | null;
+        };
+        /**
+         * HousePlanRevisionOut
+         * @description One logged revision: what kinds of operation made it, or what it restored.
+         */
+        HousePlanRevisionOut: {
+            /** By You */
+            by_you: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Ops */
+            ops: components["schemas"]["PlanOpKind"][];
+            reason: components["schemas"]["PlanOpReason"];
+            /** Restored Revision */
+            restored_revision?: number | null;
+            /** Restored Version */
+            restored_version?: number | null;
+            /** Revision No */
+            revision_no: number;
+        };
+        /** HousePlanSummaryOut */
+        HousePlanSummaryOut: {
+            /** Completed At */
+            completed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            failure_reason: components["schemas"]["PlanFailureReason"] | null;
+            /**
+             * Is Authoritative
+             * @default false
+             * @constant
+             */
+            is_authoritative: false;
+            /** Plan Id */
+            plan_id: string;
+            /** Ruleset Is Synthetic */
+            ruleset_is_synthetic: boolean;
+            ruleset_status: components["schemas"]["RulesetStatus"];
+            /** Ruleset Version */
+            ruleset_version: number;
+            /** Sequence */
+            sequence: number;
+            state: components["schemas"]["PlanGenerationState"];
+            validity: components["schemas"]["PlanValidity"] | null;
+        };
+        /** HousePlanVersionListOut */
+        HousePlanVersionListOut: {
+            /** Items */
+            items: components["schemas"]["HousePlanVersionOut"][];
+        };
+        /**
+         * HousePlanVersionOut
+         * @description A named, immutable snapshot of the plan (version 1 is the generated plan).
+         */
+        HousePlanVersionOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By You */
+            created_by_you: boolean;
+            /** Name */
+            name: string;
+            /** Revision No */
+            revision_no: number;
+            validity: components["schemas"]["PlanValidity"];
+            /** Version No */
+            version_no: number;
+        };
+        /**
+         * InfeasibilityOut
+         * @description Why no plan was produced. `classification` PROVEN: no arrangement can meet the hard rules;
+         *     NO_SUPPORTED_LAYOUT: none of the layouts this engine version produces fits, which never means
+         *     impossible (CP2-U4). Plans from Checkpoint 1 carry `reasons` only.
+         */
+        InfeasibilityOut: {
+            classification?: components["schemas"]["FeasibilityClass"] | null;
+            /**
+             * Constraints
+             * @default []
+             */
+            constraints: components["schemas"]["InvolvedConstraintOut"][];
+            /** Explanation */
+            explanation?: string | null;
+            /** Message */
+            message?: string | null;
+            /** Message Key */
+            message_key?: string | null;
+            /** Reasons */
+            reasons: components["schemas"]["InfeasibleReasonOut"][];
+        };
+        /**
+         * InfeasibleReason
+         * @enum {string}
+         */
+        InfeasibleReason: "ENVELOPE_EMPTY" | "AREA_BUDGET" | "WIDTH_TOO_NARROW" | "DEPTH_EXCEEDED" | "PARKING_TOO_WIDE" | "ACCESS_SPAN" | "FIXTURE_FIT" | "OPENING_FIT" | "RULESET_INCOMPLETE";
+        /** InfeasibleReasonOut */
+        InfeasibleReasonOut: {
+            code: components["schemas"]["InfeasibleReason"];
+            /** Message Key */
+            message_key: string;
+            /** Params */
+            params: {
+                [key: string]: number | string;
+            };
+        };
         /** InformationRequest */
         InformationRequest: {
             /**
@@ -7610,6 +9040,19 @@ export interface components {
              */
             note: string;
         };
+        /** IntentSources */
+        IntentSources: {
+            /** Design Inputs Sha256 */
+            design_inputs_sha256: string | null;
+            /** Question Set Version */
+            question_set_version: number;
+            /** Requirement Version */
+            requirement_version: number;
+            /** Ruleset Sha256 */
+            ruleset_sha256: string;
+            /** Ruleset Version */
+            ruleset_version: number;
+        };
         /** IntroduceIn */
         IntroduceIn: {
             /**
@@ -7673,6 +9116,20 @@ export interface components {
             /** Total */
             total: string;
         };
+        /** InvolvedConstraintOut */
+        InvolvedConstraintOut: {
+            /** Kind */
+            kind: string;
+            /** Origin */
+            origin: string;
+            /** Subject */
+            subject: string;
+        };
+        /**
+         * KitchenArrangement
+         * @enum {string}
+         */
+        KitchenArrangement: "CLOSED" | "OPEN";
         /**
          * ListingState
          * @description One professional category's place in the review workflow (D-04). Only LISTED is public,
@@ -7795,6 +9252,38 @@ export interface components {
              */
             user_id: string;
         };
+        /** Meta */
+        Meta: {
+            /** Body Sha256 */
+            body_sha256?: string | null;
+            /** Created At */
+            created_at?: string | null;
+            /** Created By */
+            created_by?: string | null;
+            generator: components["schemas"]["GeneratorInfo"];
+            /** Plan Id */
+            plan_id?: string | null;
+            /** Project Id */
+            project_id?: string | null;
+            /** Question Set Version */
+            question_set_version?: number | null;
+            /** Requirement Version */
+            requirement_version?: number | null;
+            /**
+             * Revision No
+             * @default 0
+             */
+            revision_no: number;
+            /**
+             * Schema
+             * @default p2b.houseplan
+             * @constant
+             */
+            schema: "p2b.houseplan";
+            /** Schema Version */
+            schema_version: string;
+            source: components["schemas"]["PlanSource"];
+        };
         /** MfaConfirmRequest */
         MfaConfirmRequest: {
             /** Code */
@@ -7871,6 +9360,62 @@ export interface components {
             milestones: components["schemas"]["MilestoneOut"][];
         };
         /**
+         * MoveEdge
+         * @description One side of a rectangular room, moved along +x (LEFT, RIGHT) or +y (FRONT, BACK); only
+         *     the part of that line that must move with it moves (`graph_edit.move_edge`).
+         */
+        MoveEdge: {
+            /** Delta Mm */
+            delta_mm: number;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "MOVE_EDGE";
+            /** Room */
+            room: string;
+            side: components["schemas"]["RoomSide"];
+        };
+        /** MoveFixture */
+        MoveFixture: {
+            /** Fixture */
+            fixture: string;
+            /** Offset Mm */
+            offset_mm: number;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "MOVE_FIXTURE";
+            side: components["schemas"]["WallSide"];
+            /** Wall */
+            wall: string;
+        };
+        /** MoveOpening */
+        MoveOpening: {
+            /** Offset Mm */
+            offset_mm: number;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "MOVE_OPENING";
+            /** Opening */
+            opening: string;
+        };
+        /** MoveWall */
+        MoveWall: {
+            /** Delta Mm */
+            delta_mm: number;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "MOVE_WALL";
+            /** Wall */
+            wall: string;
+        };
+        /**
          * NcState
          * @description EX-11: closed only by an approved re-inspection.
          * @enum {string}
@@ -7893,6 +9438,15 @@ export interface components {
          * @enum {string}
          */
         NeedState: "UNDECIDED" | "NEEDED" | "NOT_NEEDED";
+        /** Node */
+        Node: {
+            /** Id */
+            id: string;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+        };
         /**
          * OfferOut
          * @description The price now, computed by the server for the buyer's state (the seller's by default).
@@ -7967,6 +9521,83 @@ export interface components {
             pricing_rule_version_id: string;
             /** Terms Version */
             terms_version: string;
+        };
+        /**
+         * OpenArea
+         * @description Unbuilt space inside the buildable area (geometry 1.1.0, Checkpoint 3): a presentation
+         *     label for the 2D view, never a room and never stored. `cells` are rectangles that together
+         *     make the area; `kind` says where it lies (see `open_areas`).
+         */
+        OpenArea: {
+            /** Area Mm2 */
+            area_mm2: number;
+            /** Cells */
+            cells: components["schemas"]["GPoint"][][];
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "FORECOURT" | "SIDE_YARD" | "REAR_YARD" | "COURT";
+            label_at: components["schemas"]["GPoint"];
+        };
+        /** Opening */
+        Opening: {
+            door?: components["schemas"]["DoorSpec"] | null;
+            /** Height Mm */
+            height_mm: number;
+            /** Id */
+            id: string;
+            kind: components["schemas"]["OpeningKind"];
+            /** Offset Mm */
+            offset_mm: number;
+            /** Sill Mm */
+            sill_mm: number;
+            /** Wall */
+            wall: string;
+            /** Width Mm */
+            width_mm: number;
+        };
+        /** OpeningGeom */
+        OpeningGeom: {
+            /** Connects */
+            connects: string[];
+            /** Id */
+            id: string;
+            jamb_a: components["schemas"]["GPoint"];
+            jamb_b: components["schemas"]["GPoint"];
+            kind: components["schemas"]["OpeningKind"];
+            swing: components["schemas"]["Swing"] | null;
+            /** Wall */
+            wall: string;
+        };
+        /**
+         * OpeningKind
+         * @enum {string}
+         */
+        OpeningKind: "MAIN_ENTRANCE" | "DOOR" | "VOID" | "WINDOW";
+        /**
+         * OpeningSizesOut
+         * @description The plan ruleset's opening sizes, for new and resized doors and windows.
+         */
+        OpeningSizesOut: {
+            /** Door Height Mm */
+            door_height_mm: number;
+            /** Door Width Mm */
+            door_width_mm: number;
+            /** Jamb Clearance Mm */
+            jamb_clearance_mm: number;
+            /** Min Door Width Mm */
+            min_door_width_mm: number;
+            /** Min Window Width Mm */
+            min_window_width_mm: number;
+            /** Window Height Mm */
+            window_height_mm: number;
+            /** Window Sill Mm */
+            window_sill_mm: number;
+            /** Window Width Mm */
+            window_width_mm: number;
         };
         /** OpsAnswerIn */
         OpsAnswerIn: {
@@ -8170,6 +9801,18 @@ export interface components {
             /** Waiting */
             waiting: components["schemas"]["OpsWaitingOut"][];
         };
+        /** OpsHandoverOut */
+        OpsHandoverOut: {
+            build_records: components["schemas"]["BuildRecordsOut"];
+            handover: components["schemas"]["HandoverOut"] | null;
+            /** Project Code */
+            project_code: string;
+            /**
+             * Project Id
+             * Format: uuid
+             */
+            project_id: string;
+        };
         /** OpsHistoryOut */
         OpsHistoryOut: {
             /** Actor Role */
@@ -8194,6 +9837,44 @@ export interface components {
             subject_id: string;
             /** To State */
             to_state: string;
+        };
+        /** OpsHousePlanDetailOut */
+        OpsHousePlanDetailOut: {
+            /** Completed At */
+            completed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            design_inputs: components["schemas"]["DesignInputs-Output"] | null;
+            document: components["schemas"]["HousePlan"] | null;
+            editing?: components["schemas"]["EditingOut"] | null;
+            /** Failure Detail */
+            failure_detail: string | null;
+            failure_reason: components["schemas"]["PlanFailureReason"] | null;
+            geometry: components["schemas"]["PlanGeometry"] | null;
+            infeasibility: components["schemas"]["InfeasibilityOut"] | null;
+            intent: components["schemas"]["ArchitecturalIntent"];
+            /**
+             * Is Authoritative
+             * @default false
+             * @constant
+             */
+            is_authoritative: false;
+            /** Plan Id */
+            plan_id: string;
+            quality?: components["schemas"]["QualityOut"] | null;
+            /** Ruleset Is Synthetic */
+            ruleset_is_synthetic: boolean;
+            ruleset_status: components["schemas"]["RulesetStatus"];
+            /** Ruleset Version */
+            ruleset_version: number;
+            /** Sequence */
+            sequence: number;
+            state: components["schemas"]["PlanGenerationState"];
+            validation: components["schemas"]["ValidationReport"] | null;
+            validity: components["schemas"]["PlanValidity"] | null;
         };
         /** OpsInspectionOut */
         OpsInspectionOut: {
@@ -8725,6 +10406,25 @@ export interface components {
             /** Total */
             total: string;
         };
+        /**
+         * OrientationMode
+         * @description From the Vastu answer. Recorded only: no orientation table exists until AD-13.
+         * @enum {string}
+         */
+        OrientationMode: "OFF" | "SOFT" | "SOFT_HIGH";
+        /** Origin */
+        Origin: {
+            kind: components["schemas"]["OriginKind"];
+            /** Ref */
+            ref: string;
+        };
+        /**
+         * OriginKind
+         * @description Why a plan element exists: a requirement answer, a provisional design input, ruleset data,
+         *     the solver's circulation, or a person's edit.
+         * @enum {string}
+         */
+        OriginKind: "REQUIREMENT" | "DESIGN_INPUT" | "RULESET" | "SOLVER" | "USER_EDIT";
         /** OtpStartRequest */
         OtpStartRequest: {
             /**
@@ -9017,6 +10717,36 @@ export interface components {
             };
             unavailable: components["schemas"]["UnavailableOut"] | null;
         };
+        /** Parking */
+        Parking: {
+            kind: components["schemas"]["ParkingKind"];
+            origin: components["schemas"]["Origin"];
+            placement: components["schemas"]["ParkingPlacement"];
+            /** Space D Mm */
+            space_d_mm: number;
+            /** Space W Mm */
+            space_w_mm: number;
+            /** Spaces */
+            spaces: number;
+        };
+        /** ParkingIntent */
+        ParkingIntent: {
+            kind: components["schemas"]["ParkingKind"];
+            origin: components["schemas"]["Origin"];
+            placement: components["schemas"]["ParkingPlacement"];
+            /** Spaces */
+            spaces: number;
+        };
+        /**
+         * ParkingKind
+         * @enum {string}
+         */
+        ParkingKind: "CAR" | "TWO_WHEELER";
+        /**
+         * ParkingPlacement
+         * @enum {string}
+         */
+        ParkingPlacement: "INSIDE_FOOTPRINT";
         /**
          * PaymentMarkValue
          * @enum {string}
@@ -9049,6 +10779,96 @@ export interface components {
             provider_payment_id: string;
             /** Source */
             source: string;
+        };
+        /**
+         * PlanFailureReason
+         * @enum {string}
+         */
+        PlanFailureReason: "ENGINE_ERROR" | "ENGINE_INVALID_OUTPUT" | "ENGINE_TIMEOUT" | "STALE";
+        /**
+         * PlanGenerationState
+         * @description The concept plan generation lifecycle (CP1-04: its own, not Slice 3.1's). VALID is the
+         *     only outcome that carries a plan, and only a plan the validator passed. INFEASIBLE: the
+         *     requirement does not fit under the ruleset, with reasons. FAILED: an engine fault.
+         * @enum {string}
+         */
+        PlanGenerationState: "QUEUED" | "RUNNING" | "VALID" | "INFEASIBLE" | "FAILED";
+        /** PlanGeometry */
+        PlanGeometry: {
+            bounds: components["schemas"]["BBox"];
+            /** Envelope */
+            envelope: components["schemas"]["GPoint"][] | null;
+            /** Floors */
+            floors: components["schemas"]["FloorGeometry"][];
+            /**
+             * Geometry Version
+             * @default 1.1.0
+             * @constant
+             */
+            geometry_version: "1.1.0";
+            /** Plot */
+            plot: components["schemas"]["GPoint"][];
+            /**
+             * Units
+             * @default mm
+             * @constant
+             */
+            units: "mm";
+        };
+        /**
+         * PlanOpKind
+         * @description Typed HousePlan operations (CP1-11): the one way a plan changes after generation, shared by
+         *     deterministic repair, the future editor and future natural-language edits.
+         * @enum {string}
+         */
+        PlanOpKind: "MOVE_OPENING" | "SET_OPENING" | "ADD_OPENING" | "DELETE_OPENING" | "MOVE_FIXTURE" | "ADD_FIXTURE" | "DELETE_FIXTURE" | "RENAME_ROOM" | "SET_ROOM_TYPE" | "MOVE_WALL" | "ADD_ROOM" | "DELETE_ROOM" | "MOVE_EDGE" | "REVERT_TO_REVISION" | "REVERT_TO_VERSION";
+        /**
+         * PlanOpReason
+         * @description Why an operation batch was applied (`house_plan_ops.reason`).
+         * @enum {string}
+         */
+        PlanOpReason: "USER" | "AUTO_REPAIR" | "REVERT";
+        /**
+         * PlanSource
+         * @enum {string}
+         */
+        PlanSource: "GENERATED" | "EDITED" | "REGENERATED";
+        /**
+         * PlanValidity
+         * @enum {string}
+         */
+        PlanValidity: "VALID" | "INVALID";
+        /** Plot */
+        Plot: {
+            /** Edges */
+            edges: components["schemas"]["PlotEdge"][];
+            /** Vertices */
+            vertices: components["schemas"]["Point"][];
+        };
+        /** PlotEdge */
+        PlotEdge: {
+            /** End */
+            end: number;
+            /** Id */
+            id: string;
+            kind: components["schemas"]["PlotEdgeKind"];
+            /** Road Width Mm */
+            road_width_mm?: number | null;
+            side: components["schemas"]["SetbackSide"];
+            /** Start */
+            start: number;
+        };
+        /**
+         * PlotEdgeKind
+         * @enum {string}
+         */
+        PlotEdgeKind: "ROAD" | "NEIGHBOUR";
+        /** Point */
+        Point: {
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
         };
         /** PointIn */
         PointIn: {
@@ -9423,6 +11243,15 @@ export interface components {
             /** Years Experience */
             years_experience?: number | null;
         };
+        /** ProgrammeItem */
+        ProgrammeItem: {
+            /** Key */
+            key: string;
+            /** Must Have */
+            must_have: boolean;
+            origin: components["schemas"]["Origin"];
+            room_type: components["schemas"]["RoomType"];
+        };
         /** ProjectCreateRequest */
         ProjectCreateRequest: {
             /** City */
@@ -9536,6 +11365,34 @@ export interface components {
             team_size: number | null;
             /** Years Experience */
             years_experience: number | null;
+        };
+        /**
+         * QualityOut
+         * @description The Scorer's measure of a plan (derived on read; never stored apart from the document's
+         *     soft constraints). Lower is better; it never decides validity.
+         */
+        QualityOut: {
+            /** Aspect Violations */
+            aspect_violations: number;
+            /** Circulation Share Milli */
+            circulation_share_milli: number;
+            /** Rooms */
+            rooms: components["schemas"]["RoomQualityOut"][];
+            /** Terms */
+            terms: components["schemas"]["QualityTermOut"][];
+            /** Total */
+            total: number;
+        };
+        /** QualityTermOut */
+        QualityTermOut: {
+            kind: components["schemas"]["ConstraintKind"];
+            outcome: components["schemas"]["ConstraintOutcome"];
+            /** Score Milli */
+            score_milli: number | null;
+            /** Subjects */
+            subjects: string[];
+            /** Weight */
+            weight: number;
         };
         /**
          * QuantityBasis
@@ -10196,6 +12053,37 @@ export interface components {
             /** Visit Note */
             visit_note?: string | null;
         };
+        /**
+         * Relation
+         * @description `room` is reached only from `host`, through a door (ADJACENT_WITH_DOOR) or an open
+         *     connection (ADJACENT_OPEN).
+         */
+        Relation: {
+            /** Host */
+            host: string;
+            kind: components["schemas"]["RelationKind"];
+            origin: components["schemas"]["Origin"];
+            /** Room */
+            room: string;
+            strength: components["schemas"]["ConstraintStrength"];
+        };
+        /**
+         * RelationKind
+         * @enum {string}
+         */
+        RelationKind: "ADJACENT_WITH_DOOR" | "ADJACENT_OPEN";
+        /** RenameRoom */
+        RenameRoom: {
+            /** Name */
+            name: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "RENAME_ROOM";
+            /** Room */
+            room: string;
+        };
         /** RenewIn */
         RenewIn: {
             /**
@@ -10209,6 +12097,11 @@ export interface components {
              */
             valid_to: string;
         };
+        /**
+         * RepairHint
+         * @enum {string}
+         */
+        RepairHint: "AUTO" | "USER" | "NONE";
         /** ReportOut */
         ReportOut: {
             /** Correction Reason */
@@ -10339,6 +12232,34 @@ export interface components {
         ResultsIn: {
             /** Results */
             results: components["schemas"]["ResultIn"][];
+        };
+        /**
+         * RevertToRevision
+         * @description Make the plan what it was at `revision`, as a new revision (Checkpoint 3.1). The undo of
+         *     a structural edit; applied by the plan service, alone in its batch.
+         */
+        RevertToRevision: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "REVERT_TO_REVISION";
+            /** Revision */
+            revision: number;
+        };
+        /**
+         * RevertToVersion
+         * @description Make the plan what named version `version` holds, as a new revision (Checkpoint 3.1).
+         *     Applied by the plan service, alone in its batch.
+         */
+        RevertToVersion: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "REVERT_TO_VERSION";
+            /** Version */
+            version: number;
         };
         /** ReviewDetailOut */
         ReviewDetailOut: {
@@ -10541,6 +12462,100 @@ export interface components {
          * @enum {string}
          */
         RfqState: "DRAFT" | "ISSUED" | "CLOSED" | "CANCELLED";
+        /** Room */
+        Room: {
+            /** Boundary */
+            boundary: string[];
+            /** Enclosed */
+            enclosed: boolean;
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            origin: components["schemas"]["Origin"];
+            /** Required */
+            required: boolean;
+            size_spec: components["schemas"]["SizeSpec"];
+            type: components["schemas"]["RoomType"];
+            zone: components["schemas"]["Zone"];
+        };
+        /** RoomGeom */
+        RoomGeom: {
+            /** Carpet Area Mm2 */
+            carpet_area_mm2: number | null;
+            /** Clear D Mm */
+            clear_d_mm: number | null;
+            /** Clear Polygon */
+            clear_polygon: components["schemas"]["GPoint"][] | null;
+            /** Clear W Mm */
+            clear_w_mm: number | null;
+            /** Id */
+            id: string;
+            label_at: components["schemas"]["GPoint"] | null;
+            /** Name */
+            name: string;
+            /** Polygon */
+            polygon: components["schemas"]["GPoint"][];
+            type: components["schemas"]["RoomType"];
+            zone: components["schemas"]["Zone"];
+        };
+        /** RoomQualityOut */
+        RoomQualityOut: {
+            /** Aspect X100 */
+            aspect_x100: number;
+            /** Clear D Mm */
+            clear_d_mm: number;
+            /** Clear W Mm */
+            clear_w_mm: number;
+            /** Over Aspect */
+            over_aspect: boolean;
+            /** Room */
+            room: string;
+            room_type: components["schemas"]["RoomType"];
+        };
+        /**
+         * RoomSide
+         * @description A side of a rectangular room in the plot frame (Checkpoint 3.1, MOVE_EDGE): LEFT is -x,
+         *     RIGHT +x, FRONT the road side (-y), BACK +y.
+         * @enum {string}
+         */
+        RoomSide: "LEFT" | "RIGHT" | "FRONT" | "BACK";
+        /**
+         * RoomType
+         * @enum {string}
+         */
+        RoomType: "LIVING" | "DINING" | "KITCHEN" | "BEDROOM" | "BATH_ATTACHED" | "BATH_COMMON" | "WC" | "PUJA" | "UTILITY" | "STORE" | "PASSAGE" | "FOYER" | "STAIR_HALL" | "PARKING";
+        /**
+         * RoomTypeOut
+         * @description A room type the editor may offer (Checkpoint 3.1): enclosed types of the plan's ruleset.
+         *     `name` is the default room name the engine gives the type.
+         */
+        RoomTypeOut: {
+            /** Min Short Mm */
+            min_short_mm: number;
+            /** Name */
+            name: string;
+            /** Needs Window */
+            needs_window: boolean;
+            type: components["schemas"]["RoomType"];
+        };
+        /**
+         * RulesetStatus
+         * @description A layout ruleset (ADR-025): DRAFT; APPROVED after an architect's review; PUBLISHED (one at a
+         *     time, the only status production may use); RETIRED. Content never changes.
+         * @enum {string}
+         */
+        RulesetStatus: "DRAFT" | "APPROVED" | "PUBLISHED" | "RETIRED";
+        /**
+         * SaveHousePlanVersionRequest
+         * @description Keep the head the editor shows (`expected_revision`) as a named version.
+         */
+        SaveHousePlanVersionRequest: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Name */
+            name: string;
+        };
         /** ScheduleEntryIn */
         ScheduleEntryIn: {
             /** Duration Days */
@@ -10655,6 +12670,54 @@ export interface components {
             /** Response Hours */
             response_hours: number;
         };
+        /** SetOpening */
+        SetOpening: {
+            door?: components["schemas"]["DoorSpec"] | null;
+            /** Height Mm */
+            height_mm: number;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "SET_OPENING";
+            /** Opening */
+            opening: string;
+            /** Sill Mm */
+            sill_mm: number;
+            /** Width Mm */
+            width_mm: number;
+        };
+        /** SetRoomType */
+        SetRoomType: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            op: "SET_ROOM_TYPE";
+            /** Room */
+            room: string;
+            type: components["schemas"]["RoomType"];
+        };
+        /** Setback */
+        Setback: {
+            /** Distance Mm */
+            distance_mm: number;
+            /** Edge */
+            edge: string;
+            source: components["schemas"]["SetbackSource"];
+        };
+        /**
+         * SetbackSide
+         * @description Sides of a rectangular plot as seen standing on the primary road edge, looking at the
+         *     plot (CP1-02): FRONT is the road edge; LEFT and RIGHT are the viewer's left and right.
+         * @enum {string}
+         */
+        SetbackSide: "FRONT" | "BACK" | "LEFT" | "RIGHT";
+        /**
+         * SetbackSource
+         * @enum {string}
+         */
+        SetbackSource: "REQUIREMENT" | "DESIGN_INPUT";
         /**
          * Severity
          * @description EX-11.
@@ -10724,6 +12787,48 @@ export interface components {
             signed: boolean;
             /** Value */
             value: string | null;
+        };
+        /** Site */
+        Site: {
+            /** Entry Edge */
+            entry_edge: string;
+            facing: components["schemas"]["Facing"];
+            /** North Angle Deg */
+            north_angle_deg: number;
+            parking?: components["schemas"]["Parking"] | null;
+            plot: components["schemas"]["Plot"];
+            /** Setbacks */
+            setbacks: components["schemas"]["Setback"][];
+        };
+        /** SiteIntent */
+        SiteIntent: {
+            /** Depth Mm */
+            depth_mm: number;
+            facing: components["schemas"]["Facing"];
+            facing_origin: components["schemas"]["Origin"];
+            /** Frontage Mm */
+            frontage_mm: number;
+            /** North Angle Deg */
+            north_angle_deg: number;
+            /** Setback Sources */
+            setback_sources: {
+                [key: string]: components["schemas"]["SetbackSource"];
+            };
+            /** Setbacks Mm */
+            setbacks_mm: {
+                [key: string]: number;
+            };
+        };
+        /** SizeSpec */
+        SizeSpec: {
+            /** Max Area Mm2 */
+            max_area_mm2?: number | null;
+            /** Min Area Mm2 */
+            min_area_mm2: number;
+            /** Min Short Mm */
+            min_short_mm: number;
+            /** Pref Area Mm2 */
+            pref_area_mm2?: number | null;
         };
         /** SnapshotAcceptanceOut */
         SnapshotAcceptanceOut: {
@@ -11011,6 +13116,11 @@ export interface components {
             version_no: number;
         };
         /**
+         * SolverKind
+         * @enum {string}
+         */
+        SolverKind: "DETERMINISTIC_MVP" | "ZONED_LOCAL_SEARCH" | "CP_SAT";
+        /**
          * SpecLineState
          * @description STATE_MODEL section 7.
          * @enum {string}
@@ -11204,29 +13314,29 @@ export interface components {
          * @enum {string}
          */
         StageUpdateKind: "PROGRESS" | "COMPLETION_REQUEST";
-        /** StatementIn */
-        StatementIn: {
-            /** Note */
-            note: string;
-            /** Text */
-            text: string;
-        };
-        /** StatementOut */
-        StatementOut: {
-            /**
-             * Id
-             * Format: uuid
-             */
+        /**
+         * Stair
+         * @description Present for schema stability; Checkpoint 1 generates none; the v1 validator refuses one.
+         */
+        Stair: {
+            /** Id */
             id: string;
-            /** Note */
-            note: string;
-            /** Status */
-            status: string;
-            /** Text */
-            text: string;
-            /** Version */
-            version: number;
+            /** Riser Mm */
+            riser_mm: number;
+            /** Risers */
+            risers: number;
+            /** Room */
+            room: string;
+            /** Tread Mm */
+            tread_mm: number;
+            /** Width Mm */
+            width_mm: number;
         };
+        /**
+         * StairChoice
+         * @enum {string}
+         */
+        StairChoice: "NONE" | "INTERNAL" | "EXTERNAL";
         /** SubmitIn */
         SubmitIn: {
             /**
@@ -11243,6 +13353,16 @@ export interface components {
         SubtypesIn: {
             /** Subtypes */
             subtypes?: string[];
+        };
+        /** Swing */
+        Swing: {
+            /** End Deg */
+            end_deg: number;
+            hinge: components["schemas"]["GPoint"];
+            /** Radius Mm */
+            radius_mm: number;
+            /** Start Deg */
+            start_deg: number;
         };
         /** TaxConfigurationIn */
         TaxConfigurationIn: {
@@ -11417,6 +13537,57 @@ export interface components {
          */
         UserStatus: "PENDING_VERIFICATION" | "ACTIVE" | "SUSPENDED" | "CLOSED";
         /**
+         * ValidationCategory
+         * @enum {string}
+         */
+        ValidationCategory: "SCHEMA" | "REFERENCES" | "GEOMETRY" | "OPENINGS" | "FIXTURES" | "CIRCULATION" | "DIMENSIONS" | "REQUIREMENTS";
+        /**
+         * ValidationCode
+         * @enum {string}
+         */
+        ValidationCode: "SCHEMA_INVALID" | "SCHEMA_VERSION_UNSUPPORTED" | "ID_DUPLICATE" | "REF_MISSING" | "PLOT_INVALID" | "GEOMETRY_UNSUPPORTED_V1" | "ROOM_POLYGON_INVALID" | "ROOM_OVERLAP" | "ROOM_OUTSIDE_ENVELOPE" | "BUILDING_OUTSIDE_PLOT" | "ROOM_EDGE_NOT_ON_WALL" | "WALL_ZERO_LENGTH" | "WALL_NOT_ORTHOGONAL" | "WALL_OVERLAP" | "WALL_DANGLING_END" | "WALL_THICKNESS_INVALID" | "OPENING_HOST_MISSING" | "OPENING_OUTSIDE_HOST" | "OPENING_OVERLAP" | "OPENING_DIMENSION_INVALID" | "WINDOW_ON_INTERIOR_WALL" | "FIXTURE_HOST_MISSING" | "FIXTURE_NOT_ON_ROOM_WALL" | "FIXTURE_OUTSIDE_ROOM" | "FIXTURE_NOT_PERMITTED_IN_ROOM" | "FIXTURE_COUNT_EXCEEDS_SPEC" | "FIXTURE_OVERLAP" | "FIXTURE_CLEARANCE_BLOCKED" | "FIXTURE_BLOCKS_OPENING" | "ENTRANCE_MISSING" | "ROOM_UNREACHABLE" | "ROOM_BELOW_MIN_SHORT_SIDE" | "ROOM_BELOW_MIN_AREA" | "PASSAGE_TOO_NARROW" | "HABITABLE_ROOM_NO_WINDOW" | "ROOM_COUNT_MISMATCH" | "PARKING_MISSING" | "PARKING_TOO_SMALL" | "RELATION_UNMET";
+        /** ValidationIssue */
+        ValidationIssue: {
+            category: components["schemas"]["ValidationCategory"];
+            code: components["schemas"]["ValidationCode"];
+            /** Entities */
+            entities: components["schemas"]["EntityRef"][];
+            /** Message */
+            message: string;
+            /** Message Key */
+            message_key: string;
+            /** Params */
+            params: {
+                [key: string]: number | string | boolean | string[];
+            };
+            repair: components["schemas"]["RepairHint"];
+            severity: components["schemas"]["ValidationSeverity"];
+        };
+        /** ValidationReport */
+        ValidationReport: {
+            /** Checks Run */
+            checks_run: components["schemas"]["ValidationCode"][];
+            /** Engine Version */
+            engine_version: string;
+            /** Errors */
+            errors: components["schemas"]["ValidationIssue"][];
+            /** Ruleset Sha256 */
+            ruleset_sha256: string | null;
+            /** Ruleset Version */
+            ruleset_version: number | null;
+            /** Schema Version */
+            schema_version: string | null;
+            /** Valid */
+            valid: boolean;
+            /** Warnings */
+            warnings: components["schemas"]["ValidationIssue"][];
+        };
+        /**
+         * ValidationSeverity
+         * @enum {string}
+         */
+        ValidationSeverity: "ERROR" | "WARNING";
+        /**
          * ValueApplicability
          * @enum {string}
          */
@@ -11472,6 +13643,106 @@ export interface components {
             state: components["schemas"]["BuildPlanState"];
             /** Version No */
             version_no: number;
+        };
+        /** Wall */
+        Wall: {
+            /** A */
+            a: string;
+            /** B */
+            b: string;
+            /** Id */
+            id: string;
+            kind: components["schemas"]["WallKind"];
+            /**
+             * Structural Role
+             * @default UNASSESSED
+             * @constant
+             */
+            structural_role: "UNASSESSED";
+            /** Thickness Mm */
+            thickness_mm: number;
+        };
+        /** WallGeom */
+        WallGeom: {
+            a: components["schemas"]["GPoint"];
+            b: components["schemas"]["GPoint"];
+            /** Id */
+            id: string;
+            kind: components["schemas"]["WallKind"];
+            /** Length Mm */
+            length_mm: number;
+            /** Outline */
+            outline: components["schemas"]["GPoint"][][];
+            /** Pieces */
+            pieces: components["schemas"]["WallPiece"][];
+            /** Thickness Mm */
+            thickness_mm: number;
+        };
+        /**
+         * WallKind
+         * @enum {string}
+         */
+        WallKind: "EXTERIOR" | "INTERIOR";
+        /** WallPiece */
+        WallPiece: {
+            /** S0 Mm */
+            s0_mm: number;
+            /** S1 Mm */
+            s1_mm: number;
+            /** Z0 Mm */
+            z0_mm: number;
+            /** Z1 Mm */
+            z1_mm: number;
+        };
+        /**
+         * WallSide
+         * @description A side of a wall, relative to its a-to-b direction.
+         * @enum {string}
+         */
+        WallSide: "LEFT" | "RIGHT";
+        /**
+         * WarrantyIn
+         * @description MVP P8: every warranty carries its term, expiry and installer.
+         */
+        WarrantyIn: {
+            /** Document Id */
+            document_id?: string | null;
+            /**
+             * Expiry Date
+             * Format: date
+             */
+            expiry_date: string;
+            /** Installer */
+            installer: string;
+            /** Item */
+            item: string;
+            /** Spec Line Code */
+            spec_line_code?: string | null;
+            /** Term */
+            term: string;
+        };
+        /** WarrantyOut */
+        WarrantyOut: {
+            /** Document Id */
+            document_id: string | null;
+            /**
+             * Expiry Date
+             * Format: date
+             */
+            expiry_date: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Installer */
+            installer: string;
+            /** Item */
+            item: string;
+            /** Spec Line Code */
+            spec_line_code: string | null;
+            /** Term */
+            term: string;
         };
         /** WebhookAck */
         WebhookAck: {
@@ -11556,6 +13827,11 @@ export interface components {
             stage_number: number;
             state: components["schemas"]["StageState"];
         };
+        /**
+         * Zone
+         * @enum {string}
+         */
+        Zone: "PUBLIC" | "PRIVATE" | "SERVICE" | "CIRCULATION" | "OUTDOOR";
         /**
          * CaptureIn
          * @description Operations enter the auditor's signed report (no account, F.3).
@@ -11714,6 +13990,29 @@ export interface components {
             /** Entries */
             entries: components["schemas"]["ScheduleEntryIn"][];
         };
+        /** StatementIn */
+        p2b__buildplan__schemas__StatementIn: {
+            /** Note */
+            note: string;
+            /** Text */
+            text: string;
+        };
+        /** StatementOut */
+        p2b__buildplan__schemas__StatementOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Note */
+            note: string;
+            /** Status */
+            status: string;
+            /** Text */
+            text: string;
+            /** Version */
+            version: number;
+        };
         /** UploadIn */
         p2b__buildplan__schemas__UploadIn: {
             /** Content Type */
@@ -11848,6 +14147,35 @@ export interface components {
             /** Note */
             note?: string | null;
         };
+        /** DocumentIn */
+        p2b__professionals__schemas__DocumentIn: {
+            /** Category Code */
+            category_code?: string | null;
+            /**
+             * File Id
+             * Format: uuid
+             */
+            file_id: string;
+            /**
+             * Gstin
+             * @description GSTIN (business), where registered
+             * @default
+             */
+            gstin: string;
+            /**
+             * Issuer
+             * @description Issuing body (registration)
+             * @default
+             */
+            issuer: string;
+            kind: components["schemas"]["ProfessionalDocumentKind"];
+            /**
+             * Number
+             * @description Registration or licence number
+             * @default
+             */
+            number: string;
+        };
         /** DownloadOut */
         p2b__professionals__schemas__DownloadOut: {
             /** Url */
@@ -11887,6 +14215,83 @@ export interface components {
              * @enum {string}
              */
             purpose: "VERIFICATION_EVIDENCE" | "PORTFOLIO";
+            /** Size Bytes */
+            size_bytes: number;
+        };
+        /** StatementIn */
+        p2b__records__ops_router__StatementIn: {
+            /** Note */
+            note: string;
+            /** Text */
+            text: string;
+        };
+        /** StatementOut */
+        p2b__records__ops_router__StatementOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Note */
+            note: string;
+            /** Status */
+            status: string;
+            /** Text */
+            text: string;
+            /** Version */
+            version: number;
+        };
+        /** ChallengeOut */
+        p2b__records__schemas__ChallengeOut: {
+            /**
+             * Challenge Id
+             * Format: uuid
+             */
+            challenge_id: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Sent To */
+            sent_to: string;
+            /**
+             * Statement Id
+             * Format: uuid
+             */
+            statement_id: string;
+            /** Statement Text */
+            statement_text: string;
+            /** Statement Version */
+            statement_version: number;
+        };
+        /** DocumentIn */
+        p2b__records__schemas__DocumentIn: {
+            /**
+             * File Id
+             * Format: uuid
+             */
+            file_id: string;
+            kind: components["schemas"]["HandoverDocumentKind"];
+            /** Title */
+            title: string;
+        };
+        /** DownloadOut */
+        p2b__records__schemas__DownloadOut: {
+            /** Url */
+            url: string;
+        };
+        /** ReasonIn */
+        p2b__records__schemas__ReasonIn: {
+            /** Reason */
+            reason: string;
+        };
+        /** UploadIn */
+        p2b__records__schemas__UploadIn: {
+            /** Content Type */
+            content_type: string;
+            /** File Name */
+            file_name: string;
             /** Size Bytes */
             size_bytes: number;
         };
@@ -12003,6 +14408,29 @@ export interface components {
             /** Reason */
             reason: string;
         };
+        /** StatementIn */
+        p2b__rfq__schemas__StatementIn: {
+            /** Note */
+            note: string;
+            /** Text */
+            text: string;
+        };
+        /** StatementOut */
+        p2b__rfq__schemas__StatementOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Note */
+            note: string;
+            /** Status */
+            status: string;
+            /** Text */
+            text: string;
+            /** Version */
+            version: number;
+        };
         /** UploadIn */
         p2b__rfq__schemas__UploadIn: {
             /** Content Type */
@@ -12033,7 +14461,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["StatementIn"];
+                "application/json": components["schemas"]["p2b__buildplan__schemas__StatementIn"];
             };
         };
         responses: {
@@ -12043,7 +14471,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__StatementOut"];
                 };
             };
             /** @description Client error */
@@ -12083,7 +14511,95 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"][];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__StatementOut"][];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_statement_api_v1_admin_acknowledgement_statements_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__records__ops_router__StatementIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__records__ops_router__StatementOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_activate_statement_api_v1_admin_acknowledgement_statements__statement_id__activate_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                statement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__records__ops_router__StatementOut"];
                 };
             };
             /** @description Client error */
@@ -12875,7 +15391,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["StatementIn"];
+                "application/json": components["schemas"]["p2b__rfq__schemas__StatementIn"];
             };
         };
         responses: {
@@ -12885,7 +15401,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"];
+                    "application/json": components["schemas"]["p2b__rfq__schemas__StatementOut"];
                 };
             };
             /** @description Client error */
@@ -12925,7 +15441,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"][];
+                    "application/json": components["schemas"]["p2b__rfq__schemas__StatementOut"][];
                 };
             };
             /** @description Client error */
@@ -12960,7 +15476,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["StatementIn"];
+                "application/json": components["schemas"]["p2b__buildplan__schemas__StatementIn"];
             };
         };
         responses: {
@@ -12970,7 +15486,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__StatementOut"];
                 };
             };
             /** @description Client error */
@@ -13010,7 +15526,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"][];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__StatementOut"][];
                 };
             };
             /** @description Client error */
@@ -13730,7 +16246,45 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"][];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__StatementOut"][];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_statements_api_v1_ops_acknowledgement_statements_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__records__ops_router__StatementOut"][];
                 };
             };
             /** @description Client error */
@@ -14870,6 +17424,89 @@ export interface operations {
             };
         };
     };
+    get_record_api_v1_ops_build_records__record_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                record_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildRecordSnapshotOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_issue_api_v1_ops_build_records__record_id__issue_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                record_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_checklists_api_v1_ops_checklists_get: {
         parameters: {
             query?: never;
@@ -15362,6 +17999,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StaffDownloadLink"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ops_house_plan_api_v1_ops_house_plans__plan_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHousePlanDetailOut"];
                 };
             };
             /** @description Client error */
@@ -16707,6 +19384,53 @@ export interface operations {
             };
         };
     };
+    post_assemble_api_v1_ops_projects__project_id__build_record_assemble_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssembleIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     post_cancel_api_v1_ops_projects__project_id__cancel_post: {
         parameters: {
             query?: never;
@@ -16859,6 +19583,455 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OpsExecutionOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_handover_api_v1_ops_projects__project_id__handover_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_open_api_v1_ops_projects__project_id__handover_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_handover_file_api_v1_ops_projects__project_id__handover_files_post: {
+        parameters: {
+            query: {
+                file_name: string;
+            };
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/pdf": string;
+                "image/jpeg": string;
+                "image/png": string;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_document_api_v1_ops_projects__project_id__handover_documents_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__records__schemas__DocumentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_remove_document_api_v1_ops_projects__project_id__handover_documents__document_id__remove_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_issue_without_acknowledgement_api_v1_ops_projects__project_id__handover_issue_without_acknowledgement_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__records__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_ready_api_v1_ops_projects__project_id__handover_ready_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_reopen_api_v1_ops_projects__project_id__handover_reopen_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__records__schemas__ReasonIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_warranty_api_v1_ops_projects__project_id__handover_warranties_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WarrantyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsHandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    ops_house_plans_api_v1_ops_projects__project_id__house_plans_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanListOut"];
                 };
             };
             /** @description Client error */
@@ -18187,7 +21360,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"][];
+                    "application/json": components["schemas"]["p2b__rfq__schemas__StatementOut"][];
                 };
             };
             /** @description Client error */
@@ -18225,7 +21398,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatementOut"][];
+                    "application/json": components["schemas"]["p2b__buildplan__schemas__StatementOut"][];
                 };
             };
             /** @description Client error */
@@ -19816,7 +22989,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DocumentIn"];
+                "application/json": components["schemas"]["p2b__professionals__schemas__DocumentIn"];
             };
         };
         responses: {
@@ -20201,6 +23374,225 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["p2b__engagements__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_pro_handover_api_v1_pro_engagements__engagement_id__handover_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoverOut"] | null;
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_pro_document_api_v1_pro_engagements__engagement_id__handover_documents_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__records__schemas__DocumentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoverOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_handover_upload_api_v1_pro_engagements__engagement_id__handover_uploads_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["p2b__records__schemas__UploadIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadTicketOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_handover_upload_complete_api_v1_pro_engagements__engagement_id__handover_uploads__file_id__complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                engagement_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_pro_warranty_api_v1_pro_engagements__engagement_id__handover_warranties_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                engagement_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WarrantyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoverOut"];
                 };
             };
             /** @description Client error */
@@ -22443,6 +25835,129 @@ export interface operations {
             };
         };
     };
+    get_build_record_api_v1_projects__project_id__build_record_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildRecordsOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_build_record_version_api_v1_projects__project_id__build_record_versions__version_no__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                version_no: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildRecordSnapshotOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_build_record_file_api_v1_projects__project_id__build_record_versions__version_no___form__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                version_no: number;
+                form: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__records__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_connection_target_api_v1_projects__project_id__connection_target_get: {
         parameters: {
             query: {
@@ -23340,6 +26855,480 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FileView"][];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_handover_api_v1_projects__project_id__handover_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoverViewOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_acknowledge_api_v1_projects__project_id__handover_acknowledge_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AcknowledgeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoverViewOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_acknowledgement_code_api_v1_projects__project_id__handover_acknowledgement_code_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__records__schemas__ChallengeOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_handover_document_api_v1_projects__project_id__handover_documents__document_id__url_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["p2b__records__schemas__DownloadOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_house_plans_api_v1_projects__project_id__house_plans_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanListOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_house_plan_api_v1_projects__project_id__house_plans_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenerateHousePlanRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanSummaryOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_house_plan_api_v1_projects__project_id__house_plans__plan_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanDetailOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_house_plan_ops_api_v1_projects__project_id__house_plans__plan_id__ops_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EditHousePlanRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EditHousePlanOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_house_plan_revisions_api_v1_projects__project_id__house_plans__plan_id__revisions_get: {
+        parameters: {
+            query?: {
+                before?: number | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanRevisionListOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_house_plan_versions_api_v1_projects__project_id__house_plans__plan_id__versions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanVersionListOut"];
+                };
+            };
+            /** @description Client error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Server error */
+            "5XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    post_house_plan_version_api_v1_projects__project_id__house_plans__plan_id__versions_post: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description A new UUID for each action; reuse it only to retry the same request. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                project_id: string;
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveHousePlanVersionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HousePlanVersionOut"];
                 };
             };
             /** @description Client error */

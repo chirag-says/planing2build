@@ -1,0 +1,358 @@
+{
+ "_note": "Checkpoint 1 baseline, recorded 2026-10-06 for benchmark_cp2.json, extended 2026-10-07 to benchmark_cp2_1_quality.json and benchmark_cp2_2_quality.json, and rescored 2026-10-07 when Checkpoint 2.2 added the ROOM_SIZE_OUTLIER term (plan bodies unchanged): the DETERMINISTIC_MVP solver on the frozen Checkpoint 1 synthetic ruleset (ruleset_synthetic_cp1_test_only.json), each VALID plan scored by the current Scorer with the synthetic objective weights. tests/test_houseplan_benchmark.py checks the live baseline still equals this record.",
+ "cases": {
+  "1bhk_25x40_south_small": {
+   "outcome": "INFEASIBLE"
+  },
+  "1bhk_30x40_no_parking": {
+   "aspect_violations": 3,
+   "body_sha256": "be7bf6e9ba2e271c468d7e6dd3b79bbf18df0448a2c42d72a2fc87f50c211177",
+   "circulation_share_milli": 102,
+   "outcome": "VALID",
+   "quality": 7093
+  },
+  "2bhk_12x40_too_narrow": {
+   "outcome": "INFEASIBLE"
+  },
+  "2bhk_22x60_narrow_deep": {
+   "outcome": "INFEASIBLE"
+  },
+  "2bhk_25x50_narrow_open_plan": {
+   "outcome": "INFEASIBLE"
+  },
+  "2bhk_30x45_common_bath_only": {
+   "outcome": "INFEASIBLE"
+  },
+  "2bhk_30x50_north_twowheeler_open": {
+   "aspect_violations": 5,
+   "body_sha256": "97f446ba0395aba89966d2ab58d9f66e1e5be1af7e9decca1d9d58a56b31fd6b",
+   "circulation_share_milli": 117,
+   "outcome": "VALID",
+   "quality": 12270
+  },
+  "2bhk_30x55_west_twowheeler": {
+   "aspect_violations": 4,
+   "body_sha256": "65fff2d9705c14b5568542d37e878b449fe3977b0d62eb7fd482ece7a91a1ad5",
+   "circulation_share_milli": 121,
+   "outcome": "VALID",
+   "quality": 14323
+  },
+  "2bhk_30x60_two_cars_too_wide": {
+   "outcome": "INFEASIBLE"
+  },
+  "2bhk_35x50_south_car": {
+   "outcome": "INFEASIBLE"
+  },
+  "2bhk_35x55_utility_no_vastu": {
+   "outcome": "INFEASIBLE"
+  },
+  "2bhk_40x80_west_two_cars": {
+   "aspect_violations": 6,
+   "body_sha256": "1ba2ffbc6c981041a78d139626be33dad9ad0f30312bf0999504e968e3315973",
+   "circulation_share_milli": 94,
+   "outcome": "VALID",
+   "quality": 60178
+  },
+  "3bhk_20x30_too_small": {
+   "outcome": "INFEASIBLE"
+  },
+  "3bhk_25x30_setbacks_eat_plot": {
+   "outcome": "INFEASIBLE"
+  },
+  "3bhk_30x60_single_car_vastu": {
+   "outcome": "INFEASIBLE"
+  },
+  "3bhk_35x70_east_car": {
+   "aspect_violations": 4,
+   "body_sha256": "8eb3ca6282ce274ca93421cbeac5375b7bd0217b49db9965244ab0cd0bebed24",
+   "circulation_share_milli": 105,
+   "outcome": "VALID",
+   "quality": 12107
+  },
+  "3bhk_40x60_asymmetric_setbacks": {
+   "outcome": "INFEASIBLE"
+  },
+  "3bhk_40x60_north_one_car": {
+   "outcome": "INFEASIBLE"
+  },
+  "3bhk_40x65_east_puja": {
+   "aspect_violations": 7,
+   "body_sha256": "bc430b40346fd7ad8eadb0f9301a919ed8a0c975668e7c19063dfbb21863b5b5",
+   "circulation_share_milli": 85,
+   "outcome": "VALID",
+   "quality": 18339
+  },
+  "3bhk_45x70_two_cars_puja": {
+   "aspect_violations": 7,
+   "body_sha256": "0362a23c878667ff67c38ef820a087925d1181dfd6243a3cc2b2e0d7f8bd5d38",
+   "circulation_share_milli": 81,
+   "outcome": "VALID",
+   "quality": 33322
+  },
+  "3bhk_50x60_wide_two_cars": {
+   "aspect_violations": 8,
+   "body_sha256": "acec00f86a1a19dc2a3f327323316399be68dab99f03a1810b8a68f70f92281c",
+   "circulation_share_milli": 70,
+   "outcome": "VALID",
+   "quality": 33047
+  },
+  "4bhk_25x40_overfull": {
+   "outcome": "INFEASIBLE"
+  },
+  "4bhk_30x40_overfull": {
+   "outcome": "INFEASIBLE"
+  },
+  "4bhk_40x90_deep_car_utility": {
+   "aspect_violations": 10,
+   "body_sha256": "7dd30eca7db5c303fa57159d3c44efbe6f45d0470b13d39d1f77f5b1cca37300",
+   "circulation_share_milli": 94,
+   "outcome": "VALID",
+   "quality": 29724
+  },
+  "4bhk_45x75_two_cars_puja": {
+   "outcome": "INFEASIBLE"
+  },
+  "4bhk_50x80_large_two_cars": {
+   "aspect_violations": 10,
+   "body_sha256": "7bb4f896c637227f606c46fb0b9cd2b32fa602c3a9924baf68b1c06006f3192e",
+   "circulation_share_milli": 76,
+   "outcome": "VALID",
+   "quality": 49507
+  },
+  "c01_3bhk_40x70_car_attached2": {
+   "aspect_violations": 8,
+   "body_sha256": "47481c0df08f96a1d2be0ac6e5cb74334714e63d7c7a033d7708cec57320e6b0",
+   "circulation_share_milli": 88,
+   "outcome": "VALID",
+   "quality": 18090
+  },
+  "c02_2bhk_35x60_car_utility": {
+   "aspect_violations": 4,
+   "body_sha256": "e50f142aa4ab94b8df89816e7e13de505f130c4aec29021d96dd5b43a0d74f65",
+   "circulation_share_milli": 100,
+   "outcome": "VALID",
+   "quality": 11652
+  },
+  "c03_3bhk_45x80_two_cars_puja": {
+   "aspect_violations": 9,
+   "body_sha256": "d0f4abeebb6d2408389510b4c879235dd6682d841db38901c71ffcdf240dbb29",
+   "circulation_share_milli": 84,
+   "outcome": "VALID",
+   "quality": 38658
+  },
+  "c04_4bhk_55x90_two_cars": {
+   "aspect_violations": 10,
+   "body_sha256": "3b877611bd62c189c417f07362678e2a03fc0b830fccaede9932cccf83a3ef84",
+   "circulation_share_milli": 69,
+   "outcome": "VALID",
+   "quality": 60199
+  },
+  "c05_4bhk_60x100_two_cars_puja_utility": {
+   "aspect_violations": 12,
+   "body_sha256": "e0f08959b6232361848c7d4677393f83c81b425fa9a9b13b98a31b60d7a09081",
+   "circulation_share_milli": 65,
+   "outcome": "VALID",
+   "quality": 89694
+  },
+  "c06_3bhk_50x70_car": {
+   "aspect_violations": 7,
+   "body_sha256": "0a6877d6680f350bde39c18f98766ccee6877089ea2565afe756e1859849585e",
+   "circulation_share_milli": 69,
+   "outcome": "VALID",
+   "quality": 31069
+  },
+  "c07_2bhk_30x60_twowheeler_attached": {
+   "aspect_violations": 5,
+   "body_sha256": "24d0cd82bcdb335c79332fb57a68bc6b49f03f1732ee9f6957024300e6837e27",
+   "circulation_share_milli": 124,
+   "outcome": "VALID",
+   "quality": 16270
+  },
+  "c08_2bhk_25x65_no_car": {
+   "aspect_violations": 5,
+   "body_sha256": "dc92c85037f8241be074ff3cdf05420a5b141c7ad74a361143f5bf713cf5adfc",
+   "circulation_share_milli": 148,
+   "outcome": "VALID",
+   "quality": 13484
+  },
+  "c09_3bhk_30x80_deep_car": {
+   "aspect_violations": 4,
+   "body_sha256": "93482bb256f93ea15a65f8f1b0f05234dbd4342bc85c1d7c4efe57e8d881b14e",
+   "circulation_share_milli": 125,
+   "outcome": "VALID",
+   "quality": 18939
+  },
+  "c10_2bhk_60x30_wide_twowheeler": {
+   "outcome": "INFEASIBLE"
+  },
+  "c11_3bhk_70x35_wide_car": {
+   "outcome": "INFEASIBLE"
+  },
+  "c12_2bhk_45x45_square_twowheeler_puja": {
+   "outcome": "INFEASIBLE"
+  },
+  "c13_1bhk_30x45_car": {
+   "aspect_violations": 1,
+   "body_sha256": "94a15edc6df199e56df97b35ca696a6640a04db81fe27e14b9ea05a64ac26ce3",
+   "circulation_share_milli": 95,
+   "outcome": "VALID",
+   "quality": 3629
+  },
+  "c14_2bhk_30x45_open_plan_twowheeler": {
+   "aspect_violations": 4,
+   "body_sha256": "13067a4aafda34ce0f969bdc4e9d24f6172269dad219986930b70a60fc9282ef",
+   "circulation_share_milli": 112,
+   "outcome": "VALID",
+   "quality": 8900
+  },
+  "c15_3bhk_40x60_all_attached_car": {
+   "aspect_violations": 6,
+   "body_sha256": "e8d3d2772b500ebc4a926955b8dc866b0f8632dad2f3ebbd7e008d77de22cdf8",
+   "circulation_share_milli": 82,
+   "outcome": "VALID",
+   "quality": 17239
+  },
+  "c16_4bhk_45x80_car_utility": {
+   "aspect_violations": 9,
+   "body_sha256": "506e8b4f62bdb76518439100f2bf8d65e4ede8e8c69d07fbe7762470e940af39",
+   "circulation_share_milli": 78,
+   "outcome": "VALID",
+   "quality": 35958
+  },
+  "c17_3bhk_35x60_car_puja": {
+   "outcome": "INFEASIBLE"
+  },
+  "c18_2bhk_40x40_car": {
+   "outcome": "INFEASIBLE"
+  },
+  "c19_3bhk_20x40_too_small": {
+   "outcome": "INFEASIBLE"
+  },
+  "c20_4bhk_25x50_overfull": {
+   "outcome": "INFEASIBLE"
+  },
+  "c21_2bhk_15x50_too_narrow": {
+   "outcome": "INFEASIBLE"
+  },
+  "c22_2bhk_30x25_shallow_car": {
+   "outcome": "INFEASIBLE"
+  },
+  "c23_4bhk_50x90_two_cars_puja": {
+   "aspect_violations": 10,
+   "body_sha256": "ec7389f610152838e182b5e4cb784ee23f161e7a3eaa9b8e75d21c1c927eb81d",
+   "circulation_share_milli": 78,
+   "outcome": "VALID",
+   "quality": 48087
+  },
+  "c24_3bhk_60x45_wide_car_utility": {
+   "outcome": "INFEASIBLE"
+  },
+  "c25_2bhk_35x70_twowheeler_puja": {
+   "aspect_violations": 6,
+   "body_sha256": "962ca3c1fbe5e09b42af054a518d98a099269fdd291538e851369c37f8d99078",
+   "circulation_share_milli": 114,
+   "outcome": "VALID",
+   "quality": 24134
+  },
+  "prop_deep_25x90": {
+   "outcome": "INFEASIBLE"
+  },
+  "prop_deep_30x70": {
+   "outcome": "INFEASIBLE"
+  },
+  "prop_mid_40x55": {
+   "aspect_violations": 4,
+   "body_sha256": "27f44ce1e048a6c8a366f1e5633b75ef79222b2b31ff29844b6b4e607f720047",
+   "circulation_share_milli": 79,
+   "outcome": "VALID",
+   "quality": 13756
+  },
+  "prop_square_45x45": {
+   "outcome": "INFEASIBLE"
+  },
+  "prop_very_deep_22x100": {
+   "outcome": "INFEASIBLE"
+  },
+  "prop_very_wide_80x28": {
+   "outcome": "INFEASIBLE"
+  },
+  "prop_wide_60x35": {
+   "outcome": "INFEASIBLE"
+  },
+  "prop_wide_70x30": {
+   "outcome": "INFEASIBLE"
+  },
+  "q01_2bhk_45x35_wide_shallow_car": {
+   "outcome": "INFEASIBLE"
+  },
+  "q02_3bhk_60x40_wide_two_cars": {
+   "outcome": "INFEASIBLE"
+  },
+  "q03_1bhk_20x45_narrow_no_car": {
+   "outcome": "INFEASIBLE"
+  },
+  "q04_2bhk_25x60_narrow_twowheeler": {
+   "outcome": "INFEASIBLE"
+  },
+  "q05_3bhk_30x75_deep_car": {
+   "aspect_violations": 4,
+   "body_sha256": "92b95b0906be283487c2fde9873ba5d2294c88aeedb9d94f0d7e7fee86540db2",
+   "circulation_share_milli": 123,
+   "outcome": "VALID",
+   "quality": 14754
+  },
+  "q06_4bhk_60x90_large_two_cars_puja_utility": {
+   "aspect_violations": 11,
+   "body_sha256": "81b0048434bde4a7611f73e98e541134d0f945e7e1452b36f8101cb7187818d8",
+   "circulation_share_milli": 64,
+   "outcome": "VALID",
+   "quality": 84653
+  },
+  "q07_3bhk_50x50_square_car_utility": {
+   "outcome": "INFEASIBLE"
+  },
+  "q08_2bhk_35x40_compact_open_plan": {
+   "aspect_violations": 3,
+   "body_sha256": "be8e5e9de85cbaa24f353f35f0111d959eff9cf8b916adadfa6e10273dc89b09",
+   "circulation_share_milli": 84,
+   "outcome": "VALID",
+   "quality": 11031
+  },
+  "q09_2bhk_30x40_compact_car": {
+   "outcome": "INFEASIBLE"
+  },
+  "q10_3bhk_40x70_all_attached": {
+   "aspect_violations": 8,
+   "body_sha256": "a764b41655127d2cbc3282ef654aa5c8bf15bf14dd1670275a4b11b13074558c",
+   "circulation_share_milli": 88,
+   "outcome": "VALID",
+   "quality": 18618
+  },
+  "q11_2bhk_40x50_twowheeler_utility_puja": {
+   "aspect_violations": 8,
+   "body_sha256": "9c5031c4cb416d8a806f83df0a662f325b332e2647f2fde36721c00043015286",
+   "circulation_share_milli": 88,
+   "outcome": "VALID",
+   "quality": 25275
+  },
+  "q12_4bhk_50x100_very_large_two_cars": {
+   "aspect_violations": 10,
+   "body_sha256": "b45312eef930d226c072d04bf4bb6680d4ed656b163c45bbbc4ca035357a8a24",
+   "circulation_share_milli": 79,
+   "outcome": "VALID",
+   "quality": 53166
+  },
+  "q13_3bhk_35x45_tight_car": {
+   "outcome": "INFEASIBLE"
+  },
+  "q14_1bhk_25x30_tiny_no_car": {
+   "outcome": "INFEASIBLE"
+  },
+  "q15_2bhk_50x30_wide_shallow_twowheeler": {
+   "outcome": "INFEASIBLE"
+  },
+  "q16_3bhk_45x60_puja_two_cars_utility": {
+   "outcome": "INFEASIBLE"
+  }
+ }
+}

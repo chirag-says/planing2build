@@ -1,0 +1,3 @@
+Build Record draft assembled
+---
+A draft Build Record of project $code is assembled. Review and issue it.

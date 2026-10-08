@@ -39,8 +39,8 @@ from p2b.records import service
 from p2b.records.models import BuildRecord
 from p2b.records.schemas import (
     AcknowledgeIn,
-    BuildRecordsOut,
     BuildRecordSnapshotOut,
+    BuildRecordsOut,
     ChallengeOut,
     DocumentIn,
     DownloadOut,
@@ -107,7 +107,9 @@ async def get_handover(
     return await _family_view(db, actor, project_id)
 
 
-@router.get("/projects/{project_id}/handover/documents/{document_id}/url", response_model=DownloadOut)
+@router.get(
+    "/projects/{project_id}/handover/documents/{document_id}/url", response_model=DownloadOut
+)
 async def get_handover_document(
     project_id: uuid.UUID, document_id: uuid.UUID, request: Request, db: DbSession,
     actor: Annotated[Actor, HOMEOWNER],

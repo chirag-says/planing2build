@@ -63,7 +63,7 @@ ignore = ["N818"]
 [tool.mypy]
 strict = true
 python_version = "3.12"
-mypy_path = "src"
+mypy_path = "src:scripts"
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
@@ -86,6 +86,8 @@ concurrency = ["greenlet", "thread"]
 # Module boundaries (IMPLEMENTATION_CONTRACT section 4; ADR-019).
 [tool.importlinter]
 root_package = "p2b"
+# Lets the houseplans engine contract forbid third-party packages (sqlalchemy, fastapi, ...).
+include_external_packages = true
 
 [[tool.importlinter.contracts]]
 name = "core imports no module"
@@ -93,8 +95,8 @@ type = "forbidden"
 source_modules = ["p2b.core"]
 forbidden_modules = [
     "p2b.identity", "p2b.audit", "p2b.catalog", "p2b.integrations", "p2b.projects", "p2b.documents",
-    "p2b.operations", "p2b.construction", "p2b.specification", "p2b.notifications", "p2b.designs", "p2b.professionals",
-    "p2b.billing", "p2b.engagements", "p2b.buildplan", "p2b.rfq", "p2b.money", "p2b.assurance",
+    "p2b.operations", "p2b.construction", "p2b.specification", "p2b.notifications", "p2b.designs", "p2b.houseplans", "p2b.professionals",
+    "p2b.billing", "p2b.engagements", "p2b.buildplan", "p2b.rfq", "p2b.money", "p2b.assurance", "p2b.records",
 ]
 
 [[tool.importlinter.contracts]]
@@ -103,8 +105,8 @@ type = "forbidden"
 source_modules = ["p2b.integrations"]
 forbidden_modules = [
     "p2b.identity", "p2b.audit", "p2b.catalog", "p2b.projects", "p2b.documents", "p2b.operations",
-    "p2b.construction", "p2b.specification", "p2b.notifications", "p2b.designs", "p2b.professionals",
-    "p2b.billing", "p2b.engagements", "p2b.buildplan", "p2b.rfq", "p2b.money", "p2b.assurance",
+    "p2b.construction", "p2b.specification", "p2b.notifications", "p2b.designs", "p2b.houseplans", "p2b.professionals",
+    "p2b.billing", "p2b.engagements", "p2b.buildplan", "p2b.rfq", "p2b.money", "p2b.assurance", "p2b.records",
 ]
 
 [[tool.importlinter.contracts]]
@@ -113,19 +115,32 @@ type = "forbidden"
 source_modules = ["p2b.billing"]
 forbidden_modules = [
     "p2b.professionals", "p2b.construction", "p2b.specification", "p2b.engagements",
-    "p2b.buildplan", "p2b.rfq", "p2b.money", "p2b.assurance",
+    "p2b.buildplan", "p2b.rfq", "p2b.money", "p2b.assurance", "p2b.records",
 ]
 # Billing reads projects through their interface, which knows the workspace; billing itself
 # never imports these modules.
 allow_indirect_imports = true
 
 [[tool.importlinter.contracts]]
+name = "houseplans engine is pure: no database, web, jobs or other module (ADR-025)"
+type = "forbidden"
+source_modules = ["p2b.houseplans.engine"]
+forbidden_modules = [
+    "p2b.identity", "p2b.audit", "p2b.catalog", "p2b.integrations", "p2b.projects", "p2b.documents",
+    "p2b.operations", "p2b.construction", "p2b.specification", "p2b.notifications", "p2b.designs",
+    "p2b.professionals", "p2b.billing", "p2b.engagements", "p2b.buildplan", "p2b.rfq", "p2b.money",
+    "p2b.assurance", "p2b.records", "p2b.houseplans.models", "p2b.houseplans.service",
+    "p2b.houseplans.router", "p2b.houseplans.ops_router", "p2b.houseplans.rulesets",
+    "p2b.houseplans.jobs", "p2b.houseplans.handlers", "p2b.core.db", "p2b.core.config",
+    "sqlalchemy", "fastapi", "procrastinate", "httpx", "boto3",
+]
+[[tool.importlinter.contracts]]
 name = "modules talk to each other only through interface.py"
 type = "independence"
 modules = [
     "p2b.identity", "p2b.audit", "p2b.catalog", "p2b.projects", "p2b.documents", "p2b.operations",
-    "p2b.construction", "p2b.specification", "p2b.notifications", "p2b.designs", "p2b.professionals",
-    "p2b.billing", "p2b.engagements", "p2b.buildplan", "p2b.rfq", "p2b.money", "p2b.assurance",
+    "p2b.construction", "p2b.specification", "p2b.notifications", "p2b.designs", "p2b.houseplans", "p2b.professionals",
+    "p2b.billing", "p2b.engagements", "p2b.buildplan", "p2b.rfq", "p2b.money", "p2b.assurance", "p2b.records",
 ]
 # Allowed: a module may call another module's interface.py, never its other files.
 ignore_imports = [
@@ -143,5 +158,6 @@ ignore_imports = [
     "p2b.** -> p2b.designs.interface",
     "p2b.** -> p2b.rfq.interface",
     "p2b.** -> p2b.assurance.interface",
+    "p2b.** -> p2b.money.interface",
+    "p2b.** -> p2b.records.interface",
 ]
-# p2b.money.interface is added here once another module calls it (nothing does in 3.7A).

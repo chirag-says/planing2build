@@ -493,6 +493,24 @@ Owner `assurance` (ADR-008 name). Section 4.12's design is [SUPERSEDED] where it
 | `stage_instances` (construction) | `gate_status` set only through `construction.interface.set_gate_status`, derived from the records; each change is a `construction_events` row with subject GATE |
 | `file_objects`, `otp_challenges` | Purposes INSPECTION_EVIDENCE, INSPECTION_REPORT; confirmation purpose SUBMIT_INSPECTION |
 
+### 4.23 As built for Slice 3.7C, handover and Build Record (migration `0018_records`, 2026-10-06)
+
+Owner `records` (ADR-008 name). Section 4.13's design is [SUPERSEDED] where it differs: no share tokens, transfers or opt-ins (EX-17), no material records (EX-16). Guards: lifecycle columns only, `p2b_child_editable` (documents and warranties only while the handover is OPEN), `p2b_records_frozen` (a handover never changes once ACKNOWLEDGED or ISSUED_BY_OPERATIONS; a Build Record version never changes once ISSUED except to SUPERSEDED), append-only history.
+
+| Table | As built |
+|---|---|
+| `acknowledgement_statements` | Versioned statement template ($project_code), one ACTIVE; v1 seeded ACTIVE as functional wording, IMPLEMENTED / PENDING FINAL CLIENT + LEGAL CONFIRMATION; reference data (user ids without foreign keys) |
+| `handovers` | One per project: OPEN, READY, ACKNOWLEDGED (owner, time, challenge, statement and its filled-in text, CHECK complete) or ISSUED_BY_OPERATIONS (actor, time, reason; CHECK: no acknowledgement fields, EX-15) |
+| `handover_documents` | Kind WARRANTY, MANUAL, DRAWING, CERTIFICATE, PHOTO, OTHER; title; HANDOVER_DOCUMENT file; who added it |
+| `warranties` | Item, term, expiry date, installer (MVP P8), optional specification line and document |
+| `build_records` | Versions per project: DRAFT (one), ISSUED (one), SUPERSEDED; basis ACKNOWLEDGED or ISSUED_BY_OPERATIONS; snapshot jsonb (schema version 1) and its sha256; PDF (BUILD_RECORD_DOCUMENT) and JSON export (BUILD_RECORD_EXPORT) with their sha256; a version after the first names its correction reason (CHECK) |
+| `records_events` | Append-only history |
+| `file_objects`, `otp_challenges` | Purposes HANDOVER_DOCUMENT, BUILD_RECORD_DOCUMENT, BUILD_RECORD_EXPORT; confirmation purpose ACKNOWLEDGE_HANDOVER |
+
+### 4.24 As built for the concept floor plan, Checkpoint 1 (migration `0019_houseplans`, 2026-10-06)
+
+Owner `houseplans` (ADR-025). Design and columns: `02_IMPLEMENTATION/AI_DESIGN_ENGINE_CHECKPOINT_1.md` sections C and E; as built: `AI_DESIGN_ENGINE_CHECKPOINT_1_REPORT.md` section 3. Plan states are QUEUED, RUNNING, VALID, INFEASIBLE, FAILED (CP1-04). Tables: `layout_rulesets` (versioned rule data, DRAFT / APPROVED / PUBLISHED / RETIRED, per-value sources), `house_plans` (generation state, intent, head document in integer millimetres, head validity and report, `is_authoritative` false by CHECK), `house_plan_versions` (append-only named snapshots with content hash). Additive only. `house_plan_ops` (append-only operation log) arrives with the editing checkpoint, not in 0019.
+
 ## 5. Geospatial design
 
 - Projects store the plot as a `geography(Point, 4326)` chosen by a map pin (the address text is secondary). Professionals store a base point and optional service polygons; a profile without polygons uses `base_geom` plus `service_radius_km`.

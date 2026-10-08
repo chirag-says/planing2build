@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { BuildProgress } from "@/components/plan2build/build-progress";
 import { AssuranceSection } from "@/components/plan2build/assurance-view";
 import { ActionButton } from "@/components/plan2build/build-plan";
+import { BuildRecordSection, HandoverSection } from "@/components/plan2build/records-view";
 import { SectionHeader } from "@/components/plan2build/page-header";
 import { TextAction } from "@/components/plan2build/rfq";
 import { serverApi } from "@/lib/api/server";
@@ -36,12 +37,16 @@ export default async function ProjectConstructionPage({
   if (!hasStagesAndLines(project.status)) redirect(`/projects/${projectId}`);
   const api = await serverApi();
   const path = { params: { path: { project_id: projectId } } };
-  const [execution, marks, assurance] = await Promise.all([
+  const [execution, marks, assurance, handover, records] = await Promise.all([
     api.GET("/api/v1/projects/{project_id}/execution", path),
     api.GET("/api/v1/projects/{project_id}/payment-marks", path),
     api.GET("/api/v1/projects/{project_id}/assurance", path),
+    api.GET("/api/v1/projects/{project_id}/handover", path),
+    api.GET("/api/v1/projects/{project_id}/build-record", path),
   ]);
-  if (!execution.data || !marks.data || !assurance.data) throw new Error("the stages could not be loaded");
+  if (!execution.data || !marks.data || !assurance.data || !handover.data || !records.data) {
+    throw new Error("the stages could not be loaded");
+  }
   const t = getTranslator("Execution");
   const w = getTranslator("Workspace");
   const data = execution.data;
@@ -91,6 +96,8 @@ export default async function ProjectConstructionPage({
         ))}
       </ol>
       <AssuranceSection data={assurance.data} reportBase={`/api/v1/projects/${projectId}/inspections`} />
+      <HandoverSection projectId={projectId} view={handover.data} />
+      <BuildRecordSection projectId={projectId} records={records.data} />
       <section aria-labelledby="marks" className="flex flex-col gap-3">
         <SectionHeader id="marks" title={t("marks")} description={t("marksIntro")} />
         <ul className="flex flex-col gap-2">

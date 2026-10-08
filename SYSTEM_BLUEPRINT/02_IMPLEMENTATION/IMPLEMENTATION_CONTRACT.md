@@ -193,7 +193,8 @@ A default written in an architecture document (an AQ default) may be implemented
 3. No brand recommendation, no paid signal, no price ranking, no hidden signal: the configuration validator enforces it and its deny-list test must pass.
 4. Every recommendation is reproducible from its stored snapshot, configuration version and seed, and carries written reasons.
 5. No personal data in any prompt or provider request; tests assert it.
-6. No language model at the POC.
+6. No language model at the POC. The concept floor plan path (PD-28, ADR-025) uses none; natural-language editing waits for an amendment to this rule.
+7. Concept floor plans (PD-28): generated only by the deterministic `houseplans` engine; never presented, referenced or exported unless the independent validator reports no errors; `is_authoritative` is false by CHECK; rule values only from a PUBLISHED layout ruleset in production.
 
 ## 19. Frontend
 
@@ -237,7 +238,7 @@ A default written in an architecture document (an AQ default) may be implemented
 7. Request handlers calling providers that the user is not waiting on, or enqueueing jobs directly.
 8. Payment amounts between homeowner and professional anywhere (CD-09); any path that moves construction money (CD-01).
 9. Brand recommendation, price-ranked or price-sorted listings, paid prominence, star ratings.
-10. AI-generated drawings or structural design; a model output that commits a business state.
+10. AI-generated drawings or structural design; a model output that commits a business state. (A PD-28 concept floor plan is computed by a deterministic engine and is not a drawing; it is governed by section 18 rule 7.)
 11. Hard deletes of transactional or audit records; UPDATE on append-only tables.
 12. P2 or P3 data in logs, events, analytics or provider requests.
 13. String-built SQL; `dangerouslySetInnerHTML`; shell calls with user input.

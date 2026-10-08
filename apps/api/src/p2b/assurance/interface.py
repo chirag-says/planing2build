@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from p2b.assurance import inspections
 from p2b.assurance.common import NOT_CLOSED
 from p2b.assurance.models import (
     AuditorAppointment,
@@ -16,6 +17,7 @@ from p2b.assurance.models import (
     InspectionReport,
     NonConformance,
 )
+from p2b.assurance.pdf import outcome
 from p2b.construction.interface import stage_facts
 from p2b.engagements.interface import engagement_facts
 from p2b.professionals.interface import profile_names

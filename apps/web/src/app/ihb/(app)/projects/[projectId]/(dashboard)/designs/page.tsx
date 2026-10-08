@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { DesignGallery } from "@/components/plan2build/design-gallery";
 import { SectionHeader } from "@/components/plan2build/page-header";
+import { PlanList } from "@/components/plan2build/plan/plan-list";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
 import { dashboardOpen, loadProject, projectTitle } from "@/lib/project";
@@ -16,7 +17,7 @@ export async function generateMetadata({
   return { title: await projectTitle((await params).projectId, area) };
 }
 
-// Generate My Design and the gallery (Slice 3.1). Illustrative concepts only.
+// Concept floor plans (Checkpoint 3), then Generate My Design and the gallery (Slice 3.1).
 export default async function ProjectDesignsPage({
   params,
 }: {
@@ -31,9 +32,12 @@ export default async function ProjectDesignsPage({
   if (!data) throw new Error("the designs could not be loaded");
   const t = getTranslator("Designs");
   return (
-    <section aria-labelledby="designs" className="flex flex-col gap-4">
-      <SectionHeader id="designs" title={t("title")} description={t("intro")} />
-      <DesignGallery projectId={project.project_id} initial={data} />
-    </section>
+    <>
+      <PlanList projectId={project.project_id} />
+      <section aria-labelledby="designs" className="flex flex-col gap-4">
+        <SectionHeader id="designs" title={t("title")} description={t("intro")} />
+        <DesignGallery projectId={project.project_id} initial={data} />
+      </section>
+    </>
   );
 }

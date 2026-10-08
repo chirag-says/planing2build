@@ -17,6 +17,11 @@ from p2b.core.vocabulary import (
     ContactKind,
     OtpPurpose,
     OtpState,
+    PlanFailureReason,
+    PlanGenerationState,
+    PlanOpReason,
+    PlanValidity,
+    RulesetStatus,
     SecuritySeverity,
     UserStatus,
 )
@@ -56,6 +61,14 @@ async def test_migrations_produce_exactly_the_model_schema(database: Database) -
         ("otp_challenges", "ck_otp_challenges_purpose", OtpPurpose),
         ("otp_challenges", "ck_otp_challenges_contact_kind", ContactKind),
         ("otp_challenges", "ck_otp_challenges_state", OtpState),
+        # Concept floor plans (Checkpoint 1, migration 0019).
+        ("layout_rulesets", "ck_layout_rulesets_status", RulesetStatus),
+        ("house_plans", "ck_house_plans_state", PlanGenerationState),
+        ("house_plans", "ck_house_plans_failure_reason", PlanFailureReason),
+        ("house_plans", "ck_house_plans_head_validity", PlanValidity),
+        ("house_plan_versions", "ck_house_plan_versions_validity", PlanValidity),
+        # Operation log (Checkpoint 3, migration 0020).
+        ("house_plan_ops", "ck_house_plan_ops_reason", PlanOpReason),
     ],
 )
 async def test_check_constraints_equal_the_vocabulary(

@@ -9,6 +9,9 @@
   "scripts": {
     "local:up": "docker compose -f infra/local/compose.yml up -d --build --wait",
     "local:down": "docker compose -f infra/local/compose.yml down",
+    "local:up:houseplans": "docker compose -f infra/local/compose.yml -f infra/local/compose.houseplans.yml up -d --build --wait",
+    "local:houseplans:ruleset": "cd apps/api && uv run python scripts/local_houseplans.py seed-ruleset",
+    "local:reset-rate-limits": "cd apps/api && uv run python scripts/local_houseplans.py reset-rate-limits",
     "local:logs": "docker compose -f infra/local/compose.yml logs -f api worker",
     "local:demo-rates": "docker compose -f infra/local/compose.yml exec api python -m p2b.catalog.demo_rate_card",
     "dev:web": "pnpm --filter @p2b/web dev",

@@ -3,6 +3,7 @@ payment marks for the Build Record (I.1): yes or no with times, never an amount.
 imports this module (import-linter)."""
 
 import uuid
+from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,10 +11,10 @@ from p2b.construction.interface import milestone_stages
 from p2b.money.service import milestones
 
 
-async def marks_summary(session: AsyncSession, project_id: uuid.UUID) -> list[dict[str, object]]:
+async def marks_summary(session: AsyncSession, project_id: uuid.UUID) -> list[dict[str, Any]]:
     stages = await milestone_stages(session, project_id)
     by_id = {s.id: s for s in stages}
-    out = []
+    out: list[dict[str, Any]] = []
     for m in await milestones(session, project_id, [(s.id, s.state) for s in stages]):
         stage = by_id[m.stage_instance_id]
         out.append({

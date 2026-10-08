@@ -86,10 +86,10 @@ export function PageContainer({
   className,
 }: {
   children: ReactNode;
-  width?: "narrow" | "default" | "wide";
+  width?: "narrow" | "default" | "wide" | "full";
   className?: string;
 }) {
-  const max = { narrow: "max-w-md", default: "max-w-3xl", wide: "max-w-5xl" }[width];
+  const max = { narrow: "max-w-md", default: "max-w-3xl", wide: "max-w-5xl", full: "max-w-7xl" }[width];
   return (
     <main
       id="main"

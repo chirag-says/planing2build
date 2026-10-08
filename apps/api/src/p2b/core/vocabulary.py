@@ -843,6 +843,467 @@ class BuildRecordBasis(StrEnum):
     ISSUED_BY_OPERATIONS = "ISSUED_BY_OPERATIONS"
 
 
+# ---------- Concept floor plans (module houseplans; PD-28, ADR-025) ----------
+
+
+class Facing(StrEnum):
+    """The side of the road and main entrance (AD-15), one of eight compass directions."""
+
+    N = "N"
+    NE = "NE"
+    E = "E"
+    SE = "SE"
+    S = "S"
+    SW = "SW"
+    W = "W"
+    NW = "NW"
+
+
+class SetbackSide(StrEnum):
+    """Sides of a rectangular plot as seen standing on the primary road edge, looking at the
+    plot (CP1-02): FRONT is the road edge; LEFT and RIGHT are the viewer's left and right."""
+
+    FRONT = "FRONT"
+    BACK = "BACK"
+    LEFT = "LEFT"
+    RIGHT = "RIGHT"
+
+
+class PlotEdgeKind(StrEnum):
+    ROAD = "ROAD"
+    NEIGHBOUR = "NEIGHBOUR"
+
+
+class SetbackSource(StrEnum):
+    REQUIREMENT = "REQUIREMENT"
+    DESIGN_INPUT = "DESIGN_INPUT"
+
+
+class ParkingKind(StrEnum):
+    CAR = "CAR"
+    TWO_WHEELER = "TWO_WHEELER"
+
+
+class ParkingPlacement(StrEnum):
+    INSIDE_FOOTPRINT = "INSIDE_FOOTPRINT"
+
+
+class OriginKind(StrEnum):
+    """Why a plan element exists: a requirement answer, a provisional design input, ruleset data,
+    the solver's circulation, or a person's edit."""
+
+    REQUIREMENT = "REQUIREMENT"
+    DESIGN_INPUT = "DESIGN_INPUT"
+    RULESET = "RULESET"
+    SOLVER = "SOLVER"
+    USER_EDIT = "USER_EDIT"
+
+
+class RoomType(StrEnum):
+    LIVING = "LIVING"
+    DINING = "DINING"
+    KITCHEN = "KITCHEN"
+    BEDROOM = "BEDROOM"
+    BATH_ATTACHED = "BATH_ATTACHED"
+    BATH_COMMON = "BATH_COMMON"
+    WC = "WC"
+    PUJA = "PUJA"
+    UTILITY = "UTILITY"
+    STORE = "STORE"
+    PASSAGE = "PASSAGE"
+    FOYER = "FOYER"
+    STAIR_HALL = "STAIR_HALL"
+    PARKING = "PARKING"
+
+
+class Zone(StrEnum):
+    PUBLIC = "PUBLIC"
+    PRIVATE = "PRIVATE"
+    SERVICE = "SERVICE"
+    CIRCULATION = "CIRCULATION"
+    OUTDOOR = "OUTDOOR"
+
+
+class WallKind(StrEnum):
+    EXTERIOR = "EXTERIOR"
+    INTERIOR = "INTERIOR"
+
+
+class OpeningKind(StrEnum):
+    MAIN_ENTRANCE = "MAIN_ENTRANCE"
+    DOOR = "DOOR"
+    VOID = "VOID"
+    WINDOW = "WINDOW"
+
+
+class DoorLeaf(StrEnum):
+    SINGLE = "SINGLE"
+    DOUBLE = "DOUBLE"
+    SLIDING = "SLIDING"
+
+
+class HingeSide(StrEnum):
+    """The jamb a door hangs on, relative to its host wall's a-to-b direction."""
+
+    A_SIDE = "A_SIDE"
+    B_SIDE = "B_SIDE"
+
+
+class WallSide(StrEnum):
+    """A side of a wall, relative to its a-to-b direction."""
+
+    LEFT = "LEFT"
+    RIGHT = "RIGHT"
+
+
+class FixtureType(StrEnum):
+    WC_WESTERN = "WC_WESTERN"
+    WC_INDIAN = "WC_INDIAN"
+    WASH_BASIN = "WASH_BASIN"
+    SHOWER_AREA = "SHOWER_AREA"
+    KITCHEN_COUNTER = "KITCHEN_COUNTER"
+    KITCHEN_SINK = "KITCHEN_SINK"
+
+
+class ConstraintKind(StrEnum):
+    ROOM_PRESENT = "ROOM_PRESENT"
+    ROOM_MIN_SIZE = "ROOM_MIN_SIZE"
+    RELATION = "RELATION"
+    INSIDE_ENVELOPE = "INSIDE_ENVELOPE"
+    ENTRANCE_ON_EDGE = "ENTRANCE_ON_EDGE"
+    PARKING_PROVIDED = "PARKING_PROVIDED"
+    # Soft quality terms (Checkpoint 2): scored by the Scorer, never validation errors.
+    AREA_DEVIATION = "AREA_DEVIATION"
+    DIMENSION_DEVIATION = "DIMENSION_DEVIATION"
+    ASPECT_EXCESS = "ASPECT_EXCESS"
+    CIRCULATION_SHARE = "CIRCULATION_SHARE"
+    OVERSIZE = "OVERSIZE"
+    ADJACENCY = "ADJACENCY"
+    WET_CLUSTER = "WET_CLUSTER"
+    EXTERIOR_EXPOSURE = "EXTERIOR_EXPOSURE"
+    PRIVACY = "PRIVACY"
+    PARKING_CONVENIENCE = "PARKING_CONVENIENCE"
+    ZONE_ORDER = "ZONE_ORDER"
+    ROOM_SIZE_OUTLIER = "ROOM_SIZE_OUTLIER"
+    BEDROOM_GROUPING = "BEDROOM_GROUPING"
+    ORIENTATION = "ORIENTATION"
+
+
+class ConstraintStrength(StrEnum):
+    HARD = "HARD"
+    SOFT = "SOFT"
+
+
+class ConstraintOutcome(StrEnum):
+    MET = "MET"
+    PARTIAL = "PARTIAL"
+    RELAXED = "RELAXED"
+    UNMET = "UNMET"
+    NOT_EVALUATED = "NOT_EVALUATED"
+
+
+class RelationKind(StrEnum):
+    ADJACENT_WITH_DOOR = "ADJACENT_WITH_DOOR"
+    ADJACENT_OPEN = "ADJACENT_OPEN"
+
+
+class OrientationMode(StrEnum):
+    """From the Vastu answer. Recorded only: no orientation table exists until AD-13."""
+
+    OFF = "OFF"
+    SOFT = "SOFT"
+    SOFT_HIGH = "SOFT_HIGH"
+
+
+class DiningArrangement(StrEnum):
+    SEPARATE = "SEPARATE"
+    IN_LIVING = "IN_LIVING"
+
+
+class KitchenArrangement(StrEnum):
+    CLOSED = "CLOSED"
+    OPEN = "OPEN"
+
+
+class StairChoice(StrEnum):
+    NONE = "NONE"
+    INTERNAL = "INTERNAL"
+    EXTERNAL = "EXTERNAL"
+
+
+class DesignInputKey(StrEnum):
+    """A fact the requirement (RQ v1) does not give, asked through the provisional design inputs
+    (CP1-03) until AD-03 decides the design brief."""
+
+    FACING = "FACING"
+    SETBACK_FRONT = "SETBACK_FRONT"
+    SETBACK_BACK = "SETBACK_BACK"
+    SETBACK_LEFT = "SETBACK_LEFT"
+    SETBACK_RIGHT = "SETBACK_RIGHT"
+    BEDROOMS_EXACT = "BEDROOMS_EXACT"
+    BATHROOMS_EXACT = "BATHROOMS_EXACT"
+    ATTACHED_BATHROOMS = "ATTACHED_BATHROOMS"
+    PARKING_SPACES = "PARKING_SPACES"
+    PARKING_KIND = "PARKING_KIND"
+    DINING = "DINING"
+    KITCHEN = "KITCHEN"
+    STAIR = "STAIR"
+    UTILITY = "UTILITY"
+
+
+class MissingInputReason(StrEnum):
+    NOT_ANSWERED = "NOT_ANSWERED"
+    NOT_SURE = "NOT_SURE"
+    OUT_OF_RANGE = "OUT_OF_RANGE"
+
+
+class UnsupportedReason(StrEnum):
+    QUESTION_SET_NOT_SUPPORTED = "QUESTION_SET_NOT_SUPPORTED"
+    ANSWER_INVALID = "ANSWER_INVALID"
+    PLOT_NOT_RECTANGULAR = "PLOT_NOT_RECTANGULAR"
+    FLOORS_NOT_SUPPORTED = "FLOORS_NOT_SUPPORTED"
+    BASEMENT_NOT_SUPPORTED = "BASEMENT_NOT_SUPPORTED"
+    STAIR_NOT_YET_SUPPORTED = "STAIR_NOT_YET_SUPPORTED"
+
+
+class InfeasibleReason(StrEnum):
+    ENVELOPE_EMPTY = "ENVELOPE_EMPTY"
+    AREA_BUDGET = "AREA_BUDGET"
+    WIDTH_TOO_NARROW = "WIDTH_TOO_NARROW"
+    DEPTH_EXCEEDED = "DEPTH_EXCEEDED"
+    PARKING_TOO_WIDE = "PARKING_TOO_WIDE"
+    ACCESS_SPAN = "ACCESS_SPAN"
+    FIXTURE_FIT = "FIXTURE_FIT"
+    OPENING_FIT = "OPENING_FIT"
+    RULESET_INCOMPLETE = "RULESET_INCOMPLETE"
+
+
+class PlanSource(StrEnum):
+    GENERATED = "GENERATED"
+    EDITED = "EDITED"
+    REGENERATED = "REGENERATED"
+
+
+class SolverKind(StrEnum):
+    DETERMINISTIC_MVP = "DETERMINISTIC_MVP"
+    ZONED_LOCAL_SEARCH = "ZONED_LOCAL_SEARCH"
+    CP_SAT = "CP_SAT"
+
+
+class RulesetStatus(StrEnum):
+    """A layout ruleset (ADR-025): DRAFT; APPROVED after an architect's review; PUBLISHED (one at a
+    time, the only status production may use); RETIRED. Content never changes."""
+
+    DRAFT = "DRAFT"
+    APPROVED = "APPROVED"
+    PUBLISHED = "PUBLISHED"
+    RETIRED = "RETIRED"
+
+
+class PlanGenerationState(StrEnum):
+    """The concept plan generation lifecycle (CP1-04: its own, not Slice 3.1's). VALID is the
+    only outcome that carries a plan, and only a plan the validator passed. INFEASIBLE: the
+    requirement does not fit under the ruleset, with reasons. FAILED: an engine fault."""
+
+    QUEUED = "QUEUED"
+    RUNNING = "RUNNING"
+    VALID = "VALID"
+    INFEASIBLE = "INFEASIBLE"
+    FAILED = "FAILED"
+
+
+class PlanFailureReason(StrEnum):
+    ENGINE_ERROR = "ENGINE_ERROR"
+    ENGINE_INVALID_OUTPUT = "ENGINE_INVALID_OUTPUT"
+    ENGINE_TIMEOUT = "ENGINE_TIMEOUT"
+    STALE = "STALE"
+
+
+class PlanValidity(StrEnum):
+    VALID = "VALID"
+    INVALID = "INVALID"
+
+
+class ValidationCategory(StrEnum):
+    SCHEMA = "SCHEMA"
+    REFERENCES = "REFERENCES"
+    GEOMETRY = "GEOMETRY"
+    OPENINGS = "OPENINGS"
+    FIXTURES = "FIXTURES"
+    CIRCULATION = "CIRCULATION"
+    DIMENSIONS = "DIMENSIONS"
+    REQUIREMENTS = "REQUIREMENTS"
+
+
+class ValidationSeverity(StrEnum):
+    ERROR = "ERROR"
+    WARNING = "WARNING"
+
+
+class RepairHint(StrEnum):
+    AUTO = "AUTO"
+    USER = "USER"
+    NONE = "NONE"
+
+
+class EntityKind(StrEnum):
+    DOCUMENT = "DOCUMENT"
+    PLOT = "PLOT"
+    ENVELOPE = "ENVELOPE"
+    NODE = "NODE"
+    WALL = "WALL"
+    ROOM = "ROOM"
+    OPENING = "OPENING"
+    FIXTURE = "FIXTURE"
+
+
+class ValidationCode(StrEnum):
+    SCHEMA_INVALID = "SCHEMA_INVALID"
+    SCHEMA_VERSION_UNSUPPORTED = "SCHEMA_VERSION_UNSUPPORTED"
+    ID_DUPLICATE = "ID_DUPLICATE"
+    REF_MISSING = "REF_MISSING"
+    PLOT_INVALID = "PLOT_INVALID"
+    GEOMETRY_UNSUPPORTED_V1 = "GEOMETRY_UNSUPPORTED_V1"
+    ROOM_POLYGON_INVALID = "ROOM_POLYGON_INVALID"
+    ROOM_OVERLAP = "ROOM_OVERLAP"
+    ROOM_OUTSIDE_ENVELOPE = "ROOM_OUTSIDE_ENVELOPE"
+    BUILDING_OUTSIDE_PLOT = "BUILDING_OUTSIDE_PLOT"
+    ROOM_EDGE_NOT_ON_WALL = "ROOM_EDGE_NOT_ON_WALL"
+    WALL_ZERO_LENGTH = "WALL_ZERO_LENGTH"
+    WALL_NOT_ORTHOGONAL = "WALL_NOT_ORTHOGONAL"
+    WALL_OVERLAP = "WALL_OVERLAP"
+    WALL_DANGLING_END = "WALL_DANGLING_END"
+    WALL_THICKNESS_INVALID = "WALL_THICKNESS_INVALID"
+    OPENING_HOST_MISSING = "OPENING_HOST_MISSING"
+    OPENING_OUTSIDE_HOST = "OPENING_OUTSIDE_HOST"
+    OPENING_OVERLAP = "OPENING_OVERLAP"
+    OPENING_DIMENSION_INVALID = "OPENING_DIMENSION_INVALID"
+    WINDOW_ON_INTERIOR_WALL = "WINDOW_ON_INTERIOR_WALL"
+    FIXTURE_HOST_MISSING = "FIXTURE_HOST_MISSING"
+    FIXTURE_NOT_ON_ROOM_WALL = "FIXTURE_NOT_ON_ROOM_WALL"
+    FIXTURE_OUTSIDE_ROOM = "FIXTURE_OUTSIDE_ROOM"
+    FIXTURE_NOT_PERMITTED_IN_ROOM = "FIXTURE_NOT_PERMITTED_IN_ROOM"
+    FIXTURE_COUNT_EXCEEDS_SPEC = "FIXTURE_COUNT_EXCEEDS_SPEC"
+    FIXTURE_OVERLAP = "FIXTURE_OVERLAP"
+    FIXTURE_CLEARANCE_BLOCKED = "FIXTURE_CLEARANCE_BLOCKED"
+    FIXTURE_BLOCKS_OPENING = "FIXTURE_BLOCKS_OPENING"
+    ENTRANCE_MISSING = "ENTRANCE_MISSING"
+    ROOM_UNREACHABLE = "ROOM_UNREACHABLE"
+    ROOM_BELOW_MIN_SHORT_SIDE = "ROOM_BELOW_MIN_SHORT_SIDE"
+    ROOM_BELOW_MIN_AREA = "ROOM_BELOW_MIN_AREA"
+    PASSAGE_TOO_NARROW = "PASSAGE_TOO_NARROW"
+    HABITABLE_ROOM_NO_WINDOW = "HABITABLE_ROOM_NO_WINDOW"
+    ROOM_COUNT_MISMATCH = "ROOM_COUNT_MISMATCH"
+    PARKING_MISSING = "PARKING_MISSING"
+    PARKING_TOO_SMALL = "PARKING_TOO_SMALL"
+    RELATION_UNMET = "RELATION_UNMET"
+
+
+class PlanOpKind(StrEnum):
+    """Typed HousePlan operations (CP1-11): the one way a plan changes after generation, shared by
+    deterministic repair, the future editor and future natural-language edits."""
+
+    MOVE_OPENING = "MOVE_OPENING"
+    SET_OPENING = "SET_OPENING"
+    ADD_OPENING = "ADD_OPENING"
+    DELETE_OPENING = "DELETE_OPENING"
+    MOVE_FIXTURE = "MOVE_FIXTURE"
+    ADD_FIXTURE = "ADD_FIXTURE"
+    DELETE_FIXTURE = "DELETE_FIXTURE"
+    RENAME_ROOM = "RENAME_ROOM"
+    SET_ROOM_TYPE = "SET_ROOM_TYPE"
+    MOVE_WALL = "MOVE_WALL"
+    ADD_ROOM = "ADD_ROOM"
+    DELETE_ROOM = "DELETE_ROOM"
+    MOVE_EDGE = "MOVE_EDGE"
+    REVERT_TO_REVISION = "REVERT_TO_REVISION"
+    REVERT_TO_VERSION = "REVERT_TO_VERSION"
+
+
+class PlanOpRejection(StrEnum):
+    """Why a typed operation could not apply (Checkpoint 3). Rejection happens before validation;
+    a plan that applies but breaks a rule is reported by the validator instead."""
+
+    UNKNOWN_ENTITY = "UNKNOWN_ENTITY"
+    ENTITY_EXISTS = "ENTITY_EXISTS"
+    NOT_SUPPORTED = "NOT_SUPPORTED"
+    NO_MOVEMENT = "NO_MOVEMENT"
+    NOT_AXIS_ALIGNED = "NOT_AXIS_ALIGNED"
+    WALL_WOULD_COLLAPSE = "WALL_WOULD_COLLAPSE"
+    HOSTED_ITEM_LEAVES_WALL = "HOSTED_ITEM_LEAVES_WALL"
+    NOT_RECTANGULAR = "NOT_RECTANGULAR"
+    HOSTED_ITEM_CHANGES_ROOMS = "HOSTED_ITEM_CHANGES_ROOMS"
+    DOOR_DOES_NOT_FIT = "DOOR_DOES_NOT_FIT"
+    ROOMS_WOULD_OVERLAP = "ROOMS_WOULD_OVERLAP"
+    NOT_A_SLICE = "NOT_A_SLICE"
+    ROOMS_NOT_MERGEABLE = "ROOMS_NOT_MERGEABLE"
+    ROOM_TYPE_NOT_ALLOWED = "ROOM_TYPE_NOT_ALLOWED"
+    REVERT_NOT_ALONE = "REVERT_NOT_ALONE"
+    UNKNOWN_REVISION = "UNKNOWN_REVISION"
+
+
+class RoomSide(StrEnum):
+    """A side of a rectangular room in the plot frame (Checkpoint 3.1, MOVE_EDGE): LEFT is -x,
+    RIGHT +x, FRONT the road side (-y), BACK +y."""
+
+    LEFT = "LEFT"
+    RIGHT = "RIGHT"
+    FRONT = "FRONT"
+    BACK = "BACK"
+
+
+class ProgrammeChange(StrEnum):
+    """A change the owner made to the requirement's room programme while editing (Checkpoint
+    3.1), recorded as a HousePlan compromise (I-P6). The validator counts rooms against the
+    requirement plus these recorded changes; the requirement itself is never modified."""
+
+    ROOM_ADDED_BY_OWNER = "ROOM_ADDED_BY_OWNER"
+    ROOM_REMOVED_BY_OWNER = "ROOM_REMOVED_BY_OWNER"
+    ROOM_TYPE_CHANGED_BY_OWNER = "ROOM_TYPE_CHANGED_BY_OWNER"
+
+
+class PlanOpReason(StrEnum):
+    """Why an operation batch was applied (`house_plan_ops.reason`)."""
+
+    USER = "USER"
+    AUTO_REPAIR = "AUTO_REPAIR"
+    REVERT = "REVERT"
+
+
+class TopologyFamily(StrEnum):
+    """Layout families the zoning engine can produce. Checkpoint 2: SPINE (front band, passage
+    spine, columns, optional rear band) and FRONT_EXTENSION (one more room beside the entry room).
+    Checkpoint 2.1: SIDE_WING (a spine with a public and service column and a private column),
+    FRONT_LIVING_REAR_BEDROOM (compact: rooms entered from the living or dining room, no
+    corridor), FRONT_PUBLIC_REAR_PRIVATE (public band, a cross corridor, a private band at the
+    rear), L_CIRCULATION (a spine that turns into a rear cross corridor serving the private band)
+    CENTRAL_LIVING_BEDROOM_WINGS (living and dining in the middle, room wings on both sides) and
+    LINEAR_REAR_CORRIDOR (one row of rooms along the road, a corridor behind them, parking at an
+    end: wide, shallow plots)."""
+
+    SPINE = "SPINE"
+    FRONT_EXTENSION = "FRONT_EXTENSION"
+    SIDE_WING = "SIDE_WING"
+    FRONT_LIVING_REAR_BEDROOM = "FRONT_LIVING_REAR_BEDROOM"
+    FRONT_PUBLIC_REAR_PRIVATE = "FRONT_PUBLIC_REAR_PRIVATE"
+    L_CIRCULATION = "L_CIRCULATION"
+    CENTRAL_LIVING_BEDROOM_WINGS = "CENTRAL_LIVING_BEDROOM_WINGS"
+    LINEAR_REAR_CORRIDOR = "LINEAR_REAR_CORRIDOR"
+
+
+class FeasibilityClass(StrEnum):
+    """PROVEN: no rectangle arrangement can satisfy the hard rules. NO_SUPPORTED_LAYOUT: none of
+    the layouts this engine version can produce fits (CP2-U4); never presented as impossible."""
+
+    PROVEN = "PROVEN"
+    NO_SUPPORTED_LAYOUT = "NO_SUPPORTED_LAYOUT"
+
+
+class RepairReason(StrEnum):
+    VALIDATION_ERROR = "VALIDATION_ERROR"
+    OBJECTIVE = "OBJECTIVE"
+
+
 ALL_ENUMS: tuple[type[StrEnum], ...] = (
     Audience, UserStatus, ActorType, SecuritySeverity, ContactKind, OtpPurpose, OtpState,
     FinishLevel, ProjectStatus, ProjectType, MembershipRole, ReviewFlag, EnquiryKind,
@@ -863,5 +1324,12 @@ ALL_ENUMS: tuple[type[StrEnum], ...] = (
     ClarificationState, ComparisonState, StageUpdateKind, PaymentMarkSide, PaymentMarkValue,
     AppointmentStatus, ChecklistStatus, InspectionKind, InspectionState, InspectionCancelReason,
     CheckpointResult, Severity, NcState, HandoverState, HandoverDocumentKind, BuildRecordState,
-    BuildRecordBasis,
+    BuildRecordBasis, Facing, SetbackSide, PlotEdgeKind, SetbackSource, ParkingKind,
+    ParkingPlacement, OriginKind, RoomType, Zone, WallKind, OpeningKind, DoorLeaf, HingeSide,
+    WallSide, FixtureType, ConstraintKind, ConstraintStrength, ConstraintOutcome, RelationKind,
+    OrientationMode, DiningArrangement, KitchenArrangement, StairChoice, DesignInputKey,
+    MissingInputReason, UnsupportedReason, InfeasibleReason, PlanSource, SolverKind, RulesetStatus,
+    PlanGenerationState, PlanFailureReason, PlanValidity, ValidationCategory, ValidationSeverity,
+    RepairHint, EntityKind, ValidationCode, PlanOpKind, TopologyFamily, FeasibilityClass,
+    RepairReason, PlanOpRejection, PlanOpReason, RoomSide, ProgrammeChange,
 )  # fmt: skip

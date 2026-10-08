@@ -63,7 +63,7 @@ async def test_the_handover_waits_for_gate_6_and_closed_findings(
     app: FastAPI, database: Database, worker: Run, client_for: ClientFactory,
     make_user: UserFactory, sign_in: SignIn,
 ) -> None:  # fmt: skip
-    from tests.assurance_support import appoint, approve, perform, schedule
+    from tests.assurance_support import approve, perform, schedule
     from tests.execution_support import site, stage
 
     early = await site(app, database, client_for, make_user, sign_in, worker)
@@ -124,7 +124,7 @@ async def test_documents_warranties_and_the_owners_acknowledgement(
                             headers=key())).status_code == 403  # fmt: skip
     # The owner reads the statement, and a stale statement id is refused.
     challenge = ok(await s.family.post(f"{s.base}/handover/acknowledgement-code", headers=key()))
-    assert s.world.project_id and "not a completion certificate" in challenge["statement_text"]
+    assert "not a completion certificate" in challenge["statement_text"]
     code = await code_of(database, challenge["challenge_id"])
     stale = await s.family.post(
         f"{s.base}/handover/acknowledge",
@@ -157,7 +157,8 @@ async def test_documents_warranties_and_the_owners_acknowledgement(
                                   {"id": uuid.UUID(handover["id"])})  # fmt: skip
     # A DRAFT Build Record is assembled for operations; the family sees issued versions only.
     ops_view = ok(await s.ops.client.get(f"/api/v1/ops/projects/{s.project_id}/handover"))
-    assert [(v["version_no"], v["state"], v["basis"]) for v in ops_view["build_records"]["versions"]] == [
+    versions = ops_view["build_records"]["versions"]
+    assert [(v["version_no"], v["state"], v["basis"]) for v in versions] == [
         (1, "DRAFT", "ACKNOWLEDGED"),
     ]  # fmt: skip
     assert ok(await s.family.get(f"{s.base}/build-record"))["versions"] == []
@@ -188,13 +189,18 @@ async def test_an_operations_issue_is_never_an_acknowledgement(
     # The owner can no longer acknowledge; the database refuses to dress it up as one.
     late = await s.family.post(f"{s.base}/handover/acknowledgement-code", headers=key())
     assert (late.status_code, reason(late)) == (409, "NOT_READY")
-    with pytest.raises(DBAPIError):
+    async with database.transaction() as session:
+        await session.execute(text("ALTER TABLE handovers DISABLE TRIGGER handovers_frozen"))
+    try:
+        with pytest.raises(DBAPIError):
+            async with database.transaction() as session:
+                await session.execute(
+                    text("UPDATE handovers SET acknowledged_by = forced_by WHERE id = :id"),
+                    {"id": uuid.UUID(handover["id"])},
+                )
+    finally:
         async with database.transaction() as session:
-            await session.execute(text("ALTER TABLE handovers DISABLE TRIGGER handovers_frozen"))
-            await session.execute(
-                text("UPDATE handovers SET acknowledged_by = forced_by WHERE id = :id"),
-                {"id": uuid.UUID(handover["id"])},
-            )
+            await session.execute(text("ALTER TABLE handovers ENABLE TRIGGER handovers_frozen"))
     async with database.transaction() as session:
         row = await session.get_one(Handover, uuid.UUID(handover["id"]))
         assert row.acknowledged_by is None
@@ -218,13 +224,13 @@ async def test_the_build_record_is_issued_versioned_and_immutable(
                                         headers=ops_key()))  # fmt: skip
     v1 = issued["build_records"]["versions"][0]
     assert v1["state"] == "ISSUED"
-    assert v1["snapshot_sha256"] and v1["pdf_sha256"] and v1["json_sha256"]
+    assert all(v1[k] for k in ("snapshot_sha256", "pdf_sha256", "json_sha256"))
     # The family reads the versions, the snapshot, the PDF and the JSON (logged).
     listing = ok(await s.family.get(f"{s.base}/build-record"))
     assert [v["version_no"] for v in listing["versions"]] == [1]
     snapshot = ok(await s.family.get(f"{s.base}/build-record/versions/1"))
-    assert hashlib.sha256(json.dumps(snapshot["snapshot"], sort_keys=True, separators=(",", ":"),
-                                     default=str).encode()).hexdigest() == v1["snapshot_sha256"]  # fmt: skip
+    canonical = json.dumps(snapshot["snapshot"], sort_keys=True, separators=(",", ":"), default=str)
+    assert hashlib.sha256(canonical.encode()).hexdigest() == v1["snapshot_sha256"]
     for form in ("pdf", "json"):
         assert ok(await s.family.get(f"{s.base}/build-record/versions/1/{form}/url"))["url"]
     assert (await s.family.get(f"{s.base}/build-record/versions/1/zip/url")).status_code == 404
@@ -241,8 +247,12 @@ async def test_the_build_record_is_issued_versioned_and_immutable(
     async with database.transaction() as session:
         row = await session.get_one(BuildRecord, uuid.UUID(draft_id))
         stored = await app.state.storage.read(
-            (await session.execute(text("SELECT object_key FROM file_objects WHERE id = :id"),
-                                   {"id": row.json_file_id})).scalar_one()  # fmt: skip
+            (
+                await session.execute(
+                    text("SELECT object_key FROM file_objects WHERE id = :id"),
+                    {"id": row.json_file_id},
+                )
+            ).scalar_one()
         )
     export = json.loads(stored)
     assert export["snapshot_sha256"] == v1["snapshot_sha256"]
@@ -273,6 +283,9 @@ async def test_the_build_record_is_issued_versioned_and_immutable(
               for v in ok(await s.family.get(f"{s.base}/build-record"))["versions"]}  # fmt: skip
     assert states == {1: "SUPERSEDED", 2: "ISSUED"}
     assert ok(await s.family.get(f"{s.base}/build-record/versions/1"))["snapshot"] == content
+    # Sent before another project is set up (its setup relays the outbox on its own).
+    mailbox = await worker()
+    assert any(m.subject == "Your Build Record is issued" for m in mailbox.sent)
     # OWNER and HOUSEHOLD only: another family and the contractor see nothing.
     home = await household(database, client_for, make_user, sign_in, s.project_id)
     assert ok(await home.get(f"{s.base}/build-record"))["versions"]
@@ -280,8 +293,6 @@ async def test_the_build_record_is_issued_versioned_and_immutable(
     assert (await stranger.family.get(f"{s.base}/build-record")).status_code == 404
     assert s.pro is not None
     assert (await s.pro.get(f"{s.base}/build-record")).status_code in (401, 403, 404)
-    mailbox = await worker()
-    assert any(m.subject == "Your Build Record is issued" for m in mailbox.sent)
 
 
 async def test_issuing_needs_the_package_and_acknowledging_does_not(
