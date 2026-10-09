@@ -1,0 +1,406 @@
+/*
+ * The homeowners hero's build film (HeroStory.tsx), played once. One registered number, `--bt`,
+ * runs 0 -> 1 a single time and stays at 1, the finished house; every piece reads it through its own window (`--a` start, `--d` length)
+ * as `--p` (0..1) and `--e` (the same, eased out). Nothing here is a script. At rest `--bt` sits
+ * at 1, the finished house with the lights on, so reduced motion simply shows the result.
+ */
+@property --bt {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+.hs {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 740 / 654;
+  /* The whole film, once. */
+  --dur: 6.5s;
+  --ink: var(--gd-ink);
+  /* Nothing fades out: the film ends on the finished house. */
+  --fade: 1;
+}
+.hs-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.hs-stage,
+.hs-dim,
+.hs-plate {
+  opacity: var(--fade);
+}
+.hs-ground {
+  opacity: 1;
+}
+
+/* Each piece: its own progress. */
+.hs [style*="--a"] {
+  --p: clamp(0, calc((var(--bt) - var(--a)) / var(--d)), 1);
+  /* Eased: quick off the mark, soft landing. */
+  --e: calc(1 - (1 - var(--p)) * (1 - var(--p)) * (1 - var(--p)));
+}
+.hs-rise {
+  transform: scaleY(var(--e));
+  transform-origin: 50% 100%;
+  transform-box: fill-box;
+}
+.hs-sweep {
+  transform: scaleX(var(--e));
+  transform-origin: 0 50%;
+  transform-box: fill-box;
+}
+.hs-grow {
+  transform: scale(var(--e));
+  transform-origin: 50% 100%;
+  transform-box: fill-box;
+}
+.hs-fade {
+  opacity: var(--p);
+}
+.hs-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--e));
+}
+
+/* A ghost of the finished elevation, drawn first, gone once the lights are on. */
+.hs-ghost {
+  opacity: calc(1 - clamp(0, calc((var(--bt) - 0.5) / 0.3), 1));
+}
+.hs-ghost-line {
+  fill: none;
+  stroke: color-mix(in srgb, var(--ink) 55%, transparent);
+  stroke-width: 1.2;
+  stroke-dasharray: 4 3;
+  stroke-dashoffset: 0;
+}
+.hs-ghost-line.hs-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--e));
+}
+/* The warm air around the house once its lights are on. */
+.hs-sun {
+  opacity: var(--p);
+}
+
+/* The tower crane: in with the plan, lifting while the frame goes up, gone before the planting. */
+.hs-crane {
+  opacity: min(var(--p), calc(1 - clamp(0, calc((var(--bt) - 0.7) / 0.06), 1)));
+}
+.hs-crane-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+.hs-crane-weight {
+  fill: url(#hs-hatch);
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+.hs-crane-cab {
+  fill: #e8e5de;
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+.hs-crane-load {
+  fill: var(--gd-brass);
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+.hs-cable {
+  fill: var(--ink);
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  transform: scaleY(calc(0.3 + 0.7 * (0.5 + 0.5 * sin(var(--bt) * 22 + 1.7))));
+}
+.hs-trolley {
+  transform: translateX(calc(8px + 190px * (0.5 + 0.5 * sin(var(--bt) * 22))));
+}
+.hs-load {
+  /* Hangs from the cable's end: down from the jib (y 260) by the cable's length, and sways about
+     the hook (its top centre). Both in one transform, so the sway pivots on the hook, not on
+     the point it started from. */
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  transform: translateY(calc(260px + 30px + 70px * (0.5 + 0.5 * sin(var(--bt) * 22 + 1.7))))
+    rotate(calc(sin(var(--bt) * 30) * 1.6deg));
+}
+
+/* Material and line styles. */
+.hs-ink,
+.hs-plot,
+.hs-frame,
+.hs-wire,
+.hs-pipe {
+  fill: none;
+  stroke-linecap: square;
+  stroke-linejoin: round;
+}
+.hs-ink {
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+.hs-plot {
+  stroke: color-mix(in srgb, var(--ink) 55%, transparent);
+  stroke-width: 1.2;
+  stroke-dasharray: 0.02 0.012;
+  stroke-dashoffset: calc(1 - var(--e));
+}
+.hs-peg {
+  fill: var(--gd-brass);
+  stroke: var(--ink);
+  stroke-width: 1.2;
+}
+.hs-plate {
+  fill: var(--gd-brass);
+}
+.hs-found {
+  fill: url(#hs-hatch);
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+.hs-concrete {
+  fill: #9a9d9f;
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+.hs-brick {
+  fill: url(#hs-brick);
+  stroke: color-mix(in srgb, var(--ink) 55%, transparent);
+  stroke-width: 1;
+}
+.hs-void {
+  fill: #23282c;
+}
+.hs-wire {
+  stroke: #e5a800;
+  stroke-width: 3;
+}
+.hs-pipe {
+  stroke: #2a2e31;
+  stroke-width: 5;
+  stroke-linecap: butt;
+}
+.hs-plaster {
+  fill: #ebe8e1;
+  stroke: color-mix(in srgb, var(--ink) 40%, transparent);
+  stroke-width: 1;
+}
+.hs-glass {
+  fill: url(#hs-glass);
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+.hs-lit {
+  fill: url(#hs-glow);
+  mix-blend-mode: normal;
+}
+.hs-frame {
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+.hs-slats {
+  fill: url(#hs-slat);
+  stroke: var(--ink);
+  stroke-width: 1.2;
+}
+.hs-leaf {
+  fill: #3f6b3a;
+  stroke: #27482a;
+  stroke-width: 1;
+}
+.hs-trunk {
+  fill: #6a4a2c;
+}
+.hs-canopy {
+  fill: #4d7a44;
+  stroke: #27482a;
+  stroke-width: 1;
+}
+.hs-label {
+  fill: var(--ink);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+/*
+ * The cards, top right: one per early step (Find, Compare, Select), each in its own window, and
+ * the build record at the end, which stays. They share the spot and take turns.
+ */
+.hs-card {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  gap: 1cqw;
+  padding: 1.8cqw 2cqw 2cqw;
+  background: var(--gd-bone);
+  box-shadow: inset 0 0 0 1.5px var(--gd-ink), 0 1.6cqw 3cqw -2cqw rgba(13, 16, 18, 0.45);
+  --on: clamp(0, min(calc((var(--bt) - var(--s)) / 0.025), calc((var(--e) - var(--bt)) / 0.025)), 1);
+  opacity: var(--on);
+  transform: translateY(calc((1 - var(--on)) * -2cqw)) rotate(calc((1 - var(--on)) * 3deg));
+  pointer-events: none;
+}
+.hs-card-t {
+  display: flex;
+  align-items: center;
+  gap: 1.4cqw;
+  margin: 0 0 0.4cqw;
+  font-size: clamp(8px, 1.5cqw, 11px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gd-ink);
+}
+.hs-card-t b {
+  padding: 0.3cqw 0.8cqw;
+  background: var(--gd-ink);
+  color: var(--gd-cloud);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+.hs-card-s {
+  margin: 0.2cqw 0 0;
+  font-size: clamp(8px, 1.5cqw, 11px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+/* Each row inside a card draws in a beat after the one above it. */
+.hs-pro,
+.hs-q,
+.hs-sel {
+  --row: clamp(0, calc((var(--bt) - var(--s) - 0.015 - var(--i) * 0.012) / 0.03), 1);
+  margin: 0;
+  font-size: clamp(8px, 1.6cqw, 12px);
+  font-weight: 600;
+}
+.hs-pro {
+  display: grid;
+  grid-template-columns: 3.4cqw 1fr auto;
+  align-items: center;
+  gap: 1.2cqw;
+  opacity: var(--row);
+  transform: translateX(calc((1 - var(--row)) * 2cqw));
+}
+.hs-pro b {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  background: var(--gd-ink);
+  color: var(--gd-cloud);
+  font-size: clamp(7px, 1.3cqw, 10px);
+  letter-spacing: 0.04em;
+}
+.hs-pro i {
+  display: block;
+  height: 1.3cqw;
+  min-height: 5px;
+  background: color-mix(in srgb, var(--gd-ink) 22%, transparent);
+}
+.hs-pro u,
+.hs-sel u {
+  text-decoration: none;
+  font-size: clamp(7px, 1.3cqw, 10px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2f7a3b;
+}
+.hs-q,
+.hs-sel {
+  display: grid;
+  grid-template-columns: 2.6cqw 1fr;
+  align-items: center;
+  gap: 1.2cqw;
+}
+.hs-sel {
+  grid-template-columns: 2.6cqw 1fr auto;
+  opacity: calc(1 - (1 - var(--row)) * 0.5);
+}
+.hs-q i,
+.hs-sel i {
+  display: block;
+  height: 1.3cqw;
+  min-height: 5px;
+  background: color-mix(in srgb, var(--gd-ink) 25%, transparent);
+  transform-origin: 0 50%;
+  transform: scaleX(var(--row));
+}
+.hs-q.is-pick i,
+.hs-sel.is-pick i {
+  background: var(--gd-brass);
+  box-shadow: inset 0 0 0 1px var(--gd-ink);
+}
+.hs-sel:not(.is-pick) {
+  filter: grayscale(1);
+  opacity: calc(var(--row) * 0.55);
+}
+.hs-sel u {
+  opacity: var(--row);
+}
+/* The record: six ticks, one per check, filled in turn. */
+.hs-rec {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.8cqw;
+  margin: 0;
+}
+.hs-rec i {
+  display: block;
+  aspect-ratio: 1;
+  background: var(--gd-brass);
+  box-shadow: inset 0 0 0 1.5px var(--gd-ink);
+  transform: scale(clamp(0, calc((var(--bt) - var(--s) - 0.01 - var(--i) * 0.012) / 0.025), 1));
+}
+
+/* Verify: the stamp, pressed onto the house. */
+.hs-stamp {
+  position: absolute;
+  right: 3%;
+  bottom: 24%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.4cqw 2.6cqw 1.6cqw;
+  background: var(--gd-brass);
+  color: var(--gd-ink);
+  box-shadow: inset 0 0 0 2px var(--gd-ink), 0 2cqw 3cqw -2cqw rgba(13, 16, 18, 0.5);
+  --on: clamp(0, calc((var(--bt) - 0.86) / 0.03), 1);
+  opacity: var(--on);
+  transform: rotate(-7deg) scale(calc(1 + (1 - var(--on)) * 0.9));
+  pointer-events: none;
+}
+.hs-stamp b {
+  font-size: clamp(22px, 5.4cqw, 38px);
+  line-height: 1;
+}
+.hs-stamp span {
+  font-size: clamp(8px, 1.5cqw, 11px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* The film: starts once nothing holds the page (the loader and page transitions set gd-hold-*),
+   plays once, and stays on its last frame. */
+.ph-art.is-dw .hs {
+  animation: hs-time var(--dur) linear 0.3s 1 both;
+  animation-play-state: paused;
+}
+html:not([class*="gd-hold"]) .ph-art.is-dw .hs {
+  animation-play-state: running;
+}
+@keyframes hs-time {
+  from {
+    --bt: 0;
+  }
+  to {
+    --bt: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ph-art.is-dw .hs {
+    animation: none;
+  }
+}

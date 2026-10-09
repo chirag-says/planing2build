@@ -212,7 +212,15 @@
 }
 .ph-art.is-dw {
   right: var(--edge);
-  width: min(44cqw, (max(100svh, 860px) - var(--gd-hdh) - 230px) * 0.8372);
+  width: min(46cqw, (max(100svh, 860px) - var(--gd-hdh) - 135px) * 0.8372);
+}
+/* The build film (For homeowners) on desktop: wider than tall, lifted level with the copy. */
+@container site (min-width: 1100px) {
+  .ph-art.is-dw:has(.hs) {
+    top: 64px;
+    bottom: auto;
+    width: min(52cqw, (max(100svh, 860px) - var(--gd-hdh) - 135px) * 1.13);
+  }
 }
 .ph-dw {
   --dr: var(--ph-dr);
@@ -501,6 +509,9 @@ html:not([class*="gd-hold"]) .ph :is(.ph-lni, .ph-in, .ph-pic img, .ph-tag, .ph-
     margin-top: 28px;
     align-self: flex-end;
     margin-right: calc(-1 * var(--edge));
+  }
+  .ph-art.is-dw:has(.hs) {
+    width: min(100%, 680px);
   }
   .ph-art.is-dw {
     right: auto;

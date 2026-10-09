@@ -59,6 +59,9 @@ export function Hero({ content, art }: { content: HeroContent; art?: ReactNode |
           <div className="ph-btns ph-in">
             <Button href={content.primaryLink} label={content.primary} kind="solid" glyph={ARROW_UP_RIGHT} />
             <Button href={content.secondaryLink} label={content.secondary} kind="ghost" glyph={ARROW_UP_RIGHT} className="ph-pro" />
+            {content.tertiary && content.tertiaryLink && (
+              <Button href={content.tertiaryLink} label={content.tertiary} kind="ghost" glyph={ARROW_UP_RIGHT} className="ph-pro" />
+            )}
           </div>
         </div>
 

@@ -10,6 +10,7 @@ import { pageMetadata } from '@/marketing/lib/seo';
 import { Bid } from '@/marketing/sections/home/Bid/Bid';
 import { Board } from '@/marketing/sections/home/Board/Board';
 import { Hero } from '@/marketing/sections/home/Hero/Hero';
+import { HeroStory } from '@/marketing/sections/home/Hero/HeroStory';
 import { Tiers } from '@/marketing/sections/pages/Tiers';
 import { Faq } from '@/marketing/sections/shared/Faq/Faq';
 
@@ -23,7 +24,7 @@ export const forHomeownersMetadata = pageMetadata({ ...forHomeownersMeta, path: 
 export function ForHomeownersPage() {
   return (
     <main id="main">
-      <Hero content={homeownersHero} art={null} />
+      <Hero content={homeownersHero} art={<HeroStory alt={homeownersHero.imageAlt} />} />
       <Board content={homeownersProblem} />
       <Tiers content={homeownersTiers} />
       <Faq content={homeownersFaq} />

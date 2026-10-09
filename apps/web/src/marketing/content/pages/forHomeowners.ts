@@ -38,6 +38,10 @@ export const homeownersHero: HeroContent = {
   primaryLink: '/start',
   secondary: 'See what your house should cost',
   secondaryLink: '/estimate',
+  tertiary: 'Browse professionals',
+  tertiaryLink: '/professionals',
+  imageAlt:
+    'A house building itself in four steps: the plot set out, the frame and masonry, services and finishes, and the finished home with six checks passed',
 };
 
 export const homeownersProblem: BoardContent = {

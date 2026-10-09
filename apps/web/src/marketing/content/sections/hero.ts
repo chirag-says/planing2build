@@ -13,6 +13,9 @@ export type HeroContent = {
   primaryLink: string;
   secondary: string;
   secondaryLink: string;
+  /** An optional third button, after the first two. */
+  tertiary?: string;
+  tertiaryLink?: string;
   /** Pointers on the drawing, top to bottom (Plan, Compare, Build, Verify). */
   callouts: HeroCallout[];
   /** The rail along the bottom of the hero. */
@@ -33,14 +36,14 @@ export const hero: HeroContent = {
   callouts: [
     { title: 'Plan', lines: ['Cost • BOQ • Specifications', 'Schedule • Cash Flow'] },
     { title: 'Compare', lines: ['Contractor Quotes', 'Scope Normalisation'] },
-    { title: 'Build', lines: ['Track Decisions', 'Manage Variations'] },
+    { title: 'Build', lines: ['Track Decisions', 'Stage-by-Stage Progress'] },
     { title: 'Verify', lines: ['Six Assurance Gates', 'Evidence • Build Record'] },
   ],
   steps: [
     { title: 'Plan', text: 'Your requirements, cost, and complete Build Plan' },
     { title: 'Compare', text: 'Standard RFQ and apples-to-apples quotes' },
     { title: 'Select', text: 'Choose the right contractor with full clarity' },
-    { title: 'Build', text: 'Track decisions, procurement and variations' },
+    { title: 'Build', text: 'Track decisions, procurement and stage progress' },
     { title: 'Verify', text: 'Independent inspections at six key stages' },
     { title: 'Your Build Record', text: 'A permanent record for your home' },
   ],
