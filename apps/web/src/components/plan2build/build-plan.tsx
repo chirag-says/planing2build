@@ -6,7 +6,7 @@
 // issue versions. The API decides every rule; these controls send and show its answer.
 import { CSRF_HEADERS, type components } from "@p2b/contracts";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, useSyncExternalStore, type FormEvent } from "react";
 
 import { ConfirmationDialog } from "@/components/plan2build/confirmation-dialog";
 import { FormField } from "@/components/plan2build/form-field";
@@ -769,6 +769,13 @@ export function RevokeSignoff({ signoffId, lineCode, afterIssue }: { signoffId: 
 
 // --- operations ------------------------------------------------------------------------------
 
+const subscribeNever = () => () => {};
+
+/** True after hydration, false while server rendering (as in LiftReveal). */
+function useMounted(): boolean {
+  return useSyncExternalStore(subscribeNever, () => true, () => false);
+}
+
 export function JsonForm({
   id,
   label,
@@ -791,6 +798,9 @@ export function JsonForm({
   const action = useCall();
   const [value, setValue] = useState(initial);
   const [parseError, setParseError] = useState(false);
+  // Editable only once hydrated: text typed into the server-rendered box was merged with the initial
+  // JSON on hydration (a parse error), and an early submit would be a plain form GET.
+  const mounted = useMounted();
   async function save(event: FormEvent) {
     event.preventDefault();
     let parsed: unknown;
@@ -806,11 +816,14 @@ export function JsonForm({
   return (
     <form onSubmit={save} className="flex flex-col gap-2">
       <FormField id={id} label={label} required>
-        {(c) => <Textarea {...c} rows={8} className="font-mono text-xs" value={value} onChange={(e) => setValue(e.target.value)} />}
+        {(c) => (
+          <Textarea {...c} rows={8} className="font-mono text-xs" value={value} readOnly={!mounted}
+            onChange={(e) => setValue(e.target.value)} />
+        )}
       </FormField>
       {parseError && <Notice tone="error" live="assertive">JSON</Notice>}
       <ErrorNotice error={action.error} />
-      <Button type="submit" variant="outline" className="self-start" disabled={action.busy}>
+      <Button type="submit" variant="outline" className="self-start" disabled={!mounted || action.busy}>
         {action.busy && <Spinner />}
         {submitLabel}
       </Button>
