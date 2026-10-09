@@ -11,12 +11,10 @@ export async function HomeownerHeader() {
   const user = await currentUser();
   const projects = user ? await ownProjects() : null;
   const t = getTranslator("Nav");
+  // A public "start" button goes to the entry questions (never straight to sign-in); a family with
+  // projects gets its list.
   const home =
-    !user
-      ? { href: "/sign-in", label: t("start") }
-      : (projects?.length ?? 0) === 0
-        ? { href: "/start", label: t("start") }
-        : { href: "/projects", label: t("projects") };
+    user && (projects?.length ?? 0) > 0 ? { href: "/projects", label: t("projects") } : { href: "/start", label: t("start") };
   return (
     <HeaderNav
       brand={getTranslator("App")("name")}

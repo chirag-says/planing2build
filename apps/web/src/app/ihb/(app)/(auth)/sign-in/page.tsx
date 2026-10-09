@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 
 import { HangingCard } from "@/components/plan2build/hanging-card";
 import { SignInForm } from "@/components/plan2build/sign-in-form";
-import { serverApi } from "@/lib/api/server";
+import { SignedInNotice } from "@/components/plan2build/signed-in-notice";
 import { getTranslator } from "@/lib/i18n";
 import { safeNextPath } from "@/lib/navigation";
+import { currentUser } from "@/lib/session";
+import { professionalsSignInUrl } from "@/marketing/lib/hosts";
 
 // The page title names the page (WCAG 2.4.2); the layout adds "| Plan2Build".
 export const metadata: Metadata = { title: getTranslator("SignIn")("title") };
@@ -18,14 +19,8 @@ export default async function SignInPage({
   const t = getTranslator("SignIn");
   const { next } = await searchParams;
   const target = typeof next === "string" ? next : undefined;
-  // Already signed in (the website's header always offers Sign in): straight on to the projects.
-  let signedIn = false;
-  try {
-    signedIn = Boolean((await (await serverApi()).GET("/api/v1/me")).data);
-  } catch {
-    // The API being unreachable must not take the page down; the form handles its own errors.
-  }
-  if (signedIn) redirect(safeNextPath(target, "/projects"));
+  // A session in this browser is shown, never silently used: the email is always asked for.
+  const user = await currentUser();
   return (
     <HangingCard
       eyebrow={t("card.eyebrow")}
@@ -34,7 +29,19 @@ export default async function SignInPage({
       label={t("card.label")}
       note={t("card.note")}
     >
-      <SignInForm framed home="/welcome" next={target} />
+      {user && (
+        <div className="mb-6">
+          <SignedInNotice name={user.display_name} continueHref={safeNextPath(target, "/continue")} />
+        </div>
+      )}
+      <SignInForm framed home="/continue" next={target} />
+      {/* A professional who landed here signs in on their own site. */}
+      <p className="mt-6 text-sm text-muted-foreground">
+        {t("professional")}{" "}
+        <a href={professionalsSignInUrl()} className="font-medium text-foreground underline underline-offset-4">
+          {t("professionalLink")}
+        </a>
+      </p>
     </HangingCard>
   );
 }

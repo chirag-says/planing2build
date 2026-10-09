@@ -27,7 +27,9 @@
         "eyebrow": "For professionals",
         "label": "Sign in or register",
         "note": "Takes one minute"
-      }
+      },
+      "homeowner": "Building your own home?",
+      "homeownerLink": "Sign in on the homeowner site"
     },
     "dashboard": {
       "title": "Your professional profile",
@@ -73,10 +75,12 @@
         "service_radius_km": "service radius",
         "years_experience": "years of experience",
         "bio": "about your work"
-      }
+      },
+      "continueTo": "Continue: add your first service",
+      "continueHome": "Continue to Today"
     },
     "category": {
-      "back": "Dashboard",
+      "back": "Services",
       "checklist": "What Plan2Build checks",
       "checklistIntro": "Plan2Build reviews each item before listing this category.",
       "supplied": "{provided} of {count} supplied",
@@ -212,16 +216,16 @@
           "text": "Name, firm, base and the radius you cover"
         },
         "category": {
-          "name": "Category",
+          "name": "Service",
           "text": "The work you do: contractor, architect, engineer"
         },
         "evidence": {
-          "name": "Evidence",
-          "text": "Documents and references, then submit for review"
+          "name": "Verification",
+          "text": "What Plan2Build checks for your trade, then submit for review"
         },
         "portfolio": {
           "name": "Portfolio",
-          "text": "Homes you have built or designed"
+          "text": "Homes you have built or designed; most trades need photos before submitting"
         },
         "listed": {
           "name": "Listed",
@@ -641,7 +645,14 @@
       "note": "Takes one minute",
       "stepEmail": "Your email",
       "stepCode": "Your code"
-    }
+    },
+    "professional": "Are you a professional?",
+    "professionalLink": "Sign in on the professionals site",
+    "alreadyAs": "You are signed in as {name}",
+    "alreadyIn": "You are already signed in on this browser",
+    "alreadyHelp": "Carry on as this account, or sign out and use a different email below.",
+    "continueAs": "Continue to my dashboard",
+    "useAnother": "Sign out and use another email"
   },
   "Common": {
     "yes": "Yes",
@@ -716,14 +727,15 @@
     "newHome": "Are you building a new home?",
     "inRaipur": "Is your plot in Raipur?",
     "continue": "Continue",
-    "ready": "You can start your requirement. Your answers are saved at each step, so you can come back to it.",
+    "ready": "You can start your requirement now. Your answers are saved at each step, so you can come back to it.",
     "begin": "Start my requirement",
     "card": {
       "eyebrow": "Plan a project",
       "intro": "Two questions, then a code by email, and you can describe your home.",
       "label": "Build plan request",
       "note": "Takes one minute"
-    }
+    },
+    "readySignIn": "Next, a code by email signs you in; then you can describe your home. Your answers are saved at each step."
   },
   "Enquiry": {
     "helpTitle": "Need help?",
@@ -749,7 +761,9 @@
       "eyebrow": "Plan a project",
       "label": "Enquiry",
       "note": "Takes one minute"
-    }
+    },
+    "backHome": "Back to Plan2Build",
+    "tryEstimate": "Get a cost estimate"
   },
   "Projects": {
     "title": "My projects",
@@ -801,7 +815,9 @@
       "cta": "Start my requirement",
       "empty": "No projects yet",
       "emptyBody": "Your projects will be here once you start one."
-    }
+    },
+    "newProject": "New project",
+    "continueDraft": "Continue your draft"
   },
   "Requirement": {
     "title": "Your requirement",
@@ -1088,8 +1104,8 @@
       "buildPlan": "Build Plan",
       "quotes": "Contractor quotes",
       "journey": "Journey",
-      "notifications": "Notifications",
-      "messages": "Messages"
+      "team": "Meet your team",
+      "attention": "Needs attention"
     },
     "draftTitle": "Finish your requirement",
     "draftBody": "Submit your requirement to open your project dashboard.",
@@ -1680,7 +1696,8 @@
       "title": "Revoke your sign-off of line {line}?",
       "bodyInReview": "The sign-off is voided. The line must be signed again before this version can be issued.",
       "bodyAfterIssue": "This version is already issued. The revocation is recorded, and the homeowner can no longer accept this version. Plan2Build withdraws or replaces it."
-    }
+    },
+    "backToList": "All drawings and sign-offs"
   },
   "Rfq": {
     "title": "Contractor quotes",
@@ -1765,7 +1782,7 @@
     "send": "Send",
     "shared": "Shared with every contractor",
     "outcome": "Outcome: {state}",
-    "engagement": "Open your engagement",
+    "engagement": "Open the project workspace",
     "nothing": "Nothing here yet.",
     "open": "Open",
     "project": "Project {code}",
@@ -1839,7 +1856,8 @@
       "uploading": "Uploading the file",
       "checkNote": "Files are checked before they can be sent. Submitting waits for the check.",
       "waiting": "Waiting for the attached files to be checked…"
-    }
+    },
+    "backToQuotes": "All requests to quote"
   },
   "Execution": {
     "title": "Construction progress",
@@ -1946,7 +1964,8 @@
     "loadingUpdates": "Loading the updates…",
     "retry": "Try again",
     "showOwnUpdates": "Show your updates ({count})",
-    "hideOwnUpdates": "Hide your updates"
+    "hideOwnUpdates": "Hide your updates",
+    "backToWorkspace": "Back to the project workspace"
   },
   "Assurance": {
     "title": "Inspections",
@@ -2056,7 +2075,8 @@
     "testFile": "Result document or photo (optional)",
     "testSave": "Save the test result",
     "testWaiting": "Saving and waiting for the file check…",
-    "testSaved": "Test result saved."
+    "testSaved": "Test result saved.",
+    "backToList": "All inspections"
   },
   "Shell": {
     "sidebar": "Sidebar",
@@ -2081,7 +2101,8 @@
       "listing": "Your listing"
     },
     "greeting": "Welcome back, {name}",
-    "greetingNoName": "Welcome back"
+    "greetingNoName": "Welcome back",
+    "browseProfessionals": "Browse professionals"
   },
   "Overview": {
     "eyebrow": "Your home",
@@ -2326,7 +2347,9 @@
       "drawing": "Elevation from your requirement",
       "drawingBuild": "Filled in as stages complete",
       "free": "{remaining} of {total} free designs left",
-      "seeDesigns": "See all designs"
+      "seeDesigns": "See all designs",
+      "siteAlt": "Your home in {place}, photographed on site during {stage}",
+      "siteNote": "Site photo · {stage} · {date}{by, select, other { · {by}}}"
     },
     "stage": {
       "label": "Current stage",
@@ -2372,7 +2395,7 @@
       "aria": "{label}: {done} of {total} {unit}"
     },
     "activity": {
-      "title": "Recent activity",
+      "title": "Recent activities",
       "all": "View all",
       "empty": "Updates appear here as your project moves.",
       "items": {
@@ -2426,6 +2449,17 @@
       "verify": "An independent auditor checks six gates, from the foundation to the snag list.",
       "handover": "Defects closed, documents and warranties collected, and your acknowledgement.",
       "record": "How your house was built: plan, drawings, specification, inspections and handover."
+    },
+    "teamPage": {
+      "title": "Meet your team",
+      "intro": "Everyone working on your home, with how to reach them.",
+      "phone": "Phone",
+      "email": "Email",
+      "since": "Joined {date}",
+      "noEmail": "No email shared yet",
+      "none": "No professionals have joined your project yet.",
+      "noneBody": "Once you engage a contractor, architect or engineer through Plan2Build, they appear here with their contact details.",
+      "plan2buildPhone": "Phone"
     }
   },
   "Console": {
@@ -2468,7 +2502,10 @@
         "connection": "{count, plural, one {homeowner request needs a reply} other {homeowner requests need a reply}}",
         "quote": "{count, plural, one {RFQ needs a response} other {RFQs need a response}}",
         "inspection": "{count, plural, one {inspection is due} other {inspections are due}}",
-        "finding": "{count, plural, one {inspection finding needs correcting} other {inspection findings need correcting}}"
+        "finding": "{count, plural, one {inspection finding needs correcting} other {inspection findings need correcting}}",
+        "drawing": "{count, plural, one {drawing set is waiting for you} other {drawing sets are waiting for you}}",
+        "signoff": "{count, plural, one {Build Plan version needs your structural sign-off} other {Build Plan versions need your structural sign-off}}",
+        "handover": "{count, plural, one {handover needs its documents and warranties} other {handovers need their documents and warranties}}"
       },
       "soonest": {
         "connection": {
@@ -2490,15 +2527,33 @@
           "today": "",
           "tomorrow": "",
           "later": ""
+        },
+        "drawing": {
+          "today": "",
+          "tomorrow": "",
+          "later": ""
+        },
+        "signoff": {
+          "today": "",
+          "tomorrow": "",
+          "later": ""
+        },
+        "handover": {
+          "today": "",
+          "tomorrow": "",
+          "later": ""
         }
       },
       "cta": {
         "connection": "Review requests",
         "quote": "Review RFQs",
         "inspection": "Open inspections",
-        "finding": "Open the project"
+        "finding": "Open the project",
+        "drawing": "Open drawing requests",
+        "signoff": "Open sign-offs",
+        "handover": "Open the project"
       },
-      "queue": "Waiting on you, most urgent first",
+      "queue": "Waiting on you: urgent, respond, review, complete",
       "more": "{count, plural, one {# more waiting} other {# more waiting}}",
       "seeAll": "See everything waiting",
       "clear": "You're all caught up",
@@ -2516,7 +2571,10 @@
       "connection": "Homeowner request",
       "quote": "Request to quote",
       "inspection": "Inspection",
-      "finding": "Inspection finding"
+      "finding": "Inspection finding",
+      "drawing": "Drawing set to submit",
+      "signoff": "Structural sign-off",
+      "handover": "Handover documents"
     },
     "due": {
       "respond": "Reply by {date}",
@@ -2624,7 +2682,7 @@
     "checkpoints": {
       "profile": "Profile",
       "services": "Services",
-      "evidence": "Evidence",
+      "evidence": "Verification",
       "portfolio": "Portfolio",
       "listed": "Listed",
       "states": {
@@ -2697,17 +2755,20 @@
       "open": "Open"
     },
     "notifications": {
-      "label": "Notifications",
-      "count": "{count, plural, =0 {Notifications, nothing new} one {Notifications, # waiting} other {Notifications, # waiting}}",
-      "title": "Notifications",
-      "intro": "Everything waiting on you, most urgent first: homeowner requests, RFQs and inspections.",
+      "label": "Needs attention",
+      "count": "{count, plural, =0 {Needs attention, nothing waiting} one {Needs attention, # waiting} other {Needs attention, # waiting}}",
+      "title": "Needs attention",
+      "intro": "Everything waiting on you, most urgent first: requests, quotes, drawings, sign-offs, inspections and site work.",
       "empty": "Nothing is waiting on you",
-      "emptyBody": "New homeowner requests, RFQs and inspections appear here as they arrive.",
+      "emptyBody": "New requests, quotes, drawings to submit, sign-offs and inspections appear here as they arrive.",
       "back": "Back to today"
     },
     "projectsPage": {
       "title": "Projects",
-      "intro": "The work you are doing on Plan2Build: projects won through quotes, and services families engaged you for."
+      "intro": "The work you are doing on Plan2Build: projects won through quotes, and services families engaged you for.",
+      "past": "Past projects",
+      "pastIntro": "Engagements that have ended. Their records stay with the family's project.",
+      "pastNone": "No past projects yet."
     },
     "servicesPage": {
       "title": "Services",
@@ -2724,14 +2785,17 @@
       "services": "Services",
       "portfolio": "Portfolio",
       "work": "Work",
-      "presence": "Your presence"
+      "presence": "Your presence",
+      "signoffs": "Sign-offs"
     },
     "preview": "Preview data: sample {state} state, not from the server",
     "summary": {
       "projects": "{count, plural, one {# active project} other {# active projects}}",
       "requests": "{count, plural, one {# request to review} other {# requests to review}}",
       "inspections": "{count, plural, one {# inspection due} other {# inspections due}}",
-      "none": "Nothing is waiting on you right now."
+      "none": "Nothing is waiting on you right now.",
+      "quotes": "{count, plural, one {# RFQ to answer} other {# RFQs to answer}}",
+      "drawings": "{count, plural, one {# drawing or sign-off waiting} other {# drawings or sign-offs waiting}}"
     },
     "notice": {
       "label": "Your listing",
@@ -2739,7 +2803,7 @@
       "steps": {
         "profile": "Complete your profile",
         "services": "Add your first service",
-        "evidence": "Add your evidence",
+        "evidence": "Complete the verification requirements",
         "portfolio": "Add portfolio photos",
         "listed": "Submit for review",
         "review": "In review with Plan2Build",
@@ -2748,9 +2812,9 @@
       "text": {
         "profile": "Families see your name, firm and base first.",
         "services": "Tell Plan2Build what you do so homeowners can find you.",
-        "evidence": "Each service needs documents and references before review.",
-        "portfolio": "Photos of homes you've built or designed.",
-        "listed": "Everything is in. Submit your service for review.",
+        "evidence": "What Plan2Build checks for your trade: documents, references and, where it applies, a site visit. The list comes from Plan2Build, not from us.",
+        "portfolio": "Photos of homes you've built or designed. Most trades need them before submitting.",
+        "listed": "Everything is in. Submit your service for review on its page.",
         "review": "Requests reach you once you are listed.",
         "attention": "Read the note on your service and send it again."
       },
@@ -2768,14 +2832,20 @@
     "header": {
       "account": "Account",
       "bell": "Notifications"
+    },
+    "groups": {
+      "urgent": "Urgent",
+      "respond": "Respond",
+      "review": "Review",
+      "complete": "Complete"
     }
   },
   "Inbox": {
-    "bell": "Notifications",
-    "bellCount": "Notifications, {count, plural, =0 {none new} one {# new} other {# new}}",
+    "bell": "Needs attention",
+    "bellCount": "Needs attention, {count, plural, =0 {nothing waiting} one {# thing waiting} other {# things waiting}}",
     "notifications": {
-      "title": "Notifications",
-      "intro": "What needs you and what changed on {code}.",
+      "title": "Needs attention",
+      "intro": "What needs you and what changed on {code}, from your project's own records.",
       "empty": "Nothing yet. Updates appear here as your project moves.",
       "groups": {
         "today": "Today",
@@ -2790,31 +2860,7 @@
       },
       "new": "New",
       "open": "Open"
-    },
-    "messages": {
-      "title": "Messages",
-      "intro": "The people on {code} and how to reach them.",
-      "empty": "No one engaged yet",
-      "emptyDetail": "Professionals appear here, with the contact details they share, once they are engaged.",
-      "notAvailable": "In-app messaging is not available yet. Call or email the people below.",
-      "team": "Your project team",
-      "noContact": "No phone or email shared yet.",
-      "callName": "Call {name}",
-      "emailName": "Email {name}"
     }
-  },
-  "Welcome": {
-    "title": "Welcome to Plan2Build",
-    "intro": "Your account is ready. Tell us about your home now, or come back to it when you like.",
-    "card": {
-      "eyebrow": "You are in",
-      "label": "Your next step",
-      "note": "You can do this later"
-    },
-    "now": "Tell us about my home",
-    "nowHint": "A few questions about your plot and your house.",
-    "skip": "Skip for now",
-    "skipHint": "Go to your dashboard. We will remind you there."
   },
   "Records": {
     "handover": "Handover",
@@ -3665,5 +3711,59 @@
         }
       }
     }
+  },
+  "Help": {
+    "title": "Need help?",
+    "intro": "The Plan2Build team is here for your project: a question about your requirement, your package, a quote or a stage.",
+    "hours": "Call or email us, {hours}. We reply to emails within one working day.",
+    "call": "Call {phone}",
+    "email": "Email {email}"
+  },
+  "Engagement": {
+    "title": "Project workspace",
+    "back": "All projects",
+    "intro": "{code} · {category}",
+    "origin": {
+      "rfq": "Won through a request to quote",
+      "connection": "From an accepted homeowner request"
+    },
+    "state": {
+      "ACTIVE": "Active",
+      "ENDED": "Ended"
+    },
+    "since": "Since {date}",
+    "endedAt": "Ended {date}",
+    "family": "The family",
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "siteAddress": "Site address",
+    "location": "Plot pin",
+    "openMap": "Open the site pin in OpenStreetMap",
+    "notGiven": "Not given",
+    "files": "Files the family shared",
+    "noFiles": "No files shared yet.",
+    "download": "Download",
+    "execution": "Construction",
+    "executionIntro": "Stages, updates, inspection findings, payment status and handover for this build.",
+    "openExecution": "Construction execution",
+    "stages": "{done} of {total} stages complete",
+    "noStages": "No stages yet: construction starts when the first stage begins.",
+    "drawings": "Drawings",
+    "drawingsIntro": "Drawing requests from this family addressed to you.",
+    "openDrawings": "Open drawing requests",
+    "signoffs": "Structural sign-off",
+    "signoffsIntro": "Build Plan versions on this project waiting for your sign-off.",
+    "signVersion": "Sign version {number}",
+    "handover": {
+      "OPEN": "Handover is open: add the documents and warranties.",
+      "READY": "Handover is ready for the family's acknowledgement.",
+      "ACKNOWLEDGED": "Handover acknowledged by the family.",
+      "ISSUED_BY_OPERATIONS": "Handover issued by Plan2Build."
+    },
+    "end": "End this engagement",
+    "endReason": "Why is it ending?",
+    "endConfirm": "End engagement",
+    "ended": "This engagement has ended. Its records stay with the family's project."
   }
 }

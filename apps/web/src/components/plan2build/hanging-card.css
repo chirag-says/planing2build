@@ -210,6 +210,10 @@
     inset 0 0 0 1px color-mix(in oklch, var(--foreground) 15%, transparent),
     0 30px 50px -36px color-mix(in srgb, var(--gd-black) 45%, transparent);
 }
+/* On a static sheet the steps are there at once, not dealt in after the card has dropped. */
+.hc-sheet .hc-step {
+  animation-delay: calc(0.1s + var(--i, 1) * 0.08s);
+}
 /* Room between the card's header rule and a form that is not laid out in numbered steps. */
 .hc-card > .bid-top + form:not(:has(> .bid-step:first-child)) {
   margin-top: 1.25rem;

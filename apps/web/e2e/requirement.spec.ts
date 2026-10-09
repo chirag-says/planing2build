@@ -65,13 +65,14 @@ test("a homeowner signs up, answers the requirement, uploads a photo and submits
   await choose(page, "Is your plot in Raipur?", "Yes");
   await axe(page);
   await page.getByRole("link", { name: "Start my requirement" }).click();
-  await expect(page).toHaveURL(/\/sign-in\?next=%2Fprojects%2Fnew$/);
+  await expect(page).toHaveURL(/\/sign-in\?next=%2Fstart%3Fready%3D1$/);
   await page.getByLabel("Email address").fill(email);
   await page.getByRole("button", { name: "Email me a code" }).click();
   await page.getByLabel("6-digit code").fill(await codeFor(request, email));
   await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(page).toHaveURL(/\/projects\/new$/);
-  await page.getByRole("button", { name: "Create my project" }).click();
+  // Back on the start questions with both answers kept; the project is created from here.
+  await expect(page).toHaveURL(/\/start\?ready=1$/);
+  await page.getByRole("button", { name: "Start my requirement" }).click();
   // Generous: in development the first visit compiles the route.
   await expect(page).toHaveURL(/\/projects\/[0-9a-f-]+\/requirement$/, { timeout: 30_000 });
 
@@ -159,9 +160,9 @@ test("a homeowner signs up, answers the requirement, uploads a photo and submits
   }
   await expect(sections.getByRole("link", { name: "Construction stages" })).toHaveCount(0);
   await expect(sections.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");
-  // The overview is a command center: the package as a state, the estimate on its own page.
-  await expect(page.getByText("Current stage")).toBeVisible();
-  await expect(page.getByText("Available once Plan2Build has reviewed your project")).toBeVisible();
+  // The overview is one screen: the home, the next step and recent activities. The stage, the team
+  // and the estimate have their own pages.
+  await expect(page.getByRole("heading", { name: "Recent activities" })).toBeVisible();
   await axe(page);
 
   await openSection(page, "Estimate");

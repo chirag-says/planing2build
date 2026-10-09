@@ -26,15 +26,11 @@ test("a homeowner signs up with an emailed code and signs out", async ({ page, r
   await page.getByLabel("6-digit code").fill(await codeFor(request, email));
   await page.getByRole("button", { name: "Sign in" }).click();
 
-  // A new family is asked once whether to describe the home now; skipping is a fine answer and
-  // leads to the dashboard, which asks again.
-  await expect(page).toHaveURL(`${IHB}/welcome`);
-  await expect(page.getByRole("link", { name: "Tell us about my home" })).toBeVisible();
-  await expectAccessible(page);
-  await page.getByRole("link", { name: "Skip for now" }).click();
-  await expect(page).toHaveURL(`${IHB}/projects`);
-  await expect(page.getByRole("heading", { name: "Tell us about your home" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Start my requirement" })).toBeVisible();
+  // A new family with no project lands on the start questions (decided 2026-10-08): nothing to
+  // list yet, and no welcome screen in between.
+  // Generous: in development the first visit compiles /continue and /start.
+  await expect(page).toHaveURL(`${IHB}/start`, { timeout: 30_000 });
+  await expect(page.getByRole("group", { name: "Are you building a new home?" })).toBeVisible();
   await expectAccessible(page);
   const signOut = await openSignOut(page);
   const cookies = await page.context().cookies();

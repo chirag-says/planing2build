@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 
-import { ArrowRightIcon, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-import { Eyebrow, PageContainer, PageHeader } from "@/components/plan2build/page-header";
+import { PageContainer, PageHeader } from "@/components/plan2build/page-header";
 import { ProjectSummaryCard } from "@/components/plan2build/project-summary-card";
 import { Button } from "@/components/ui/button";
 import { serverApi } from "@/lib/api/server";
@@ -31,37 +32,14 @@ export default async function ProjectsPage() {
   const t = getTranslator("Projects");
   const { data: projects } = await (await serverApi()).GET("/api/v1/projects");
   if (!projects) throw new Error("projects could not be loaded");
-  // No project yet: the dashboard asks for the requirement (signing up never waits on it).
-  if (projects.length === 0) {
-    return (
-      <PageContainer width="wide">
-        <PageHeader size="compact" title={t("title")} />
-        <section
-          aria-labelledby="get-started"
-          className="surface-dark flex flex-col gap-4 rounded-xl bg-background p-6 text-foreground ring-1 ring-foreground sm:p-8"
-        >
-          <Eyebrow>{t("getStarted.eyebrow")}</Eyebrow>
-          <span aria-hidden="true" className="p2b-beam" />
-          <h2 id="get-started" className="font-heading text-3xl leading-none sm:text-4xl">
-            {t("getStarted.title")}
-          </h2>
-          <p className="max-w-prose text-lg text-pretty text-muted-foreground">{t("getStarted.body")}</p>
-          <Button asChild size="lg" className="mt-2 bg-brand text-brand-foreground sm:self-start">
-            <Link href="/start">
-              {t("getStarted.cta")}
-              <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
-            </Link>
-          </Button>
-        </section>
-      </PageContainer>
-    );
-  }
+  // No project yet: there is nothing to list; the start questions are the way in.
+  if (projects.length === 0) redirect("/start");
   const count = (statuses: ProjectStatus[]) => projects.filter((p) => statuses.includes(p.status)).length;
   const startNew = (
     <Button asChild variant="outline">
       <Link href="/start">
         <PlusIcon aria-hidden="true" data-icon="inline-start" />
-        {t("startNew")}
+        {t("newProject")}
       </Link>
     </Button>
   );

@@ -4,6 +4,7 @@
 // for "Need help?". Each creates an enquiry for operations; nothing else follows from it.
 import type { ComingSoonWork, EnquiryKind } from "@p2b/contracts";
 import { ComingSoonWorkValues } from "@p2b/contracts";
+import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
 import { ChoiceGroup, FormField, FormFieldset } from "@/components/plan2build/form-field";
@@ -57,11 +58,22 @@ export function EnquiryForm({ kind }: { kind: EnquiryKind }) {
 
   if (sent) {
     return (
-      <Notice tone="success" live="polite">
-        {t("thanks")}
-      </Notice>
+      <div className="flex flex-col gap-4">
+        <Notice tone="success" live="polite">
+          {t("thanks")}
+        </Notice>
+        <div className="flex flex-wrap gap-3">
+          <Button asChild variant="outline">
+            <Link href="/">{t("backHome")}</Link>
+          </Button>
+          <Button asChild variant="ghost">
+            <Link href="/estimate">{t("tryEstimate")}</Link>
+          </Button>
+        </div>
+      </div>
     );
   }
+
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-6">

@@ -4,6 +4,9 @@ import type { Audience } from "@p2b/contracts";
 
 export type AudienceHosts = Record<Audience, string>;
 
+/** The request header carrying the public path and query (set by proxy.ts, read by lib/session.ts). */
+export const PATH_HEADER = "x-p2b-path";
+
 const ENV_KEYS: Record<Audience, string> = {
   ihb: "P2B_HOST_IHB",
   pro: "P2B_HOST_PRO",

@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { HideOnPath } from "@/components/plan2build/hide-on-path";
@@ -8,11 +9,13 @@ import { ProjectSectionsRow } from "@/components/plan2build/project-sections-nav
 import { StatusBadge } from "@/components/plan2build/status-badge";
 import { getTranslator } from "@/lib/i18n";
 import { dashboardOpen, loadProject } from "@/lib/project";
+import { currentPath } from "@/lib/session";
 
 // The project dashboard (PD-07): one header around every project area but the overview, which
 // opens with its own greeting and the home. The sections, in seven groups, are in the sidebar on
 // wide screens and in a scrolling row under the header below. It opens on submission (PD-21); a
-// draft shows only its overview, which leads back to the requirement.
+// draft has only its overview and the journey, so any other address goes back to the overview
+// (the API would refuse the data anyway; this keeps the family on a page that makes sense).
 export default async function ProjectDashboardLayout({
   children,
   params,
@@ -27,6 +30,10 @@ export default async function ProjectDashboardLayout({
   const code = getTranslator("Projects")("code", { code: project.code });
   const open = dashboardOpen(project.status);
   const base = `/projects/${project.project_id}`;
+  if (!open) {
+    const path = (await currentPath()).split("?")[0].replace(/\/+$/, "");
+    if (path !== base && path !== `${base}/journey`) redirect(base);
+  }
 
   return (
     <main id="main" className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:gap-8 lg:px-8">

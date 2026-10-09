@@ -2,18 +2,23 @@
 
 // The two entry questions before the requirement (REQUIREMENT_QUESTIONS_V1 L.1): a "No" leads to
 // the matching capture path (L.3); two "Yes" answers lead to the project. Choosing an answer only
-// reveals the next step; the family follows a link to move on (no change of page on input,
-// WCAG 3.2.2).
+// reveals the next step; the family follows a link or presses the one button to move on (no change
+// of page on input, WCAG 3.2.2). The city question is "Is your plot in Raipur?" while Raipur is the
+// only supported city; an unsupported city goes to the other-city enquiry.
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 import { useState, type CSSProperties, type ReactNode } from "react";
 
 import { ChoiceGroup, FormFieldset } from "@/components/plan2build/form-field";
+import { CreateProjectButton } from "@/components/plan2build/create-project-button";
 import { Button } from "@/components/ui/button";
 import { getTranslator } from "@/lib/i18n";
 
 const t = getTranslator("Start");
 const common = getTranslator("Common");
+
+/** Where sign-in returns to: the questions already answered, so the family is not asked twice. */
+export const START_READY = "/start?ready=1";
 
 function YesNo({
   id,
@@ -70,9 +75,22 @@ function Next({ href, label }: { href: string; label: string }) {
   );
 }
 
-export function EntryQuestions({ framed = false }: { framed?: boolean }) {
-  const [newHome, setNewHome] = useState<boolean | null>(null);
-  const [inRaipur, setInRaipur] = useState<boolean | null>(null);
+/**
+ * `signedIn`: the last step creates the project here. Signed out, it leads to sign-in and comes
+ * back with `ready` set, both answers kept. Creating never resumes an older draft: "New project"
+ * means a new project; a lone draft is resumed by the sign-in landing (lib/session.ts).
+ */
+export function EntryQuestions({
+  framed = false,
+  signedIn,
+  ready = false,
+}: {
+  framed?: boolean;
+  signedIn: boolean;
+  ready?: boolean;
+}) {
+  const [newHome, setNewHome] = useState<boolean | null>(ready ? true : null);
+  const [inRaipur, setInRaipur] = useState<boolean | null>(ready ? true : null);
 
   return (
     <div className="flex flex-col gap-8">
@@ -89,8 +107,12 @@ export function EntryQuestions({ framed = false }: { framed?: boolean }) {
         {newHome && inRaipur === false && <Next href="/other-city" label={t("continue")} />}
         {newHome && inRaipur && (
           <div className="flex flex-col gap-4">
-            <p className="text-base">{t("ready")}</p>
-            <Next href="/projects/new" label={t("begin")} />
+            <p className="text-base">{signedIn ? t("ready") : t("readySignIn")}</p>
+            {signedIn ? (
+              <CreateProjectButton label={t("begin")} />
+            ) : (
+              <Next href={`/sign-in?next=${encodeURIComponent(START_READY)}`} label={t("begin")} />
+            )}
           </div>
         )}
       </div>

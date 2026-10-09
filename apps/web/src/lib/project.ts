@@ -12,7 +12,7 @@ export type ProjectDetail = components["schemas"]["ProjectDetail"];
 export type ProjectStatus = ProjectDetail["project"]["status"];
 
 export const loadProject = cache(async (projectId: string): Promise<ProjectDetail> => {
-  await requireSignedIn(`/projects/${projectId}`);
+  await requireSignedIn();
   const { data, response } = await (await serverApi()).GET("/api/v1/projects/{project_id}", {
     params: { path: { project_id: projectId } },
   });

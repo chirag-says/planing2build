@@ -2,7 +2,7 @@ import { HeaderNav } from "@/components/plan2build/header-nav";
 import { getTranslator } from "@/lib/i18n";
 
 // Sign-in sits outside the app shell: before the email there is no account and no dashboard,
-// only the website header. A signed-in professional never sees it (the page sends them on).
+// only the website header. A signed-in browser is told so on the page, never sent on silently.
 export default function ProAuthLayout({ children }: { children: React.ReactNode }) {
   const t = getTranslator("Pro");
   return (

@@ -12,6 +12,19 @@ export function professionalsOrigin(): string {
   return host.endsWith('.localhost') || host === 'localhost' ? `http://${host}:${LOCAL_CADDY_PORT}` : `https://${host}`;
 }
 
+/** The homeowner site's origin (the public website and the family's sign-in), or '' when unset. */
+export function homeownerOrigin(): string {
+  const host = process.env.P2B_HOST_IHB?.trim().toLowerCase();
+  if (!host) return '';
+  return host.endsWith('.localhost') || host === 'localhost' ? `http://${host}:${LOCAL_CADDY_PORT}` : `https://${host}`;
+}
+
+/** The homeowner sign-in, for a family that landed on the professionals host. */
+export function homeownerSignInUrl(): string {
+  const origin = homeownerOrigin();
+  return origin ? `${origin}/sign-in` : '/';
+}
+
 /** The professionals sign-in (registration starts there), or the public page when unset. */
 export function professionalsSignInUrl(): string {
   const origin = professionalsOrigin();

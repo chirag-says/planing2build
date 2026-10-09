@@ -14,7 +14,8 @@ import { getTranslator } from "@/lib/i18n";
 
 const t = getTranslator("Projects");
 
-export function CreateProjectButton() {
+/** `label` words the button where the page already says what it does ("Start my requirement"). */
+export function CreateProjectButton({ label }: { label?: string } = {}) {
   const router = useRouter();
   const key = useRef<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -54,7 +55,7 @@ export function CreateProjectButton() {
       )}
       <Button type="button" size="lg" onClick={create} disabled={busy} className="sm:self-start">
         {busy && <Spinner />}
-        {busy ? t("creating") : t("create")}
+        {busy ? t("creating") : (label ?? t("create"))}
         {!busy && <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />}
       </Button>
     </div>
