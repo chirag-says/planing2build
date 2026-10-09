@@ -6,14 +6,6 @@ import { PageContainer, PageHeader } from "@/components/plan2build/page-header";
 import { EmptyState, Notice } from "@/components/plan2build/states";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
 import { requireVerifiedStaff } from "@/lib/staff";
@@ -37,42 +29,27 @@ export default async function AdminStaffPage() {
       ) : (
         <Card size="sm">
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead scope="col">{t("staff.email")}</TableHead>
-                  <TableHead scope="col">{t("staff.roles")}</TableHead>
-                  <TableHead scope="col">{t("staff.status")}</TableHead>
-                  <TableHead scope="col">{t("staff.mfa")}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.map((member) => (
-                  <TableRow key={member.user_id} data-testid="staff-member">
-                    <TableCell className="font-medium break-all whitespace-normal">
-                      {member.email}
-                    </TableCell>
-                    <TableCell>
-                      <span className="flex flex-wrap gap-1">
-                        {member.roles.map((role) => (
-                          <Badge key={role} variant="outline">{t(`staff.roleNames.${role}`)}</Badge>
-                        ))}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={member.status === "ACTIVE" ? "success" : "neutral"}>
-                        {t(`staff.statuses.${member.status}`)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={member.mfa_enabled ? "success" : "warning"}>
-                        {member.mfa_enabled ? t("staff.mfaOn") : t("staff.mfaOff")}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            {/* A list, not a table: each row is one account and its badges label themselves, so it
+                reads on a phone without a sideways-scrolling region. Columns line up from sm. */}
+            <ul className="flex flex-col divide-y divide-border">
+              {data.map((member) => (
+                <li key={member.user_id} data-testid="staff-member"
+                  className="grid gap-2 py-3 first:pt-0 last:pb-0 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto_auto] sm:items-center sm:gap-4">
+                  <span className="font-medium break-all">{member.email}</span>
+                  <span className="flex flex-wrap gap-1" aria-label={t("staff.roles")}>
+                    {member.roles.map((role) => (
+                      <Badge key={role} variant="outline">{t(`staff.roleNames.${role}`)}</Badge>
+                    ))}
+                  </span>
+                  <Badge variant={member.status === "ACTIVE" ? "success" : "neutral"}>
+                    {t(`staff.statuses.${member.status}`)}
+                  </Badge>
+                  <Badge variant={member.mfa_enabled ? "success" : "warning"}>
+                    {member.mfa_enabled ? t("staff.mfaOn") : t("staff.mfaOff")}
+                  </Badge>
+                </li>
+              ))}
+            </ul>
           </CardContent>
         </Card>
       )}

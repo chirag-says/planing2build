@@ -598,8 +598,8 @@
       "roles": "Roles",
       "status": "Status",
       "mfa": "Authenticator",
-      "mfaOn": "Set up",
-      "mfaOff": "Not set up",
+      "mfaOn": "Authenticator set up",
+      "mfaOff": "No authenticator",
       "roleNames": {
         "OPS": "Operations",
         "ADMIN": "ADMIN"
