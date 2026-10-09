@@ -463,6 +463,7 @@ async def test_acceptance_reveals_contacts_engages_and_withdraws_the_other_reque
     before = (await chosen.get(f"/api/v1/pro/connections/{first}")).json()
     assert before["family_contact"] is None
     assert before["location"] is None
+    assert before["engagement_id"] is None
     assert before["brief"]["locality"] == "Shankar Nagar"
     assert "Meera" not in str(before)
     assert "98765" not in str(before)
@@ -483,6 +484,12 @@ async def test_acceptance_reveals_contacts_engages_and_withdraws_the_other_reque
 
     row = category_of(await services(w), "CONTRACTOR")
     assert row["engagement"]["party"] == "LISTED"
+    # The accepted request names its engagement, so the professional reaches the workspace from it.
+    assert after["engagement_id"] == row["engagement"]["id"]
+    workspace = await chosen.get(f"/api/v1/pro/engagements/{after['engagement_id']}")
+    assert workspace.status_code == 200, workspace.text
+    again = (await chosen.get(f"/api/v1/pro/connections/{first}")).json()
+    assert again["engagement_id"] == after["engagement_id"]
     assert row["engagement"]["professional_contact"] == {
         "name": "Ravi Builders", "firm": "Ravi Builders & Co", "phone": "+91 90000 11111",
         "email": "ravi@example.in",

@@ -287,6 +287,10 @@ class ProConnectionOut(BaseModel):
     withdraw_reason: WithdrawReason | None
     family_contact: FamilyContactOut | None = Field(description="Only after you accepted")
     location: PointOut | None = Field(description="The plot pin, while the engagement is active")
+    engagement_id: uuid.UUID | None = Field(
+        description="The engagement this request became once you accepted; its workspace is "
+        "/pro/engagements/{engagement_id}"
+    )
     engagement_state: EngagementState | None
     shared_files: list[FileOut]
 

@@ -269,6 +269,7 @@ async def pro_connection_out(
         withdraw_reason=WithdrawReason(c.withdraw_reason) if c.withdraw_reason else None,
         family_contact=FamilyContactOut.model_validate(c.family_contact) if accepted else None,
         location=location,
+        engagement_id=engagement.id if engagement else None,
         engagement_state=EngagementState(engagement.state) if engagement else None,
         shared_files=files or [],
     )

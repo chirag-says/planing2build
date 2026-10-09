@@ -11237,6 +11237,11 @@ export interface components {
             /** Decline Note */
             decline_note: string | null;
             decline_reason: components["schemas"]["DeclineReason"] | null;
+            /**
+             * Engagement Id
+             * @description The engagement this request became once you accepted; its workspace is /pro/engagements/{engagement_id}
+             */
+            engagement_id: string | null;
             engagement_state: components["schemas"]["EngagementState"] | null;
             /** @description Only after you accepted */
             family_contact: components["schemas"]["FamilyContactOut"] | null;

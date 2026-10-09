@@ -14759,6 +14759,19 @@
               }
             ]
           },
+          "engagement_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The engagement this request became once you accepted; its workspace is /pro/engagements/{engagement_id}",
+            "title": "Engagement Id"
+          },
           "engagement_state": {
             "anyOf": [
               {
@@ -14853,6 +14866,7 @@
           "withdraw_reason",
           "family_contact",
           "location",
+          "engagement_id",
           "engagement_state",
           "shared_files"
         ],
