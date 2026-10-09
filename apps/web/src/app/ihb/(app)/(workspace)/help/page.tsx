@@ -25,13 +25,15 @@ export default async function HelpPage() {
         <CardContent className="flex flex-col gap-4">
           <p className="text-base">{t("hours", { hours: site.hours })}</p>
           <div className="flex flex-wrap gap-3">
-            <Button asChild size="lg">
-              <a href={telHref(site.phone)}>
-                <PhoneIcon aria-hidden="true" data-icon="inline-start" />
-                {t("call", { phone: site.phone })}
-              </a>
-            </Button>
-            <Button asChild size="lg" variant="outline">
+            {site.phone && (
+              <Button asChild size="lg">
+                <a href={telHref(site.phone)}>
+                  <PhoneIcon aria-hidden="true" data-icon="inline-start" />
+                  {t("call", { phone: site.phone })}
+                </a>
+              </Button>
+            )}
+            <Button asChild size="lg" variant={site.phone ? "outline" : "default"}>
               <a href={`mailto:${site.email}`}>
                 <MailIcon aria-hidden="true" data-icon="inline-start" />
                 {t("email", { email: site.email })}

@@ -8,7 +8,9 @@ export const site: SiteInfo = {
   "descriptor": "Home construction platform",
   "tagline": "Independent advice for the family building one house: a written Build Plan, quotes compared on equal scope, and independent checks at the six stages that cannot be undone. We never take your contract.",
   "email": "hello@plan2build.in",
-  "phone": "+91 98765 43210",
+  // Empty until Plan2Build supplies its approved number: every call link checks for a number,
+  // so none is offered meanwhile (the earlier +91 98765 43210 was a placeholder).
+  "phone": "",
   "bidHref": "/request-a-bid",
   "projectsHref": "/projects",
   "area": "Mumbai",

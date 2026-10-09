@@ -20,7 +20,7 @@ export default async function TeamPage({ params }: { params: Promise<{ projectId
   return (
     <>
       <PageHeader size="compact" title={o("teamPage.title")} description={o("teamPage.intro")} />
-      <TeamDirectory overview={overview} base={`/projects/${projectId}`} plan2build={{ phone: site.phone }} />
+      <TeamDirectory overview={overview} base={`/projects/${projectId}`} plan2build={{ phone: site.phone, email: site.email }} />
     </>
   );
 }

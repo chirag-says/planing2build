@@ -80,7 +80,7 @@ export function TeamDirectory({
 }: {
   overview: ProjectOverview;
   base: string;
-  plan2build: { phone: string };
+  plan2build: { phone: string; email: string };
 }) {
   const o = getTranslator("Overview");
   const p2bPhone = contactHref(plan2build.phone);
@@ -120,18 +120,17 @@ export function TeamDirectory({
                 <p className="text-base text-pretty text-muted-foreground">{o("team.plan2buildBody")}</p>
               </div>
             </div>
-            <Detail icon={<PhoneIcon />}>
-              {p2bPhone ? (
+            {/* No call link until Plan2Build's approved number is in the site content. */}
+            {p2bPhone && (
+              <Detail icon={<PhoneIcon />}>
                 <a href={p2bPhone.href} className="font-mono tracking-wider tabular-nums underline-offset-4 hover:underline">
                   {plan2build.phone}
                 </a>
-              ) : (
-                plan2build.phone
-              )}
-            </Detail>
+              </Detail>
+            )}
             <ContactActions
               name={o("team.plan2build")}
-              contact={plan2build.phone}
+              contact={plan2build.phone || plan2build.email}
             />
           </li>
           {overview.assurance && (
