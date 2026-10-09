@@ -161,6 +161,9 @@ test("a family requests contractor quotes, operations publish a neutral comparis
   await expect(page.getByRole("heading", { name: "Requests for quotation" })).toBeVisible();
   await axe(page);
   await page.goto(`${OPS}/rfqs/${rfqId}`);
+  // Type only once the page is interactive: text typed before hydration is merged with the form's
+  // initial JSON (seen on a cold dev-server compile).
+  await page.waitForLoadState("networkidle");
   const deadline = page.locator("form").filter({ has: page.getByLabel("Set the deadline (ISO date-time)") });
   await deadline.getByLabel("Set the deadline (ISO date-time)").fill(
     JSON.stringify({ quotes_due_at: new Date(Date.now() + 7 * 86_400_000).toISOString() }),
@@ -215,13 +218,15 @@ test("a family requests contractor quotes, operations publish a neutral comparis
   // Alpha is engaged and sees the family's contact; Beta sees only the outcome.
   await pageA.reload();
   await expect(pageA.getByText(/ACCEPTED · SELECTED/)).toBeVisible();
-  await pageA.getByRole("link", { name: "Open your engagement" }).click();
+  // Selection creates the engagement; the invitation hands over to its Project workspace.
+  await pageA.getByRole("link", { name: "Open the project workspace" }).click();
+  await expect(pageA).toHaveURL(/\/engagements\/[0-9a-f-]+$/, { timeout: 30_000 });
   await expect(pageA.getByTestId("family-contact")).toContainText("Asha Verma");
   await expect(pageA.getByTestId("family-contact")).toContainText("+91 98765 43210");
   await axe(pageA);
   await pageB.reload();
   await expect(pageB.getByText(/ACCEPTED · NOT_SELECTED/)).toBeVisible();
-  await expect(pageB.getByRole("link", { name: "Open your engagement" })).toHaveCount(0);
+  await expect(pageB.getByRole("link", { name: "Open the project workspace" })).toHaveCount(0);
   await axe(pageB);
   await pageA.context().close();
   await pageB.context().close();

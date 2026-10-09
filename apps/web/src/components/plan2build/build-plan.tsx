@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { isScanPending, SCAN_POLL_MS, shouldPollScan } from "@/lib/file-scan";
+import { SCAN_POLL_MS, shouldPollScan } from "@/lib/file-scan";
 import { getTranslator } from "@/lib/i18n";
 
 type Request = components["schemas"]["DesignRequestOut"];
@@ -365,9 +365,15 @@ function AddDrawingForm({
 }
 
 /** A drawing the family uploaded, still being checked: its state, read again until the check settles
- * (GET build-plan/files/{id}, the owner's own uploads only); the page then refreshes. */
-function FamilyFileState({ projectId, fileId, initial }: { projectId: string; fileId: string; initial: FileState }) {
-  const router = useRouter();
+ * (GET build-plan/files/{id}, the owner's own uploads only), then its download once AVAILABLE.
+ * Only this row changes: refreshing the page from each file raced the owner's own actions (a
+ * refresh started before "Submit the set" could land after it and show the set as a draft again). */
+function FamilyFileState({ projectId, fileId, initial, downloadLabel }: {
+  projectId: string;
+  fileId: string;
+  initial: FileState;
+  downloadLabel: string;
+}) {
   const [state, setState] = useState<FileState>(initial);
   useEffect(() => {
     let attempt = 0;
@@ -380,15 +386,19 @@ function FamilyFileState({ projectId, fileId, initial }: { projectId: string; fi
       const next = (result.body as components["schemas"]["FileOut"]).state;
       setState(next);
       if (shouldPollScan(next, attempt)) timer = setTimeout(() => void read(), SCAN_POLL_MS);
-      else if (!isScanPending(next)) router.refresh();
     }
     if (shouldPollScan(initial, 0)) timer = setTimeout(() => void read(), SCAN_POLL_MS);
     return () => {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [projectId, fileId, initial, router]);
-  return <StatusBadge kind="file" status={state} />;
+  }, [projectId, fileId, initial]);
+  return (
+    <>
+      <StatusBadge kind="file" status={state} />
+      {state === "AVAILABLE" && <DownloadButton audience="family" projectId={projectId} fileId={fileId} label={downloadLabel} />}
+    </>
+  );
 }
 
 /** Remove a drawing from the family's own DRAFT set, after a confirmation (no package needed). */
@@ -559,12 +569,15 @@ export function DesignRequestCard({
               <li key={f.id} className="flex flex-wrap items-center gap-2">
                 <span>{t(`classes.${f.drawing_class}`)}{f.floor !== null ? ` (${t("floor")} ${f.floor})` : ""}: {f.title}</span>
                 {familyDraft(set.state) ? (
-                  <FamilyFileState key={f.file_state} projectId={projectId} fileId={f.file_id} initial={f.file_state} />
+                  <FamilyFileState key={f.file_state} projectId={projectId} fileId={f.file_id} initial={f.file_state}
+                    downloadLabel={t("download")} />
                 ) : (
-                  <StatusBadge kind="file" status={f.file_state} />
-                )}
-                {f.file_state === "AVAILABLE" && (
-                  <DownloadButton audience={audience} projectId={projectId} fileId={f.file_id} label={t("download")} />
+                  <>
+                    <StatusBadge kind="file" status={f.file_state} />
+                    {f.file_state === "AVAILABLE" && (
+                      <DownloadButton audience={audience} projectId={projectId} fileId={f.file_id} label={t("download")} />
+                    )}
+                  </>
                 )}
                 {familyDraft(set.state) && (
                   <RemoveDrawingFile projectId={projectId} setId={set.id} drawingFileId={f.id} title={f.title} />
