@@ -5,7 +5,7 @@
 // missing, what is locked, what may be submitted); these forms send and show what it says. Files go
 // straight to storage on a presigned URL, then through the same checks as every upload.
 import type { components } from "@p2b/contracts";
-import { EyeIcon, EyeOffIcon, PlusIcon, SendIcon, Trash2Icon, UploadIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, PlusIcon, SendIcon, Trash2Icon, UploadIcon, ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -135,6 +135,7 @@ export function ProfileForm({ data, tiles }: { data: Dashboard; tiles: MapTiles 
   });
   const [point, setPoint] = useState<Point | null>(profile.base_point ?? null);
   const [state, setState] = useState<"idle" | "busy" | "saved" | "error">("idle");
+  const [complete, setComplete] = useState(profile.missing.length === 0);
   const set = (name: keyof typeof values) => (value: string) =>
     setValues((current) => ({ ...current, [name]: value }));
   const number = (value: string) => (value.trim() === "" ? null : Number(value));
@@ -157,11 +158,9 @@ export function ProfileForm({ data, tiles }: { data: Dashboard; tiles: MapTiles 
     const { data: saved } = await browserApi.PATCH("/api/v1/pro/profile", { body });
     setState(saved ? "saved" : "error");
     if (!saved) return;
-    // Onboarding ends with the last required field: on to the dashboard, where the rail
-    // continues with the category. Otherwise stay, with the saved values.
-    if (profile.missing.length > 0 && saved.profile.missing.length === 0) {
-      router.push("/");
-    }
+    // Saving never moves the page (decided 2026-10-08): the saved values stay, and the
+    // "Continue" link under the notice leads on once nothing is missing.
+    setComplete(saved.profile.missing.length === 0);
     router.refresh();
   }
 
@@ -213,9 +212,17 @@ export function ProfileForm({ data, tiles }: { data: Dashboard; tiles: MapTiles 
       />
       <p className="-mt-4 text-base text-muted-foreground">{t("profile.baseHelp")}</p>
       {numeric("service_radius_km", t("profile.radius"), true)}
-      <div aria-live="polite">
+      <div aria-live="polite" className="flex flex-col gap-3">
         {state === "saved" && <Notice tone="success">{t("profile.saved")}</Notice>}
         {state === "error" && <Notice tone="error">{t("profile.error")}</Notice>}
+        {state === "saved" && complete && (
+          <Button asChild variant="outline" className="sm:self-start">
+            <Link href={data.categories.length === 0 ? "/services#add" : "/"}>
+              {data.categories.length === 0 ? t("profile.continueTo") : t("profile.continueHome")}
+              <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
+            </Link>
+          </Button>
+        )}
       </div>
       <Button type="submit" size="lg" disabled={state === "busy"} className="sm:self-start">
         {state === "busy" && <Spinner />}

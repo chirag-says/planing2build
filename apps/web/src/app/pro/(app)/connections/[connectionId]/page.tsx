@@ -31,6 +31,8 @@ export default async function ProConnectionPage({ params }: { params: Promise<{ 
   if (response.status === 401) redirect(`/sign-in?next=${encodeURIComponent(`/connections/${connectionId}`)}`);
   if (response.status === 404) notFound();
   if (!c) throw new Error("the request could not be loaded");
+  // Accepted: the engagement's workspace is the one page for this job (decided 2026-10-08).
+  if (c.engagement_id) redirect(`/engagements/${c.engagement_id}`);
   const t = getTranslator("Pro");
   const b = c.brief;
   const none = t("connections.notGiven");

@@ -1,9 +1,12 @@
+import { ArrowLeftIcon } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { DownloadButton, RevokeSignoff, SignPanel } from "@/components/plan2build/build-plan";
 import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
 import { Notice } from "@/components/plan2build/states";
+import { Button } from "@/components/ui/button";
 import { serverApi } from "@/lib/api/server";
 import { formatDateTime } from "@/lib/format";
 import { getTranslator } from "@/lib/i18n";
@@ -28,6 +31,12 @@ export default async function SignoffPage({ params }: { params: Promise<{ versio
   const unsigned = data.lines.filter((l) => !l.signed).map((l) => l.code);
   return (
     <PageContainer>
+      <Button asChild variant="ghost" className="self-start">
+        <Link href="/build-plan">
+          <ArrowLeftIcon aria-hidden="true" />
+          {t("backToList")}
+        </Link>
+      </Button>
       <PageHeader title={t("signTitle")} description={`${data.project_code}: ${t("version", { number: data.version_no })}`} />
       <p className="text-sm text-muted-foreground">{t("signIntro")}</p>
       <p className="break-all font-mono text-xs">{t("contentHash")}: {data.content_hash}</p>

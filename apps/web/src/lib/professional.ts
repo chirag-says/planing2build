@@ -9,14 +9,20 @@ import {
   buildConsole,
   buildQueue,
   findingItems,
+  rolesOf,
   sheetOf,
+  sortQueue,
   type Connection,
   type Console,
+  type DesignRequest,
+  type Engagement,
   type Inspection,
   type Invitation,
   type QueueItem,
-  type WonProject,
+  type Roles,
+  type Signoff,
 } from "@/lib/pro-console";
+import { currentPath } from "@/lib/session";
 
 export type ProDashboard = components["schemas"]["OwnDashboardOut"];
 
@@ -28,13 +34,13 @@ export async function signedInProfessional(): Promise<boolean> {
 }
 
 /**
- * The professional's own dashboard data, or a redirect to sign-in when signed out. An incomplete
- * profile does not hold anyone back: the dashboard asks for the missing details, and the API
- * refuses a listing until they are in.
+ * The professional's own dashboard data, or a redirect to sign-in when signed out (and back to
+ * the page asked for afterwards). An incomplete profile does not hold anyone back: the dashboard
+ * asks for the missing details, and the API refuses a listing until they are in.
  */
-export async function loadOwnProfile(returnTo: string): Promise<ProDashboard> {
+export async function loadOwnProfile(returnTo?: string): Promise<ProDashboard> {
   const { data, response } = await (await serverApi()).GET("/api/v1/pro/profile");
-  if (response.status === 401) redirect(`/sign-in?next=${encodeURIComponent(returnTo)}`);
+  if (response.status === 401) redirect(`/sign-in?next=${encodeURIComponent(returnTo ?? (await currentPath()))}`);
   if (!data) throw new Error("the professional profile could not be loaded");
   return data;
 }
@@ -50,8 +56,11 @@ export interface ProCounts {
   projects: number;
   /** Open inspection findings on their projects, waiting for a correction. */
   findings: number;
+  /** Drawing sets to submit and versions to sign. */
+  drawings: number;
   /** Whether the professional is an appointed auditor (the inspections list is theirs). */
   auditor: boolean;
+  roles: Roles;
 }
 
 /** One thing waiting for the professional, as the work queue shows it. */
@@ -62,6 +71,8 @@ export interface ProRaw {
   invitations: Invitation[];
   /** Null when the API does not return an inspections list for this person (not an auditor). */
   inspections: Inspection[] | null;
+  drawings: DesignRequest[];
+  signoffs: Signoff[];
 }
 
 /**
@@ -70,84 +81,103 @@ export interface ProRaw {
  */
 export const loadProRaw = cache(async (): Promise<ProRaw> => {
   const api = await serverApi();
-  const [connections, invitations, inspections] = await Promise.all([
+  const [connections, invitations, inspections, drawings, signoffs] = await Promise.all([
     api.GET("/api/v1/pro/connections").then((r) => r.data).catch(() => undefined),
     api.GET("/api/v1/pro/rfq-invitations").then((r) => r.data).catch(() => undefined),
     api.GET("/api/v1/pro/inspections").then((r) => r.data).catch(() => undefined),
+    api.GET("/api/v1/pro/build-plan/design-requests").then((r) => r.data).catch(() => undefined),
+    api.GET("/api/v1/pro/build-plan/signoffs").then((r) => r.data).catch(() => undefined),
   ]);
   return {
     connections: connections?.items ?? [],
     invitations: invitations?.items ?? [],
     inspections: inspections ? inspections.items : null,
+    drawings: drawings?.items ?? [],
+    signoffs: signoffs?.items ?? [],
   };
 });
 
 /**
- * Projects won through a request to quote: each selected quote's engagement and its stages. A few
- * reads per won project, so only the screens that show the work call it.
+ * Every engagement the professional holds, from the one place the API records each relationship:
+ * an accepted request carries its engagement id, and a selected quote its own. Nothing is guessed
+ * from page history. A few reads per engagement, so only the screens that show the work call it.
  */
-export const loadWonProjects = cache(async (): Promise<WonProject[]> => {
+export const loadEngagements = cache(async (): Promise<Engagement[]> => {
   const api = await serverApi();
-  const { invitations } = await loadProRaw();
-  const selected = invitations.filter((i) => i.outcome === "SELECTED");
-  const won = await Promise.all(
-    selected.map(async (invitation): Promise<WonProject | null> => {
-      const detail = await api
-        .GET("/api/v1/pro/rfq-invitations/{invitation_id}", { params: { path: { invitation_id: invitation.id } } })
-        .then((r) => r.data)
-        .catch(() => undefined);
-      const engagementId = detail?.engagement_id;
-      if (!engagementId) return null;
+  const { invitations, connections } = await loadProRaw();
+  const fromQuotes = await Promise.all(
+    invitations
+      .filter((i) => i.outcome === "SELECTED")
+      .map(async (invitation) => {
+        const detail = await api
+          .GET("/api/v1/pro/rfq-invitations/{invitation_id}", { params: { path: { invitation_id: invitation.id } } })
+          .then((r) => r.data)
+          .catch(() => undefined);
+        return detail?.engagement_id ? { id: detail.engagement_id, locality: invitation.locality } : null;
+      }),
+  );
+  const ids = new Map<string, string | null>();
+  for (const c of connections) if (c.engagement_id) ids.set(c.engagement_id, c.brief.locality ?? null);
+  for (const won of fromQuotes) if (won && !ids.has(won.id)) ids.set(won.id, won.locality);
+  const engagements = await Promise.all(
+    [...ids].map(async ([engagementId, locality]): Promise<Engagement | null> => {
       const path = { params: { path: { engagement_id: engagementId } } };
-      const [engagement, execution] = await Promise.all([
+      const [engagement, execution, handover] = await Promise.all([
         api.GET("/api/v1/pro/engagements/{engagement_id}", path).then((r) => r.data).catch(() => undefined),
         api.GET("/api/v1/pro/engagements/{engagement_id}/execution", path).then((r) => r.data).catch(() => undefined),
+        api.GET("/api/v1/pro/engagements/{engagement_id}/handover", path).then((r) => r.data).catch(() => undefined),
       ]);
       if (!engagement) return null;
       return {
-        invitationId: invitation.id,
         engagementId,
         projectCode: engagement.project_code,
         category: engagement.category_name,
+        categoryCode: engagement.category,
+        origin: engagement.origin === "RFQ_SELECTION" ? "rfq" : "connection",
         startedAt: engagement.started_at,
         ended: engagement.state === "ENDED",
-        locality: invitation.locality,
+        locality,
         family: engagement.family_contact?.name ?? null,
         stages: execution?.stages ?? [],
+        handover: handover?.state ?? null,
       };
     }),
   );
-  return won.filter((project): project is WonProject => project !== null);
+  return engagements.filter((e): e is Engagement => e !== null);
 });
 
 /** The whole command center for the dashboard. */
-export async function loadConsole(returnTo: string): Promise<Console> {
-  const [dashboard, raw, won] = await Promise.all([loadOwnProfile(returnTo), loadProRaw(), loadWonProjects()]);
-  return buildConsole({ dashboard, ...raw, won, now: new Date() });
+export async function loadConsole(returnTo?: string): Promise<Console> {
+  const [dashboard, raw, engagements] = await Promise.all([loadOwnProfile(returnTo), loadProRaw(), loadEngagements()]);
+  return buildConsole({ dashboard, ...raw, engagements, now: new Date() });
 }
 
 export interface ProWork {
   counts: ProCounts;
-  /** Most urgent first: by the date it is due, undated last. */
+  /** Most urgent first: by group (urgent, respond, review, complete), then the date due. */
   queue: ProQueueItem[];
 }
 
-/** What is waiting for the professional, for the shell's counts and the notifications page. */
+/** What is waiting for the professional, for the shell's counts and the Needs attention page. */
 export const loadProWork = cache(async (): Promise<ProWork> => {
-  const [{ connections, invitations, inspections }, won] = await Promise.all([loadProRaw(), loadWonProjects()]);
-  const queue = [
-    ...buildQueue(connections, invitations, inspections, new Date()),
-    ...findingItems(won.filter((p) => !p.ended).map(sheetOf)),
-  ];
-  const count = (kind: ProQueueItem["kind"]) => queue.filter((item) => item.kind === kind).length;
+  const [dashboard, raw, engagements] = await Promise.all([loadOwnProfile(), loadProRaw(), loadEngagements()]);
+  const { connections, invitations, inspections, drawings, signoffs } = raw;
+  const active = engagements.filter((e) => !e.ended);
+  const queue = sortQueue([
+    ...buildQueue(connections, invitations, inspections, new Date(), { drawings, signoffs, engagements }),
+    ...findingItems(active.map(sheetOf)),
+  ]);
+  const count = (...kinds: ProQueueItem["kind"][]) => queue.filter((item) => kinds.includes(item.kind)).length;
   return {
     counts: {
       requests: count("connection"),
       quotes: count("quote"),
       inspections: count("inspection"),
       findings: count("finding"),
-      projects: won.filter((p) => !p.ended).length + connections.filter((c) => c.engagement_state === "ACTIVE").length,
+      drawings: count("drawing", "signoff"),
+      projects: active.length,
       auditor: inspections !== null,
+      roles: rolesOf(dashboard),
     },
     queue,
   };

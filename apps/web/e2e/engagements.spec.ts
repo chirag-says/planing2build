@@ -146,7 +146,9 @@ test("a family connects with a listed contractor, records their own architect, a
   await axe(page);
   await page.getByLabel("Phone for the family").fill("+91 90000 11111");
   await page.getByRole("button", { name: "Accept request" }).click();
-  await expect(page.getByText("Status: Accepted")).toBeVisible();
+  // Accepted: the request becomes an engagement, and its workspace is the one page for the job.
+  await expect(page).toHaveURL(/\/engagements\/[0-9a-f-]+$/);
+  await expect(page.getByText("Status: Active")).toBeVisible();
   await expect(page.getByText("Meera Iyer")).toBeVisible();
   await expect(page.getByRole("link", { name: "+91 98765 43210" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open the site pin in OpenStreetMap" })).toBeVisible();

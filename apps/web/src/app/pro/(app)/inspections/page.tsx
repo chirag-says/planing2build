@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: getTranslator("Assurance")("proTitle"
 // appointment sees that nothing is assigned.
 export default async function AuditorInspectionsPage() {
   const { data, response } = await (await serverApi()).GET("/api/v1/pro/inspections");
-  if (response.status === 401) redirect("/sign-in");
+  if (response.status === 401) redirect("/sign-in?next=%2Finspections");
   const t = getTranslator("Assurance");
   return (
     <PageContainer>

@@ -41,7 +41,15 @@ const HOUR = new Intl.DateTimeFormat("en-GB", { hour: "numeric", hourCycle: "h23
 const TODAY = new Intl.DateTimeFormat("en-IN", { weekday: "long", day: "numeric", month: "long", timeZone: IST });
 
 const HOUSES = [heroHouse, villa, blueprint];
-const KIND_HREF = { connection: "/connections", quote: "/quotes", inspection: "/inspections", finding: "/projects" } as const;
+const KIND_HREF: Record<QueueItem["kind"], string> = {
+  connection: "/connections",
+  quote: "/quotes",
+  inspection: "/inspections",
+  finding: "/projects",
+  drawing: "/build-plan",
+  signoff: "/build-plan",
+  handover: "/projects",
+};
 
 const vars = (values: Record<string, string | number>) =>
   Object.fromEntries(Object.entries(values).map(([key, value]) => [`--${key}`, value])) as CSSProperties;
@@ -99,10 +107,15 @@ function greetingOf(name: string | null, state: ConsoleState, now: Date) {
 
 /** What is waiting, as one line of links: projects on site, requests to review, inspections due. */
 function summaryOf(c: Console) {
-  const requests = c.attention.items.filter((item) => item.kind === "connection" || item.kind === "quote").length;
+  const count = (...kinds: QueueItem["kind"][]) => c.attention.items.filter((item) => kinds.includes(item.kind)).length;
+  const requests = count("connection");
+  const quotes = count("quote");
+  const drawings = count("drawing", "signoff");
   const parts = [
     { href: "/projects", text: c.projects.length ? t("summary.projects", { count: c.projects.length }) : null },
     { href: "/connections", text: requests ? t("summary.requests", { count: requests }) : null },
+    { href: "/quotes", text: quotes ? t("summary.quotes", { count: quotes }) : null },
+    { href: "/build-plan", text: drawings ? t("summary.drawings", { count: drawings }) : null },
     {
       href: "/inspections",
       text: c.inspections.upcoming.length ? t("summary.inspections", { count: c.inspections.upcoming.length }) : null,
@@ -315,7 +328,7 @@ export function AttentionBoard({ console: c, max = 4 }: { console: Console; max?
             ))}
           </ul>
           {items.length > max && (
-            <TextLink href="/notifications" className="text-muted-foreground">
+            <TextLink href="/attention" className="text-muted-foreground">
               {t("attention.more", { count: items.length - max })}
             </TextLink>
           )}

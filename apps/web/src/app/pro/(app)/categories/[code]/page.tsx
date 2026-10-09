@@ -21,7 +21,7 @@ export default async function ProCategoryPage({ params }: { params: Promise<{ co
   return (
     <PageContainer>
       <div className="flex flex-col gap-4">
-        <ProjectBreadcrumb root={{ label: t("category.back"), href: "/" }} trail={[{ label: category.name }]} />
+        <ProjectBreadcrumb root={{ label: t("category.back"), href: "/services" }} trail={[{ label: category.name }]} />
         <PageHeader title={category.name} actions={<CategoryHeaderBadge category={category} />} />
         {/* Guided onboarding until a category is listed. */}
         {!data.categories.some((c) => c.listing_state === "LISTED") && <OnboardingRail data={data} />}

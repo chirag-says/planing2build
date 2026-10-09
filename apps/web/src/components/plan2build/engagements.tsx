@@ -823,6 +823,26 @@ export function ProEndEngagement({ connectionId }: { connectionId: string }) {
   );
 }
 
+/** The same control on the project workspace, through the engagement's own endpoint. */
+export function ProEndEngagementById({ engagementId }: { engagementId: string }) {
+  const e = getTranslator("Engagement");
+  return (
+    <EndForm
+      id={`pro-end-${engagementId}`}
+      label={e("end")}
+      reasonLabel={e("endReason")}
+      confirm={e("endConfirm")}
+      describe={proError}
+      send={(reason, requestKey) =>
+        browserApi.POST("/api/v1/pro/engagements/{engagement_id}/end", {
+          params: { path: { engagement_id: engagementId }, header: { "Idempotency-Key": requestKey } },
+          body: { reason },
+        })
+      }
+    />
+  );
+}
+
 export function SharedFileButton({ connectionId, fileId, name }: { connectionId: string; fileId: string; name: string }) {
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);

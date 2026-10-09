@@ -1,3 +1,4 @@
+import { ArrowLeftIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -5,6 +6,7 @@ import { notFound, redirect } from "next/navigation";
 import { JsonForm, ReasonAction } from "@/components/plan2build/build-plan";
 import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
 import { DownloadLink, QuoteAttachmentList, QuoteForm, RespondToInvitation, TextAction } from "@/components/plan2build/rfq";
+import { Button } from "@/components/ui/button";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
 
@@ -28,6 +30,12 @@ export default async function ProQuotePage({ params }: { params: Promise<{ invit
   const b = data.brief;
   return (
     <PageContainer>
+      <Button asChild variant="ghost" className="self-start">
+        <Link href="/quotes">
+          <ArrowLeftIcon aria-hidden="true" />
+          {t("backToQuotes")}
+        </Link>
+      </Button>
       <PageHeader title={t("proTitle")} description={`${data.state}${data.outcome ? ` · ${data.outcome}` : ""}`} />
       <section aria-labelledby="brief" className="flex flex-col gap-1 text-sm">
         <SectionHeader id="brief" title={t("brief")} />

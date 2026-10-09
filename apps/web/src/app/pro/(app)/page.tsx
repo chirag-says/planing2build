@@ -16,10 +16,11 @@ import { loadConsole, loadOwnProfile } from "@/lib/professional";
 
 export const metadata: Metadata = { title: getTranslator("Console")("title") };
 
-// The professional's home: their work first. Projects on site and requests to review lead (the
-// projects first once there are any); the listing is a slim notice above them until it is done,
-// then it leaves the page. Listing is per category (D-06); approval alone lists a category and
-// nothing here is paid (D-03).
+// The professional's home: their work first. What waits on them (the queue: urgent, respond,
+// review, complete) leads, then the projects on site; the listing is a slim notice above them
+// until it is done, then it leaves the page, and it never displaces assigned work (an auditor
+// with an inspection tomorrow sees the inspection). Listing is per category (D-06); approval
+// alone lists a category and nothing here is paid (D-03).
 
 async function consoleFor(preview: unknown): Promise<{ console: Console; preview: string | null }> {
   if (previewAllowed(preview)) {
@@ -34,7 +35,6 @@ export default async function ProDashboardPage({ searchParams }: { searchParams:
   const { console: c, preview } = await consoleFor(asked);
   const t = getTranslator("Console");
   const now = new Date();
-  const working = c.state === "working";
   const started = c.state === "working" || c.state === "listed";
   return (
     <main id="main" className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-6 sm:px-6 sm:py-8 lg:gap-12 lg:px-8">
@@ -45,17 +45,8 @@ export default async function ProDashboardPage({ searchParams }: { searchParams:
         </p>
       )}
       <Greeting console={c} now={now} />
-      {working ? (
-        <>
-          <ActiveWork console={c} />
-          <AttentionBoard console={c} />
-        </>
-      ) : (
-        <>
-          <AttentionBoard console={c} />
-          <ActiveWork console={c} />
-        </>
-      )}
+      <AttentionBoard console={c} />
+      <ActiveWork console={c} />
       <InspectionsStrip console={c} />
       {started && <Pipeline console={c} />}
       {c.record.length > 0 && <RecordPanel console={c} />}

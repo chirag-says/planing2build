@@ -1,7 +1,7 @@
 // Sample data for the command center's states, for local design review only (`?preview=listed`,
 // `working` or `multi` on the dashboard outside production). Every object has the API's own shape,
 // so the same buildConsole rules run on it. Never used in production builds.
-import type { Connection, ConsoleInput, Dashboard, Invitation, Stage, WonProject } from "@/lib/pro-console";
+import type { Connection, ConsoleInput, Dashboard, Engagement, Invitation, Stage } from "@/lib/pro-console";
 
 export const PREVIEW_STATES = ["listed", "working", "multi"] as const;
 export type PreviewState = (typeof PREVIEW_STATES)[number];
@@ -66,6 +66,7 @@ function connection(now: Date, id: string, over: Partial<Connection>): Connectio
     respond_by: iso(now, 3),
     responded_at: null,
     sent_at: iso(now, -1),
+    engagement_id: null,
     engagement_state: null,
     decline_note: null,
     decline_reason: null,
@@ -173,12 +174,15 @@ export function previewInput(state: PreviewState, dashboard: Dashboard, now: Dat
     invitation(now, "i-lost-1", { outcome: "NOT_SELECTED", rfq_open: false, locality: "Tatibandh" }),
   ];
   if (state === "listed") {
-    return { dashboard: base, connections: [...history, ...inbound], invitations: rfqs, inspections: null, won: [], now };
+    return { dashboard: base, connections: [...history, ...inbound], invitations: rfqs, inspections: null, engagements: [], now };
   }
-  const won: WonProject[] = [
+  const won: (Engagement & { invitationId: string })[] = [
     {
       invitationId: "i-won-1",
       engagementId: "e-1",
+      categoryCode: "CONTRACTOR",
+      origin: "rfq" as const,
+      handover: null,
       projectCode: "P2B-00219",
       category: "Contractor",
       startedAt: iso(now, -96),
@@ -193,6 +197,9 @@ export function previewInput(state: PreviewState, dashboard: Dashboard, now: Dat
       {
         invitationId: "i-won-2",
         engagementId: "e-2",
+        categoryCode: "CONTRACTOR",
+        origin: "rfq" as const,
+        handover: null,
         projectCode: "P2B-00184",
         category: "Contractor",
         startedAt: iso(now, -180),
@@ -204,6 +211,9 @@ export function previewInput(state: PreviewState, dashboard: Dashboard, now: Dat
       {
         invitationId: "i-won-3",
         engagementId: "e-3",
+        categoryCode: "CONTRACTOR",
+        origin: "rfq" as const,
+        handover: null,
         projectCode: "P2B-00141",
         category: "Contractor",
         startedAt: iso(now, -260),
@@ -220,7 +230,7 @@ export function previewInput(state: PreviewState, dashboard: Dashboard, now: Dat
     connections: [...history, ...(state === "multi" ? inbound : inbound.slice(0, 1))],
     invitations: [...rfqs, ...wonInvites],
     inspections: null,
-    won,
+    engagements: won,
     now,
   };
 }

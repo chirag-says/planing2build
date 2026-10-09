@@ -1,4 +1,6 @@
+import { ArrowLeftIcon } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { AuditorResults, SubmitInspection } from "@/components/plan2build/assurance";
@@ -6,6 +8,7 @@ import { ActionButton } from "@/components/plan2build/build-plan";
 import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
 import { DownloadLink } from "@/components/plan2build/rfq";
 import { Notice } from "@/components/plan2build/states";
+import { Button } from "@/components/ui/button";
 import { serverApi } from "@/lib/api/server";
 import { getTranslator } from "@/lib/i18n";
 
@@ -22,12 +25,18 @@ export default async function AuditorInspectionPage({ params }: { params: Promis
   const { data, response } = await (await serverApi()).GET("/api/v1/pro/inspections/{inspection_id}", {
     params: { path: { inspection_id: inspectionId } },
   });
-  if (response.status === 401) redirect("/sign-in");
+  if (response.status === 401) redirect(`/sign-in?next=${encodeURIComponent(`/inspections/${inspectionId}`)}`);
   if (!data) notFound();
   const t = getTranslator("Assurance");
   const base = `/api/v1/pro/inspections/${inspectionId}`;
   return (
     <PageContainer>
+      <Button asChild variant="ghost" className="self-start">
+        <Link href="/inspections">
+          <ArrowLeftIcon aria-hidden="true" />
+          {t("backToList")}
+        </Link>
+      </Button>
       <PageHeader
         title={`${data.project_code} · ${t("inspection", { gate: data.gate, stage: data.stage_name })}`}
         description={`${t(`kinds.${data.kind}`)} · ${t(`states.${data.state}`)} · ${t("checklist", { version: data.checklist_version })}`}

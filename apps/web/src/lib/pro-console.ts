@@ -11,19 +11,45 @@ export type Connection = S["ProConnectionOut"];
 export type Invitation = S["ProInvitationSummaryOut"];
 export type Inspection = S["AuditorInspectionSummary"];
 export type Stage = S["StageOut"];
+export type DesignRequest = S["ProDesignRequestOut"];
+export type Signoff = S["ProSignoffOut"];
+export type HandoverState = S["HandoverState"];
 
-/** A project won through a request to quote: its engagement and, when readable, its stages. */
-export interface WonProject {
-  invitationId: string;
+/**
+ * An engagement the professional holds, whatever brought it (an accepted request or a selected
+ * quote; ADR-024), with its stages and handover when readable. The one record behind the
+ * project workspace, the project sheets and the work queue.
+ */
+export interface Engagement {
   engagementId: string;
   projectCode: string;
   category: string;
+  categoryCode: string;
+  origin: "rfq" | "connection";
   startedAt: string;
   ended: boolean;
   locality: string | null;
   /** The family's name, shared once the engagement exists. */
   family: string | null;
   stages: Stage[];
+  /** The handover's state once one is open; null before. */
+  handover: HandoverState | null;
+}
+
+/** The trades a professional works in, as the API names them (service_categories). */
+export interface Roles {
+  contractor: boolean;
+  architect: boolean;
+  engineer: boolean;
+}
+
+export function rolesOf(dashboard: Pick<Dashboard, "categories">): Roles {
+  const codes = new Set(dashboard.categories.map((c) => c.code));
+  return {
+    contractor: codes.has("CONTRACTOR"),
+    architect: codes.has("ARCHITECT") || codes.has("INTERIOR_DESIGNER"),
+    engineer: codes.has("STRUCTURAL_ENGINEER"),
+  };
 }
 
 export interface ConsoleInput {
@@ -32,7 +58,10 @@ export interface ConsoleInput {
   invitations: Invitation[];
   /** Null when the professional is not an appointed auditor. */
   inspections: Inspection[] | null;
-  won: WonProject[];
+  engagements: Engagement[];
+  /** Drawing requests addressed to them (architects) and versions to sign (structural engineers). */
+  drawings?: DesignRequest[];
+  signoffs?: Signoff[];
   now: Date;
 }
 
@@ -44,10 +73,19 @@ export type ConsoleState = "setup" | "review" | "listed" | "working";
 
 export type ListingStatus = "listed" | "review" | "changes" | "draft" | "none" | "suspended";
 
-export type QueueKind = "connection" | "quote" | "inspection" | "finding";
+export type QueueKind = "connection" | "quote" | "inspection" | "finding" | "drawing" | "signoff" | "handover";
+
+/**
+ * How Today orders the queue (decided 2026-10-08): what is dated or assigned first, then what
+ * waits for an answer, then what waits for a review, then what completes a project. Setup never
+ * outranks any of these; the listing notice sits beside the work, not in front of it.
+ */
+export type QueueGroup = "urgent" | "respond" | "review" | "complete";
+export const QUEUE_GROUPS: QueueGroup[] = ["urgent", "respond", "review", "complete"];
 
 export interface QueueItem {
   kind: QueueKind;
+  group: QueueGroup;
   id: string;
   href: string;
   title: string;
@@ -185,54 +223,116 @@ function dayDiff(at: Date, now: Date): number {
   return day(at) - day(now);
 }
 
-/** The work queue: everything waiting on the professional, most urgent first, undated last. */
+/** Which group a thing waiting belongs to: dated and assigned work first. */
+export function groupOf(kind: QueueKind, due: QueueItem["due"]): QueueGroup {
+  if (kind === "inspection" || kind === "finding") return "urgent";
+  if (kind === "connection" || kind === "quote") return due?.soon ? "urgent" : "respond";
+  if (kind === "drawing" || kind === "signoff") return "review";
+  return "complete";
+}
+
+/** Most urgent group first; within a group by the date due, undated last. */
+export function sortQueue(items: QueueItem[]): QueueItem[] {
+  return [...items].sort(
+    (a, b) =>
+      QUEUE_GROUPS.indexOf(a.group) - QUEUE_GROUPS.indexOf(b.group) ||
+      (a.due?.at ?? "9999").localeCompare(b.due?.at ?? "9999"),
+  );
+}
+
+export interface QueueWork {
+  drawings: DesignRequest[];
+  signoffs: Signoff[];
+  engagements: Engagement[];
+}
+
+/**
+ * The work queue: everything waiting on the professional, from every domain the API has
+ * (requests, requests to quote, inspections, drawing sets, structural sign-offs, handover), each
+ * keeping its own kind. Open findings join through findingItems.
+ */
 export function buildQueue(
   connections: Connection[],
   invitations: Invitation[],
   inspections: Inspection[] | null,
   now: Date,
+  work: QueueWork = { drawings: [], signoffs: [], engagements: [] },
 ): QueueItem[] {
   const due = (kind: "respond" | "quotes" | "scheduled", at: string) => ({
     kind,
     at,
     soon: new Date(at).getTime() - now.getTime() < SOON_MS,
   });
-  return [
+  const item = (kind: QueueKind, rest: Omit<QueueItem, "kind" | "group">): QueueItem => ({
+    kind,
+    group: groupOf(kind, rest.due),
+    ...rest,
+  });
+  return sortQueue([
     ...connections
       .filter((c) => c.state === "SENT")
-      .map((c) => ({
-        kind: "connection" as const,
-        id: c.id,
-        href: `/connections/${c.id}`,
-        title: c.category_name,
-        place: c.brief.locality ?? null,
-        due: due("respond", c.respond_by),
-        brief: { floors: c.brief.floors ?? null, area: c.brief.built_up_area_sqft ?? null },
-      })),
+      .map((c) =>
+        item("connection", {
+          id: c.id,
+          href: `/connections/${c.id}`,
+          title: c.category_name,
+          place: c.brief.locality ?? null,
+          due: due("respond", c.respond_by),
+          brief: { floors: c.brief.floors ?? null, area: c.brief.built_up_area_sqft ?? null },
+        }),
+      ),
     ...invitations.filter(waitsOnQuote).map((i) => {
       const at = i.state === "SENT" ? i.respond_by : i.quotes_due_at;
-      return {
-        kind: "quote" as const,
+      return item("quote", {
         id: i.id,
         href: `/quotes/${i.id}`,
         title: i.locality ?? "",
         place: null,
         due: at ? due(i.state === "SENT" ? "respond" : "quotes", at) : null,
         brief: null,
-      };
+      });
     }),
     ...(inspections ?? [])
       .filter((i) => i.state === "SCHEDULED" || i.state === "IN_PROGRESS")
-      .map((i) => ({
-        kind: "inspection" as const,
-        id: i.id,
-        href: `/inspections/${i.id}`,
-        title: `${i.project_code} · ${i.stage_number}. ${i.stage_name}`,
-        place: null,
-        due: due("scheduled", i.scheduled_at),
-        brief: null,
-      })),
-  ].sort((a, b) => (a.due?.at ?? "9999").localeCompare(b.due?.at ?? "9999"));
+      .map((i) =>
+        item("inspection", {
+          id: i.id,
+          href: `/inspections/${i.id}`,
+          title: `${i.project_code} · ${i.stage_number}. ${i.stage_name}`,
+          place: null,
+          due: due("scheduled", i.scheduled_at),
+          brief: null,
+        }),
+      ),
+    // A drawing request with no set on its way to the family yet (none, a draft, or changes asked).
+    ...work.drawings
+      .filter((d) => d.request.can_provide && !d.request.sets.some((s) => ["SUBMITTED", "IN_CHECK", "APPROVED"].includes(s.state)))
+      .map((d) => item("drawing", { id: d.request.id, href: "/build-plan", title: d.project_code, place: null, due: null, brief: null })),
+    ...work.signoffs
+      .filter((s) => s.state === "IN_REVIEW" && s.lines.some((line) => !line.signed))
+      .map((s) =>
+        item("signoff", {
+          id: s.version_id,
+          href: `/build-plan/signoffs/${s.version_id}`,
+          title: `${s.project_code} · v${s.version_no}`,
+          place: null,
+          due: null,
+          brief: null,
+        }),
+      ),
+    ...work.engagements
+      .filter((e) => !e.ended && e.handover === "OPEN")
+      .map((e) =>
+        item("handover", {
+          id: e.engagementId,
+          href: `/engagements/${e.engagementId}/execution#handover`,
+          title: e.projectCode,
+          place: e.locality,
+          due: null,
+          brief: null,
+        }),
+      ),
+  ]);
 }
 
 /** An invitation waiting on the professional: to agree to quote, or open with no quote yet. */
@@ -246,6 +346,7 @@ export function findingItems(projects: ProjectSheet[]): QueueItem[] {
     .filter((sheet) => sheet.next.key === "rectify")
     .map((sheet) => ({
       kind: "finding" as const,
+      group: "urgent" as const,
       id: sheet.id,
       href: sheet.href,
       title: `${sheet.code ?? sheet.category} · ${"stage" in sheet.next ? sheet.next.stage : ""}`,
@@ -281,8 +382,8 @@ function lookOf(stages: Stage[]): SegmentLook {
   return "todo";
 }
 
-/** A won project as a sheet: one segment per stage number, the current stage and the next step. */
-export function sheetOf(project: WonProject): ProjectSheet {
+/** An engagement as a sheet: one segment per stage number, the current stage and the next step. */
+export function sheetOf(project: Engagement): ProjectSheet {
   const sorted = [...project.stages].sort((a, b) => a.sequence - b.sequence);
   const numbers = [...new Set(sorted.map((s) => s.stage_number))];
   const groups = numbers.map((n) => sorted.filter((s) => s.stage_number === n));
@@ -299,7 +400,7 @@ export function sheetOf(project: WonProject): ProjectSheet {
   const asked = sorted.find((s) => s.state === "COMPLETION_REQUESTED");
   const working = sorted.find((s) => s.state === "IN_PROGRESS");
   const held = sorted.find((s) => s.state === "BLOCKED" || s.state === "ON_HOLD");
-  if (sorted.length === 0) next = { key: "openEngagement" };
+  if (sorted.length === 0) next = { key: project.origin === "connection" ? "contactFamily" : "openEngagement" };
   else if (open) next = { key: "rectify", stage: label(open) };
   else if (held) next = { key: "onHold", stage: label(held) };
   else if (working) next = { key: "postUpdate", stage: label(working) };
@@ -313,7 +414,7 @@ export function sheetOf(project: WonProject): ProjectSheet {
     code: project.projectCode,
     category: project.category,
     place: project.locality,
-    origin: "rfq",
+    origin: project.origin,
     family: project.family,
     stage:
       instance && at >= 0
@@ -348,7 +449,11 @@ function listingOf(categories: Dashboard["categories"]): ListingStatus {
   return "none";
 }
 
-/** The five checkpoints of a listing (PROFESSIONALS_FLOW 44.2) and what is still missing for each. */
+/**
+ * The five checkpoints of a listing (PROFESSIONALS_FLOW 44.2) in the order the API needs them:
+ * profile, a service, portfolio photos (most trades need them before submitting), the trade's own
+ * verification requirements (from the API, never a fixed list), then submitting for review.
+ */
 export function readinessOf(dashboard: Dashboard): { checkpoints: Checkpoint[]; todos: Todo[]; ready: number } {
   const { profile, categories, portfolio } = dashboard;
   const states = categories.map((c) => c.listing_state);
@@ -370,9 +475,10 @@ export function readinessOf(dashboard: Dashboard): { checkpoints: Checkpoint[]; 
     services: "/services#add",
     evidence: draft ? `/categories/${draft.code}` : "/services",
     portfolio: "/portfolio",
-    listed: "/services",
+    // Submitting happens on the service's own page, where the button is.
+    listed: draft ? `/categories/${draft.code}` : "/services",
   };
-  const order: CheckpointKey[] = ["profile", "services", "evidence", "portfolio", "listed"];
+  const order: CheckpointKey[] = ["profile", "services", "portfolio", "evidence", "listed"];
   const firstOpen = order.findIndex((key) => !done[key]);
   const checkpoints = order.map((key, index): Checkpoint => {
     let state: CheckpointState = done[key] ? "done" : index === firstOpen ? "current" : "next";
@@ -413,13 +519,16 @@ export function readinessOf(dashboard: Dashboard): { checkpoints: Checkpoint[]; 
 }
 
 export function buildConsole(input: ConsoleInput): Console {
-  const { dashboard, connections, invitations, inspections, won, now } = input;
+  const { dashboard, connections, invitations, inspections, engagements, drawings = [], signoffs = [], now } = input;
   const listing = listingOf(dashboard.categories);
 
+  // Every active engagement, whatever brought it. An accepted request the API has not linked to
+  // its engagement (older contracts) still shows, through the request page.
+  const known = new Set(engagements.map((e) => e.engagementId));
   const projects: ProjectSheet[] = [
-    ...won.filter((p) => !p.ended).map(sheetOf),
+    ...engagements.filter((p) => !p.ended).map(sheetOf),
     ...connections
-      .filter((c) => c.engagement_state === "ACTIVE")
+      .filter((c) => c.engagement_state === "ACTIVE" && !(c.engagement_id && known.has(c.engagement_id)))
       .map(
         (c): ProjectSheet => ({
           id: c.id,
@@ -437,7 +546,7 @@ export function buildConsole(input: ConsoleInput): Console {
       ),
   ];
 
-  const queue = [...buildQueue(connections, invitations, inspections, now), ...findingItems(projects)];
+  const queue = sortQueue([...buildQueue(connections, invitations, inspections, now, { drawings, signoffs, engagements }), ...findingItems(projects)]);
   const requests = connections.filter((c) => c.state === "SENT").length;
   const rfqs = invitations.filter(waitsOnQuote).length;
   const quoted = invitations.filter((i) => i.outcome === "SUBMITTED").length;
@@ -463,7 +572,7 @@ export function buildConsole(input: ConsoleInput): Console {
   const expired = connections.filter((c) => c.state === "EXPIRED" && !c.responded_at).length;
   const submittedQuotes = invitations.filter((i) => i.outcome && i.outcome !== "WITHDRAWN").length;
   const selected = invitations.filter((i) => i.outcome === "SELECTED").length;
-  const worked = connections.filter((c) => c.engagement_state).length + won.length;
+  const worked = new Set([...engagements.map((e) => e.engagementId), ...connections.flatMap((c) => (c.engagement_state && !c.engagement_id ? [c.id] : []))]).size;
   const signed = (inspections ?? []).filter((i) => i.state === "SUBMITTED" || i.state === "APPROVED").length;
   const record: RecordFact[] = [
     ...(listedCats.length ? [{ key: "verified" as const, count: listedCats.length, names: listedCats.map((c) => c.name) }] : []),

@@ -1,4 +1,6 @@
+import { ArrowLeftIcon } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { AssuranceSection } from "@/components/plan2build/assurance-view";
@@ -7,6 +9,7 @@ import { UpdateForm } from "@/components/plan2build/execution";
 import { PageContainer, PageHeader, SectionHeader } from "@/components/plan2build/page-header";
 import { ContractorHandoverSection } from "@/components/plan2build/records-view";
 import { DownloadLink } from "@/components/plan2build/rfq";
+import { Button } from "@/components/ui/button";
 import { StageUpdateHistory } from "@/components/plan2build/stage-updates";
 import { Notice } from "@/components/plan2build/states";
 import { serverApi } from "@/lib/api/server";
@@ -32,7 +35,7 @@ export default async function ProExecutionPage({ params }: { params: Promise<{ e
     api.GET("/api/v1/pro/engagements/{engagement_id}/assurance", path),
     api.GET("/api/v1/pro/engagements/{engagement_id}/handover", path),
   ]);
-  if (execution.response.status === 401) redirect("/sign-in");
+  if (execution.response.status === 401) redirect(`/sign-in?next=${encodeURIComponent(`/engagements/${engagementId}/execution`)}`);
   if (!execution.data || !marks.data || !assurance.data) notFound();
   const t = getTranslator("Execution");
   const r = getTranslator("Records");
@@ -44,6 +47,12 @@ export default async function ProExecutionPage({ params }: { params: Promise<{ e
   const open = data.stages.filter((s) => s.state !== "COMPLETED");
   return (
     <PageContainer>
+      <Button asChild variant="ghost" className="self-start">
+        <Link href={`/engagements/${engagementId}`}>
+          <ArrowLeftIcon aria-hidden="true" />
+          {t("backToWorkspace")}
+        </Link>
+      </Button>
       <PageHeader title={t("proTitle")} description={data.project_code} />
       <section aria-labelledby="drawings" className="flex flex-col gap-2 text-sm">
         <SectionHeader id="drawings" title={data.build_plan_version_no

@@ -27,7 +27,8 @@ export default async function ProLayout({ children }: { children: React.ReactNod
     );
   }
   const counts = await loadProCounts();
-  const waiting = counts.requests + counts.quotes + counts.inspections + counts.findings;
+  const waiting = counts.requests + counts.quotes + counts.inspections + counts.findings + counts.drawings;
+  const { roles } = counts;
   // The name they gave during onboarding (their profile), before the account's own.
   const name = own?.profile.display_name ?? user.display_name;
   const firm = own?.profile.firm_name;
@@ -35,7 +36,7 @@ export default async function ProLayout({ children }: { children: React.ReactNod
   const subtitle = firm ?? own?.categories[0]?.name ?? null;
   const bell = (
     <Link
-      href="/notifications"
+      href="/attention"
       aria-label={c("notifications.count", { count: waiting })}
       className="relative inline-flex size-11 items-center justify-center rounded-md border-2 border-foreground/15 bg-card outline-none transition-colors hover:border-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
     >
@@ -74,12 +75,26 @@ export default async function ProLayout({ children }: { children: React.ReactNod
               items: [
                 { href: "/", label: c("nav.today"), icon: "overview", exact: true },
                 { href: "/connections", label: c("nav.requests"), icon: "requests", count: counts.requests },
-                { href: "/quotes", label: c("nav.rfqs"), icon: "quoteRequests", count: counts.quotes },
+                // Requests to quote go to contractors only (rfq/common.py).
+                ...(roles.contractor || counts.quotes > 0
+                  ? [{ href: "/quotes", label: c("nav.rfqs"), icon: "quoteRequests" as const, count: counts.quotes }]
+                  : []),
                 { href: "/projects", label: c("nav.projects"), icon: "construction" },
+                // Inspections belong to an appointed auditor (assurance), never to a listing.
                 ...(counts.auditor
                   ? [{ href: "/inspections", label: c("nav.inspections"), icon: "inspections" as const, count: counts.inspections }]
                   : []),
-                { href: "/build-plan", label: c("nav.drawings"), icon: "buildPlan" },
+                // Drawing requests reach architects; structural sign-offs reach structural engineers.
+                ...(roles.architect || roles.engineer || counts.drawings > 0
+                  ? [
+                      {
+                        href: "/build-plan",
+                        label: roles.engineer && !roles.architect ? c("nav.signoffs") : c("nav.drawings"),
+                        icon: "buildPlan" as const,
+                        count: counts.drawings,
+                      },
+                    ]
+                  : []),
               ],
             },
             {
