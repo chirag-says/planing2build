@@ -417,8 +417,8 @@ const SECTION_GROUP: Record<string, string> = {
   "Contractor quotes": "Quotes",
   "Construction stages": "Construction",
   Specification: "Construction",
-  Notifications: "Home",
-  Messages: "Home",
+  "Needs attention": "Home",
+  "Meet your team": "Home",
 };
 
 /**

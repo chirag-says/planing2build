@@ -81,9 +81,9 @@ test("a family buys the package: a failed payment, then a verified one; the pack
   test.setTimeout(240_000);
   const project = await acceptedProject(page, request);
 
-  // The overview offers the package once the review is complete.
+  // The overview's next step offers the package once the review is complete.
   await page.goto(`${IHB}/projects/${project.id}`);
-  await page.getByRole("link", { name: "View the package" }).click();
+  await page.getByRole("link", { name: "See what it includes" }).click();
   await orderPackage(page, project);
   await axe(page);
 

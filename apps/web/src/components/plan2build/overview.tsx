@@ -16,8 +16,7 @@ import {
   HandshakeIcon,
   HardHatIcon,
   MailIcon,
-  MessageSquareTextIcon,
-  PhoneIcon,
+    PhoneIcon,
   ScaleIcon,
   SendIcon,
   ShieldCheckIcon,
@@ -58,11 +57,11 @@ export function contactHref(value: string | null): { href: string; kind: "phone"
 export function OverviewGreeting({ name }: { name: string | null }) {
   const o = getTranslator("Overview");
   return (
-    <header className="flex flex-col gap-2">
-      <h1 className="p2b-rise-clip font-heading text-4xl leading-none sm:text-5xl">
+    <header className="flex flex-col gap-1.5">
+      <h1 className="p2b-rise-clip font-heading text-4xl leading-none">
         <span className="p2b-rise-in">{name ? o("greeting.named", { name }) : o("greeting.plain")}</span>
       </h1>
-      <p className="text-lg text-pretty text-muted-foreground">{o("sub")}</p>
+      <p className="text-base text-pretty text-muted-foreground">{o("sub")}</p>
     </header>
   );
 }
@@ -89,19 +88,26 @@ function BlueprintOverlay() {
 
 const HOME_FACTS = ["bedrooms", "built_up_area_sqft", "floors", "quality_tier"] as const;
 
-export function HomeVisual({ overview, base }: { overview: ProjectOverview; base: string }) {
+export function HomeVisual({ overview, base, fill = false }: { overview: ProjectOverview; base: string; fill?: boolean }) {
   const o = getTranslator("Overview");
   const designs = getTranslator("Designs");
   const hero = overview.heroDesign;
+  const site = overview.siteVisual;
   const place = overview.project.locality;
   const facts = HOME_FACTS.flatMap((key) => overview.facts.filter((fact) => fact.key === key));
   const quota = overview.designQuota;
   // When the next step is the first design, the board offers it; the frame only counts what is left.
   const designFirst = overview.actions.find((action) => action.kind === "act")?.key === "generateDesign";
   return (
-    <section aria-labelledby="home-title" className="flex min-w-0 flex-col gap-4">
-      <div className={cn("ov-home", hero ? "is-photo" : "is-drawing")}>
-        {hero ? (
+    <section aria-labelledby="home-title" className={cn("flex min-w-0 flex-col gap-4", fill && "ov-fill")}>
+      <div className={cn("ov-home", fill && "is-fill", site || hero ? "is-photo" : "is-drawing")}>
+        {site ? (
+          <div className="ov-home-photo p2b-unmask">
+            {/* The contractor's own photo, a signed short-lived link to private storage. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={site.url} alt={o("home.siteAlt", { place: place ?? overview.project.code, stage: site.stage })} className="p2b-unmask-img" />
+          </div>
+        ) : hero ? (
           <>
             <div className="ov-home-photo p2b-unmask">
               {/* Signed, short-lived links to private storage: no image optimiser in between. */}
@@ -150,7 +156,13 @@ export function HomeVisual({ overview, base }: { overview: ProjectOverview; base
             {place ? o("home.place", { place }) : o("home.label")}
           </h2>
           <p className="font-mono text-xs tracking-widest text-muted-foreground uppercase">
-            {hero ? o("home.illustrativeNote") : overview.stages.length ? o("home.drawingBuild") : o("home.drawing")}
+            {site
+              ? o("home.siteNote", { stage: site.stage, date: formatDate(site.postedAt), by: site.by ?? "" })
+              : hero
+                ? o("home.illustrativeNote")
+                : overview.stages.length
+                  ? o("home.drawingBuild")
+                  : o("home.drawing")}
           </p>
         </div>
         {quota && (
@@ -276,18 +288,21 @@ export function NextStep({
   overview,
   base,
   waiting,
+  compact = false,
   children,
 }: {
   overview: ProjectOverview;
   base: string;
   waiting: { title: string; body: string } | null;
+  /** Drops the "also waiting" list, for a single-screen overview. */
+  compact?: boolean;
   children?: ReactNode;
 }) {
   const o = getTranslator("Overview");
   const [primary, ...rest] = overview.actions.filter((action) => action.kind === "act");
   if (!primary && !waiting) return null;
   const lead = primary ? actionCopy(primary) : { ...waiting!, cta: null };
-  const more = [...rest, ...overview.actions.filter((action) => action.kind === "watch")].slice(0, 2);
+  const more = compact ? [] : [...rest, ...overview.actions.filter((action) => action.kind === "watch")].slice(0, 2);
   return (
     <section
       aria-labelledby="next-title"
@@ -439,15 +454,13 @@ export function StandingPanel({ overview }: { overview: ProjectOverview }) {
 
 /* 5. The team ------------------------------------------------------------------------------ */
 
-function ContactActions({
+export function ContactActions({
   name,
   contact,
-  messageHref,
   compact = false,
 }: {
   name: string;
   contact: string | null;
-  messageHref: string;
   compact?: boolean;
 }) {
   const o = getTranslator("Overview");
@@ -486,17 +499,11 @@ function ContactActions({
           </a>
         </Button>
       )}
-      <Button asChild size={compact ? "sm" : "default"} variant="outline">
-        <Link href={messageHref} aria-label={o("team.messageName", { name })}>
-          <MessageSquareTextIcon aria-hidden="true" data-icon="inline-start" />
-          <span className={cn(compact && "max-sm:sr-only")}>{o("team.message")}</span>
-        </Link>
-      </Button>
     </div>
   );
 }
 
-function Monogram({ name, large }: { name: string; large?: boolean }) {
+export function Monogram({ name, large }: { name: string; large?: boolean }) {
   return (
     <span aria-hidden="true" className={cn("ov-monogram font-mono", large && "is-large")}>
       {initialsOf(name) ?? "P"}
@@ -504,7 +511,7 @@ function Monogram({ name, large }: { name: string; large?: boolean }) {
   );
 }
 
-function Standing({ member }: { member: TeamMember }) {
+export function Standing({ member }: { member: TeamMember }) {
   const o = getTranslator("Overview");
   return member.outside ? (
     <span className="font-mono text-xs tracking-wider text-muted-foreground uppercase">{o("team.own")}</span>
@@ -548,7 +555,6 @@ function PrimaryContact({ member, base }: { member: TeamMember; base: string }) 
       <ContactActions
         name={name}
         contact={member.phone ?? member.email}
-        messageHref={`${base}/messages?to=${member.id}`}
       />
     </article>
   );
@@ -631,7 +637,6 @@ export function TeamSection({
                   <ContactActions
                     name={name}
                     contact={member.phone ?? member.email}
-                    messageHref={`${base}/messages?to=${member.id}`}
                     compact
                   />
                 }
@@ -672,7 +677,6 @@ export function TeamSection({
               <ContactActions
                 name={o("team.plan2build")}
                 contact={plan2build.phone}
-                messageHref={`${base}/messages?to=plan2build`}
                 compact
               />
             }
@@ -715,17 +719,30 @@ export function ActivityIcon({ kind, className }: { kind: ActivityKind; classNam
   return <Icon aria-hidden="true" className={className} />;
 }
 
-export function ActivityTimeline({ overview, base, now }: { overview: ProjectOverview; base: string; now: string }) {
+export function ActivityTimeline({
+  overview,
+  base,
+  now,
+  compact = false,
+  rows = 4,
+}: {
+  overview: ProjectOverview;
+  base: string;
+  now: string;
+  /** Tighter spacing and at most `rows` rows (three on short screens): a single-screen overview. */
+  compact?: boolean;
+  rows?: number;
+}) {
   const o = getTranslator("Overview");
-  const items = overview.activity.slice(0, 5);
+  const items = overview.activity.slice(0, compact ? rows : 5);
   return (
-    <section aria-labelledby="activity-title" className="flex min-w-0 flex-col gap-4">
+    <section aria-labelledby="activity-title" className={cn("flex min-w-0 flex-col gap-4", compact && "min-h-0 gap-3 overflow-hidden")}>
       <div className="flex flex-wrap items-end justify-between gap-3 border-t-2 border-foreground pt-4">
         <h2 id="activity-title" className="font-heading text-2xl leading-none">
           {o("activity.title")}
         </h2>
         {overview.activity.length > 0 && (
-          <Link href={`${base}/notifications`} className="ov-link">
+          <Link href={`${base}/attention`} className="ov-link">
             {o("activity.all")}
             <ArrowRightIcon aria-hidden="true" />
           </Link>
@@ -734,7 +751,7 @@ export function ActivityTimeline({ overview, base, now }: { overview: ProjectOve
       {items.length === 0 ? (
         <p className="text-base text-muted-foreground">{o("activity.empty")}</p>
       ) : (
-        <RevealOnView as="ol" className="ov-timeline">
+        <RevealOnView as="ol" className={cn("ov-timeline", compact && "is-compact")}>
           {items.map((item, index) => (
             <li key={item.id} className="ov-tl-item" style={order(index)}>
               <span className="ov-tl-node">

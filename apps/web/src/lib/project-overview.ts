@@ -4,7 +4,7 @@
 // quotes, stages or inspections yet, and their absence is a fact, not an error.
 import "server-only";
 
-import type { components } from "@p2b/contracts";
+import type { ApiClient, components } from "@p2b/contracts";
 import { cache } from "react";
 
 import { serverApi } from "@/lib/api/server";
@@ -105,6 +105,11 @@ export interface ProjectOverview {
   designs: Design[];
   /** The newest finished concept with an image: the house visual on the overview (always marked illustrative). */
   heroDesign: Design | null;
+  /**
+   * The newest photo a contractor posted on one of this project's stage updates, from their own
+   * dashboard: the house as it stands on site. Null until a contractor has posted one.
+   */
+  siteVisual: { url: string; stage: string; postedAt: string; by: string | null } | null;
   /** Independent assurance: the auditor Plan2Build appointed (only their code reaches the family). */
   assurance: { auditorCode: string | null; inspections: number; scheduled: number } | null;
   /** The Plan2Build package, as a state only (the package page has the rest). */
@@ -146,6 +151,35 @@ async function settle<T>(request: Promise<{ data?: T }> | null): Promise<T | und
   }
 }
 
+/**
+ * The latest site photo: from the stages with the newest updates, the first update (newest first)
+ * that has a photo, as a short-lived signed link to private storage. Never throws.
+ */
+async function loadSiteVisual(api: ApiClient, projectId: string, stages: Stage[]): Promise<ProjectOverview["siteVisual"]> {
+  const newest = stages
+    .filter((stage) => stage.update_count > 0 && stage.last_update_at)
+    .sort((a, b) => (b.last_update_at ?? "").localeCompare(a.last_update_at ?? ""))
+    .slice(0, 3);
+  for (const stage of newest) {
+    const updates = await settle(
+      api.GET("/api/v1/projects/{project_id}/stages/{stage_id}/updates", {
+        params: { path: { project_id: projectId, stage_id: stage.id } },
+      }),
+    );
+    for (const update of updates?.updates ?? []) {
+      const photo = update.photos[0];
+      if (!photo) continue;
+      const link = await settle(
+        api.GET("/api/v1/projects/{project_id}/stages/{stage_id}/files/{file_id}/url", {
+          params: { path: { project_id: projectId, stage_id: stage.id, file_id: photo.file_id } },
+        }),
+      );
+      if (link?.url) return { url: link.url, stage: stage.name, postedAt: update.posted_at, by: update.contractor_name };
+    }
+  }
+  return null;
+}
+
 /** Floors above ground from the requirement's floors answer ("G_PLUS_2" -> 2, "G" -> 0). */
 function floorsAbove(value: unknown): number {
   const match = typeof value === "string" ? value.match(/(\d+)$/) : null;
@@ -180,7 +214,9 @@ export async function loadProjectOverview(detail: ProjectDetail, labels: FormatL
   for (const key of FACT_KEYS) {
     const question = byKey.get(key);
     const text = question ? formatAnswer(question, answers[key], labels) : "";
-    if (text) facts.push({ key, value: key === "built_up_area_sqft" ? `${Number(answers[key]).toLocaleString("en-IN")} sq ft` : text });
+    // The area as a number with the unit; an answer that is not a number keeps its own wording.
+    const area = key === "built_up_area_sqft" ? Number(answers[key]) : Number.NaN;
+    if (text) facts.push({ key, value: Number.isFinite(area) ? `${area.toLocaleString("en-IN")} sq ft` : text });
   }
   if (typeof answers.plot_width_ft === "number" && typeof answers.plot_depth_ft === "number") {
     facts.splice(1, 0, { key: "plot", value: `${answers.plot_width_ft} × ${answers.plot_depth_ft} ft` });
@@ -376,6 +412,7 @@ export async function loadProjectOverview(detail: ProjectDetail, labels: FormatL
       [...(designs?.items ?? [])]
         .filter((d) => d.state === "SUCCEEDED" && d.image_url)
         .sort((a, b) => b.sequence - a.sequence)[0] ?? null,
+    siteVisual: built ? await loadSiteVisual(api, id, stages) : null,
     assurance: built
       ? {
           auditorCode:

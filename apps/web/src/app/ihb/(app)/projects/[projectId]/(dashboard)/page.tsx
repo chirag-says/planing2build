@@ -1,22 +1,17 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
-import {
-  ActivityTimeline,
-  HomeVisual,
-  NextStep,
-  OverviewGreeting,
-  ProjectSnapshot,
-  StagePanel,
-  StandingPanel,
-  TeamSection,
-} from "@/components/plan2build/overview";
+import { ArrowRightIcon } from "lucide-react";
+import Link from "next/link";
+
+import { ActivityTimeline, HomeVisual, NextStep, OverviewGreeting, ProjectSnapshot } from "@/components/plan2build/overview";
+import { StatusBadge } from "@/components/plan2build/status-badge";
 import { Notice } from "@/components/plan2build/states";
 import { getTranslator } from "@/lib/i18n";
 import { getInbox } from "@/lib/inbox-server";
 import { dashboardOpen, loadProject, projectTitle, type ProjectDetail } from "@/lib/project";
 import { getProjectOverview, type ProjectOverview } from "@/lib/project-overview";
 import { currentUser } from "@/lib/session";
-import { site } from "@/marketing/content/site";
 
 export async function generateMetadata({ params }: { params: Promise<{ projectId: string }> }): Promise<Metadata> {
   return { title: await projectTitle((await params).projectId) };
@@ -27,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ projectId
  * family, a closed project's reason, and the result of the initial review. The review itself runs
  * in the background and never blocks the dashboard.
  */
-function ReviewNotice({ detail, boardSaysReview }: { detail: ProjectDetail; boardSaysReview: boolean }) {
+function reviewNotice(detail: ProjectDetail, boardSaysReview: boolean): ReactNode {
   const t = getTranslator("Dashboard");
   const projects = getTranslator("Projects");
   const { project, review_message: message } = detail;
@@ -82,9 +77,10 @@ function waitingCopy(overview: ProjectOverview) {
 }
 
 /**
- * The project's home (homeowner brief v3): which home and where it stands, the one next step, how
- * far it has come, who is building it, what changed. The estimate, the package, the designs and
- * the full journey have their own pages.
+ * The project's home: where the project stands (its status, the journey), the house as it stands
+ * (the contractor's site photo), the next step with everything else waiting under it, what changed
+ * lately, and the project's standing (code, package, requirement, estimate). The team, the designs
+ * and the full journey have their own pages and sidebar entries. Phones stack it and scroll.
  */
 export default async function ProjectOverviewPage({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;
@@ -98,31 +94,35 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
   const waiting = waitingCopy(overview);
   const hasAct = overview.actions.some((action) => action.kind === "act");
   const boardSaysReview = !hasAct && overview.waiting === "review";
+  const notice = reviewNotice(detail, boardSaysReview);
   const now = open ? (await getInbox(projectId)).now : new Date().toISOString();
+  const o = getTranslator("Overview");
 
   return (
-    <div className="flex flex-col gap-10 lg:gap-14">
+    // On wide screens the page is as tall as the window under the top bar, so nothing scrolls.
+    <div className="ov-single flex flex-col gap-6 lg:gap-5">
       <OverviewGreeting name={user?.display_name ?? null} />
-
-      {/* The home beside where it stands; on phones the stage and the next step come first. */}
-      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-10">
-        <div className="order-2 min-w-0 lg:order-1">
-          <HomeVisual overview={overview} base={base} />
+      <div className="ov-single-grid grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-8">
+        {/* Phones put the next step first; the house follows. */}
+        <div className="ov-single-col order-2 min-w-0 lg:order-1">
+          <HomeVisual overview={overview} base={base} fill />
         </div>
-        <div className="order-1 flex min-w-0 flex-col gap-6 lg:order-2">
-          <StagePanel overview={overview} base={base} />
-          <ReviewNotice detail={detail} boardSaysReview={boardSaysReview} />
-          <NextStep overview={overview} base={base} waiting={waiting} />
+        <div className="ov-single-col order-1 flex min-w-0 flex-col gap-4 lg:order-2">
+          {/* Where the project stands: the backend's own status, and the way to the whole journey. */}
+          <div className="flex shrink-0 flex-wrap items-center justify-between gap-3">
+            <StatusBadge kind="project" status={detail.project.status} withLabel />
+            <Link href={`${base}/journey`} className="ov-link">
+              {o("stage.viewJourney")}
+              <ArrowRightIcon aria-hidden="true" />
+            </Link>
+          </div>
+          {notice && <div className="shrink-0">{notice}</div>}
+          <div className="shrink-0">
+            <NextStep overview={overview} base={base} waiting={waiting} />
+          </div>
+          {open && <ActivityTimeline overview={overview} base={base} now={now} compact rows={2} />}
+          {open && <ProjectSnapshot overview={overview} base={base} />}
         </div>
-      </div>
-
-      {open && <StandingPanel overview={overview} />}
-
-      {open && <TeamSection overview={overview} base={base} plan2build={{ phone: site.phone }} />}
-
-      <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-10">
-        {open ? <ActivityTimeline overview={overview} base={base} now={now} /> : <div />}
-        <ProjectSnapshot overview={overview} base={base} />
       </div>
     </div>
   );

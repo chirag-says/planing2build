@@ -57,6 +57,32 @@
     aspect-ratio: 16 / 11;
   }
 }
+/*
+ * The single-screen overview: on wide windows at least 800px tall the page is as tall as the
+ * window under the top bar, and the home takes whatever height its column leaves it. Shorter
+ * windows scroll as any page does.
+ */
+@media (min-width: 64rem) and (min-height: 800px) {
+  .ov-single {
+    height: calc(100svh - 8.75rem);
+  }
+  .ov-single-grid {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+  .ov-single-col {
+    min-height: 0;
+  }
+  .ov-fill {
+    height: 100%;
+    min-height: 0;
+  }
+  .ov-home.is-fill {
+    aspect-ratio: auto;
+    flex: 1 1 0;
+    min-height: 0;
+  }
+}
 .ov-home-photo {
   position: absolute;
   inset: 0;
@@ -530,6 +556,18 @@
 }
 .ov-tl-item:last-child {
   padding-bottom: 0;
+}
+/* Compact: the recent activity of a single-screen overview. Short screens show three rows. */
+.ov-timeline.is-compact .ov-tl-item {
+  padding-bottom: 0.625rem;
+}
+.ov-timeline.is-compact .ov-tl-item:last-child {
+  padding-bottom: 0;
+}
+@media (max-height: 820px) {
+  .ov-timeline.is-compact .ov-tl-item:nth-child(n + 4) {
+    display: none;
+  }
 }
 .ov-tl-node {
   position: relative;

@@ -38,7 +38,7 @@ function text(item: InboxNotification): string {
 // The bell's page (lib/inbox.ts): what needs the family and what changed, by day. Action
 // notifications come from the next actions and updates from the dates the API records; there is
 // no sample data.
-export default async function NotificationsPage({ params }: { params: Promise<{ projectId: string }> }) {
+export default async function AttentionPage({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;
   const [detail, inbox] = await Promise.all([loadProject(projectId), getInbox(projectId)]);
   const t = getTranslator("Inbox");

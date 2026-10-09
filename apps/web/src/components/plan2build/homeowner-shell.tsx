@@ -5,6 +5,8 @@
 // On a project's pages the top bar names the home (the
 // project switcher) beside the notifications bell, and the sidebar carries the project's sections
 // in seven groups (ProjectSectionsNav). Phones get the groups as a scrolling row in the page.
+import { SearchIcon } from "lucide-react";
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { AppShell, type ShellSection } from "@/components/plan2build/app-shell";
@@ -17,6 +19,7 @@ import {
   type SectionItem,
 } from "@/components/plan2build/project-sections-nav";
 import { ProjectSwitcher } from "@/components/plan2build/project-switcher";
+import { Button } from "@/components/ui/button";
 import { getTranslator } from "@/lib/i18n";
 import { getInbox } from "@/lib/inbox-server";
 import { dashboardOpen, hasStagesAndLines, type ProjectDetail } from "@/lib/project";
@@ -31,6 +34,7 @@ type GroupKey = "home" | "project" | "quotes" | "construction" | "verify" | "rec
 export function projectGroups(detail: ProjectDetail): SectionGroup[] {
   const t = getTranslator("Dashboard");
   const o = getTranslator("Overview");
+  const records = getTranslator("Records");
   const { project } = detail;
   const base = `/projects/${project.project_id}`;
   const g = (key: GroupKey, icon: SectionIcon, items: SectionItem[]): SectionGroup => ({
@@ -51,8 +55,10 @@ export function projectGroups(detail: ProjectDetail): SectionGroup[] {
   return [
     g("home", "home", [
       { href: base, label: t("areas.overview"), icon: "overview", exact: true },
-      { href: `${base}/notifications`, label: t("areas.notifications"), icon: "notifications" },
-      { href: `${base}/messages`, label: t("areas.messages"), icon: "messages" },
+      // What needs the family, derived from the API's own records (no notification API exists).
+      { href: `${base}/attention`, label: t("areas.attention"), icon: "notifications" },
+      // Everyone engaged on the project, with how to reach them.
+      { href: `${base}/team`, label: t("areas.team"), icon: "team" },
     ]),
     g("project", "project", [
       { href: `${base}/answers`, label: t("areas.requirement"), icon: "requirement" },
@@ -76,7 +82,16 @@ export function projectGroups(detail: ProjectDetail): SectionGroup[] {
           g("verify", "verify", [{ href: `${base}/construction#inspections`, label: o("nav.inspections"), icon: "inspections" }]),
         ]
       : []),
-    g("records", "records", [{ href: `${base}/documents`, label: t("areas.documents"), icon: "documents" }]),
+    g("records", "records", [
+      { href: `${base}/documents`, label: t("areas.documents"), icon: "documents" },
+      // The handover pack and the permanent record sit on the construction page once it has stages.
+      ...(built
+        ? [
+            { href: `${base}/construction#handover`, label: records("handover"), icon: "handover" as const },
+            { href: `${base}/construction#build-record`, label: records("buildRecord"), icon: "buildRecord" as const },
+          ]
+        : []),
+    ]),
     journey,
   ];
 }
@@ -115,7 +130,6 @@ export async function HomeownerShell({
         label: shell("workspace"),
         items: [
           { href: "/projects", label: t("projects"), icon: "projects", exact: Boolean(project) },
-          { href: "/professionals", label: t("professionals"), icon: "search" },
           { href: "/account/billing", label: t("billing"), icon: "billing" },
         ],
       },
@@ -125,7 +139,16 @@ export async function HomeownerShell({
   let sidebarTop: ReactNode;
   const sections: ShellSection[] = [workspace];
   let context: ReactNode;
-  let headerActions: ReactNode;
+  // Browsing professionals sits in the top bar, to the left of the notifications bell and account.
+  const browse = (
+    <Button asChild variant="outline" className="shrink-0">
+      <Link href="/professionals">
+        <SearchIcon aria-hidden="true" data-icon="inline-start" />
+        <span className="max-sm:sr-only">{shell("browseProfessionals")}</span>
+      </Link>
+    </Button>
+  );
+  let headerActions: ReactNode = browse;
   if (project) {
     const base = `/projects/${project.project.project_id}`;
     const switcher = (
@@ -145,7 +168,12 @@ export async function HomeownerShell({
     );
     if (dashboardOpen(project.project.status)) {
       const inbox = await getInbox(project.project.project_id);
-      headerActions = <NotificationsBell href={`${base}/notifications`} count={inbox.unread} />;
+      headerActions = (
+        <>
+          {browse}
+          <NotificationsBell href={`${base}/attention`} count={inbox.unread} />
+        </>
+      );
     }
   } else {
     context = (
@@ -168,14 +196,15 @@ export async function HomeownerShell({
       accountKind={shell("homeowner")}
       sections={sections}
       sidebarTop={sidebarTop}
-      helpHref="/need-help"
+      helpHref="/help"
       context={context}
       headerActions={headerActions}
-      primaryAction={project ? undefined : { href: "/start", label: shell("newProject") }}
+      // With no project yet the dashboard itself asks the entry questions; there is nothing to add.
+      primaryAction={project || (projects?.length ?? 0) === 0 ? undefined : { href: "/start", label: shell("newProject") }}
       accountLinks={[
         { href: "/projects", label: t("projects"), icon: "projects" },
         { href: "/account/billing", label: t("billing"), icon: "billing" },
-        { href: "/need-help", label: shell("help"), icon: "help" },
+        { href: "/help", label: shell("help"), icon: "help" },
       ]}
     >
       {children}

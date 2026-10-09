@@ -15,7 +15,9 @@ import {
   FileTextIcon,
   FolderOpenIcon,
   HardHatIcon,
+  BookCheckIcon,
   HouseIcon,
+  KeyRoundIcon,
   LayoutDashboardIcon,
   ListChecksIcon,
   MessageSquareTextIcon,
@@ -25,6 +27,7 @@ import {
   ShieldCheckIcon,
   SparklesIcon,
   UsersIcon,
+  UsersRoundIcon,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -36,6 +39,7 @@ const ICONS = {
   overview: LayoutDashboardIcon,
   notifications: BellIcon,
   messages: MessageSquareTextIcon,
+  team: UsersRoundIcon,
   project: FolderOpenIcon,
   requirement: ClipboardListIcon,
   estimate: CalculatorIcon,
@@ -50,6 +54,8 @@ const ICONS = {
   inspections: ClipboardCheckIcon,
   records: FileTextIcon,
   documents: FileTextIcon,
+  handover: KeyRoundIcon,
+  buildRecord: BookCheckIcon,
   journey: RouteIcon,
 } satisfies Record<string, LucideIcon>;
 
