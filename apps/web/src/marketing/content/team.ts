@@ -1,7 +1,7 @@
-import imgRolesAdvisor from '@/marketing/assets/roles/advisor.svg';
-import imgRolesAuditor from '@/marketing/assets/roles/auditor.svg';
-import imgRolesEngineer from '@/marketing/assets/roles/engineer.svg';
-import imgRolesOperations from '@/marketing/assets/roles/operations.svg';
+import imgRolesAdvisor from '@/marketing/assets/roles/advisor.jpg';
+import imgRolesAuditor from '@/marketing/assets/roles/auditor.jpg';
+import imgRolesEngineer from '@/marketing/assets/roles/engineer.jpg';
+import imgRolesOperations from '@/marketing/assets/roles/operations.jpg';
 import type { TeamMember } from './types';
 
 /**
@@ -31,8 +31,8 @@ export const team: TeamMember[] = [
     ],
     "photo": {
       "src": imgRolesAdvisor.src,
-      "width": 400,
-      "height": 500
+      "width": 660,
+      "height": 820
     }
   },
   {
@@ -56,8 +56,8 @@ export const team: TeamMember[] = [
     ],
     "photo": {
       "src": imgRolesEngineer.src,
-      "width": 400,
-      "height": 500
+      "width": 660,
+      "height": 820
     }
   },
   {
@@ -81,8 +81,8 @@ export const team: TeamMember[] = [
     ],
     "photo": {
       "src": imgRolesAuditor.src,
-      "width": 400,
-      "height": 500
+      "width": 660,
+      "height": 820
     }
   },
   {
@@ -106,8 +106,8 @@ export const team: TeamMember[] = [
     ],
     "photo": {
       "src": imgRolesOperations.src,
-      "width": 400,
-      "height": 500
+      "width": 660,
+      "height": 820
     }
   }
 ];
